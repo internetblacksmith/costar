@@ -1,0 +1,7 @@
+# Doppler CLI configuration example
+# Copy this file to .doppler and update with your project details
+
+{
+  "project": "actorsync",
+  "config": "development"
+}

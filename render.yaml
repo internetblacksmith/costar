@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: actorsync
+    env: ruby
+    buildCommand: |
+      bundle install
+      # Optional: Setup Doppler for build-time secrets
+      # curl -Ls https://cli.doppler.com/install.sh | sh
+      # doppler secrets download --no-file --format env > .env.render
+    startCommand: bundle exec ruby app.rb
+    envVars:
+      - key: RACK_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Option 1: Manual environment variables (recommended for simplicity)
+      - key: TMDB_API_KEY
+        sync: false
+      # Option 2: Use Doppler service token (uncomment if using Doppler)
+      # - key: DOPPLER_TOKEN
+      #   sync: false
+    healthCheckPath: /
+    numInstances: 1
+    plan: free
+    region: oregon
+    runtime: ruby-3.1.0
+    scaling:
+      minInstances: 1
+      maxInstances: 1

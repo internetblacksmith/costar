@@ -1,0 +1,33 @@
+<div class="movie-item<%= ' shared' if shared %>">
+    <div class="mdc-card movie-card">
+        <div class="movie-poster-container">
+            <img src="<%= PosterService.poster_url(movie[:poster_path], :medium) %>" 
+                 alt="<%= movie[:title] %> poster"
+                 class="movie-poster"
+                 loading="lazy"
+                 onerror="this.src='<%= PosterService.placeholder_url %>'"
+                 onload="this.classList.add('loaded')"
+                 srcset="<%= PosterService.poster_url(movie[:poster_path], :thumbnail) %> 154w,
+                         <%= PosterService.poster_url(movie[:poster_path], :medium) %> 342w,
+                         <%= PosterService.poster_url(movie[:poster_path], :large) %> 500w"
+                 sizes="(max-width: 768px) 154px, 342px">
+        </div>
+        <div class="movie-content">
+            <div class="movie-title">
+                <%= movie[:title] %>
+                <% if shared %>
+                    <span class="material-icons shared-star">star</span>
+                <% end %>
+            </div>
+            <div class="movie-character">as <%= movie[:character] || 'Unknown' %></div>
+            <div class="movie-actor"><%= actor_name %></div>
+            <% if shared && mobile_actors_info %>
+                <div class="mobile-shared-actors">
+                    <% mobile_actors_info.each_with_index do |actor_info, index| %>
+                        <div class="mobile-actor-detail"><%= actor_info %></div>
+                    <% end %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>

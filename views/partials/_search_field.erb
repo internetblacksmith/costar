@@ -1,0 +1,20 @@
+<div class="search-field-container" id="<%= field %>Container">
+    <label class="mdc-text-field mdc-text-field--filled" data-mdc-auto-init="MDCTextField">
+        <span class="mdc-text-field__ripple"></span>
+        <span class="mdc-floating-label" id="<%= field %>-label"><%= label %></span>
+        <input type="text" 
+               class="mdc-text-field__input" 
+               id="<%= field %>"
+               aria-labelledby="<%= field %>-label"
+               hx-get="/api/actors/search" 
+               hx-trigger="keyup changed delay:300ms" 
+               hx-target="#suggestions<%= suggestion_id %>"
+               hx-include="this"
+               hx-vals='{"field": "<%= field %>"}'
+               name="q">
+        <span class="mdc-line-ripple"></span>
+    </label>
+    <div class="suggestions" id="suggestions<%= suggestion_id %>"></div>
+    <input type="hidden" id="<%= field %>_id" name="<%= field %>_id">
+    <input type="hidden" id="<%= field %>_name" name="<%= field %>_name">
+</div>

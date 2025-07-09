@@ -1,0 +1,54 @@
+/* CSS Custom Properties and Theme Variables */
+:root {
+    /* Light Theme */
+    --bg-primary: #fafafa;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-movie-card: #f8f9fa;
+    --text-primary: rgba(0, 0, 0, 0.87);
+    --text-secondary: rgba(0, 0, 0, 0.6);
+    --text-tertiary: rgba(0, 0, 0, 0.5);
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.12);
+    --header-bg: linear-gradient(135deg, #6200ea, #3700b3);
+    --header-text: #ffffff;
+    --input-bg: #f5f5f5;
+    --suggestion-hover: #f5f5f5;
+    --movie-shared-bg: #ffebee;
+    --movie-shared-text: #d32f2f;
+    --movie-shared-border: #f44336;
+    
+    /* Common values */
+    --primary-color: #6200ea;
+    --secondary-color: #3700b3;
+    --accent-color: #f44336;
+    --border-radius: 8px;
+    --spacing-unit: 8px;
+    
+    /* Calculated spacing */
+    --spacing-xs: calc(var(--spacing-unit) * 1);
+    --spacing-sm: calc(var(--spacing-unit) * 2);
+    --spacing-md: calc(var(--spacing-unit) * 3);
+    --spacing-lg: calc(var(--spacing-unit) * 4);
+    --spacing-xl: calc(var(--spacing-unit) * 6);
+}
+
+[data-theme="dark"] {
+    /* Dark Theme */
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-card: #2d2d2d;
+    --bg-movie-card: #383838;
+    --text-primary: rgba(255, 255, 255, 0.87);
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-tertiary: rgba(255, 255, 255, 0.5);
+    --border-color: #333333;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --header-bg: linear-gradient(135deg, #6200ea, #3700b3);
+    --header-text: #ffffff;
+    --input-bg: #333333;
+    --suggestion-hover: #333333;
+    --movie-shared-bg: #2d1f1f;
+    --movie-shared-text: #ff6b6b;
+    --movie-shared-border: #f44336;
+}

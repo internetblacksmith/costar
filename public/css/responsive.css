@@ -1,0 +1,152 @@
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .search-form {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Mobile timeline layout */
+    .timeline::before {
+        left: 24px;
+        width: 2px;
+    }
+    
+    .year-header {
+        margin-bottom: calc(var(--spacing-lg) * 2);
+        padding: 0;
+    }
+    
+    .year-header::before {
+        left: 24px;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--bg-primary);
+    }
+    
+    .year-text {
+        position: static;
+        transform: none;
+        margin: 0 0 0 var(--spacing-xl);
+        font-size: 1.5rem;
+    }
+    
+    .shared-indicator {
+        position: static;
+        transform: none;
+        margin: var(--spacing-xs) 0 0 var(--spacing-xl);
+        display: inline-flex;
+    }
+    
+    /* Single column layout for movies */
+    .movie-row {
+        display: block;
+        margin-left: var(--spacing-xl);
+        margin-bottom: var(--spacing-sm);
+        position: relative;
+    }
+    
+    .movie-left,
+    .movie-right {
+        width: 100%;
+        padding: 0;
+        justify-content: flex-start;
+    }
+    
+    .movie-center {
+        display: none;
+    }
+    
+    /* Hide placeholders on mobile */
+    .movie-placeholder {
+        display: none;
+    }
+    
+    /* Add connection line for movie cards */
+    .movie-row::before {
+        content: '';
+        position: absolute;
+        left: -24px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 2px;
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    }
+    
+    /* Shared movie rows - show combined card on mobile */
+    .shared-movie-row .movie-right {
+        display: none;
+    }
+    
+    .shared-movie-row .movie-left {
+        margin-bottom: 0;
+    }
+    
+    .shared-movie-row::before {
+        background: var(--accent-color);
+    }
+    
+    /* Show mobile shared actors section and hide original for shared movies */
+    .shared-movie-row .mobile-shared-actors {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: var(--spacing-xs);
+    }
+    
+    .mobile-actor-detail {
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+        font-weight: 500;
+    }
+    
+    .mobile-actor-detail:first-child {
+        color: var(--movie-shared-text);
+    }
+    
+    .shared-movie-row .movie-character,
+    .shared-movie-row .movie-actor {
+        display: none;
+    }
+    
+    /* Mobile poster adjustments */
+    .movie-poster-container {
+        width: 60px;
+        height: 90px;
+    }
+    
+    /* Mobile always uses left-side poster layout */
+    .movie-left .movie-card,
+    .movie-right .movie-card {
+        flex-direction: row;
+    }
+    
+    .movie-left .movie-poster,
+    .movie-right .movie-poster {
+        border-radius: var(--border-radius) 0 0 var(--border-radius);
+    }
+    
+    .movie-content {
+        padding: var(--spacing-xs);
+    }
+    
+    .movie-title {
+        font-size: 0.95rem;
+        margin-bottom: 2px;
+    }
+    
+    .movie-character {
+        font-size: 0.8rem;
+    }
+    
+    .movie-actor {
+        font-size: 0.75rem;
+    }
+}

@@ -1,0 +1,62 @@
+/* Header Component Styles */
+header {
+    margin-bottom: calc(var(--spacing-lg) * 2);
+    padding: var(--spacing-xl) var(--spacing-md);
+    background: var(--header-bg);
+    color: var(--header-text);
+    border-radius: calc(var(--border-radius) * 2);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    transition: box-shadow 0.3s ease;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.header-text {
+    text-align: center;
+    flex: 1;
+}
+
+.header-text h1 {
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.header-text p {
+    font-size: 1.1rem;
+    font-weight: 300;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--header-text);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle .material-icons {
+    font-size: 24px;
+}

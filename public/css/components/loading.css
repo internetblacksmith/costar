@@ -1,0 +1,41 @@
+/* Loading State Component */
+.loading {
+    text-align: center;
+    padding: var(--spacing-xl);
+    display: none;
+}
+
+.loading.show {
+    display: block;
+}
+
+.loading p {
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+}
+
+/* Results section */
+.results-section {
+    margin-top: calc(var(--spacing-lg) * 2);
+}
+
+.results-card {
+    padding: var(--spacing-md);
+    border-radius: calc(var(--border-radius) + 4px);
+    min-height: 200px;
+}
+
+.results-section:not(.show) {
+    display: none;
+}
+
+/* Error state */
+.error {
+    background-color: var(--movie-shared-bg);
+    color: var(--movie-shared-text);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    text-align: center;
+    font-weight: 500;
+    border-left: 4px solid var(--movie-shared-border);
+}

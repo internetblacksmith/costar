@@ -1,0 +1,17 @@
+<div class="actor-portrait">
+  <div class="actor-portrait-container">
+    <img src="<%= ActorProfileService.profile_url(actor_profile[:profile_path], :medium) %>" 
+         alt="<%= actor_name %> profile"
+         class="actor-portrait-image"
+         loading="lazy"
+         onerror="this.src='<%= ActorProfileService.placeholder_url %>'"
+         onload="this.classList.add('loaded')"
+         srcset="<%= ActorProfileService.profile_url(actor_profile[:profile_path], :small) %> 92w,
+                 <%= ActorProfileService.profile_url(actor_profile[:profile_path], :medium) %> 185w,
+                 <%= ActorProfileService.profile_url(actor_profile[:profile_path], :large) %> 500w"
+         sizes="(max-width: 768px) 92px, 185px">
+  </div>
+  <div class="actor-portrait-name">
+    <%= actor_name %>
+  </div>
+</div>

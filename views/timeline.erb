@@ -1,0 +1,112 @@
+<div class="timeline">
+    <!-- Actor Portrait Header -->
+    <div class="actor-portrait-header">
+        <div class="actor-portrait-left">
+            <%= erb :'partials/_actor_portrait', locals: { 
+                actor_name: @actor1_name, 
+                actor_profile: @actor1_profile 
+            } %>
+        </div>
+        <div class="actor-portrait-center">
+            <div class="vs-indicator">vs</div>
+        </div>
+        <div class="actor-portrait-right">
+            <%= erb :'partials/_actor_portrait', locals: { 
+                actor_name: @actor2_name, 
+                actor_profile: @actor2_profile 
+            } %>
+        </div>
+    </div>
+    
+    <% @years.each do |year| %>
+        <% next unless @processed_movies[year] %>
+        
+        <% shared_movies_this_year = @shared_movies.select { |m| m[:year] == year } %>
+        
+        <div class="year-group">
+            <%= erb :'partials/_year_header', locals: { 
+                year: year, 
+                shared_movies_count: shared_movies_this_year.length 
+            } %>
+            
+            <div class="movies-timeline">
+                <% @processed_movies[year].each do |entry| %>
+                    <% if entry[:type] == :shared %>
+                        <!-- Shared movie on same line -->
+                        <div class="movie-row shared-movie-row">
+                            <div class="movie-left">
+                                <% left_movie = entry[:movies].find { |m| m[:side] == :left } %>
+                                <% if left_movie %>
+                                    <% mobile_actors_info = [
+                                        "#{left_movie[:actor]}: #{left_movie[:movie][:character] || 'Unknown'}",
+                                        "#{entry[:movies].find { |m| m[:side] == :right }&.dig(:actor) || ''}: #{entry[:movies].find { |m| m[:side] == :right }&.dig(:movie, :character) || 'Unknown'}"
+                                    ].compact %>
+                                    
+                                    <%= erb :'partials/_movie_card', locals: { 
+                                        movie: left_movie[:movie], 
+                                        actor_name: left_movie[:actor], 
+                                        shared: true,
+                                        mobile_actors_info: mobile_actors_info
+                                    } %>
+                                <% else %>
+                                    <div class="movie-placeholder"></div>
+                                <% end %>
+                            </div>
+                            
+                            <div class="movie-center">
+                                <div class="shared-movie-indicator">
+                                    <span class="material-icons">movie</span>
+                                </div>
+                            </div>
+                            
+                            <div class="movie-right">
+                                <% right_movie = entry[:movies].find { |m| m[:side] == :right } %>
+                                <% if right_movie %>
+                                    <%= erb :'partials/_movie_card', locals: { 
+                                        movie: right_movie[:movie], 
+                                        actor_name: right_movie[:actor], 
+                                        shared: true,
+                                        mobile_actors_info: nil
+                                    } %>
+                                <% else %>
+                                    <div class="movie-placeholder"></div>
+                                <% end %>
+                            </div>
+                        </div>
+                    <% else %>
+                        <!-- Single movie on its own line -->
+                        <div class="movie-row single-movie-row">
+                            <% if entry[:movie][:side] == :left %>
+                                <div class="movie-left">
+                                    <%= erb :'partials/_movie_card', locals: { 
+                                        movie: entry[:movie][:movie], 
+                                        actor_name: entry[:movie][:actor], 
+                                        shared: false,
+                                        mobile_actors_info: nil
+                                    } %>
+                                </div>
+                                <div class="movie-center"></div>
+                                <div class="movie-right">
+                                    <div class="movie-placeholder"></div>
+                                </div>
+                            <% else %>
+                                <div class="movie-left">
+                                    <div class="movie-placeholder"></div>
+                                </div>
+                                <div class="movie-center"></div>
+                                <div class="movie-right">
+                                    <%= erb :'partials/_movie_card', locals: { 
+                                        movie: entry[:movie][:movie], 
+                                        actor_name: entry[:movie][:actor], 
+                                        shared: false,
+                                        mobile_actors_info: nil
+                                    } %>
+                                </div>
+                            <% end %>
+                        </div>
+                    <% end %>
+                <% end %>
+            </div>
+        </div>
+    <% end %>
+</div>

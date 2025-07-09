@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 ActorSync</title>
+    
+    <!-- Material Design Components Web -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Scripts -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    
+    <!-- Application modules -->
+    <script src="/js/modules/snackbar.js"></script>
+    <script src="/js/modules/scroll-to-top.js"></script>
+    <script src="/js/modules/actor-search.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- Theme switching script -->
+    <script>
+        // Theme initialization
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            function initThemeToggle() {
+                const themeToggle = document.getElementById('themeToggle');
+                const themeIcon = document.getElementById('themeIcon');
+                
+                if (!themeToggle || !themeIcon) return;
+                
+                function updateThemeIcon(theme) {
+                    themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+                }
+                
+                // Set initial icon
+                updateThemeIcon(savedTheme);
+                
+                themeToggle.addEventListener('click', function() {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initThemeToggle);
+            } else {
+                initThemeToggle();
+            }
+        })();
+    </script>
+    
+    <% if ENV['POSTHOG_API_KEY'] %>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('<%= ENV['POSTHOG_API_KEY'] %>', {
+            api_host: '<%= ENV['POSTHOG_HOST'] || 'https://app.posthog.com' %>',
+            person_profiles: 'identified_only'
+        })
+    </script>
+    <% end %>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>🎬 ActorSync</h1>
+                    <p>Discover shared filmographies between your favorite actors</p>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <span class="material-icons" id="themeIcon">dark_mode</span>
+                </button>
+            </div>
+        </header>
+        
+        <%= yield %>
+        
+        <footer>
+            <div class="tmdb-attribution">
+                <p><strong>This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</strong></p>
+                <p>Data provided by <a href="https://www.themoviedb.org/" target="_blank">The Movie Database (TMDB)</a></p>
+                <% if ENV['POSTHOG_API_KEY'] %>
+                <p><small>This site uses analytics to improve user experience. No personal data is collected without consent.</small></p>
+                <% end %>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

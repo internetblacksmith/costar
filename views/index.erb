@@ -1,0 +1,62 @@
+<main>
+    <section class="search-section">
+        <div class="mdc-card search-card">
+            <div class="search-form">
+                <%= erb :'partials/_search_field', locals: { 
+                    field: 'actor1', 
+                    label: 'First Actor', 
+                    suggestion_id: '1' 
+                } %>
+                
+                <%= erb :'partials/_search_field', locals: { 
+                    field: 'actor2', 
+                    label: 'Second Actor', 
+                    suggestion_id: '2' 
+                } %>
+            </div>
+            
+            <div class="compare-button-container">
+                <button class="mdc-button mdc-button--raised" 
+                        id="compareBtn"
+                        data-mdc-auto-init="MDCRipple"
+                        hx-get="/api/actors/compare"
+                        hx-target="#timeline"
+                        hx-include="#actor1_id, #actor2_id, #actor1_name, #actor2_name"
+                        hx-vals='js:{"actor1_id": document.getElementById("actor1_id").value, "actor2_id": document.getElementById("actor2_id").value}'
+                        hx-indicator="#timeline"
+                        onclick="trackComparison();">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Compare Filmographies</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="results-section" id="results">
+        <div class="mdc-card results-card">
+            <div class="timeline-container" id="timeline">
+                <!-- Timeline content or loading state will be inserted here -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- MDC FAB for scroll to top -->
+    <button class="mdc-fab mdc-fab--mini" id="scrollToTop" data-mdc-auto-init="MDCRipple">
+        <div class="mdc-fab__ripple"></div>
+        <span class="mdc-fab__icon material-icons">keyboard_arrow_up</span>
+    </button>
+    
+    <!-- MDC Snackbar for notifications -->
+    <div class="mdc-snackbar" id="snackbar" data-mdc-auto-init="MDCSnackbar">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+            <div class="mdc-snackbar__label" id="snackbarMessage" aria-atomic="false"></div>
+            <div class="mdc-snackbar__actions" aria-atomic="true">
+                <button type="button" class="mdc-button mdc-snackbar__action" id="snackbarAction" data-mdc-auto-init="MDCRipple">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">UNDO</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+

@@ -29,6 +29,19 @@ A web application that visualizes actor filmographies in a timeline format, high
    - Copy your API key
 
 3. **Configure Environment**:
+   
+   **Option A: Using Doppler (Recommended)**
+   ```bash
+   # Install Doppler CLI
+   brew install dopplerhq/cli/doppler  # macOS
+   
+   # Setup Doppler
+   doppler login
+   doppler setup --project actorsync --config development
+   doppler secrets set TMDB_API_KEY="your_api_key"
+   ```
+   
+   **Option B: Using .env file**
    ```bash
    cp .env.example .env
    ```
@@ -40,16 +53,24 @@ A web application that visualizes actor filmographies in a timeline format, high
    ```
 
 4. **Run the App**:
+   
+   **With Doppler**:
+   ```bash
+   doppler run -- bundle exec ruby app.rb
+   # Or with auto-reload
+   doppler run -- bundle exec rerun ruby app.rb
+   ```
+   
+   **Without Doppler**:
    ```bash
    bundle exec ruby app.rb
-   ```
-   Or with automatic reloading during development:
-   ```bash
+   # Or with auto-reload
    bundle exec rerun ruby app.rb
    ```
 
 5. **Open in Browser**:
-   Visit `http://localhost:4567`
+   - Direct app: `http://localhost:4567`
+   - Shotgun: `http://localhost:9393`
 
 ## How to Use
 
@@ -102,7 +123,19 @@ actorsync/
 
 For development with auto-reloading:
 ```bash
+bundle exec shotgun config.ru
+```
+
+Alternative with rerun:
+```bash
 bundle exec rerun ruby app.rb
+```
+
+### Code Quality
+
+Run RuboCop to check code style and automatically fix issues:
+```bash
+bundle exec rubocop -A
 ```
 
 ## Analytics Setup (Optional)

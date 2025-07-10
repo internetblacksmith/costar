@@ -1,0 +1,11 @@
+<div class="year-header">
+    <% if shared_movies_count > 0 %>
+        <div class="shared-indicator">
+            <span class="material-icons">movie</span>
+            <span>Shared Movies! (<%= shared_movies_count %>)</span>
+        </div>
+    <% end %>
+    <div class="year-text">
+        <%= year %>
+    </div>
+</div>

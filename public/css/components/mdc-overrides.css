@@ -1,0 +1,134 @@
+/* Material Design Components Customization */
+
+/* MDC Text Field customization */
+.mdc-text-field {
+    width: 100%;
+}
+
+.mdc-text-field--filled {
+    background-color: var(--input-bg);
+}
+
+.mdc-text-field--filled .mdc-text-field__input {
+    color: var(--text-primary);
+}
+
+.mdc-floating-label {
+    color: var(--text-secondary);
+}
+
+.mdc-text-field--focused .mdc-floating-label {
+    color: var(--primary-color);
+}
+
+.mdc-text-field--focused .mdc-line-ripple::before {
+    border-bottom-color: var(--primary-color);
+}
+
+.mdc-text-field--focused .mdc-line-ripple::after {
+    border-bottom-color: var(--primary-color);
+}
+
+/* MDC Card dark theme support */
+.mdc-card {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* MDC Chip customization */
+.mdc-chip {
+    background-color: #e1f5fe;
+    color: #0277bd;
+    transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .mdc-chip {
+    background-color: #1e3a5f;
+    color: #81d4fa;
+}
+
+.mdc-chip__primary-action {
+    color: #0277bd;
+}
+
+[data-theme="dark"] .mdc-chip__primary-action {
+    color: #81d4fa;
+}
+
+.mdc-chip__trailing-icon {
+    color: #0277bd;
+}
+
+[data-theme="dark"] .mdc-chip__trailing-icon {
+    color: #81d4fa;
+}
+
+/* MDC Button customization */
+.mdc-button--raised {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.mdc-button--raised:hover {
+    background-color: var(--secondary-color);
+}
+
+.mdc-button--raised:disabled {
+    background-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.38);
+}
+
+[data-theme="dark"] .mdc-button--raised:disabled {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.38);
+}
+
+/* MDC Linear Progress customization */
+.mdc-linear-progress {
+    margin-top: var(--spacing-sm);
+}
+
+.mdc-linear-progress__bar-inner {
+    border-color: var(--primary-color);
+}
+
+.mdc-linear-progress__buffer-bar {
+    background-color: #e1f5fe;
+}
+
+[data-theme="dark"] .mdc-linear-progress__buffer-bar {
+    background-color: #1e3a5f;
+}
+
+/* MDC Snackbar customization */
+.mdc-snackbar {
+    z-index: 1000;
+}
+
+.mdc-snackbar__surface {
+    background-color: #323232;
+    color: white;
+}
+
+.mdc-snackbar__action {
+    color: #bb86fc;
+}
+
+/* MDC FAB customization */
+.mdc-fab {
+    position: fixed;
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    background-color: var(--primary-color);
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+.mdc-fab:hover {
+    background-color: var(--secondary-color);
+}
+
+.mdc-fab .material-icons {
+    font-size: 24px;
+}

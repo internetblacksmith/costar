@@ -1,0 +1,83 @@
+/* Search Component Styles */
+.search-section {
+    margin-bottom: calc(var(--spacing-lg) * 2);
+}
+
+.search-card {
+    padding: var(--spacing-md);
+    border-radius: calc(var(--border-radius) + 4px);
+    background-color: var(--bg-card);
+    transition: background-color 0.3s ease;
+}
+
+.search-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.search-field-container {
+    position: relative;
+}
+
+/* Selected actor chips in place of input fields */
+.selected-actor-chip {
+    width: 100%;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 var(--spacing-sm);
+    box-sizing: border-box;
+}
+
+.selected-actor-chip .mdc-chip__text {
+    font-size: 1rem;
+}
+
+.selected-actor-chip .mdc-chip__trailing-icon {
+    margin-left: auto;
+}
+
+/* Suggestions dropdown */
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-top: 4px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.suggestions:empty {
+    display: none;
+}
+
+.suggestion-item {
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+    color: var(--text-primary);
+}
+
+.suggestion-item:hover {
+    background-color: var(--suggestion-hover);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Compare button */
+.compare-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-md);
+}

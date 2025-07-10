@@ -1,0 +1,139 @@
+/* Actor Portrait Component Styles */
+.actor-portrait-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.actor-portrait-left {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.actor-portrait-center {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 var(--spacing-md);
+}
+
+.actor-portrait-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.actor-portrait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.actor-portrait-container {
+    width: 120px;
+    height: 180px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+    background-color: var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.actor-portrait-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.actor-portrait-image:hover {
+    transform: scale(1.05);
+}
+
+/* Loading state for portraits */
+.actor-portrait-image {
+    opacity: 0;
+}
+
+.actor-portrait-image.loaded {
+    opacity: 1;
+}
+
+.actor-portrait-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: var(--spacing-sm);
+    max-width: 150px;
+    word-wrap: break-word;
+}
+
+.vs-indicator {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-secondary);
+    padding: var(--spacing-sm);
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .actor-portrait-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+    
+    .actor-portrait-left,
+    .actor-portrait-right {
+        flex: none;
+    }
+    
+    .actor-portrait-center {
+        margin: 0;
+    }
+    
+    .actor-portrait-container {
+        width: 100px;
+        height: 150px;
+    }
+    
+    .actor-portrait-name {
+        font-size: 1.1rem;
+    }
+    
+    .vs-indicator {
+        font-size: 1.5rem;
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .actor-portrait-container {
+        width: 80px;
+        height: 120px;
+    }
+    
+    .actor-portrait-name {
+        font-size: 1rem;
+    }
+}

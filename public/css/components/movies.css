@@ -1,0 +1,134 @@
+/* Movie Card Component Styles */
+.movie-item {
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.movie-item:hover {
+    transform: translateY(-2px);
+}
+
+.movie-item.shared {
+    background-color: var(--movie-shared-bg);
+    border-left: 4px solid var(--movie-shared-border);
+}
+
+.movie-item.shared .movie-card {
+    background-color: var(--movie-shared-bg);
+}
+
+.movie-item .movie-card {
+    padding: 0 !important;
+    border-radius: var(--border-radius);
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-movie-card);
+    border: 1px solid var(--border-color);
+    display: flex !important;
+    flex-direction: row !important; /* Default: poster on left, content on right */
+    overflow: hidden;
+}
+
+/* Poster positioning - left side for left movies, right side for right movies */
+.movie-left .movie-item .movie-card {
+    flex-direction: row !important; /* Poster on left, content on right */
+}
+
+.movie-right .movie-item .movie-card {
+    flex-direction: row-reverse !important; /* Poster on right, content on left */
+}
+
+.movie-poster-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 120px;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* Poster border radius based on position */
+.movie-left .movie-poster {
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.movie-right .movie-poster {
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.movie-poster:hover {
+    transform: scale(1.05);
+}
+
+/* Loading state for posters */
+.movie-poster[src*="data:image/svg+xml"] {
+    opacity: 0.7;
+}
+
+/* Smooth loading animation */
+.movie-poster {
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.movie-poster.loaded {
+    opacity: 1;
+}
+
+.movie-content {
+    flex: 1;
+    padding: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.movie-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.movie-character {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.movie-actor {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.movie-item.shared .movie-title {
+    color: var(--movie-shared-text);
+    font-weight: 600;
+}
+
+.movie-item.shared .movie-character {
+    color: var(--movie-shared-text);
+}
+
+/* Hide mobile shared actors section on desktop */
+.mobile-shared-actors {
+    display: none;
+}
+
+/* Shared movie star icon */
+.shared-star {
+    color: var(--movie-shared-text);
+    font-size: 16px;
+    vertical-align: middle;
+}

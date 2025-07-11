@@ -26,8 +26,13 @@ class ActorSyncApp < Sinatra::Base
     set :public_folder, "public"
     set :views, "views"
     enable :sessions
-    set :port, ENV.fetch('PORT', 4567)
-    set :bind, '0.0.0.0'
+    
+    # Only set port/bind for direct Ruby execution (development)
+    # Let Puma handle this in production
+    unless defined?(::Puma)
+      set :port, ENV.fetch('PORT', 4567)
+      set :bind, '0.0.0.0'
+    end
     
     # Initialize services
     set :tmdb_service, TMDBService.new

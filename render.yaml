@@ -3,7 +3,7 @@ services:
     name: actorsync
     env: ruby
     buildCommand: bundle install
-    startCommand: bundle exec puma -t 5:5 -p ${PORT:-10000} -e ${RACK_ENV:-production}
+    startCommand: bundle exec puma
     envVars:
       - key: RACK_ENV
         value: production

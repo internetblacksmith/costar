@@ -3,6 +3,9 @@
 require "sinatra"
 require "sinatra/namespace"
 require "dotenv"
+require "rack/attack"
+require "active_support/cache"
+require "active_support/notifications"
 
 # Load application dependencies
 
@@ -30,6 +33,24 @@ class ActorSyncApp < Sinatra::Base
     set :tmdb_service, TMDBService.new
     set :comparison_service, ActorComparisonService.new
   end
+
+  # Production security configuration
+  configure :production do
+    require "rack/ssl"
+    
+    # Force HTTPS
+    use Rack::SSL
+    
+    # Additional security headers
+    use Rack::Protection, 
+        :except => [:json_csrf], # Allow JSON requests
+        :use => [:authenticity_token, :encrypted_cookie, :form_token, :frame_options,
+                 :http_origin, :ip_spoofing, :path_traversal, :session_hijacking, :xss_header]
+  end
+
+  # Rate limiting configuration
+  require_relative "config/rack_attack"
+  use Rack::Attack
 
   # Error handling
   error APIError do

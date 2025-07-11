@@ -3,7 +3,7 @@ services:
     name: actorsync
     env: ruby
     buildCommand: bundle install
-    startCommand: bundle exec ruby app.rb
+    startCommand: bundle exec puma -t 5:5 -p ${PORT:-10000} -e ${RACK_ENV:-production}
     envVars:
       - key: RACK_ENV
         value: production
@@ -12,6 +12,11 @@ services:
       # Environment variables will be synced from Doppler automatically
       - key: TMDB_API_KEY
         sync: false
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: actorsync-redis
+          property: connectionString
     healthCheckPath: /
     numInstances: 1
     plan: free
@@ -20,3 +25,9 @@ services:
     scaling:
       minInstances: 1
       maxInstances: 1
+
+  - type: redis
+    name: actorsync-redis
+    plan: free
+    region: oregon
+    ipAllowList: []

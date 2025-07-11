@@ -7,8 +7,23 @@ class Rack::Attack
   
   # Configure cache store - use Redis in production, memory for development
   if ENV.fetch('RACK_ENV', 'development') == 'production'
-    # Use Redis cache in production (requires Redis setup)
-    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(url: ENV.fetch('REDIS_URL', 'redis://localhost:6379'))
+    # Use Redis cache in production via connection pool
+    require 'redis'
+    require 'connection_pool'
+    
+    redis_pool = ConnectionPool.new(size: 5, timeout: 5) do
+      Redis.new(
+        url: ENV.fetch('REDIS_URL', 'redis://localhost:6379'),
+        reconnect_attempts: 3,
+        reconnect_delay: 1,
+        timeout: 5
+      )
+    end
+    
+    Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
+      redis: redis_pool,
+      namespace: 'rack_attack'
+    )
   else
     # Use memory cache in development
     Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new

@@ -5,7 +5,6 @@ require "sinatra/namespace"
 require "dotenv"
 
 # Load application dependencies
-# Doppler configuration will be loaded by the configuration class if available
 
 # Load configuration and services
 require_relative "lib/config/configuration"

@@ -7,7 +7,7 @@ This is a simplified guide to get ActorSync deployed on Render.com in minutes.
 - [ ] GitHub account with your code pushed
 - [ ] Render.com account (sign up for free)
 - [ ] TMDB API key from [themoviedb.org](https://www.themoviedb.org/settings/api)
-- [ ] (Optional) Doppler account for advanced secret management
+- [ ] Environment variables configured (TMDB_API_KEY, etc.)
 
 ## Step-by-Step Deployment
 
@@ -41,15 +41,10 @@ git push origin main
 **Environment Variables:**
 Click "Add Environment Variable" and add:
 
-**Option 1: Manual Setup (Recommended)**
+**Environment Variables (synced from Doppler automatically):**
 - `TMDB_API_KEY` = `your_actual_tmdb_api_key`
 - `RACK_ENV` = `production`
-
-**Option 2: Using Doppler (Advanced)**
-- `DOPPLER_TOKEN` = `your_doppler_service_token`
-- `RACK_ENV` = `production`
-
-*See DOPPLER_SETUP.md for Doppler configuration details*
+- `POSTHOG_API_KEY` = `your_posthog_key` (optional)
 
 ### 4. Deploy
 

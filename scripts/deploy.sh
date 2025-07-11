@@ -36,20 +36,10 @@ bundle install
 
 # Check for environment variables
 echo "🔧 Checking environment configuration..."
-if command -v doppler &> /dev/null; then
-    echo "✅ Doppler CLI found"
-    if doppler secrets list &> /dev/null; then
-        echo "✅ Doppler secrets configured"
-    else
-        echo "⚠️  Warning: Doppler not configured. Run 'doppler setup' or check .env file"
-    fi
+if [ ! -f ".env" ]; then
+    echo "⚠️  Warning: No .env file found. Make sure TMDB_API_KEY is set in Render dashboard"
 else
-    echo "⚠️  Doppler CLI not found. Checking for .env file..."
-    if [ ! -f ".env" ]; then
-        echo "⚠️  Warning: No .env file found. Make sure to set TMDB_API_KEY in Render dashboard"
-    else
-        echo "✅ Found .env file"
-    fi
+    echo "✅ Found .env file"
 fi
 
 # Run basic tests
@@ -107,11 +97,10 @@ echo "2. In Render dashboard:"
 echo "   - Create new Web Service"
 echo "   - Connect your GitHub repository"
 echo "   - Use settings from render.yaml"
-echo "   - Add environment variables:"
+echo "   - Environment variables will be synced from Doppler automatically"
 echo "     * TMDB_API_KEY (required)"
 echo "     * RACK_ENV=production (required)"
 echo "     * POSTHOG_API_KEY (optional)"
-echo "     * DOPPLER_TOKEN (optional, if using Doppler)"
 echo ""
 echo "3. Deploy and monitor the build logs"
 echo ""

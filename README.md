@@ -30,18 +30,6 @@ A web application that visualizes actor filmographies in a timeline format, high
 
 3. **Configure Environment**:
    
-   **Option A: Using Doppler (Recommended)**
-   ```bash
-   # Install Doppler CLI
-   brew install dopplerhq/cli/doppler  # macOS
-   
-   # Setup Doppler
-   doppler login
-   doppler setup --project actorsync --config development
-   doppler secrets set TMDB_API_KEY="your_api_key"
-   ```
-   
-   **Option B: Using .env file**
    ```bash
    cp .env.example .env
    ```
@@ -54,14 +42,6 @@ A web application that visualizes actor filmographies in a timeline format, high
 
 4. **Run the App**:
    
-   **With Doppler**:
-   ```bash
-   doppler run -- bundle exec ruby app.rb
-   # Or with auto-reload
-   doppler run -- bundle exec rerun ruby app.rb
-   ```
-   
-   **Without Doppler**:
    ```bash
    bundle exec ruby app.rb
    # Or with auto-reload

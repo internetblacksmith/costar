@@ -65,6 +65,54 @@ class ActorSyncApp < Sinatra::Base
     { error: env["sinatra.error"].message }.to_json
   end
 
+  # Health check endpoint
+  get "/health" do
+    content_type :json
+    
+    begin
+      # Check cache health
+      cache_healthy = Cache.healthy?
+      
+      # Check TMDB service (basic connectivity)
+      tmdb_healthy = true
+      begin
+        settings.tmdb_service.search_actors("test")
+        tmdb_healthy = true
+      rescue StandardError
+        tmdb_healthy = false
+      end
+      
+      overall_status = cache_healthy && tmdb_healthy ? "healthy" : "degraded"
+      status_code = overall_status == "healthy" ? 200 : 503
+      
+      response = {
+        status: overall_status,
+        timestamp: Time.now.iso8601,
+        version: ENV.fetch('APP_VERSION', 'unknown'),
+        environment: ENV.fetch('RACK_ENV', 'development'),
+        checks: {
+          cache: {
+            status: cache_healthy ? "healthy" : "unhealthy",
+            type: ENV.fetch('RACK_ENV', 'development') == 'production' ? "redis" : "memory"
+          },
+          tmdb_api: {
+            status: tmdb_healthy ? "healthy" : "unhealthy"
+          }
+        }
+      }
+      
+      status status_code
+      response.to_json
+    rescue StandardError => e
+      status 500
+      {
+        status: "error",
+        timestamp: Time.now.iso8601,
+        error: "Health check failed: #{e.message}"
+      }.to_json
+    end
+  end
+
   # Main page
   get "/" do
     erb :index

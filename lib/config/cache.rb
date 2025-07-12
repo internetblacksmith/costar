@@ -50,8 +50,9 @@ class Cache
         Redis.new(
           url: ENV.fetch("REDIS_URL", "redis://localhost:6379"),
           reconnect_attempts: 3,
-          reconnect_delay: 1,
-          timeout: 5
+          connect_timeout: 5,
+          read_timeout: 5,
+          write_timeout: 5
         )
       end
     end

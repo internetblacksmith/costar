@@ -13,6 +13,7 @@ gem "puma"
 gem "rack-attack" # Rate limiting and security
 gem "rack-ssl" # HTTPS enforcement
 gem "redis", "~> 5.0" # Redis client
+gem "sentry-ruby" # Error tracking and Rack integration
 gem "sinatra", "~> 3.0"
 gem "sinatra-contrib", "~> 3.0"
 

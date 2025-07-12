@@ -3,6 +3,7 @@
 source "https://rubygems.org"
 
 gem "activesupport", "~> 7.1.0" # For cache and notifications - pin to stable version
+gem "circuit_breaker", "~> 1.1" # Circuit breaker pattern for API resilience
 gem "connection_pool" # Redis connection pooling
 gem "dotenv" # Keep dotenv as fallback
 gem "json"
@@ -13,6 +14,7 @@ gem "puma"
 gem "rack-attack" # Rate limiting and security
 gem "rack-ssl" # HTTPS enforcement
 gem "redis", "~> 5.0" # Redis client
+gem "retries", "~> 0.0.5" # Exponential backoff retries
 gem "sentry-ruby" # Error tracking and Rack integration
 gem "sinatra", "~> 4.1"
 gem "sinatra-contrib", "~> 4.1"

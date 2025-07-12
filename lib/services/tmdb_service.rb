@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
-require_relative "tmdb_client"
+require_relative "resilient_tmdb_client"
 require_relative "tmdb_data_processor"
 require_relative "../config/logger"
 
 # High-level service for interacting with The Movie Database API
 class TMDBService
   def initialize(api_key = nil)
-    @client = TMDBClient.new(api_key)
+    @client = ResilientTMDBClient.new(api_key)
+  end
+
+  def healthy?
+    @client.healthy?
+  end
+
+  def circuit_breaker_status
+    @client.circuit_breaker_status
   end
 
   def search_actors(query)
@@ -64,15 +72,22 @@ class TMDBService
     log_cache_miss_and_api_success(cache_key, start_time, "search/person", api_duration)
 
     actors
-  rescue TMDBError => e
-    handle_tmdb_error(e, "search/person", api_start_time)
+  rescue StandardError => e
+    handle_service_error(e, "search_actors")
     []
   end
 
-  def handle_tmdb_error(error, endpoint, api_start_time)
-    api_duration = defined?(api_start_time) ? (Time.now - api_start_time) * 1000 : 0
-    StructuredLogger.log_api_call("tmdb", endpoint, api_duration, success: false, error: error)
-    StructuredLogger.error("TMDB API Error", service: "tmdb", endpoint: endpoint, error: error.message)
+  def handle_service_error(error, method_name)
+    StructuredLogger.error("TMDBService Error", 
+      type: "service_error",
+      service: "tmdb",
+      method: method_name,
+      error: error.message,
+      error_class: error.class.name,
+      circuit_breaker_status: circuit_breaker_status
+    )
+    
+    Sentry.capture_exception(error) if defined?(Sentry)
   end
 
   def fetch_and_cache_movies(actor_id, cache_key)
@@ -87,8 +102,8 @@ class TMDBService
     Cache.set(cache_key, movies, 600) # 10 minute cache
     log_cache_miss_and_api_success(cache_key, start_time, endpoint, api_duration)
     movies
-  rescue TMDBError => e
-    handle_tmdb_error(e, endpoint, api_start_time)
+  rescue StandardError => e
+    handle_service_error(e, "get_actor_movies")
     []
   end
 
@@ -104,8 +119,8 @@ class TMDBService
     Cache.set(cache_key, profile, 600) # 10 minute cache
     log_cache_miss_and_api_success(cache_key, start_time, endpoint, api_duration)
     profile
-  rescue TMDBError => e
-    handle_tmdb_error(e, endpoint, api_start_time)
+  rescue StandardError => e
+    handle_service_error(e, "get_actor_profile")
     default_actor_profile(actor_id)
   end
 

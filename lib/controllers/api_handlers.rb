@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../config/logger"
+
 # API handlers for actor search and comparison
 class ApiHandlers
   def initialize(app)
@@ -40,12 +42,22 @@ class ApiHandlers
     @app.instance_variable_set(:@field, field)
     @app.erb :suggestions, layout: false
   rescue TMDBError => e
-    puts "[API] TMDB Error in search_actors: #{e.message}"
+    StructuredLogger.error("API TMDB Error", 
+      type: "api_error", 
+      endpoint: "search_actors", 
+      error: e.message,
+      error_class: e.class.name
+    )
     Sentry.capture_exception(e) if defined?(Sentry)
     render_search_error(e.message)
   rescue StandardError => e
-    puts "[API] Unexpected error in search_actors: #{e.class} - #{e.message}"
-    puts "[API] Backtrace: #{e.backtrace.first(5).join("\n")}"
+    StructuredLogger.error("API Unexpected Error", 
+      type: "api_error", 
+      endpoint: "search_actors", 
+      error: e.message,
+      error_class: e.class.name,
+      backtrace: e.backtrace.first(3)
+    )
     Sentry.capture_exception(e) if defined?(Sentry)
     render_unexpected_error
   end
@@ -55,11 +67,23 @@ class ApiHandlers
     @app.content_type :json
     movies.to_json
   rescue TMDBError => e
-    puts "[API] TMDB Error in fetch_actor_movies: #{e.message}"
+    StructuredLogger.error("API TMDB Error", 
+      type: "api_error", 
+      endpoint: "fetch_actor_movies", 
+      actor_id: actor_id,
+      error: e.message,
+      error_class: e.class.name
+    )
     Sentry.capture_exception(e) if defined?(Sentry)
     @app.halt e.code, { error: e.message }.to_json
   rescue StandardError => e
-    puts "[API] Unexpected error in fetch_actor_movies: #{e.class} - #{e.message}"
+    StructuredLogger.error("API Unexpected Error", 
+      type: "api_error", 
+      endpoint: "fetch_actor_movies", 
+      actor_id: actor_id,
+      error: e.message,
+      error_class: e.class.name
+    )
     Sentry.capture_exception(e) if defined?(Sentry)
     @app.halt 500, { error: "Failed to get actor movies" }.to_json
   end

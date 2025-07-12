@@ -6,6 +6,7 @@
 require "rack/attack"
 require "active_support/cache"
 require "active_support/notifications"
+require_relative "../lib/config/logger"
 
 module Rack
   class Attack
@@ -39,7 +40,7 @@ module Rack
           }
           Rack::Attack.cache.store = Redis.new(redis_config)
         rescue => e
-          puts "[RACK_ATTACK] Redis connection failed: #{e.message}. Using memory cache."
+          StructuredLogger.warn("Rack::Attack Redis Failed", type: "rack_attack", error: e.message, fallback: "memory_cache")
           Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
         end
       else
@@ -117,11 +118,23 @@ module Rack
 
       # Log blocked and throttled requests
       ActiveSupport::Notifications.subscribe("blocklist.rack_attack") do |_name, _start, _finish, _request_id, payload|
-        puts "[SECURITY] Blocked request: #{payload[:request].ip} - #{payload[:request].path}"
+        StructuredLogger.warn("Request Blocked", 
+          type: "security", 
+          action: "blocked", 
+          ip: payload[:request].ip, 
+          path: payload[:request].path,
+          user_agent: payload[:request].user_agent
+        )
       end
 
       ActiveSupport::Notifications.subscribe("throttle.rack_attack") do |_name, _start, _finish, _request_id, payload|
-        puts "[SECURITY] Throttled request: #{payload[:request].ip} - #{payload[:request].path}"
+        StructuredLogger.warn("Request Throttled", 
+          type: "security", 
+          action: "throttled", 
+          ip: payload[:request].ip, 
+          path: payload[:request].path,
+          user_agent: payload[:request].user_agent
+        )
       end
 
     end

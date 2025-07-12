@@ -40,7 +40,7 @@ class Cache
 
     def production?
       env = ENV.fetch("RACK_ENV", "development")
-      env == "production" || env == "deployment"
+      %w[production deployment].include?(env)
     end
   end
 

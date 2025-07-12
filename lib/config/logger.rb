@@ -2,12 +2,13 @@
 
 require "logger"
 require "json"
+require_relative "log_formatter"
 
 # Structured JSON logger for production
 class StructuredLogger
   class << self
     def setup
-      @logger ||= create_logger
+      @setup ||= create_logger
     end
 
     def info(message, **context)
@@ -27,17 +28,16 @@ class StructuredLogger
     end
 
     def log_request(env, status, duration_ms)
-      log(:info, "HTTP Request", 
-        type: "request",
-        method: env["REQUEST_METHOD"],
-        path: env["PATH_INFO"],
-        query: env["QUERY_STRING"],
-        ip: env["REMOTE_ADDR"] || env["HTTP_X_FORWARDED_FOR"],
-        user_agent: env["HTTP_USER_AGENT"],
-        status: status,
-        duration_ms: duration_ms.round(2),
-        timestamp: Time.now.iso8601
-      )
+      log(:info, "HTTP Request",
+          type: "request",
+          method: env["REQUEST_METHOD"],
+          path: env["PATH_INFO"],
+          query: env["QUERY_STRING"],
+          ip: env["REMOTE_ADDR"] || env["HTTP_X_FORWARDED_FOR"],
+          user_agent: env["HTTP_USER_AGENT"],
+          status: status,
+          duration_ms: duration_ms.round(2),
+          timestamp: Time.now.iso8601)
     end
 
     def log_api_call(service, endpoint, duration_ms, success: true, error: nil)
@@ -49,7 +49,7 @@ class StructuredLogger
         success: success,
         timestamp: Time.now.iso8601
       }
-      
+
       context[:error] = error.message if error
 
       if success
@@ -66,7 +66,7 @@ class StructuredLogger
         key: key,
         timestamp: Time.now.iso8601
       }
-      
+
       context[:hit] = hit unless hit.nil?
       context[:duration_ms] = duration_ms.round(2) if duration_ms
 
@@ -91,28 +91,9 @@ class StructuredLogger
 
     def create_logger
       logger = Logger.new($stdout)
-      
-      # Use JSON formatter in production/deployment, readable format in development
-      if production_env?
-        logger.formatter = proc do |severity, datetime, progname, msg|
-          "#{msg}\n"
-        end
-      else
-        logger.formatter = proc do |severity, datetime, progname, msg|
-          parsed = JSON.parse(msg)
-          "[#{datetime}] #{severity}: #{parsed['message']} #{parsed.except('timestamp', 'level', 'message', 'app', 'environment').to_json}\n"
-        rescue JSON::ParserError
-          "[#{datetime}] #{severity}: #{msg}\n"
-        end
-      end
-      
-      logger.level = production_env? ? Logger::INFO : Logger::DEBUG
+      LogFormatter.setup_formatter(logger)
+      logger.level = LogFormatter.production_env? ? Logger::INFO : Logger::DEBUG
       logger
-    end
-
-    def production_env?
-      env = ENV.fetch("RACK_ENV", "development")
-      env == "production" || env == "deployment"
     end
   end
 end

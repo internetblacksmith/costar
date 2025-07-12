@@ -61,7 +61,8 @@ class HealthHandler
   end
 
   def production_env?
-    ENV.fetch("RACK_ENV", "development") == "production"
+    env = ENV.fetch("RACK_ENV", "development")
+    env == "production" || env == "deployment"
   end
 
   def build_error_response(error)

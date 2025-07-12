@@ -28,7 +28,8 @@ class Configuration
   end
 
   def production?
-    ENV.fetch("RACK_ENV", "development") == "production"
+    env = ENV.fetch("RACK_ENV", "development")
+    env == "production" || env == "deployment"
   end
 
   private

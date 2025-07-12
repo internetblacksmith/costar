@@ -7,6 +7,9 @@ require "rack/attack"
 require "active_support/cache"
 require "active_support/notifications"
 
+# Initialize Sentry for error tracking (always load, but enable conditionally)
+require_relative "config/sentry"
+
 # Load application dependencies
 
 # Load configuration and services
@@ -57,17 +60,35 @@ class ActorSyncApp < Sinatra::Base
   require_relative "config/rack_attack"
   use Rack::Attack
 
-  # Error handling
+  # Sentry error tracking middleware (conditionally enabled in config)
+  use Sentry::Rack::CaptureExceptions
+
+  # Error handling with Sentry integration
   error APIError do
-    status env["sinatra.error"].code
+    error = env["sinatra.error"]
+    Sentry.capture_exception(error) if ENV['SENTRY_DSN']
+    
+    status error.code
     content_type :json
-    { error: env["sinatra.error"].message }.to_json
+    { error: error.message }.to_json
   end
 
   error ValidationError do
+    error = env["sinatra.error"]
+    Sentry.capture_exception(error) if ENV['SENTRY_DSN']
+    
     status 400
     content_type :json
-    { error: env["sinatra.error"].message }.to_json
+    { error: error.message }.to_json
+  end
+
+  error StandardError do
+    error = env["sinatra.error"]
+    Sentry.capture_exception(error) if ENV['SENTRY_DSN']
+    
+    status 500
+    content_type :json
+    { error: "Internal server error" }.to_json
   end
 
   # Health check endpoint
@@ -117,6 +138,7 @@ class ActorSyncApp < Sinatra::Base
       }.to_json
     end
   end
+
 
   # Main page
   get "/" do

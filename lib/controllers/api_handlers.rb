@@ -40,8 +40,13 @@ class ApiHandlers
     @app.instance_variable_set(:@field, field)
     @app.erb :suggestions, layout: false
   rescue TMDBError => e
+    puts "[API] TMDB Error in search_actors: #{e.message}"
+    Sentry.capture_exception(e) if defined?(Sentry)
     render_search_error(e.message)
-  rescue StandardError
+  rescue StandardError => e
+    puts "[API] Unexpected error in search_actors: #{e.class} - #{e.message}"
+    puts "[API] Backtrace: #{e.backtrace.first(5).join("\n")}"
+    Sentry.capture_exception(e) if defined?(Sentry)
     render_unexpected_error
   end
 
@@ -50,8 +55,12 @@ class ApiHandlers
     @app.content_type :json
     movies.to_json
   rescue TMDBError => e
+    puts "[API] TMDB Error in fetch_actor_movies: #{e.message}"
+    Sentry.capture_exception(e) if defined?(Sentry)
     @app.halt e.code, { error: e.message }.to_json
-  rescue StandardError
+  rescue StandardError => e
+    puts "[API] Unexpected error in fetch_actor_movies: #{e.class} - #{e.message}"
+    Sentry.capture_exception(e) if defined?(Sentry)
     @app.halt 500, { error: "Failed to get actor movies" }.to_json
   end
 

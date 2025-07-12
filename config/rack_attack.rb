@@ -24,10 +24,15 @@ module Rack
           )
         end
 
-        Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-          redis: redis_pool,
-          namespace: "rack_attack"
-        )
+        begin
+          Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
+            redis: redis_pool,
+            namespace: "rack_attack"
+          )
+        rescue NameError => e
+          puts "[RACK_ATTACK] Redis cache store failed: #{e.message}. Falling back to memory cache."
+          Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+        end
       else
         # Use memory cache in development
         Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new

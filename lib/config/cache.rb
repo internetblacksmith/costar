@@ -3,6 +3,7 @@
 require "redis"
 require "connection_pool"
 require "json"
+require_relative "logger"
 
 # Cache abstraction supporting both Redis (production) and memory (development)
 class Cache
@@ -68,7 +69,7 @@ class Cache
         entry[:value]
       end
     rescue Redis::BaseError, JSON::ParserError => e
-      puts "[CACHE] Error getting key #{key}: #{e.message}"
+      StructuredLogger.error("Cache Get Error", type: "cache_error", operation: "get", key: key, error: e.message)
       nil
     end
 
@@ -82,7 +83,7 @@ class Cache
         redis.setex(cache_key(key), ttl + 60, entry.to_json) # Extra 60s buffer
       end
     rescue Redis::BaseError => e
-      puts "[CACHE] Error setting key #{key}: #{e.message}"
+      StructuredLogger.error("Cache Set Error", type: "cache_error", operation: "set", key: key, error: e.message)
       false
     end
 
@@ -92,7 +93,7 @@ class Cache
         redis.del(*keys) if keys.any?
       end
     rescue Redis::BaseError => e
-      puts "[CACHE] Error clearing cache: #{e.message}"
+      StructuredLogger.error("Cache Clear Error", type: "cache_error", operation: "clear", error: e.message)
       false
     end
 
@@ -101,7 +102,7 @@ class Cache
         redis.keys("#{cache_prefix}:*").size
       end
     rescue Redis::BaseError => e
-      puts "[CACHE] Error getting cache size: #{e.message}"
+      StructuredLogger.error("Cache Size Error", type: "cache_error", operation: "size", error: e.message)
       0
     end
 

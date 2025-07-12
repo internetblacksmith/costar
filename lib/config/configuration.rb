@@ -53,8 +53,9 @@ class Configuration
   end
 
   def validate_required_env_vars
-    required_vars = %w[TMDB_API_KEY]
-    missing = required_vars.reject { |var| ENV.fetch(var, nil) }
-    raise "Missing required environment variables: #{missing.join(", ")}" if missing.any?
+    tmdb_key = ENV.fetch("TMDB_API_KEY", nil)
+    if tmdb_key.nil? || tmdb_key.empty? || tmdb_key == "changeme"
+      puts "⚠️  Warning: TMDB_API_KEY not properly configured. Some features may not work."
+    end
   end
 end

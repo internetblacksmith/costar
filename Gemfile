@@ -24,12 +24,12 @@ group :development do
 end
 
 group :test do
-  gem "rspec", "~> 3.12"
-  gem "rack-test", "~> 2.1"
-  gem "webmock", "~> 3.18"
-  gem "simplecov", "~> 0.22"
   gem "factory_bot", "~> 6.2"
   gem "faker", "~> 3.2"
+  gem "rack-test", "~> 2.1"
+  gem "rspec", "~> 3.12"
+  gem "simplecov", "~> 0.22"
+  gem "webmock", "~> 3.18"
 end
 
 group :development, :test do

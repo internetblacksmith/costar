@@ -10,32 +10,34 @@ module TestHelpers
   def json_response
     JSON.parse(last_response.body)
   end
-  
+
   def mock_tmdb_actor_search(query, results = [])
     stub_request(:get, "https://api.themoviedb.org/3/search/person")
       .with(query: hash_including(query: query))
       .to_return(
         status: 200,
         body: { results: results }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
-  
+
   def mock_tmdb_actor_movies(actor_id, movies = [])
     stub_request(:get, "https://api.themoviedb.org/3/person/#{actor_id}/movie_credits")
+      .with(query: hash_including("api_key"))
       .to_return(
         status: 200,
         body: { cast: movies }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
-  
+
   def mock_tmdb_actor_profile(actor_id, profile = {})
     stub_request(:get, "https://api.themoviedb.org/3/person/#{actor_id}")
+      .with(query: hash_including("api_key"))
       .to_return(
         status: 200,
         body: profile.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
 end

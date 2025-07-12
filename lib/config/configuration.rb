@@ -29,7 +29,7 @@ class Configuration
 
   def production?
     env = ENV.fetch("RACK_ENV", "development")
-    env == "production" || env == "deployment"
+    %w[production deployment].include?(env)
   end
 
   private
@@ -54,8 +54,8 @@ class Configuration
 
   def validate_required_env_vars
     tmdb_key = ENV.fetch("TMDB_API_KEY", nil)
-    if tmdb_key.nil? || tmdb_key.empty? || tmdb_key == "changeme"
-      puts "⚠️  Warning: TMDB_API_KEY not properly configured. Some features may not work."
-    end
+    return unless tmdb_key.nil? || tmdb_key.empty? || tmdb_key == "changeme"
+
+    puts "⚠️  Warning: TMDB_API_KEY not properly configured. Some features may not work."
   end
 end

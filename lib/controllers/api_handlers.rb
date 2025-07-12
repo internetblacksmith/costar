@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 require_relative "../config/logger"
+require_relative "api_error_handler"
+require_relative "api_renderer"
 
 # API handlers for actor search and comparison
 class ApiHandlers
+  include ApiErrorHandler
+  include ApiRenderer
   def initialize(app)
     @app = app
   end
@@ -33,32 +37,14 @@ class ApiHandlers
 
   private
 
-  def render_empty_suggestions(field)
-    @app.erb :suggestions, locals: { actors: [], field: field }, layout: false
-  end
-
   def search_actors(query, field)
-    @app.instance_variable_set(:@actors, @app.settings.tmdb_service.search_actors(query))
-    @app.instance_variable_set(:@field, field)
+    set_search_variables(query, field)
     @app.erb :suggestions, layout: false
   rescue TMDBError => e
-    StructuredLogger.error("API TMDB Error", 
-      type: "api_error", 
-      endpoint: "search_actors", 
-      error: e.message,
-      error_class: e.class.name
-    )
-    Sentry.capture_exception(e) if defined?(Sentry)
+    handle_api_error(e, "search_actors")
     render_search_error(e.message)
   rescue StandardError => e
-    StructuredLogger.error("API Unexpected Error", 
-      type: "api_error", 
-      endpoint: "search_actors", 
-      error: e.message,
-      error_class: e.class.name,
-      backtrace: e.backtrace.first(3)
-    )
-    Sentry.capture_exception(e) if defined?(Sentry)
+    handle_unexpected_error(e, "search_actors")
     render_unexpected_error
   end
 
@@ -67,24 +53,10 @@ class ApiHandlers
     @app.content_type :json
     movies.to_json
   rescue TMDBError => e
-    StructuredLogger.error("API TMDB Error", 
-      type: "api_error", 
-      endpoint: "fetch_actor_movies", 
-      actor_id: actor_id,
-      error: e.message,
-      error_class: e.class.name
-    )
-    Sentry.capture_exception(e) if defined?(Sentry)
+    handle_api_error_with_context(e, "fetch_actor_movies", actor_id: actor_id)
     @app.halt e.code, { error: e.message }.to_json
   rescue StandardError => e
-    StructuredLogger.error("API Unexpected Error", 
-      type: "api_error", 
-      endpoint: "fetch_actor_movies", 
-      actor_id: actor_id,
-      error: e.message,
-      error_class: e.class.name
-    )
-    Sentry.capture_exception(e) if defined?(Sentry)
+    handle_unexpected_error_with_context(e, "fetch_actor_movies", actor_id: actor_id)
     @app.halt 500, { error: "Failed to get actor movies" }.to_json
   end
 
@@ -95,10 +67,6 @@ class ApiHandlers
       actor1_name: @app.params[:actor1_name],
       actor2_name: @app.params[:actor2_name]
     }
-  end
-
-  def error_missing_actors
-    '<div class="error">Please select both actors</div>'
   end
 
   def perform_comparison(actor_ids)
@@ -130,14 +98,5 @@ class ApiHandlers
     @app.instance_variable_set(:@actor2_profile, data[:actor2_profile])
     @app.instance_variable_set(:@years, data[:years])
     @app.instance_variable_set(:@processed_movies, data[:processed_movies])
-  end
-
-  def render_search_error(message)
-    "<div class=\"suggestion-item\"><strong>❌ Search Error</strong><br><small>#{message}</small></div>"
-  end
-
-  def render_unexpected_error
-    "<div class=\"suggestion-item\"><strong>❌ Unexpected Error</strong>" \
-      "<br><small>Please try again later</small></div>"
   end
 end

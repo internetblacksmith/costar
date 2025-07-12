@@ -15,17 +15,18 @@ module Rack
 
       # Configure cache store - use Redis in production, memory for development
       rack_env = ENV.fetch("RACK_ENV", "development")
-      if rack_env == "production" || rack_env == "deployment"
+      if %w[production deployment].include?(rack_env)
         # Use Redis cache in production via connection pool
         require "redis"
         require "connection_pool"
 
-        redis_pool = ConnectionPool.new(size: 5, timeout: 5) do
+        ConnectionPool.new(size: 5, timeout: 5) do
           Redis.new(
             url: ENV.fetch("REDIS_URL", "redis://localhost:6379"),
             reconnect_attempts: 3,
-            reconnect_delay: 1,
-            timeout: 5
+            connect_timeout: 5,
+            read_timeout: 5,
+            write_timeout: 5
           )
         end
 
@@ -39,8 +40,9 @@ module Rack
             write_timeout: 5
           }
           Rack::Attack.cache.store = Redis.new(redis_config)
-        rescue => e
-          StructuredLogger.warn("Rack::Attack Redis Failed", type: "rack_attack", error: e.message, fallback: "memory_cache")
+        rescue StandardError => e
+          StructuredLogger.warn("Rack::Attack Redis Failed", type: "rack_attack", error: e.message,
+                                                             fallback: "memory_cache")
           Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
         end
       else
@@ -118,23 +120,21 @@ module Rack
 
       # Log blocked and throttled requests
       ActiveSupport::Notifications.subscribe("blocklist.rack_attack") do |_name, _start, _finish, _request_id, payload|
-        StructuredLogger.warn("Request Blocked", 
-          type: "security", 
-          action: "blocked", 
-          ip: payload[:request].ip, 
-          path: payload[:request].path,
-          user_agent: payload[:request].user_agent
-        )
+        StructuredLogger.warn("Request Blocked",
+                              type: "security",
+                              action: "blocked",
+                              ip: payload[:request].ip,
+                              path: payload[:request].path,
+                              user_agent: payload[:request].user_agent)
       end
 
       ActiveSupport::Notifications.subscribe("throttle.rack_attack") do |_name, _start, _finish, _request_id, payload|
-        StructuredLogger.warn("Request Throttled", 
-          type: "security", 
-          action: "throttled", 
-          ip: payload[:request].ip, 
-          path: payload[:request].path,
-          user_agent: payload[:request].user_agent
-        )
+        StructuredLogger.warn("Request Throttled",
+                              type: "security",
+                              action: "throttled",
+                              ip: payload[:request].ip,
+                              path: payload[:request].path,
+                              user_agent: payload[:request].user_agent)
       end
 
     end

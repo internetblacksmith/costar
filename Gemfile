@@ -14,10 +14,12 @@ gem "rack-attack" # Rate limiting and security
 gem "rack-ssl" # HTTPS enforcement
 gem "redis", "~> 5.0" # Redis client
 gem "sentry-ruby" # Error tracking and Rack integration
-gem "sinatra", "~> 3.0"
-gem "sinatra-contrib", "~> 3.0"
+gem "sinatra", "~> 4.1"
+gem "sinatra-contrib", "~> 4.1"
 
 group :development do
+  gem "brakeman", "~> 6.0" # Security scanner
+  gem "bundle-audit", "~> 0.1" # Dependency security scanner
   gem "pry"
   gem "rerun"
   gem "rubocop", "~> 1.78"
@@ -28,6 +30,7 @@ group :test do
   gem "faker", "~> 3.2"
   gem "rack-test", "~> 2.1"
   gem "rspec", "~> 3.12"
+  gem "rspec_junit_formatter", "~> 0.6" # JUnit format for CI
   gem "simplecov", "~> 0.22"
   gem "webmock", "~> 3.18"
 end

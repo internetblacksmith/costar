@@ -18,7 +18,7 @@ services:
           type: redis
           name: actorsync-redis
           property: connectionString
-    healthCheckPath: /health
+    healthCheckPath: /health/simple
     plan: free
     region: oregon
 

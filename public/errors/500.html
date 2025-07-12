@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - ActorSync</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .error-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .error-details {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff6b6b;
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-primary:hover {
+            background: white;
+            color: #ff6b6b;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .status-info {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 6rem;
+            }
+            
+            .error-title {
+                font-size: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <h1 class="error-title">Server Error</h1>
+        <p class="error-message">
+            Something went wrong on our server. We're working to fix the issue. Please try again in a few minutes.
+        </p>
+        
+        <div class="error-details">
+            <strong>What happened?</strong><br>
+            Our server encountered an unexpected error while processing your request. This could be due to:
+            <br><br>
+            • Temporary server overload<br>
+            • Database connectivity issues<br>
+            • External API unavailability<br>
+            • Maintenance operations
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">
+                <span class="icon">🏠</span>
+                Go Home
+            </a>
+            <a href="javascript:location.reload()" class="btn">
+                <span class="icon">🔄</span>
+                Try Again
+            </a>
+            <a href="javascript:history.back()" class="btn">
+                <span class="icon">⬅️</span>
+                Go Back
+            </a>
+        </div>
+        
+        <div class="status-info">
+            <strong>Error ID:</strong> <span id="error-id"></span><br>
+            <strong>Time:</strong> <span id="error-time"></span><br>
+            If the problem persists, please check our status page or contact support.
+        </div>
+    </div>
+
+    <script>
+        // Generate a simple error ID and timestamp
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorId = Math.random().toString(36).substr(2, 9).toUpperCase();
+            const errorTime = new Date().toLocaleString();
+            
+            document.getElementById('error-id').textContent = errorId;
+            document.getElementById('error-time').textContent = errorTime;
+            
+            // Add animation
+            const container = document.querySelector('.error-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ require "base64"
 # Service for handling TMDB actor profile images
 class ActorProfileService
   BASE_URL = "https://image.tmdb.org/t/p"
-  
+
   PROFILE_SIZES = {
     small: "w92",
     medium: "w185",
@@ -15,7 +15,7 @@ class ActorProfileService
 
   def self.profile_url(profile_path, size = :medium)
     return placeholder_url if profile_path.nil? || profile_path.empty?
-    
+
     size_param = PROFILE_SIZES[size] || PROFILE_SIZES[:medium]
     "#{BASE_URL}/#{size_param}#{profile_path}"
   end
@@ -23,8 +23,6 @@ class ActorProfileService
   def self.placeholder_url
     "data:image/svg+xml;base64,#{Base64.encode64(placeholder_svg).strip}"
   end
-
-  private
 
   def self.placeholder_svg
     <<~SVG

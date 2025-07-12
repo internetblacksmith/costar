@@ -9,24 +9,18 @@ services:
         value: production
       - key: PORT
         value: 10000
-      # Environment variables will be synced from Doppler automatically
       - key: TMDB_API_KEY
-        sync: false
+        value: changeme
       - key: SENTRY_DSN
-        sync: true
+        value: changeme
       - key: REDIS_URL
         fromService:
           type: redis
           name: actorsync-redis
           property: connectionString
-    healthCheckPath: /
-    numInstances: 1
+    healthCheckPath: /health
     plan: free
     region: oregon
-    runtime: ruby-3.1.0
-    scaling:
-      minInstances: 1
-      maxInstances: 1
 
   - type: redis
     name: actorsync-redis

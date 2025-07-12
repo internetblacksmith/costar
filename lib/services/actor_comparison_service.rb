@@ -7,40 +7,58 @@ class ActorComparisonService
   end
 
   def compare(actor1_id, actor2_id, actor1_name, actor2_name)
+    validate_actor_ids(actor1_id, actor2_id)
+
+    movies_data = fetch_actor_movies(actor1_id, actor2_id)
+    profiles_data = fetch_actor_profiles(actor1_id, actor2_id)
+    timeline_data = build_timeline_data(movies_data, actor1_name, actor2_name)
+
+    build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name)
+  end
+
+  private
+
+  def validate_actor_ids(actor1_id, actor2_id)
     raise ValidationError, "Actor IDs cannot be nil" if actor1_id.nil? || actor2_id.nil?
+  end
 
-    # Fetch movies concurrently if possible
-    actor1_movies = @tmdb_service.get_actor_movies(actor1_id)
-    actor2_movies = @tmdb_service.get_actor_movies(actor2_id)
+  def fetch_actor_movies(actor1_id, actor2_id)
+    {
+      actor1: @tmdb_service.get_actor_movies(actor1_id),
+      actor2: @tmdb_service.get_actor_movies(actor2_id)
+    }
+  end
 
-    # Get actor profiles for the portraits
-    actor1_profile = get_actor_profile(actor1_id)
-    actor2_profile = get_actor_profile(actor2_id)
+  def fetch_actor_profiles(actor1_id, actor2_id)
+    {
+      actor1: get_actor_profile(actor1_id),
+      actor2: get_actor_profile(actor2_id)
+    }
+  end
 
-    # Build timeline data
+  def build_timeline_data(movies_data, actor1_name, actor2_name)
     timeline_builder = TimelineBuilder.new(
-      actor1_movies, 
-      actor2_movies, 
-      actor1_name, 
+      movies_data[:actor1],
+      movies_data[:actor2],
+      actor1_name,
       actor2_name
     )
-    
-    timeline_data = timeline_builder.build
+    timeline_builder.build
+  end
 
+  def build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name)
     {
-      actor1_movies: actor1_movies,
-      actor2_movies: actor2_movies,
+      actor1_movies: movies_data[:actor1],
+      actor2_movies: movies_data[:actor2],
       actor1_name: actor1_name,
       actor2_name: actor2_name,
-      actor1_profile: actor1_profile,
-      actor2_profile: actor2_profile,
+      actor1_profile: profiles_data[:actor1],
+      actor2_profile: profiles_data[:actor2],
       years: timeline_data[:years],
       shared_movies: timeline_data[:shared_movies],
       processed_movies: timeline_data[:processed_movies]
     }
   end
-
-  private
 
   def get_actor_profile(actor_id)
     # First try to get from cache

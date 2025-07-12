@@ -16,7 +16,7 @@ class Configuration
   end
 
   def posthog_api_key
-    ENV["POSTHOG_API_KEY"]
+    ENV.fetch("POSTHOG_API_KEY", nil)
   end
 
   def posthog_host
@@ -42,8 +42,8 @@ class Configuration
   end
 
   def load_from_dotenv
-    if File.exist?('.env')
-      require 'dotenv'
+    if File.exist?(".env")
+      require "dotenv"
       Dotenv.load
       puts "✅ Environment loaded from .env file"
     else
@@ -53,7 +53,7 @@ class Configuration
 
   def validate_required_env_vars
     required_vars = %w[TMDB_API_KEY]
-    missing = required_vars.reject { |var| ENV[var] }
-    raise "Missing required environment variables: #{missing.join(', ')}" if missing.any?
+    missing = required_vars.reject { |var| ENV.fetch(var, nil) }
+    raise "Missing required environment variables: #{missing.join(", ")}" if missing.any?
   end
 end

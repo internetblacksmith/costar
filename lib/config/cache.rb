@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require 'redis'
-require 'connection_pool'
-require 'json'
+require "redis"
+require "connection_pool"
+require "json"
 
 # Cache abstraction supporting both Redis (production) and memory (development)
 class Cache
   class << self
     def initialize_cache
-      @cache ||= if production?
-        RedisCache.new
-      else
-        MemoryCache.new
-      end
+      @initialize_cache ||= if production?
+                              RedisCache.new
+                            else
+                              MemoryCache.new
+                            end
     end
 
     def get(key)
@@ -38,7 +38,7 @@ class Cache
     private
 
     def production?
-      ENV.fetch('RACK_ENV', 'development') == 'production'
+      ENV.fetch("RACK_ENV", "development") == "production"
     end
   end
 
@@ -47,7 +47,7 @@ class Cache
     def initialize
       @pool = ConnectionPool.new(size: 5, timeout: 5) do
         Redis.new(
-          url: ENV.fetch('REDIS_URL', 'redis://localhost:6379'),
+          url: ENV.fetch("REDIS_URL", "redis://localhost:6379"),
           reconnect_attempts: 3,
           reconnect_delay: 1,
           timeout: 5
@@ -59,10 +59,10 @@ class Cache
       @pool.with do |redis|
         data = redis.get(cache_key(key))
         return nil unless data
-        
+
         entry = JSON.parse(data, symbolize_names: true)
         return nil if entry[:expires_at] < Time.now.to_f
-        
+
         entry[:value]
       end
     rescue Redis::BaseError, JSON::ParserError => e
@@ -76,7 +76,7 @@ class Cache
           value: value,
           expires_at: Time.now.to_f + ttl
         }
-        
+
         redis.setex(cache_key(key), ttl + 60, entry.to_json) # Extra 60s buffer
       end
     rescue Redis::BaseError => e
@@ -105,7 +105,7 @@ class Cache
 
     def healthy?
       @pool.with do |redis|
-        redis.ping == 'PONG'
+        redis.ping == "PONG"
       end
     rescue Redis::BaseError
       false
@@ -118,7 +118,7 @@ class Cache
     end
 
     def cache_prefix
-      ENV.fetch('CACHE_PREFIX', 'actorsync')
+      ENV.fetch("CACHE_PREFIX", "actorsync")
     end
   end
 
@@ -146,14 +146,14 @@ class Cache
           expires_at: Time.now.to_f + ttl
         }
       end
-      true
+      value
     end
 
     def clear
       @mutex.synchronize do
         @store.clear
       end
-      true
+      nil
     end
 
     def size

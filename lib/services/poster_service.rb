@@ -3,7 +3,7 @@
 # Service for handling movie poster URLs and optimization
 class PosterService
   BASE_URL = "https://image.tmdb.org/t/p"
-  
+
   # Available sizes: w92, w154, w185, w342, w500, w780, original
   POSTER_SIZES = {
     thumbnail: "w154",    # For mobile/small screens
@@ -15,14 +15,14 @@ class PosterService
   class << self
     def poster_url(poster_path, size = :medium)
       return placeholder_url if poster_path.nil? || poster_path.empty?
-      
+
       size_param = POSTER_SIZES[size] || POSTER_SIZES[:medium]
       "#{BASE_URL}/#{size_param}#{poster_path}"
     end
 
     def poster_urls(poster_path)
       return all_placeholder_urls if poster_path.nil? || poster_path.empty?
-      
+
       POSTER_SIZES.transform_values do |size_param|
         "#{BASE_URL}/#{size_param}#{poster_path}"
       end
@@ -49,8 +49,8 @@ class PosterService
           </g>
         </svg>
       SVG
-      
-      require 'base64'
+
+      require "base64"
       Base64.strict_encode64(svg)
     end
   end

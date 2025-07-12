@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "activesupport" # For cache and notifications
+gem "activesupport", "~> 7.1.0" # For cache and notifications - pin to stable version
 gem "connection_pool" # Redis connection pooling
 gem "dotenv" # Keep dotenv as fallback
 gem "json"

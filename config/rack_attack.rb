@@ -9,7 +9,8 @@ module Rack
     unless ENV.fetch("RACK_ENV", "development") == "test"
 
       # Configure cache store - use Redis in production, memory for development
-      if ENV.fetch("RACK_ENV", "development") == "production"
+      rack_env = ENV.fetch("RACK_ENV", "development")
+      if rack_env == "production" || rack_env == "deployment"
         # Use Redis cache in production via connection pool
         require "redis"
         require "connection_pool"

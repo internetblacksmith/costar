@@ -18,7 +18,8 @@ ActorSync is a web application for comparing actor filmographies in a timeline f
 - **Install dependencies**: `bundle install`
 - **Run development server**: `bundle exec rerun ruby app.rb`
 - **Run production server**: `bundle exec ruby app.rb`
-- **Test**: No test framework currently configured
+- **Test**: `bundle exec rspec`
+- **Test with coverage**: `bundle exec rspec --format documentation`
 - **Lint**: `bundle exec rubocop -A`
 
 ## Project Structure

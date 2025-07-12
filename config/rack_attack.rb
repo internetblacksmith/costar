@@ -3,6 +3,10 @@
 # Rack::Attack configuration for ActorSync
 # Rate limiting and security rules
 
+require "rack/attack"
+require "active_support/cache"
+require "active_support/notifications"
+
 module Rack
   class Attack
     # Disable Rack::Attack in test environment
@@ -25,12 +29,16 @@ module Rack
         end
 
         begin
-          Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-            redis: redis_pool,
-            namespace: "rack_attack"
-          )
-        rescue NameError => e
-          puts "[RACK_ATTACK] Redis cache store failed: #{e.message}. Falling back to memory cache."
+          # Use Rack::Attack's native Redis store which doesn't depend on ActiveSupport cache
+          redis_config = {
+            url: ENV.fetch("REDIS_URL", "redis://localhost:6379"),
+            reconnect_attempts: 3,
+            reconnect_delay: 1,
+            timeout: 5
+          }
+          Rack::Attack.cache.store = Redis.new(redis_config)
+        rescue => e
+          puts "[RACK_ATTACK] Redis connection failed: #{e.message}. Using memory cache."
           Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
         end
       else

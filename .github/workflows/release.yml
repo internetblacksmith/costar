@@ -1,0 +1,152 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.2.3)'
+        required: true
+        type: string
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch all history for changelog
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+
+    - name: Run full test suite
+      run: |
+        cp .env.example .env
+        echo "TMDB_API_KEY=test_key_for_ci" >> .env
+        echo "RACK_ENV=test" >> .env
+        bundle exec rspec
+
+    - name: Run security audit
+      run: |
+        gem install bundle-audit brakeman
+        bundle audit --update
+        brakeman --no-pager
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get the previous tag
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+        
+        if [ -z "$PREVIOUS_TAG" ]; then
+          echo "First release - including all commits"
+          CHANGELOG=$(git log --pretty=format:"- %s" --reverse)
+        else
+          echo "Changes since $PREVIOUS_TAG"
+          CHANGELOG=$(git log --pretty=format:"- %s" ${PREVIOUS_TAG}..HEAD --reverse)
+        fi
+        
+        # Save changelog to output
+        echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGELOG" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Get version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION="${GITHUB_REF#refs/tags/}"
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        release_name: ActorSync ${{ steps.version.outputs.VERSION }}
+        body: |
+          # ActorSync ${{ steps.version.outputs.VERSION }}
+          
+          ## 🎉 What's New
+          
+          ${{ steps.changelog.outputs.CHANGELOG }}
+          
+          ## 🛠️ Technical Details
+          
+          - **Ruby Version**: 3.2+
+          - **Deployment**: Render.com
+          - **Database**: Redis
+          - **Monitoring**: Sentry
+          
+          ## 🚀 Deployment
+          
+          This release will be automatically deployed to production after passing all tests.
+          
+          ## 📊 Health Check
+          
+          After deployment, verify the application at:
+          - Health endpoint: `/health/simple`
+          - Main application: Production URL
+          
+          ---
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.previous_tag.outputs.TAG }}...${{ steps.version.outputs.VERSION }}
+        draft: false
+        prerelease: ${{ contains(steps.version.outputs.VERSION, 'rc') || contains(steps.version.outputs.VERSION, 'beta') || contains(steps.version.outputs.VERSION, 'alpha') }}
+
+  deploy-production:
+    name: Deploy Production Release
+    runs-on: ubuntu-latest
+    needs: create-release
+    environment: production
+
+    steps:
+    - name: Deploy to Render Production
+      run: |
+        curl -X POST "${{ secrets.RENDER_PRODUCTION_DEPLOY_HOOK }}" \
+             -H "Content-Type: application/json" \
+             -d '{
+               "clear_cache": true,
+               "branch": "main"
+             }'
+
+    - name: Wait for deployment
+      run: sleep 120
+
+    - name: Verify deployment
+      run: |
+        # Health check
+        curl -f "${{ secrets.PRODUCTION_URL }}/health/simple" || exit 1
+        
+        # Verify app is responding
+        curl -f "${{ secrets.PRODUCTION_URL }}/" || exit 1
+        
+        echo "✅ Production deployment verified successfully!"
+
+    - name: Post-deployment notification
+      if: success()
+      run: |
+        echo "## 🚀 Production Deployment Successful" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: ${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **URL**: ${{ secrets.PRODUCTION_URL }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Health Check**: ✅ Passing" >> $GITHUB_STEP_SUMMARY
+        echo "- **Deployed At**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+    - name: Rollback on failure
+      if: failure()
+      run: |
+        echo "❌ Production deployment failed - consider manual rollback"
+        exit 1

@@ -79,6 +79,12 @@ class ActorSyncApp < Sinatra::Base
   # Health check endpoint
   health_check_endpoint
 
+  # Simple health check for Render's internal monitoring (always returns 200)
+  get "/health/simple" do
+    content_type :json
+    { status: "ok" }.to_json
+  end
+
   # Main page
   get "/" do
     erb :index

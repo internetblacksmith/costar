@@ -16,6 +16,8 @@ require_relative "config/sentry"
 require_relative "lib/config/configuration"
 require_relative "lib/config/cache"
 require_relative "lib/config/errors"
+require_relative "lib/config/logger"
+require_relative "lib/middleware/request_logger"
 require_relative "lib/services/tmdb_client"
 require_relative "lib/services/tmdb_data_processor"
 require_relative "lib/services/tmdb_service"
@@ -39,6 +41,10 @@ class ActorSyncApp < Sinatra::Base
     set :public_folder, "public"
     set :views, "views"
     enable :sessions
+
+    # Setup structured logging
+    StructuredLogger.setup
+    set :logger, StructuredLogger
 
     # Only set port/bind for direct Ruby execution (development)
     # Let Puma handle this in production
@@ -69,6 +75,9 @@ class ActorSyncApp < Sinatra::Base
   # Rate limiting configuration
   require_relative "config/rack_attack"
   use Rack::Attack
+
+  # Request logging middleware
+  use RequestLogger
 
   # Sentry error tracking middleware (conditionally enabled in config)
   use Sentry::Rack::CaptureExceptions

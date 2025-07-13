@@ -15,7 +15,7 @@ class ResilientTMDBClient
   # Circuit breaker configuration
   CIRCUIT_BREAKER_THRESHOLD = 5      # Number of failures before opening
   CIRCUIT_BREAKER_TIMEOUT = 60       # Seconds before trying again
-  CIRCUIT_BREAKER_EXPECTED_ERRORS = [Timeout::Error, Net::HTTPError, TMDBError].freeze
+  CIRCUIT_BREAKER_EXPECTED_ERRORS = [Net::OpenTimeout, Net::HTTPError, TMDBError].freeze
 
   # Retry configuration
   MAX_RETRIES = 3
@@ -51,7 +51,12 @@ class ResilientTMDBClient
     end
   rescue SimpleCircuitBreaker::CircuitOpenError => e
     handle_circuit_open_error(endpoint, e)
+  rescue TMDBError => e
+    # TMDBError is expected and should be handled by circuit breaker
+    # If we get here, circuit breaker has already recorded the failure and re-raised
+    raise e
   rescue StandardError => e
+    # Only handle truly unexpected errors (not timeout/HTTP errors which become TMDBError)
     handle_unexpected_error(endpoint, e) unless @test_mode
     raise e if @test_mode
   end
@@ -89,7 +94,7 @@ class ResilientTMDBClient
     retries = 0
     begin
       yield
-    rescue Timeout::Error, Net::HTTPError, TMDBError => e
+    rescue Net::OpenTimeout, Net::HTTPError, TMDBError => e
       retries += 1
       raise e unless retries < MAX_RETRIES
 
@@ -114,7 +119,7 @@ class ResilientTMDBClient
 
     log_successful_request(endpoint, duration, response)
     parse_response(response)
-  rescue Timeout::Error => e
+  rescue Net::OpenTimeout => e
     duration = (Time.now - start_time) * 1000
     log_request_error(endpoint, e, duration, "timeout")
     raise TMDBError.new(408, "Request timeout")

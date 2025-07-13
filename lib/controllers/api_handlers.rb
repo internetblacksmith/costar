@@ -23,7 +23,7 @@ class ApiHandlers
 
   def handle_actor_movies
     actor_id = @app.params[:id]
-    @app.halt 400, { error: "Actor ID required" }.to_json if actor_id.nil?
+    @app.halt 400, { error: "Actor ID required" }.to_json if actor_id.nil? || actor_id.empty?
 
     fetch_actor_movies(actor_id)
   end

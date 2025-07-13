@@ -12,141 +12,327 @@
         grid-template-columns: 1fr;
     }
     
-    /* Mobile timeline layout */
-    .timeline::before {
-        left: 24px;
-        width: 2px;
+    /* Force horizontal actor portraits on mobile */
+    .timeline .actor-portrait-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
     }
     
+    /* Mobile timeline layout - dual timelines */
+    .timeline::before {
+        display: none; /* Hide the single center line */
+    }
+    
+    /* Year header spans both columns */
     .year-header {
-        margin-bottom: calc(var(--spacing-lg) * 2);
-        padding: 0;
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-sm);
+        text-align: center;
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        position: relative;
+        z-index: 5; /* Above timeline lines */
+        margin-left: 10%;
+        margin-right: 10%;
     }
     
     .year-header::before {
-        left: 24px;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--bg-primary);
+        display: none; /* Hide year dots on timeline */
     }
     
     .year-text {
         position: static;
         transform: none;
-        margin: 0 0 0 var(--spacing-xl);
+        margin: 0;
         font-size: 1.5rem;
+        display: block;
+        text-align: center;
     }
     
     .shared-indicator {
         position: static;
         transform: none;
-        margin: var(--spacing-xs) 0 0 var(--spacing-xl);
+        margin: var(--spacing-xs) auto 0;
         display: inline-flex;
     }
     
-    /* Single column layout for movies */
+    /* Two column layout for movies */
     .movie-row {
-        display: block;
-        margin-left: var(--spacing-xl);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-xs);
         margin-bottom: var(--spacing-sm);
         position: relative;
+    }
+    
+    /* Add timeline lines for each actor */
+    .year-group {
+        position: relative;
+    }
+    
+    /* Create continuous timeline lines through all year groups */
+    .timeline {
+        position: relative;
+    }
+    
+    /* Left timeline line for actor 1 */
+    .timeline::after {
+        content: '';
+        position: absolute;
+        top: 200px; /* Start after actor portraits */
+        bottom: 20px;
+        left: 25%;
+        width: 2px;
+        background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+        z-index: 1;
+    }
+    
+    /* Right timeline line for actor 2 - using ::before */
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 200px; /* Start after actor portraits */
+        bottom: 20px;
+        right: 25%;
+        width: 2px;
+        background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color));
+        z-index: 1;
     }
     
     .movie-left,
     .movie-right {
         width: 100%;
-        padding: 0;
-        justify-content: flex-start;
+        padding: 0 var(--spacing-xs);
+        display: flex;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .movie-left {
+        grid-column: 1;
+    }
+    
+    .movie-right {
+        grid-column: 2;
     }
     
     .movie-center {
         display: none;
     }
     
-    /* Hide placeholders on mobile */
-    .movie-placeholder {
+    /* Hide connection lines for placeholder movies */
+    .movie-left:has(.movie-placeholder)::before,
+    .movie-left:has(.movie-placeholder)::after,
+    .movie-right:has(.movie-placeholder)::before,
+    .movie-right:has(.movie-placeholder)::after {
         display: none;
     }
     
-    /* Add connection line for movie cards */
-    .movie-row::before {
+    /* Show placeholders to maintain alignment */
+    .movie-placeholder {
+        visibility: hidden;
+        height: 100%;
+    }
+    
+    /* Connection dots on timeline for each movie */
+    .movie-left:has(.movie-card)::before {
         content: '';
         position: absolute;
-        left: -24px;
+        left: -25%;
         top: 50%;
-        transform: translateY(-50%);
-        width: 16px;
-        height: 2px;
-        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        border: 2px solid var(--bg-primary);
+        transform: translate(-50%, -50%);
+        z-index: 3;
     }
     
-    /* Shared movie rows - show combined card on mobile */
+    .movie-right:has(.movie-card)::before {
+        content: '';
+        position: absolute;
+        right: -25%;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--secondary-color);
+        border: 2px solid var(--bg-primary);
+        transform: translate(50%, -50%);
+        z-index: 3;
+    }
+    
+    /* Connection lines from timeline dots to movie cards */
+    .movie-left:has(.movie-card)::after {
+        content: '';
+        position: absolute;
+        left: -25%;
+        right: 50%;
+        top: 50%;
+        height: 2px;
+        background: var(--primary-color);
+        z-index: 2;
+    }
+    
+    .movie-right:has(.movie-card)::after {
+        content: '';
+        position: absolute;
+        right: -25%;
+        left: 50%;
+        top: 50%;
+        height: 2px;
+        background: var(--secondary-color);
+        z-index: 2;
+    }
+    
+    /* Shared movie rows - show both cards */
+    .shared-movie-row .movie-left,
     .shared-movie-row .movie-right {
+        display: flex;
+    }
+    
+    /* Shared movie visual connection between timelines */
+    .shared-movie-row::after {
+        content: '';
+        position: absolute;
+        left: 25%;
+        right: 25%;
+        top: 50%;
+        height: 3px;
+        background: var(--accent-color);
+        z-index: 2;
+    }
+    
+    /* Shared movie dots have accent color */
+    .shared-movie-row .movie-left:has(.movie-card)::before,
+    .shared-movie-row .movie-right:has(.movie-card)::before {
+        background: var(--accent-color);
+        width: 12px;
+        height: 12px;
+        border: 3px solid var(--bg-primary);
+        z-index: 4;
+    }
+    
+    /* Shared movie connection lines also use accent color */
+    .shared-movie-row .movie-left:has(.movie-card)::after,
+    .shared-movie-row .movie-right:has(.movie-card)::after {
+        background: var(--accent-color);
+        height: 3px;
+    }
+    
+    /* Hide mobile-specific shared actors info on two-column layout */
+    .shared-movie-row .mobile-shared-actors {
         display: none;
     }
     
-    .shared-movie-row .movie-left {
-        margin-bottom: 0;
-    }
-    
-    .shared-movie-row::before {
-        background: var(--accent-color);
-    }
-    
-    /* Show mobile shared actors section and hide original for shared movies */
-    .shared-movie-row .mobile-shared-actors {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        margin-top: var(--spacing-xs);
-    }
-    
-    .mobile-actor-detail {
-        font-size: 0.8rem;
-        color: var(--text-tertiary);
-        font-weight: 500;
-    }
-    
-    .mobile-actor-detail:first-child {
-        color: var(--movie-shared-text);
-    }
-    
+    /* Show regular character/actor info */
     .shared-movie-row .movie-character,
     .shared-movie-row .movie-actor {
-        display: none;
+        display: block;
     }
     
-    /* Mobile poster adjustments */
+    /* Mobile movie card adjustments for two-column layout */
+    .movie-card {
+        flex-direction: column;
+        width: 100%;
+        max-width: 140px;
+    }
+    
     .movie-poster-container {
-        width: 60px;
-        height: 90px;
+        width: 100%;
+        height: 100px;
     }
     
-    /* Mobile always uses left-side poster layout */
-    .movie-left .movie-card,
-    .movie-right .movie-card {
-        flex-direction: row;
-    }
-    
-    .movie-left .movie-poster,
-    .movie-right .movie-poster {
-        border-radius: var(--border-radius) 0 0 var(--border-radius);
+    .movie-poster {
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
     }
     
     .movie-content {
-        padding: var(--spacing-xs);
+        padding: 8px;
+        text-align: center;
     }
     
     .movie-title {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         margin-bottom: 2px;
+        line-height: 1.2;
     }
     
     .movie-character {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        line-height: 1.1;
     }
     
     .movie-actor {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        margin-top: 2px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    /* Force horizontal actor portraits on small screens too */
+    .timeline .actor-portrait-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+    
+    .movie-card {
+        max-width: 120px;
+    }
+    
+    .movie-poster-container {
+        height: 80px;
+    }
+    
+    .movie-title {
+        font-size: 0.8rem;
+    }
+    
+    .movie-character {
+        font-size: 0.7rem;
+    }
+    
+    .movie-actor {
+        font-size: 0.65rem;
+    }
+    
+    /* Adjust main timeline positions */
+    .timeline::after {
+        left: 20%;
+    }
+    
+    .timeline::before {
+        right: 20%;
+    }
+    
+    /* Adjust connection dot and line positions */
+    .movie-left:has(.movie-card)::before {
+        left: -30%;
+    }
+    
+    .movie-left:has(.movie-card)::after {
+        left: -30%;
+        right: 50%;
+    }
+    
+    .movie-right:has(.movie-card)::before {
+        right: -30%;
+    }
+    
+    .movie-right:has(.movie-card)::after {
+        right: -30%;
+        left: 50%;
+    }
+    
+    .shared-movie-row::after {
+        left: 20%;
+        right: 20%;
     }
 }

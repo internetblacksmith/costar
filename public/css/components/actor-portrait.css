@@ -111,31 +111,40 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .actor-portrait-header {
-        flex-direction: column;
-        gap: var(--spacing-md);
+        display: flex !important;
+        flex-direction: row !important; /* Keep horizontal on mobile */
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
     }
     
     .actor-portrait-left,
     .actor-portrait-right {
-        flex: none;
+        flex: 1;
+        display: flex !important;
+        justify-content: center !important;
     }
     
     .actor-portrait-center {
-        margin: 0;
+        flex: 0 0 auto;
+        margin: 0 var(--spacing-xs);
+        display: flex !important;
     }
     
     .actor-portrait-container {
-        width: 100px;
-        height: 150px;
+        width: 80px;
+        height: 120px;
     }
     
     .actor-portrait-name {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
+        max-width: 100px;
     }
     
     .connection-indicator {
-        min-width: 60px;
-        height: 50px;
+        min-width: 50px;
+        height: 40px;
         padding: 4px;
     }
     
@@ -150,12 +159,33 @@
 }
 
 @media (max-width: 480px) {
+    .actor-portrait-header {
+        display: flex !important;
+        flex-direction: row !important; /* Ensure horizontal layout */
+        align-items: center !important;
+    }
+    
     .actor-portrait-container {
-        width: 80px;
-        height: 120px;
+        width: 60px;
+        height: 90px;
     }
     
     .actor-portrait-name {
-        font-size: 1rem;
+        font-size: 0.85rem;
+        max-width: 80px;
+    }
+    
+    .connection-indicator {
+        min-width: 40px;
+        height: 35px;
+    }
+    
+    .connection-indicator svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .connection-text {
+        font-size: 0.55rem;
     }
 }

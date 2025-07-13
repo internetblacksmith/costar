@@ -1,13 +1,13 @@
 <div class="timeline">
     <!-- Actor Portrait Header -->
-    <div class="actor-portrait-header">
-        <div class="actor-portrait-left">
+    <div class="actor-portrait-header" style="display: flex !important; flex-direction: row !important; align-items: center !important;">
+        <div class="actor-portrait-left" style="flex: 1 !important;">
             <%= erb :'partials/_actor_portrait', locals: { 
                 actor_name: @actor1_name, 
                 actor_profile: @actor1_profile 
             } %>
         </div>
-        <div class="actor-portrait-center">
+        <div class="actor-portrait-center" style="flex: 0 0 auto !important;">
             <div class="connection-indicator">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 3L4 7L8 11"></path>
@@ -17,7 +17,7 @@
                 <span class="connection-text">explore together</span>
             </div>
         </div>
-        <div class="actor-portrait-right">
+        <div class="actor-portrait-right" style="flex: 1 !important;">
             <%= erb :'partials/_actor_portrait', locals: { 
                 actor_name: @actor2_name, 
                 actor_profile: @actor2_profile 

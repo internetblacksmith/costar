@@ -121,7 +121,8 @@ class ActorComparisonService
       actor2_profile: profiles_data[:actor2],
       years: timeline_data[:years],
       shared_movies: timeline_data[:shared_movies],
-      processed_movies: timeline_data[:processed_movies]
+      processed_movies: timeline_data[:processed_movies],
+      shared_movies_by_year: timeline_data[:shared_movies_by_year]
     }
   end
 

@@ -133,6 +133,7 @@ module ApiRenderer
     app.instance_variable_set(:@actor2_profile, data[:actor2_profile])
     app.instance_variable_set(:@years, data[:years])
     app.instance_variable_set(:@processed_movies, data[:processed_movies])
+    app.instance_variable_set(:@shared_movies_by_year, data[:shared_movies_by_year])
     # Add actor IDs for share functionality
     app.instance_variable_set(:@actor1_id, data[:actor1_id])
     app.instance_variable_set(:@actor2_id, data[:actor2_id])

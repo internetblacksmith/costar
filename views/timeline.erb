@@ -32,7 +32,7 @@
     <% @years.each do |year| %>
         <% next unless @processed_movies[year] %>
         
-        <% shared_movies_this_year = @shared_movies.select { |m| m[:year] == year } %>
+        <% shared_movies_this_year = @shared_movies_by_year[year] || [] %>
         
         <div class="year-group">
             <%= erb :'partials/_year_header', locals: { 

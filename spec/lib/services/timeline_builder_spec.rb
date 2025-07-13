@@ -28,6 +28,7 @@ RSpec.describe TimelineBuilder do
       expect(result).to have_key(:years)
       expect(result).to have_key(:shared_movies)
       expect(result).to have_key(:processed_movies)
+      expect(result).to have_key(:shared_movies_by_year)
 
       years = result[:years]
       expect(years).to include(1994, 1997, 2000, 2002, 2006, 2010)
@@ -46,6 +47,12 @@ RSpec.describe TimelineBuilder do
 
       shared_movie_ids = result[:shared_movies].map { |m| m[:id] }
       expect(shared_movie_ids).to include(999)
+
+      # Test shared_movies_by_year
+      expect(result[:shared_movies_by_year]).to be_a(Hash)
+      expect(result[:shared_movies_by_year][2005]).to be_an(Array)
+      expect(result[:shared_movies_by_year][2005].length).to eq(1)
+      expect(result[:shared_movies_by_year][2005].first[:id]).to eq(999)
     end
 
     it "handles empty movie lists" do
@@ -66,6 +73,30 @@ RSpec.describe TimelineBuilder do
       result = builder_no_dates.build
 
       expect(result[:years]).not_to include(nil)
+    end
+
+    it "correctly groups shared movies by year" do
+      # Create multiple shared movies across different years
+      shared_two_thousand_five = { title: "Shared 2005", release_date: "2005-01-01", id: 1000, year: 2005 }
+      shared_two_thousand_ten = { title: "Shared 2010", release_date: "2010-01-01", id: 1001, year: 2010 }
+
+      actor1_with_shared = actor1_movies + [shared_two_thousand_five, shared_two_thousand_ten]
+      actor2_with_shared = actor2_movies + [shared_two_thousand_five, shared_two_thousand_ten]
+
+      builder_with_shared = TimelineBuilder.new(actor1_with_shared, actor2_with_shared, "Actor 1", "Actor 2")
+      result = builder_with_shared.build
+
+      shared_by_year = result[:shared_movies_by_year]
+
+      # Check years without shared movies
+      expect(shared_by_year[1994]).to be_empty
+      expect(shared_by_year[1997]).to be_empty
+
+      # Check years with shared movies
+      expect(shared_by_year[2005].length).to eq(1)
+      expect(shared_by_year[2005].first[:id]).to eq(1000)
+      expect(shared_by_year[2010].length).to eq(1)
+      expect(shared_by_year[2010].first[:id]).to eq(1001)
     end
   end
 

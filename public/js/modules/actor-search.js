@@ -24,6 +24,13 @@ class ActorSearch {
                 this.handleCompareError(event);
             }
         });
+
+        // Handle input clearing for search fields
+        document.body.addEventListener('input', (event) => {
+            if (event.target.matches('#actor1, #actor2')) {
+                this.handleSearchInput(event.target);
+            }
+        });
     }
 
     handleCompareStart(event) {
@@ -77,6 +84,19 @@ class ActorSearch {
     handleCompareError(event) {
         console.log('Re-enabling button on error');
         event.target.disabled = false;
+    }
+
+    handleSearchInput(inputElement) {
+        const field = inputElement.id;
+        const suggestionId = field === 'actor1' ? '1' : '2';
+        const suggestionsContainer = document.getElementById(`suggestions${suggestionId}`);
+        
+        // Clear suggestions if input is empty
+        if (inputElement.value.trim() === '') {
+            if (suggestionsContainer) {
+                suggestionsContainer.innerHTML = '';
+            }
+        }
     }
 
     selectActor(actorId, actorName, field) {
@@ -152,6 +172,7 @@ class ActorSearch {
                        name="q">
                 <span class="mdc-line-ripple"></span>
             </label>
+            
             <div class="suggestions" id="suggestions${suggestionId}"></div>
             <input type="hidden" id="${field}_id" name="${field}_id">
             <input type="hidden" id="${field}_name" name="${field}_name">

@@ -76,8 +76,8 @@ RSpec.describe ResilientTMDBClient do
         stub_request(:get, /api\.themoviedb\.org/)
           .to_timeout
 
-        # Should raise TMDBError after all retries are exhausted
-        expect { client.request("test") }.to raise_error(TMDBError, "Request timeout")
+        # Should raise TMDBTimeoutError after all retries are exhausted
+        expect { client.request("test") }.to raise_error(TMDBTimeoutError, /Request timeout/)
       end
 
       it "logs timeout errors appropriately" do
@@ -93,23 +93,23 @@ RSpec.describe ResilientTMDBClient do
           )
         )
 
-        expect { client.request("test") }.to raise_error(TMDBError, "Request timeout")
+        expect { client.request("test") }.to raise_error(TMDBTimeoutError, /Request timeout/)
       end
     end
 
     context "with HTTP errors" do
-      it "handles 500 errors and raises TMDBError" do
+      it "handles 500 errors and raises TMDBServiceError" do
         stub_request(:get, /api\.themoviedb\.org/)
           .to_return(status: 500, body: "Internal Server Error")
 
-        expect { client.request("search/person") }.to raise_error(TMDBError, /HTTP error/)
+        expect { client.request("search/person") }.to raise_error(TMDBServiceError, /TMDB service error/)
       end
 
-      it "handles 404 errors and raises TMDBError" do
+      it "handles 404 errors and raises TMDBNotFoundError" do
         stub_request(:get, /api\.themoviedb\.org/)
           .to_return(status: 404, body: "Not Found")
 
-        expect { client.request("person/123") }.to raise_error(TMDBError, /HTTP error/)
+        expect { client.request("person/123") }.to raise_error(TMDBNotFoundError, /Resource not found/)
       end
     end
 
@@ -202,7 +202,7 @@ RSpec.describe ResilientTMDBClient do
         .to_return(status: 500)
 
       # Should retry and then raise error after all retries exhausted
-      expect { client.request("test") }.to raise_error(TMDBError, /HTTP error/)
+      expect { client.request("test") }.to raise_error(TMDBServiceError, /TMDB service error/)
 
       # Verify that multiple HTTP requests were made (at least more than 1)
       expect(a_request(:get, /api\.themoviedb\.org/)).to have_been_made.at_least_once

@@ -4,9 +4,11 @@ require_relative "resilient_tmdb_client"
 require_relative "tmdb_data_processor"
 require_relative "cache_manager"
 require_relative "../config/logger"
+require_relative "../middleware/error_handler_module"
 
 # High-level service for interacting with The Movie Database API
 class TMDBService
+  include ErrorHandlerModule
   def initialize(api_key = nil)
     @client = ResilientTMDBClient.new(api_key)
     @cache_manager = CacheManager.new
@@ -48,16 +50,18 @@ class TMDBService
   private
 
   def fetch_actors_from_api(query)
-    api_start_time = Time.now
+    with_tmdb_error_handling("search_actors", context: { query: query }) do
+      api_start_time = Time.now
 
-    data = @client.request("search/person", query: query)
-    api_duration = (Time.now - api_start_time) * 1000
+      data = @client.request("search/person", query: query)
+      api_duration = (Time.now - api_start_time) * 1000
 
-    actors = TMDBDataProcessor.process_actor_search_results(data)
-    log_api_call("search/person", api_duration)
+      actors = TMDBDataProcessor.process_actor_search_results(data)
+      log_api_call("search/person", api_duration)
 
-    actors
-  rescue StandardError => e
+      actors
+    end
+  rescue TMDBError => e
     handle_service_error(e, "search_actors")
     []
   end
@@ -75,33 +79,37 @@ class TMDBService
   end
 
   def fetch_movies_from_api(actor_id)
-    api_start_time = Time.now
+    with_tmdb_error_handling("get_actor_movies", context: { actor_id: actor_id }) do
+      api_start_time = Time.now
 
-    endpoint = "person/#{actor_id}/movie_credits"
-    data = @client.request(endpoint)
-    api_duration = (Time.now - api_start_time) * 1000
+      endpoint = "person/#{actor_id}/movie_credits"
+      data = @client.request(endpoint)
+      api_duration = (Time.now - api_start_time) * 1000
 
-    movies = TMDBDataProcessor.process_movie_credits(data)
-    log_api_call(endpoint, api_duration)
+      movies = TMDBDataProcessor.process_movie_credits(data)
+      log_api_call(endpoint, api_duration)
 
-    movies
-  rescue StandardError => e
+      movies
+    end
+  rescue TMDBError => e
     handle_service_error(e, "get_actor_movies")
     []
   end
 
   def fetch_profile_from_api(actor_id)
-    api_start_time = Time.now
+    with_tmdb_error_handling("get_actor_profile", context: { actor_id: actor_id }) do
+      api_start_time = Time.now
 
-    endpoint = "person/#{actor_id}"
-    data = @client.request(endpoint)
-    api_duration = (Time.now - api_start_time) * 1000
+      endpoint = "person/#{actor_id}"
+      data = @client.request(endpoint)
+      api_duration = (Time.now - api_start_time) * 1000
 
-    profile = TMDBDataProcessor.normalize_actor_profile(data)
-    log_api_call(endpoint, api_duration)
+      profile = TMDBDataProcessor.normalize_actor_profile(data)
+      log_api_call(endpoint, api_duration)
 
-    profile
-  rescue StandardError => e
+      profile
+    end
+  rescue TMDBError => e
     handle_service_error(e, "get_actor_profile")
     default_actor_profile(actor_id)
   end

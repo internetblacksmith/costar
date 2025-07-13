@@ -9,30 +9,38 @@
 }
 
 /* Share button styling */
-.share-button-container {
-    position: relative;
-    text-align: right;
-    margin-bottom: var(--spacing-md);
-    z-index: 10;
-}
-
 .share-button {
-    background-color: var(--primary-color) !important;
-    color: white !important;
-}
-
-.share-button:hover {
-    background-color: var(--primary-dark) !important;
+    width: 48px !important;
+    height: 48px !important;
+    padding: 0 !important;
+    min-width: 48px !important;
+    border-radius: 8px !important;
 }
 
 .share-button .material-icons {
-    margin-right: 8px;
+    margin: 0 !important;
+}
+
+.share-button .mdc-button__label {
+    display: none !important; /* Always hide text, show only icon */
+}
+
+/* Shrink share button when header is stuck */
+.actor-portrait-header.stuck .share-button {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
 }
 
 .timeline {
     position: relative;
     max-width: 100%;
     margin: 0 auto;
+}
+
+/* Timeline content wrapper - contains the actual timeline */
+.timeline-content {
+    position: relative;
 }
 
 /* Hide mobile timeline lines on desktop */
@@ -47,7 +55,8 @@
     width: 100%;
 }
 
-.timeline::before {
+/* Desktop center timeline line */
+.timeline-content::before {
     content: '';
     position: absolute;
     left: 50%;
@@ -56,6 +65,7 @@
     height: 100%;
     background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
     border-radius: 2px;
+    top: 10px; /* Small gap from top */
 }
 
 .year-group {
@@ -80,8 +90,8 @@
     transform: translate(-100%, -50%);
     margin-left: -20px;
     font-size: 1.75rem;
-    font-weight: 500;
-    color: var(--primary-color);
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .year-header::before {
@@ -96,7 +106,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: 0 2px 8px var(--shadow-color);
     border: 4px solid var(--bg-primary);
 }
 
@@ -163,7 +173,7 @@
     justify-content: center;
     z-index: 1;
     position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 .shared-movie-indicator .material-icons {
@@ -182,14 +192,14 @@
     top: 50%;
     transform: translateY(-50%);
     margin-left: 20px;
-    background-color: var(--accent-color);
+    background: var(--accent-color);
     color: white;
     padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
     font-size: 0.875rem;
     font-weight: 500;
     z-index: 2;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
     display: flex;
     align-items: center;
     gap: 4px;

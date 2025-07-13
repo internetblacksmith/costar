@@ -2,7 +2,7 @@
 .movie-item {
     margin-bottom: var(--spacing-sm);
     border-radius: var(--border-radius);
-    transition: all 0.2s;
+    transition: all var(--transition-normal);
     width: 100%;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .movie-item.shared {
-    background-color: var(--movie-shared-bg);
+    background: var(--movie-shared-bg);
     border-left: 4px solid var(--movie-shared-border);
 }
 
@@ -24,11 +24,12 @@
     border-radius: var(--border-radius);
     width: 100%;
     box-sizing: border-box;
-    background-color: var(--bg-movie-card);
+    background: var(--bg-movie-card);
     border: 1px solid var(--border-color);
     display: flex !important;
     flex-direction: row !important; /* Default: poster on left, content on right */
     overflow: hidden;
+    transition: all var(--transition-normal);
 }
 
 /* Poster positioning - left side for left movies, right side for right movies */
@@ -94,9 +95,10 @@
 
 .movie-title {
     font-size: 1.1rem;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: var(--spacing-xs);
     color: var(--text-primary);
+    line-height: 1.4;
 }
 
 .movie-actor {

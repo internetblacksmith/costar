@@ -1,31 +1,33 @@
 <div class="timeline">
-    <!-- Mobile timeline lines -->
-    <div class="mobile-timeline-left"></div>
-    <div class="mobile-timeline-right"></div>
-    <!-- Share Button -->
-    <div class="share-button-container">
-        <button class="mdc-button mdc-button--raised share-button" onclick="shareTimeline()">
-            <span class="mdc-button__ripple"></span>
-            <span class="material-icons mdc-button__icon">share</span>
-            <span class="mdc-button__label">Share Timeline</span>
-        </button>
-    </div>
-    
     <!-- Actor Portrait Header -->
-    <div class="actor-portrait-header" style="display: flex !important; flex-direction: row !important; align-items: center !important;">
-        <div class="actor-portrait-left" style="flex: 1 !important;">
+    <div class="actor-portrait-header" style="display: flex !important; flex-direction: row !important; align-items: flex-start !important;">
+        <div class="actor-portrait-left" style="flex: 0 0 25% !important; display: flex !important; justify-content: center !important; align-items: flex-start !important;">
             <%= erb :'partials/_actor_portrait', locals: { 
                 actor_name: @actor1_name, 
                 actor_profile: @actor1_profile 
             } %>
         </div>
-        <div class="actor-portrait-right" style="flex: 1 !important;">
+        <div class="actor-portrait-center" style="flex: 1 !important; display: flex !important; justify-content: center !important; align-items: center !important;">
+            <!-- Share Button -->
+            <button class="mdc-button mdc-button--raised share-button" onclick="shareTimeline()">
+                <span class="mdc-button__ripple"></span>
+                <span class="material-icons mdc-button__icon">share</span>
+                <span class="mdc-button__label">Share Timeline</span>
+            </button>
+        </div>
+        <div class="actor-portrait-right" style="flex: 0 0 25% !important; display: flex !important; justify-content: center !important; align-items: flex-start !important;">
             <%= erb :'partials/_actor_portrait', locals: { 
                 actor_name: @actor2_name, 
                 actor_profile: @actor2_profile 
             } %>
         </div>
     </div>
+    
+    <!-- Timeline content wrapper -->
+    <div class="timeline-content">
+        <!-- Mobile timeline lines -->
+        <div class="mobile-timeline-left"></div>
+        <div class="mobile-timeline-right"></div>
     
     <% @years.each do |year| %>
         <% next unless @processed_movies[year] %>
@@ -120,6 +122,7 @@
             </div>
         </div>
     <% end %>
+    </div> <!-- End timeline-content -->
 </div>
 
 <script>
@@ -160,4 +163,44 @@ function shareTimeline() {
         alert('Timeline link copied to clipboard!');
     });
 }
+
+// Detect when header becomes sticky and add shrink effect
+window.addEventListener('load', function() {
+    const header = document.querySelector('.actor-portrait-header');
+    if (!header) return;
+    
+    let isStuck = false;
+    
+    // Simple scroll handler - shrink after scrolling 50px
+    function handleScroll() {
+        const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+        const shouldBeStuck = scrolled > 50;
+        
+        // Only modify classes if state actually changes
+        if (shouldBeStuck && !isStuck) {
+            header.classList.add('stuck');
+            isStuck = true;
+        } else if (!shouldBeStuck && isStuck) {
+            header.classList.remove('stuck');
+            isStuck = false;
+        }
+    }
+    
+    // Throttle scroll events for better performance
+    let scrollTimeout;
+    function throttledScroll() {
+        if (!scrollTimeout) {
+            scrollTimeout = setTimeout(function() {
+                handleScroll();
+                scrollTimeout = null;
+            }, 10); // Run at most every 10ms
+        }
+    }
+    
+    // Listen for scroll events
+    window.addEventListener('scroll', throttledScroll);
+    
+    // Check initial state
+    handleScroll();
+});
 </script>

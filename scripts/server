@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # Development server with file watching (replaces rerun)
-require 'filewatcher'
+require "filewatcher"
 
 WATCHED_PATTERNS = %w[
   **/*.rb
@@ -25,7 +25,7 @@ end
 
 def stop_server(pid)
   return unless pid
-  
+
   begin
     Process.kill("TERM", pid)
     sleep(1)
@@ -43,13 +43,13 @@ rescue Errno::ESRCH
 end
 
 # Change to project root
-project_root = File.expand_path('..', __dir__)
+project_root = File.expand_path("..", __dir__)
 Dir.chdir(project_root)
 
 puts "🎬 ActorSync Development Server with File Watching"
 puts "=" * 50
 puts "📁 Project root: #{project_root}"
-puts "👁️  Watching: #{WATCHED_PATTERNS.join(', ')}"
+puts "👁️  Watching: #{WATCHED_PATTERNS.join(", ")}"
 puts "🔄 Server will restart when files change"
 puts "⏹️  Press Ctrl+C to stop"
 puts "=" * 50
@@ -75,10 +75,10 @@ Filewatcher.new(WATCHED_PATTERNS, immediate: false).watch do |changes|
   changes.each do |filename, event|
     puts "   #{event}: #{filename}"
   end
-  
+
   puts "🔄 Restarting server..."
   stop_server(server_pid)
-  sleep(0.5)  # Brief pause before restart
+  sleep(0.5) # Brief pause before restart
   server_pid = start_server
   puts "✅ Server restarted"
 end

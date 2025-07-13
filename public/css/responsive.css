@@ -4,12 +4,6 @@
         padding: var(--spacing-sm);
     }
     
-    /* Share button on mobile */
-    .share-button-container {
-        position: static !important;
-        margin-bottom: var(--spacing-md);
-        text-align: center;
-    }
     
     header h1 {
         font-size: 2rem;
@@ -19,12 +13,36 @@
         grid-template-columns: 1fr;
     }
     
-    /* Force horizontal actor portraits on mobile */
+    /* Force horizontal actor portraits on mobile - sticky header */
     .timeline .actor-portrait-header {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
         justify-content: space-between !important;
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        z-index: 100;
+        padding-top: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+        margin-bottom: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Adjust stuck state for mobile - 30% shrink */
+    .timeline .actor-portrait-header.stuck {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    
+    .timeline .actor-portrait-header.stuck .actor-portrait-container {
+        width: 56px; /* 70% of 80px */
+        height: 84px; /* 70% of 120px */
+    }
+    
+    .timeline .actor-portrait-header.stuck .actor-portrait-name {
+        font-size: 0.7rem;
+        margin-top: 2px;
     }
     
     
@@ -74,16 +92,11 @@
         margin-bottom: var(--spacing-sm);
         position: relative;
         align-items: center;
-        padding: 0 15%;
+        padding: 0 20%; /* More padding since timelines are closer to edges */
     }
     
     /* Add timeline lines for each actor */
     .year-group {
-        position: relative;
-    }
-    
-    /* Create continuous timeline lines through all year groups */
-    .timeline {
         position: relative;
     }
     
@@ -92,29 +105,35 @@
         position: relative;
     }
     
+    /* Timeline content wrapper */
+    .timeline-content {
+        position: relative;
+    }
+    
     /* Show mobile timeline lines */
     .mobile-timeline-left,
     .mobile-timeline-right {
         display: block !important;
         position: absolute;
-        top: 200px; /* Start after actor portraits */
-        bottom: 20px;
+        top: 10px; /* Small gap from top of content */
+        bottom: 0;
         width: 3px;
         z-index: 0; /* Behind everything */
     }
     
     .mobile-timeline-left {
-        left: 10%;
+        left: 12.5%; /* Half of actor position - closer to border */
         background: var(--primary-color);
     }
     
     .mobile-timeline-right {
-        right: 10%;
+        right: 12.5%; /* Half of actor position - closer to border */
         background: var(--secondary-color);
     }
     
     /* Override desktop center line on mobile */
-    .timeline::before {
+    .timeline::before,
+    .timeline-content::before {
         display: none !important;
         content: none !important;
     }
@@ -166,7 +185,7 @@
     .movie-row:has(.movie-left .movie-card)::before {
         content: '';
         position: absolute;
-        left: 10%;
+        left: 12.5%;
         top: 50%;
         width: 12px;
         height: 12px;
@@ -181,7 +200,7 @@
     .movie-row:has(.movie-right .movie-card)::after {
         content: '';
         position: absolute;
-        right: 10%;
+        right: 12.5%;
         top: 50%;
         width: 12px;
         height: 12px;
@@ -197,12 +216,13 @@
         background: var(--accent-color);
         width: 16px;
         height: 16px;
+        left: 12.5%;
     }
     
     .shared-movie-row::after {
         content: '';
         position: absolute;
-        right: 25%;
+        right: 12.5%;
         top: 50%;
         width: 16px;
         height: 16px;
@@ -217,8 +237,8 @@
     .shared-movie-row .movie-card::before {
         content: '';
         position: absolute;
-        left: 25%;
-        right: 25%;
+        left: 12.5%;
+        right: 12.5%;
         top: 50%;
         height: 3px;
         background: var(--accent-color);
@@ -401,6 +421,9 @@
         flex-direction: row !important;
         align-items: center !important;
         justify-content: space-between !important;
+        /* Maintain sticky behavior */
+        position: sticky;
+        top: 0;
     }
     
     
@@ -428,37 +451,37 @@
     
     /* Adjust timeline positions on small screens */
     .mobile-timeline-left {
-        left: 5%;
+        left: 10%; /* Even closer to border on small screens */
     }
     
     .mobile-timeline-right {
-        right: 5%;
+        right: 10%; /* Even closer to border on small screens */
     }
     
     /* Adjust dot positions for small screens */
     .movie-row:has(.movie-left .movie-card)::before {
-        left: 5%;
+        left: 10%;
     }
     
     .movie-row:has(.movie-right .movie-card)::after {
-        right: 5%;
+        right: 10%;
     }
     
     .shared-movie-row::before {
-        left: 5%;
+        left: 10%;
     }
     
     .shared-movie-row::after {
-        right: 5%;
+        right: 10%;
     }
     
     .shared-movie-row .movie-card::before {
-        left: 5%;
-        right: 5%;
+        left: 10%;
+        right: 10%;
     }
     
-    /* Reduce padding on small screens */
+    /* Adjust padding on small screens */
     .movie-row {
-        padding: 0 10%;
+        padding: 0 15%; /* Keep some padding since timelines are at 10% */
     }
 }

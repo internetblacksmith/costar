@@ -41,7 +41,7 @@ class ActorSyncApp < Sinatra::Base
   configure do
     # Initialize configuration (loads .env file in development)
     Configuration.instance
-    
+
     set :public_folder, "public"
     set :views, "views"
 
@@ -124,8 +124,30 @@ class ActorSyncApp < Sinatra::Base
     # Check if actor IDs are provided in URL parameters
     @actor1_id = params[:actor1_id]
     @actor2_id = params[:actor2_id]
-    
-    # Pass the IDs to the view to pre-populate and auto-trigger comparison
+
+    # Fetch actor names if IDs are provided
+    if @actor1_id && @actor2_id
+      begin
+        # Fetch actor profiles to get names
+        actor1_profile = settings.tmdb_service.get_actor_profile(@actor1_id.to_i)
+        actor2_profile = settings.tmdb_service.get_actor_profile(@actor2_id.to_i)
+
+        @actor1_name = actor1_profile[:name] if actor1_profile
+        @actor2_name = actor2_profile[:name] if actor2_profile
+
+        # Log what we got
+        settings.logger.info "Share link loaded",
+                             actor1_id: @actor1_id,
+                             actor1_name: @actor1_name,
+                             actor2_id: @actor2_id,
+                             actor2_name: @actor2_name
+      rescue StandardError => e
+        settings.logger.error "Error fetching actor names", error: e.message
+        # Continue without names, let client-side fetch them
+      end
+    end
+
+    # Pass the IDs and names to the view to pre-populate and auto-trigger comparison
     erb :index
   end
 

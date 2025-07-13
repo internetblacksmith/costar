@@ -31,7 +31,7 @@ class RequestLogger
   def log_successful_request(env, status, start_time)
     duration_ms = (Time.now - start_time) * 1000
     StructuredLogger.log_request(env, status, duration_ms)
-    
+
     # Track performance with error handling
     track_request_performance(env, status, duration_ms)
   end

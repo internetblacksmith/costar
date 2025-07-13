@@ -41,7 +41,17 @@ class ActorSyncApp < Sinatra::Base
   configure do
     set :public_folder, "public"
     set :views, "views"
+
+    # Configure sessions with proper secret
     enable :sessions
+    set :session_store, Rack::Session::Cookie
+    set :session_secret, ENV.fetch("SESSION_SECRET") {
+      # Generate a consistent secret in development, require it in production
+      raise "SESSION_SECRET environment variable is required in production" if ENV.fetch("RACK_ENV", "development") == "production"
+
+      # Development secret - must be >=64 characters
+      "development_secret_abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+    }
 
     # Setup structured logging
     StructuredLogger.setup

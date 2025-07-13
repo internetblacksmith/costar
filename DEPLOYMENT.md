@@ -63,6 +63,7 @@ services:
 # Required - Update these values
 TMDB_API_KEY=your_actual_tmdb_api_key_here
 SENTRY_DSN=your_actual_sentry_dsn_here
+SESSION_SECRET=your_random_64_character_session_secret_here
 
 # Auto-configured by Render
 RACK_ENV=production

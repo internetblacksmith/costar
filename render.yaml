@@ -26,6 +26,8 @@ services:
         value: ""
       - key: CDN_PROVIDER
         value: "none"
+      - key: ALLOWED_ORIGINS
+        value: ""
     healthCheckPath: /health/simple
     plan: free
     region: oregon

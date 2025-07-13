@@ -13,8 +13,8 @@ class ApiHandlers
   end
 
   def handle_actor_search
-    query = @app.params[:q]
-    field = @app.params[:field] || "actor1"
+    query = sanitize_search_query(@app.params[:q])
+    field = sanitize_field_name(@app.params[:field])
 
     return render_empty_suggestions(field) if query.nil? || query.empty?
 
@@ -22,8 +22,8 @@ class ApiHandlers
   end
 
   def handle_actor_movies
-    actor_id = @app.params[:id]
-    @app.halt 400, { error: "Actor ID required" }.to_json if actor_id.nil? || actor_id.empty?
+    actor_id = sanitize_actor_id(@app.params[:id])
+    @app.halt 400, { error: "Actor ID required" }.to_json if actor_id.nil?
 
     fetch_actor_movies(actor_id)
   end
@@ -62,10 +62,10 @@ class ApiHandlers
 
   def extract_actor_params
     {
-      actor1_id: @app.params[:actor1_id],
-      actor2_id: @app.params[:actor2_id],
-      actor1_name: @app.params[:actor1_name],
-      actor2_name: @app.params[:actor2_name]
+      actor1_id: sanitize_actor_id(@app.params[:actor1_id]),
+      actor2_id: sanitize_actor_id(@app.params[:actor2_id]),
+      actor1_name: sanitize_actor_name(@app.params[:actor1_name]),
+      actor2_name: sanitize_actor_name(@app.params[:actor2_name])
     }
   end
 
@@ -98,5 +98,52 @@ class ApiHandlers
     @app.instance_variable_set(:@actor2_profile, data[:actor2_profile])
     @app.instance_variable_set(:@years, data[:years])
     @app.instance_variable_set(:@processed_movies, data[:processed_movies])
+  end
+
+  # Input sanitization methods
+  def sanitize_search_query(query)
+    return nil if query.nil?
+
+    # Strip whitespace and limit length
+    sanitized = query.to_s.strip
+    return nil if sanitized.empty?
+    return nil if sanitized.length > 100 # Reasonable search query limit
+
+    # Remove potentially dangerous characters but allow international names
+    # Allow letters, numbers, spaces, apostrophes, hyphens, and periods
+    sanitized.gsub(/[^\p{L}\p{N}\s'\-\.]/, "").strip
+  end
+
+  def sanitize_field_name(field)
+    return "actor1" if field.nil?
+
+    # Only allow predefined field names
+    %w[actor1 actor2].include?(field.to_s) ? field.to_s : "actor1"
+  end
+
+  def sanitize_actor_id(actor_id)
+    return nil if actor_id.nil? || actor_id.to_s.strip.empty?
+
+    # Actor IDs should be positive integers
+    id = actor_id.to_s.strip
+    return nil unless id.match?(/\A\d+\z/) # Only digits
+
+    parsed_id = id.to_i
+    return nil if parsed_id <= 0 || parsed_id > 999_999_999 # Reasonable limits
+
+    parsed_id
+  end
+
+  def sanitize_actor_name(name)
+    return nil if name.nil?
+
+    # Strip whitespace and limit length
+    sanitized = name.to_s.strip
+    return nil if sanitized.empty?
+    return nil if sanitized.length > 200 # Reasonable name limit
+
+    # Allow letters, numbers, spaces, apostrophes, hyphens, periods, and common punctuation
+    # Remove potentially dangerous characters but preserve international names
+    sanitized.gsub(/[^\p{L}\p{N}\s'\-\.\(\)]/, "").strip
   end
 end

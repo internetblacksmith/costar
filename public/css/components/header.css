@@ -4,9 +4,9 @@ header {
     padding: var(--spacing-xl) var(--spacing-md);
     background: var(--header-bg);
     color: var(--header-text);
-    border-radius: calc(var(--border-radius) * 2);
-    box-shadow: 0 4px 8px var(--shadow-color);
-    transition: box-shadow 0.3s ease;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    transition: all var(--transition-normal);
 }
 
 .header-content {
@@ -23,13 +23,14 @@ header {
 
 .header-text h1 {
     font-size: 2.5rem;
-    font-weight: 400;
+    font-weight: 600;
     margin: 0 0 var(--spacing-sm) 0;
+    color: var(--header-text);
 }
 
 .header-text p {
     font-size: 1.1rem;
-    font-weight: 300;
+    font-weight: 400;
     margin: 0;
     opacity: 0.9;
 }
@@ -44,7 +45,7 @@ header {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     color: var(--header-text);
 }
 

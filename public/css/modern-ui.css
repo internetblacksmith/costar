@@ -1,0 +1,179 @@
+/* Clean & Minimal UI Design */
+
+/* Subtle body background */
+body {
+    background: var(--bg-primary);
+    transition: background-color var(--transition-normal);
+}
+
+/* Clean card styling */
+.mdc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px var(--shadow-color);
+    transition: all var(--transition-normal);
+    border-radius: var(--border-radius);
+}
+
+.mdc-card:hover {
+    box-shadow: 0 4px 12px var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+/* Refined search inputs */
+.mdc-text-field {
+    background: var(--input-bg) !important;
+    border-radius: var(--border-radius) !important;
+    border: 1px solid var(--input-border) !important;
+    transition: all var(--transition-fast);
+}
+
+.mdc-text-field:hover {
+    border-color: var(--primary-light) !important;
+}
+
+.mdc-text-field--focused {
+    border-color: var(--input-focus) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Clean buttons */
+.mdc-button--raised {
+    background: var(--primary-color) !important;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+    font-weight: 500;
+    transition: all var(--transition-normal);
+    border-radius: var(--border-radius) !important;
+}
+
+.mdc-button--raised:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Subtle timeline enhancements */
+.timeline::before {
+    background: var(--border-color) !important;
+}
+
+.year-text {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.year-header::before {
+    background: var(--primary-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    border: 3px solid var(--bg-primary);
+}
+
+/* Clean movie cards */
+.movie-card {
+    transition: all var(--transition-normal);
+    border-radius: var(--border-radius);
+}
+
+.movie-card:hover {
+    transform: var(--movie-hover-transform);
+    box-shadow: var(--movie-hover-shadow);
+}
+
+/* Refined shared indicators */
+.shared-movie-indicator {
+    background: var(--accent-color);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.movie-item.shared .movie-card {
+    background: var(--movie-shared-bg);
+    border-color: var(--movie-shared-border);
+}
+
+/* Clean chips with better contrast */
+.mdc-chip {
+    background: var(--primary-color) !important;
+    color: white !important;
+    font-weight: 500;
+    border-radius: var(--border-radius-lg) !important;
+    transition: all var(--transition-fast);
+    border: none !important;
+}
+
+.mdc-chip:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-1px);
+}
+
+.mdc-chip__primary-action {
+    color: white !important;
+}
+
+.mdc-chip__trailing-icon {
+    color: white !important;
+    opacity: 0.9;
+}
+
+.mdc-chip__trailing-icon:hover {
+    opacity: 1;
+}
+
+/* Subtle suggestion items */
+.suggestion-item {
+    transition: all var(--transition-fast);
+    border-radius: var(--border-radius-sm);
+}
+
+.suggestion-item:hover {
+    background-color: var(--suggestion-hover);
+}
+
+/* Clean snackbar */
+.mdc-snackbar__surface {
+    background: var(--text-primary) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+/* Refined fab button */
+.mdc-fab {
+    background: var(--primary-color) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    transition: all var(--transition-normal);
+}
+
+.mdc-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Clean loading spinner */
+.loading-spinner {
+    border: 2px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Subtle hover effects */
+.actor-portrait-container {
+    transition: all var(--transition-normal);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.actor-portrait-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-hover);
+}
+
+.actor-portrait-image {
+    transition: transform var(--transition-normal);
+}
+
+.actor-portrait-container:hover .actor-portrait-image {
+    transform: scale(1.02);
+}

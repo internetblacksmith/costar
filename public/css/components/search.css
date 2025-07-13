@@ -5,9 +5,11 @@
 
 .search-card {
     padding: var(--spacing-md);
-    border-radius: calc(var(--border-radius) + 4px);
-    background-color: var(--bg-card);
-    transition: background-color 0.3s ease;
+    border-radius: var(--border-radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: all var(--transition-normal);
 }
 
 .search-form {
@@ -97,13 +99,13 @@
     right: 0;
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 8px var(--shadow-color);
+    box-shadow: 0 4px 12px var(--shadow-hover);
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
     margin-top: 4px;
     border: 1px solid var(--border-color);
-    transition: opacity 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 /* Hide suggestions when loading */
@@ -119,7 +121,7 @@
     padding: var(--spacing-sm);
     cursor: pointer;
     border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.2s;
+    transition: all var(--transition-fast);
     color: var(--text-primary);
 }
 

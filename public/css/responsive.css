@@ -56,13 +56,14 @@
         display: inline-flex;
     }
     
-    /* Two column layout for movies */
+    /* Single column layout for movies on mobile */
     .movie-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--spacing-xs);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
         margin-bottom: var(--spacing-sm);
         position: relative;
+        align-items: center;
     }
     
     /* Add timeline lines for each actor */
@@ -75,32 +76,10 @@
         position: relative;
     }
     
-    /* Left timeline line for actor 1 */
-    .timeline::after {
-        content: '';
-        position: absolute;
-        top: 200px; /* Start after actor portraits */
-        bottom: 20px;
-        left: 25%;
-        width: 2px;
-        background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-        z-index: 1;
-    }
-    
-    /* Override desktop center line to create right timeline for actor 2 */
+    /* Remove timeline lines for mobile single column */
+    .timeline::after,
     .timeline::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 200px !important; /* Start after actor portraits */
-        bottom: 20px !important;
-        left: auto !important;
-        right: 25% !important;
-        transform: none !important;
-        width: 2px !important;
-        background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color)) !important;
-        z-index: 1 !important;
-        display: block !important;
-        height: auto !important;
+        display: none;
     }
     
     .movie-left,
@@ -110,14 +89,7 @@
         display: flex;
         justify-content: center;
         position: relative;
-    }
-    
-    .movie-left {
-        grid-column: 1;
-    }
-    
-    .movie-right {
-        grid-column: 2;
+        max-width: 200px;
     }
     
     .movie-center {
@@ -138,58 +110,61 @@
         height: 100%;
     }
     
-    /* Connection dots on timeline for each movie */
-    .movie-left:has(.movie-card)::before {
+    /* Single movie per row - show actor indicator */
+    .single-movie-row .movie-placeholder {
+        display: none;
+    }
+    
+    /* Connection indicators for which actor */
+    .movie-left .movie-card::before {
         content: '';
         position: absolute;
-        left: 25%;
+        left: -30px;
+        top: 50%;
+        width: 20px;
+        height: 3px;
+        background: var(--primary-color);
+        transform: translateY(-50%);
+    }
+    
+    .movie-right .movie-card::before {
+        content: '';
+        position: absolute;
+        right: -30px;
+        top: 50%;
+        width: 20px;
+        height: 3px;
+        background: var(--secondary-color);
+        transform: translateY(-50%);
+    }
+    
+    /* Actor indicator dots */
+    .movie-left .movie-card::after {
+        content: '';
+        position: absolute;
+        left: -40px;
         top: 50%;
         width: 10px;
         height: 10px;
         border-radius: 50%;
         background: var(--primary-color);
         border: 2px solid var(--bg-primary);
-        transform: translate(-50%, -50%);
+        transform: translateY(-50%);
         z-index: 3;
     }
     
-    .movie-right:has(.movie-card)::before {
+    .movie-right .movie-card::after {
         content: '';
         position: absolute;
-        right: 25%;
+        right: -40px;
         top: 50%;
         width: 10px;
         height: 10px;
         border-radius: 50%;
         background: var(--secondary-color);
         border: 2px solid var(--bg-primary);
-        transform: translate(50%, -50%);
+        transform: translateY(-50%);
         z-index: 3;
-    }
-    
-    /* Connection lines from timeline dots to movie cards */
-    .movie-left:has(.movie-card)::after {
-        content: '';
-        position: absolute;
-        left: 25%;
-        right: 70%;
-        top: 50%;
-        height: 2px;
-        background: var(--primary-color);
-        z-index: 2;
-        transform: translateY(-50%);
-    }
-    
-    .movie-right:has(.movie-card)::after {
-        content: '';
-        position: absolute;
-        right: 25%;
-        left: 70%;
-        top: 50%;
-        height: 2px;
-        background: var(--secondary-color);
-        z-index: 2;
-        transform: translateY(-50%);
     }
     
     /* Shared movie rows - show both cards */
@@ -198,16 +173,10 @@
         display: flex;
     }
     
-    /* Shared movie visual connection between timelines */
-    .shared-movie-row::after {
-        content: '';
-        position: absolute;
-        left: 25%;
-        right: 25%;
-        top: 50%;
-        height: 3px;
-        background: var(--accent-color);
-        z-index: 2;
+    /* Shared movie special styling */
+    .shared-movie-row .movie-card {
+        border: 2px solid var(--accent-color);
+        box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
     }
     
     /* Shared movie dots have accent color */
@@ -227,23 +196,27 @@
         height: 3px;
     }
     
-    /* Hide mobile-specific shared actors info on two-column layout */
+    /* Show mobile-specific shared actors info on single column */
     .shared-movie-row .mobile-shared-actors {
+        display: block;
+        margin-top: var(--spacing-xs);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+    
+    /* Hide regular character/actor info for shared movies on mobile */
+    .shared-movie-row .movie-character,
+    .shared-movie-row .movie-actor {
         display: none;
     }
     
-    /* Show regular character/actor info */
-    .shared-movie-row .movie-character,
-    .shared-movie-row .movie-actor {
-        display: block;
-    }
-    
-    /* Mobile movie card adjustments for two-column layout */
+    /* Mobile movie card adjustments for single column */
     .movie-card {
-        flex-direction: column !important;
+        flex-direction: row !important;
         width: 100%;
-        max-width: 120px;
+        max-width: 280px;
         margin: 0 auto;
+        position: relative;
     }
     
     /* Override the directional styles for mobile */
@@ -253,14 +226,14 @@
     }
     
     .movie-poster-container {
-        width: 100% !important;
-        height: 100px;
+        width: 80px !important;
+        height: 120px !important;
     }
     
     .movie-poster,
     .movie-left .movie-poster,
     .movie-right .movie-poster {
-        border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+        border-radius: var(--border-radius) 0 0 var(--border-radius) !important;
     }
     
     .movie-content {
@@ -296,11 +269,7 @@
     }
     
     .movie-card {
-        max-width: 120px;
-    }
-    
-    .movie-poster-container {
-        height: 80px;
+        max-width: 260px;
     }
     
     .movie-title {
@@ -315,36 +284,22 @@
         font-size: 0.65rem;
     }
     
-    /* Adjust main timeline positions */
-    .timeline::after {
-        left: 20%;
+    /* Adjust indicator positions for smaller screens */
+    .movie-left .movie-card::before {
+        left: -25px;
+        width: 15px;
     }
     
-    .timeline::before {
-        right: 20%;
+    .movie-right .movie-card::before {
+        right: -25px;
+        width: 15px;
     }
     
-    /* Adjust connection dot and line positions */
-    .movie-left:has(.movie-card)::before {
-        left: 20%;
+    .movie-left .movie-card::after {
+        left: -35px;
     }
     
-    .movie-left:has(.movie-card)::after {
-        left: 20%;
-        right: 65%;
-    }
-    
-    .movie-right:has(.movie-card)::before {
-        right: 20%;
-    }
-    
-    .movie-right:has(.movie-card)::after {
-        right: 20%;
-        left: 65%;
-    }
-    
-    .shared-movie-row::after {
-        left: 20%;
-        right: 20%;
+    .movie-right .movie-card::after {
+        right: -35px;
     }
 }

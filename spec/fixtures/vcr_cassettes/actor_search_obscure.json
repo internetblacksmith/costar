@@ -3,7 +3,7 @@
     {
       "request": {
         "method": "get",
-        "uri": "https://api.themoviedb.org/3/search/person?api_key=<TMDB_API_KEY>&query=Zxqwerty123456",
+        "uri": "https://api.themoviedb.org/3/search/person?api_key=<TMDB_API_KEY>&query=Zxqwerty12345",
         "body": {
           "encoding": "US-ASCII",
           "string": ""
@@ -36,31 +36,31 @@
             "keep-alive"
           ],
           "Date": [
-            "Sun, 13 Jul 2025 19:41:53 GMT"
+            "Sun, 13 Jul 2025 19:52:15 GMT"
           ],
           "Server": [
             "openresty"
           ],
           "Cache-Control": [
-            "public, max-age=2982"
+            "public, max-age=26594"
           ],
           "X-Memc": [
-            "HIT"
+            "MISS, STORE"
           ],
           "X-Memc-Key": [
-            "57759f49bb09e3c66ff43e4df79b8888ee837b154cb034e7d161ce25b0116af9"
+            "dd1ae62264964f4ef1f2c6a95dfb1a8c9ef4bac3644d6b06a813b0ee394e35bc"
           ],
           "X-Memc-Age": [
-            "18683"
+            "0"
           ],
           "X-Memc-Expires": [
-            "2982"
+            "26594"
           ],
           "X-Az": [
-            "us-east-1b"
+            "us-east-1c"
           ],
           "X-Task-Id": [
-            "f9c53df32445444d91202c48f5cf8823"
+            "52ca7a31aa5f4e8081a2827c9eecdeef"
           ],
           "Etag": [
             "W/\"0e23279b004381f72a34159d5c7dfd1f\""
@@ -70,10 +70,10 @@
             "accept-encoding"
           ],
           "X-Cache": [
-            "Hit from cloudfront"
+            "Miss from cloudfront"
           ],
           "Via": [
-            "1.1 95d28afec253ed681781482218879f5e.cloudfront.net (CloudFront)"
+            "1.1 a80cfefba1e25a9103271d8bd22be77e.cloudfront.net (CloudFront)"
           ],
           "X-Amz-Cf-Pop": [
             "LHR50-P2"
@@ -82,10 +82,7 @@
             "h3=\":443\"; ma=86400"
           ],
           "X-Amz-Cf-Id": [
-            "hkX2drwAGQGR2323K8VEeFEdGNU-nVwPbtDdTN7v1av83HSt-dKZxQ=="
-          ],
-          "Age": [
-            "1743"
+            "_oeTHtpIssp6NJjqON6hWh6be2-LO6D0G734bDZU_sYCcw1lqmPk7Q=="
           ]
         },
         "body": {
@@ -93,7 +90,7 @@
           "string": "{\"page\":1,\"results\":[],\"total_pages\":1,\"total_results\":0}"
         }
       },
-      "recorded_at": "Sun, 13 Jul 2025 20:10:56 GMT"
+      "recorded_at": "Sun, 13 Jul 2025 19:52:15 GMT"
     }
   ],
   "recorded_with": "VCR 6.3.1"

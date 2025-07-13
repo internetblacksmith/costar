@@ -21,15 +21,13 @@ VCR.configure do |config|
   }
 
   # Filter sensitive data from recordings
-  config.filter_sensitive_data("<TMDB_API_KEY>") { ENV.fetch("TMDB_API_KEY", "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6") }
-  # Also filter the test API key used in specs
-  config.filter_sensitive_data("<TMDB_API_KEY>") { "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" }
+  config.filter_sensitive_data("<TMDB_API_KEY>") { ENV["TMDB_API_KEY"] }
 
   # Configure RSpec metadata integration
   config.configure_rspec_metadata!
 
-  # Prevent VCR from interfering with CodeClimate/SimpleCov
-  config.ignore_hosts "codeclimate.com", "api.codeclimate.com"
+  # Prevent VCR from interfering with CodeClimate/SimpleCov and Sentry
+  config.ignore_hosts "codeclimate.com", "api.codeclimate.com", "o302014.ingest.us.sentry.io"
 
   # Debug mode (uncomment to debug VCR issues)
   # config.debug_logger = $stderr

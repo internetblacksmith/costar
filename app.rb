@@ -18,6 +18,7 @@ require_relative "lib/config/cache"
 require_relative "lib/config/errors"
 require_relative "lib/config/logger"
 require_relative "lib/middleware/request_logger"
+require_relative "lib/middleware/performance_headers"
 require_relative "lib/services/tmdb_client"
 require_relative "lib/services/tmdb_data_processor"
 require_relative "lib/services/tmdb_service"
@@ -58,9 +59,12 @@ class ActorSyncApp < Sinatra::Base
     set :comparison_service, ActorComparisonService.new
   end
 
-  # Production security configuration
+  # Production security and performance configuration
   configure :production do
     require "rack/ssl"
+
+    # Enable gzip compression for all responses
+    use Rack::Deflater
 
     # Force HTTPS
     use Rack::SSL
@@ -75,6 +79,9 @@ class ActorSyncApp < Sinatra::Base
   # Rate limiting configuration
   require_relative "config/rack_attack"
   use Rack::Attack
+
+  # Performance optimization middleware
+  use PerformanceHeaders
 
   # Request logging middleware
   use RequestLogger

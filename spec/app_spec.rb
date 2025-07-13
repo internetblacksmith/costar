@@ -12,7 +12,7 @@ RSpec.describe "ActorSync Application", type: :request do
     end
   end
 
-  describe "GET /health" do
+  describe "GET /health/complete" do
     before do
       # Mock the TMDB API health check
       stub_request(:get, "https://api.themoviedb.org/3/search/person")
@@ -21,7 +21,7 @@ RSpec.describe "ActorSync Application", type: :request do
     end
 
     it "returns health status" do
-      get "/health"
+      get "/health/complete"
 
       expect(last_response.status).to eq(200)
       expect(last_response.content_type).to include("application/json")

@@ -10,7 +10,7 @@ module HealthController
 
   module ClassMethods
     def health_check_endpoint
-      get "/health" do
+      get "/health/complete" do
         content_type :json
         HealthHandler.new(self).handle
       end

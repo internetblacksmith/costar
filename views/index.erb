@@ -60,3 +60,57 @@
     </div>
 </main>
 
+<% if @actor1_id && @actor2_id %>
+<script>
+// Auto-trigger comparison when actor IDs are provided
+document.addEventListener('DOMContentLoaded', function() {
+    // Set the actor IDs in hidden fields
+    document.getElementById('actor1_id').value = '<%= @actor1_id %>';
+    document.getElementById('actor2_id').value = '<%= @actor2_id %>';
+    
+    // Trigger the compare button click
+    const compareBtn = document.getElementById('compareBtn');
+    if (compareBtn) {
+        // Small delay to ensure HTMX is initialized
+        setTimeout(function() {
+            compareBtn.click();
+        }, 100);
+    }
+    
+    // Optionally fetch and display actor names
+    fetchActorName('<%= @actor1_id %>', 'actor1');
+    fetchActorName('<%= @actor2_id %>', 'actor2');
+});
+
+function fetchActorName(actorId, field) {
+    fetch(`/api/actors/${actorId}/movies`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.actor_name) {
+                // Set the hidden name field
+                const nameField = document.getElementById(`${field}_name`);
+                if (nameField) {
+                    nameField.value = data.actor_name;
+                }
+                
+                // Set the visible search input
+                const searchInput = document.getElementById(field);
+                if (searchInput) {
+                    searchInput.value = data.actor_name;
+                    // Trigger MDC text field to float the label
+                    const textField = searchInput.closest('.mdc-text-field');
+                    if (textField) {
+                        textField.classList.add('mdc-text-field--label-floating');
+                        // If MDC is initialized, update it
+                        if (window.mdc && textField.MDCTextField) {
+                            textField.MDCTextField.value = data.actor_name;
+                        }
+                    }
+                }
+            }
+        })
+        .catch(err => console.error('Error fetching actor name:', err));
+}
+</script>
+<% end %>
+

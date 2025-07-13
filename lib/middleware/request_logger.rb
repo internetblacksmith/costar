@@ -31,7 +31,9 @@ class RequestLogger
   def log_successful_request(env, status, start_time)
     duration_ms = (Time.now - start_time) * 1000
     StructuredLogger.log_request(env, status, duration_ms)
-    PerformanceMonitor.track_request(env, status, duration_ms)
+    
+    # Track performance with error handling
+    track_request_performance(env, status, duration_ms)
   end
 
   def log_request_error(env, error, start_time)
@@ -46,7 +48,17 @@ class RequestLogger
                            timestamp: Time.now.iso8601)
 
     # Track performance for error requests as 500 status
-    PerformanceMonitor.track_request(env, 500, duration_ms)
+    track_request_performance(env, 500, duration_ms)
+  end
+
+  def track_request_performance(env, status, duration_ms)
+    return unless defined?(PerformanceMonitor)
+    return unless PerformanceMonitor.respond_to?(:track_request)
+
+    PerformanceMonitor.track_request(env, status, duration_ms)
+  rescue StandardError => e
+    # Silently fail in development to avoid breaking the application
+    warn("Request performance tracking error: #{e.message}") if ENV["RACK_ENV"] == "development"
   end
 
   def skip_logging?(env)

@@ -39,6 +39,9 @@ class ActorSyncApp < Sinatra::Base
   include ErrorHandler
 
   configure do
+    # Initialize configuration (loads .env file in development)
+    Configuration.instance
+    
     set :public_folder, "public"
     set :views, "views"
 

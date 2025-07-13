@@ -12,8 +12,12 @@ module TestHelpers
   end
 
   def mock_tmdb_actor_search(query, results = [])
-    stub_request(:get, "https://api.themoviedb.org/3/search/person")
-      .with(query: hash_including(query: query))
+    # Mock at the service level for integration tests
+    tmdb_service = app.settings.tmdb_service
+    allow(tmdb_service).to receive(:search_actors).with(query).and_return(results)
+
+    # Also stub HTTP requests as fallback
+    stub_request(:get, %r{api\.themoviedb\.org/3/search/person})
       .to_return(
         status: 200,
         body: { results: results }.to_json,
@@ -22,8 +26,14 @@ module TestHelpers
   end
 
   def mock_tmdb_actor_movies(actor_id, movies = [])
-    stub_request(:get, "https://api.themoviedb.org/3/person/#{actor_id}/movie_credits")
-      .with(query: hash_including("api_key"))
+    # Mock at the service level for integration tests
+    tmdb_service = app.settings.tmdb_service
+    # Handle both string and integer versions of actor_id
+    allow(tmdb_service).to receive(:get_actor_movies).with(actor_id.to_i).and_return(movies)
+    allow(tmdb_service).to receive(:get_actor_movies).with(actor_id.to_s).and_return(movies)
+
+    # Also stub HTTP requests as fallback
+    stub_request(:get, %r{api\.themoviedb\.org/3/person/#{actor_id}/movie_credits})
       .to_return(
         status: 200,
         body: { cast: movies }.to_json,
@@ -32,8 +42,14 @@ module TestHelpers
   end
 
   def mock_tmdb_actor_profile(actor_id, profile = {})
-    stub_request(:get, "https://api.themoviedb.org/3/person/#{actor_id}")
-      .with(query: hash_including("api_key"))
+    # Mock at the service level for integration tests
+    tmdb_service = app.settings.tmdb_service
+    # Handle both string and integer versions of actor_id
+    allow(tmdb_service).to receive(:get_actor_profile).with(actor_id.to_i).and_return(profile)
+    allow(tmdb_service).to receive(:get_actor_profile).with(actor_id.to_s).and_return(profile)
+
+    # Also stub HTTP requests as fallback
+    stub_request(:get, %r{api\.themoviedb\.org/3/person/#{actor_id}$})
       .to_return(
         status: 200,
         body: profile.to_json,

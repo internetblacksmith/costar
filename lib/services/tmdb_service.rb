@@ -45,6 +45,14 @@ class TMDBService
 
     fetch_and_cache_profile(actor_id, cache_key)
   end
+  
+  def get_actor_details(actor_id)
+    cache_key = "actor_details_#{actor_id}"
+    cached_result = get_cached_result(cache_key)
+    return cached_result if cached_result
+    
+    fetch_and_cache_details(actor_id, cache_key)
+  end
 
   private
 
@@ -119,5 +127,12 @@ class TMDBService
       biography: "",
       profile_path: nil
     }
+  end
+  
+  def fetch_and_cache_details(actor_id, cache_key)
+    # Use the same endpoint as profile since it contains all details
+    profile = get_actor_profile(actor_id)
+    cache_result(cache_key, profile, 600) # 10 minute cache
+    profile
   end
 end

@@ -16,7 +16,8 @@ module ApiRenderer
   end
 
   def set_search_variables(query, field)
-    @app.instance_variable_set(:@actors, @app.settings.tmdb_service.search_actors(query))
+    actors = @app.settings.tmdb_service.search_actors(query)
+    @app.instance_variable_set(:@actors, actors)
     @app.instance_variable_set(:@field, field)
   end
 

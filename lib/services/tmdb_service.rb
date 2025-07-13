@@ -9,9 +9,9 @@ require_relative "../middleware/error_handler_module"
 # High-level service for interacting with The Movie Database API
 class TMDBService
   include ErrorHandlerModule
-  def initialize(api_key = nil)
-    @client = ResilientTMDBClient.new(api_key)
-    @cache_manager = CacheManager.new
+  def initialize(client: nil, cache: nil)
+    @client = client || ResilientTMDBClient.new
+    @cache_manager = cache || CacheManager.new
   end
 
   def healthy?

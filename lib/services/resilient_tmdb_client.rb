@@ -23,11 +23,12 @@ class ResilientTMDBClient
   MAX_DELAY = 10    # Maximum delay in seconds
   BACKOFF_FACTOR = 2
 
-  def initialize(api_key = nil)
+  def initialize(api_key: nil, cache: nil, circuit_breaker: nil)
     @api_key = api_key || ENV.fetch("TMDB_API_KEY", "")
     @base_url = "https://api.themoviedb.org/3"
     @test_mode = ENV["RACK_ENV"] == "test"
-    @circuit_breaker = SimpleCircuitBreaker.new(
+    @cache_manager = cache
+    @circuit_breaker = circuit_breaker || SimpleCircuitBreaker.new(
       failure_threshold: CIRCUIT_BREAKER_THRESHOLD,
       recovery_timeout: CIRCUIT_BREAKER_TIMEOUT,
       expected_errors: CIRCUIT_BREAKER_EXPECTED_ERRORS

@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Development server with file watching (replaces rerun)
+require 'filewatcher'
+
+WATCHED_PATTERNS = %w[
+  **/*.rb
+  **/*.erb
+  **/*.css
+  **/*.js
+  **/*.yml
+  **/*.yaml
+  config.ru
+  Gemfile
+  Gemfile.lock
+].freeze
+
+def start_server
+  puts "🚀 Starting Sinatra server..."
+  pid = spawn("ruby app.rb")
+  Process.detach(pid)
+  pid
+end
+
+def stop_server(pid)
+  return unless pid
+  
+  begin
+    Process.kill("TERM", pid)
+    sleep(1)
+    Process.kill("KILL", pid) if process_running?(pid)
+  rescue Errno::ESRCH
+    # Process already dead
+  end
+end
+
+def process_running?(pid)
+  Process.kill(0, pid)
+  true
+rescue Errno::ESRCH
+  false
+end
+
+# Change to project root
+project_root = File.expand_path('..', __dir__)
+Dir.chdir(project_root)
+
+puts "🎬 ActorSync Development Server with File Watching"
+puts "=" * 50
+puts "📁 Project root: #{project_root}"
+puts "👁️  Watching: #{WATCHED_PATTERNS.join(', ')}"
+puts "🔄 Server will restart when files change"
+puts "⏹️  Press Ctrl+C to stop"
+puts "=" * 50
+
+server_pid = start_server
+
+# Handle graceful shutdown
+trap("INT") do
+  puts "\n⏹️  Shutting down server..."
+  stop_server(server_pid)
+  puts "✅ Server stopped"
+  exit(0)
+end
+
+trap("TERM") do
+  stop_server(server_pid)
+  exit(0)
+end
+
+# Watch for file changes
+Filewatcher.new(WATCHED_PATTERNS, immediate: false).watch do |changes|
+  puts "\n🔄 File changes detected:"
+  changes.each do |filename, event|
+    puts "   #{event}: #{filename}"
+  end
+  
+  puts "🔄 Restarting server..."
+  stop_server(server_pid)
+  sleep(0.5)  # Brief pause before restart
+  server_pid = start_server
+  puts "✅ Server restarted"
+end

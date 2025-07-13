@@ -1,0 +1,42 @@
+{
+  "http_interactions": [
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/search/person?api_key=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6&query=Lupita",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"page\":1,\"results\":[{\"adult\":false,\"gender\":1,\"id\":1001657,\"known_for_department\":\"Acting\",\"name\":\"Lupita Nyong'o\",\"original_name\":\"Lupita Nyong'o\",\"popularity\":25.123,\"profile_path\":\"/y40Wu1T742kynOqtwXASc5Qgm49.jpg\",\"known_for\":[{\"adult\":false,\"backdrop_path\":\"/6CoRTJTmijhBLJTUNoVSUNxZMEI.jpg\",\"id\":12260,\"title\":\"12 Years a Slave\",\"original_language\":\"en\",\"original_title\":\"12 Years a Slave\",\"overview\":\"In the pre-Civil War United States, Solomon Northup, a free black man from upstate New York, is abducted and sold into slavery. Facing cruelty as well as unexpected kindnesses Solomon struggles not only to stay alive, but to retain his dignity.\",\"poster_path\":\"/xdANQijuNrJaw1HA61rDccME4Tm.jpg\",\"media_type\":\"movie\",\"genre_ids\":[18,36],\"popularity\":29.035,\"release_date\":\"2013-10-18\",\"video\":false,\"vote_average\":7.94,\"vote_count\":12204},{\"adult\":false,\"backdrop_path\":\"/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg\",\"id\":181808,\"title\":\"Star Wars: The Last Jedi\",\"original_language\":\"en\",\"original_title\":\"Star Wars: The Last Jedi\",\"overview\":\"Rey develops her newly discovered abilities with the guidance of Luke Skywalker, who is unsettled by the strength of her powers. Meanwhile, the Resistance prepares to do battle with the First Order.\",\"poster_path\":\"/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg\",\"media_type\":\"movie\",\"genre_ids\":[12,14,878],\"popularity\":52.375,\"release_date\":\"2017-12-13\",\"video\":false,\"vote_average\":6.8,\"vote_count\":10998},{\"adult\":false,\"backdrop_path\":\"/1TUg5pO1VZ4B0Q1amk3OlXvlpXV.jpg\",\"id\":181812,\"title\":\"Star Wars: The Rise of Skywalker\",\"original_language\":\"en\",\"original_title\":\"Star Wars: The Rise of Skywalker\",\"overview\":\"The surviving Resistance faces the First Order once again as the journey of Rey, Finn and Poe Dameron continues. With the power and knowledge of generations behind them, the final battle begins.\",\"poster_path\":\"/db32LaOibwEliAmSL2jjDF6oDdj.jpg\",\"media_type\":\"movie\",\"genre_ids\":[12,14,878],\"popularity\":39.926,\"release_date\":\"2019-12-18\",\"video\":false,\"vote_average\":6.332,\"vote_count\":9227}]}],\"total_pages\":1,\"total_results\":1}"
+        }
+      },
+      "recorded_at": "Sun, 13 Jul 2025 19:30:00 GMT"
+    }
+  ],
+  "recorded_with": "VCR 6.2.0"
+}

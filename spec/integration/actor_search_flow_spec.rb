@@ -65,7 +65,7 @@ RSpec.describe "Actor Search Flow Integration", :vcr do
 
       VCR.use_cassette("actor_search_field_params_actor2") do
         # Test with actor2 field
-        get "/api/actors/search", { q: "Tom", field: "actor2" }
+        get "/api/actors/search", { q: "Brad", field: "actor2" }
 
         html = last_response.body
         unless html.empty? || html.include?("Error") || html.include?("Unexpected")

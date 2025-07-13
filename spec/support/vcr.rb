@@ -21,9 +21,9 @@ VCR.configure do |config|
   }
 
   # Filter sensitive data from recordings
-  config.filter_sensitive_data("<TMDB_API_KEY>") { ENV.fetch("TMDB_API_KEY", "test_api_key") }
+  config.filter_sensitive_data("<TMDB_API_KEY>") { ENV.fetch("TMDB_API_KEY", "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6") }
   # Also filter the test API key used in specs
-  config.filter_sensitive_data("<TMDB_API_KEY>") { "test_api_key" }
+  config.filter_sensitive_data("<TMDB_API_KEY>") { "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" }
 
   # Configure RSpec metadata integration
   config.configure_rspec_metadata!

@@ -18,8 +18,17 @@ ActorSync is a production-ready web application for comparing actor filmographie
 
 ## Development Commands
 
+### Quick Start (Recommended)
+- **Start development**: `make dev` or `./scripts/dev`
+- **Run tests**: `make test`
+- **Code style**: `make lint`
+- **Security scan**: `make security`
+- **Environment validation**: `make validate-env`
+- **Check outdated gems**: `make check-outdated`
+
+### Manual Commands
 - **Install dependencies**: `bundle install`
-- **Run development server**: `bundle exec rerun ruby app.rb`
+- **Run development server**: `./scripts/server` (auto-restart on file changes)
 - **Run production server**: `bundle exec puma`
 - **Test suite**: `bundle exec rspec`
 - **Test with coverage**: `bundle exec rspec --format documentation`
@@ -100,6 +109,12 @@ actorsync/
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
 
+### Dependency Management
+- **Version Pinning**: All gems pinned to exact versions for production stability
+- **Security Monitoring**: Automated scanning with brakeman and bundle-audit
+- **Update Strategy**: Intentional updates with thorough testing
+- **Documentation**: Comprehensive gem management guide (GEM_MANAGEMENT.md)
+
 ## Environment Configuration
 
 ### Required Environment Variables
@@ -120,10 +135,25 @@ CDN_BASE_URL=https://cdn.yourdomain.com
 ```
 
 ### Development Setup
+
+#### Option 1: Doppler (Recommended)
+1. Install Doppler CLI: `brew install doppler` or visit [docs.doppler.com](https://docs.doppler.com/docs/install-cli)
+2. Login: `doppler login`
+3. Setup project: `doppler setup`
+4. Start development: `make dev`
+
+#### Option 2: .env File (Fallback)
 1. `cp .env.example .env`
 2. Add your TMDB API key to `.env`
 3. `bundle install`
 4. `bundle exec rerun ruby app.rb`
+
+#### Environment Validation
+The application includes comprehensive environment validation that will:
+- ✅ Check for required environment variables (TMDB_API_KEY)
+- ⚠️  Warn about missing optional variables (PostHog, Sentry, Redis)
+- 🛑 Fail fast in development if critical variables are missing
+- 🔐 Automatically detect and prefer Doppler over .env files
 
 ## Production Readiness
 

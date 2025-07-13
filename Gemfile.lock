@@ -46,29 +46,18 @@ GEM
       activesupport (>= 6.1.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
-    ffi (1.17.2)
-    ffi (1.17.2-aarch64-linux-gnu)
-    ffi (1.17.2-aarch64-linux-musl)
-    ffi (1.17.2-arm-linux-gnu)
-    ffi (1.17.2-arm-linux-musl)
-    ffi (1.17.2-arm64-darwin)
-    ffi (1.17.2-x86-linux-gnu)
-    ffi (1.17.2-x86-linux-musl)
-    ffi (1.17.2-x86_64-darwin)
-    ffi (1.17.2-x86_64-linux-gnu)
-    ffi (1.17.2-x86_64-linux-musl)
+    filewatcher (2.1.0)
+      module_methods (~> 0.1.0)
     hashdiff (1.2.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     json (2.12.2)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
-    listen (3.9.0)
-      rb-fsevent (~> 0.10, >= 0.10.3)
-      rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
     method_source (1.1.0)
     minitest (5.25.5)
+    module_methods (0.1.0)
     multi_json (1.16.0)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
@@ -109,16 +98,11 @@ GEM
     rackup (2.2.1)
       rack (>= 3)
     rainbow (3.1.1)
-    rb-fsevent (0.11.2)
-    rb-inotify (0.11.1)
-      ffi (~> 1.0)
     redis (5.4.0)
       redis-client (>= 0.22.0)
     redis-client (0.25.0)
       connection_pool
     regexp_parser (2.10.0)
-    rerun (0.14.0)
-      listen (~> 3.0)
     retries (0.0.5)
     rexml (3.4.1)
     rspec (3.13.1)
@@ -204,37 +188,37 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  activesupport (~> 7.1.0)
-  brakeman (~> 6.0)
-  bundle-audit (~> 0.1)
-  circuit_breaker (~> 1.1)
-  connection_pool
-  dotenv
-  factory_bot (~> 6.2)
-  faker (~> 3.2)
-  json
-  logger
-  net-http
-  ostruct
-  pry
-  pry-byebug
-  puma
-  rack-attack
-  rack-ssl
-  rack-test (~> 2.1)
-  rackup
-  redis (~> 5.0)
-  rerun
-  retries (~> 0.0.5)
-  rspec (~> 3.12)
-  rspec_junit_formatter (~> 0.6)
-  rubocop (~> 1.78)
-  sentry-ruby
-  simplecov (~> 0.22)
-  sinatra (~> 4.1)
-  sinatra-contrib (~> 4.1)
-  vcr (~> 6.2)
-  webmock (~> 3.18)
+  activesupport (= 7.1.5.1)
+  brakeman (= 6.2.2)
+  bundle-audit (= 0.1.0)
+  circuit_breaker (= 1.1.2)
+  connection_pool (= 2.5.3)
+  dotenv (= 3.1.8)
+  factory_bot (= 6.5.4)
+  faker (= 3.5.2)
+  filewatcher (= 2.1.0)
+  json (= 2.12.2)
+  logger (= 1.7.0)
+  net-http (= 0.6.0)
+  ostruct (= 0.6.2)
+  pry (= 0.15.2)
+  pry-byebug (= 3.11.0)
+  puma (= 6.6.0)
+  rack-attack (= 6.7.0)
+  rack-ssl (= 1.4.1)
+  rack-test (= 2.2.0)
+  rackup (= 2.2.1)
+  redis (= 5.4.0)
+  retries (= 0.0.5)
+  rspec (= 3.13.1)
+  rspec_junit_formatter (= 0.6.0)
+  rubocop (= 1.78.0)
+  sentry-ruby (= 5.26.0)
+  simplecov (= 0.22.0)
+  sinatra (= 4.1.1)
+  sinatra-contrib (= 4.1.1)
+  vcr (= 6.3.1)
+  webmock (= 3.25.1)
 
 BUNDLED WITH
    2.6.5

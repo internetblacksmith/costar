@@ -60,7 +60,7 @@ A production-ready web application that visualizes actor filmographies in a time
 ActorSync features a resilient, production-ready architecture:
 
 ### Core Services
-- **TMDBService**: API integration with caching and error handling
+- **TMDBService**: API integration with caching and standardized error handling
 - **ResilientTMDBClient**: Circuit breaker pattern for API resilience
 - **ActorComparisonService**: Timeline generation and movie analysis
 - **TimelineBuilder**: Performance-optimized timeline rendering
@@ -99,7 +99,7 @@ actorsync/
 │   ├── config/               # Configuration and utilities
 │   │   ├── cache.rb                  # Redis/Memory cache abstraction
 │   │   ├── logger.rb                 # Structured logging
-│   │   └── errors.rb                 # Custom error classes
+│   │   └── errors.rb                 # Custom error classes with hierarchy
 │   └── middleware/           # Request processing
 │       ├── request_logger.rb         # Request/response logging
 │       └── performance_headers.rb    # Caching optimization

@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (68 examples, 0 failures)
+- **Testing**: RSpec test suite (178 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -53,15 +53,18 @@ actorsync/
 │   ├── controllers/          # Request handling
 │   │   ├── api_controller.rb         # API routes with CORS and security
 │   │   ├── api_handlers.rb           # Input validation and processing
-│   │   └── health_controller.rb      # Health check endpoints
+│   │   ├── health_controller.rb      # Health check endpoints
+│   │   ├── error_handler.rb          # Application-wide error handling
+│   │   └── error_handler_tmdb.rb     # TMDB-specific error handlers
 │   ├── config/               # Configuration and utilities
 │   │   ├── cache.rb                  # Redis/Memory cache abstraction
 │   │   ├── logger.rb                 # Structured JSON logging
-│   │   └── errors.rb                 # Custom error classes
+│   │   └── errors.rb                 # Custom error classes with hierarchy
 │   └── middleware/           # Request processing pipeline
 │       ├── request_logger.rb         # Request/response logging
-│       └── performance_headers.rb    # Caching optimization headers
-├── spec/                     # Test suite (68 examples, 0 failures)
+│       ├── performance_headers.rb    # Caching optimization headers
+│       └── error_handler_module.rb   # Standardized error handling patterns
+├── spec/                     # Test suite (178 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -98,13 +101,15 @@ actorsync/
 - **Cache Keys**: MD5-hashed for consistency and security
 
 ### Error Handling
+- **Standardized Error Types**: Specific error classes for different failure scenarios (TMDBTimeoutError, TMDBAuthError, TMDBRateLimitError, TMDBNotFoundError, TMDBServiceError)
+- **Error Handling Module**: Consistent error handling patterns with `with_error_handling`, `with_tmdb_error_handling`, and `with_cache_error_handling` methods
 - **Circuit Breaker**: ResilientTMDBClient prevents cascade failures
 - **Structured Logging**: JSON logs with context and performance metrics
 - **Sentry Integration**: Real-time error tracking and monitoring
-- **Graceful Degradation**: Fallback responses for API failures
+- **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 68 examples with 100% pass rate
+- **RSpec Framework**: 178 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures

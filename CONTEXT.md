@@ -7,7 +7,7 @@ A production-ready web application that allows users to enter two actor names an
 - **Phase**: Production Ready 🚀
 - **Last Updated**: 2025-07-13
 - **Current State**: Fully hardened production application with security, monitoring, testing, and resilient architecture
-- **Test Status**: 68 examples, 0 failures
+- **Test Status**: 178 examples, 0 failures
 - **Code Quality**: 44 files inspected, no RuboCop offenses
 
 ## Architecture & Tech Stack
@@ -67,7 +67,7 @@ Backend (Ruby/Sinatra + Security Middleware)
 - **Request Protection**: Rate limiting (30-120 req/min), CORS policy, user agent filtering
 - **Response Security**: CSP headers, HSTS, X-Frame-Options, X-XSS-Protection
 - **Transport Security**: HTTPS enforcement, secure headers
-- **API Security**: Input validation, output encoding, error handling
+- **API Security**: Input validation, output encoding, standardized error handling
 
 ## Performance & Reliability
 - **Caching Strategy**: Redis with TTL management and connection pooling
@@ -129,11 +129,11 @@ actorsync/
 │   ├── config/                    # Configuration & utilities
 │   │   ├── cache.rb                      # Redis/Memory abstraction
 │   │   ├── logger.rb                     # Structured logging
-│   │   └── errors.rb                     # Custom error classes
+│   │   └── errors.rb                     # Custom error classes with hierarchy
 │   └── middleware/                # Request processing
 │       ├── request_logger.rb             # Request/response logging
 │       └── performance_headers.rb        # Caching optimization
-├── spec/                          # Test suite (68 examples)
+├── spec/                          # Test suite (178 examples)
 │   ├── lib/                       # Service and component tests
 │   ├── requests/                  # API integration tests
 │   └── support/                   # Test helpers and mocks
@@ -183,9 +183,9 @@ actorsync/
 ## Production Readiness Status
 - **Security Hardening**: Complete ✅
 - **Infrastructure**: Complete ✅ (Redis, health checks, monitoring)
-- **Testing**: Complete ✅ (68 examples, 0 failures)
+- **Testing**: Complete ✅ (178 examples, 0 failures)
 - **Code Quality**: Complete ✅ (RuboCop compliant)
-- **Error Handling**: Complete ✅ (Circuit breaker, structured logging)
+- **Error Handling**: Complete ✅ (Circuit breaker, structured logging, standardized error types)
 - **Performance**: Complete ✅ (Caching, optimization)
 - **Monitoring**: Complete ✅ (Sentry, health checks, logging)
 - **Deployment**: Complete ✅ (Render.com configuration)

@@ -1,0 +1,42 @@
+{
+  "http_interactions": [
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/search/person?api_key=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6&query=Tom",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"page\":1,\"results\":[{\"adult\":false,\"gender\":2,\"id\":31,\"known_for_department\":\"Acting\",\"name\":\"Tom Hanks\",\"original_name\":\"Tom Hanks\",\"popularity\":65.567,\"profile_path\":\"/xndWFsBlClOJFRdhSt4NBwiPq2o.jpg\",\"known_for\":[{\"adult\":false,\"backdrop_path\":\"/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg\",\"id\":13,\"title\":\"Forrest Gump\",\"original_language\":\"en\",\"original_title\":\"Forrest Gump\",\"overview\":\"A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case, far exceeding what anyone imagined he could do. But despite all he has achieved, his one true love eludes him.\",\"poster_path\":\"/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg\",\"media_type\":\"movie\",\"genre_ids\":[35,18,10749],\"popularity\":97.296,\"release_date\":\"1994-06-23\",\"video\":false,\"vote_average\":8.471,\"vote_count\":26146}]},{\"adult\":false,\"gender\":2,\"id\":8891,\"known_for_department\":\"Acting\",\"name\":\"Tom Cruise\",\"original_name\":\"Tom Cruise\",\"popularity\":45.123,\"profile_path\":\"/eOh4ubpOm2Igdg0QH2ghj0mFtC.jpg\",\"known_for\":[{\"adult\":false,\"backdrop_path\":\"/dqK9Hag1054tghRQSqLSfrkvQnA.jpg\",\"id\":137,\"title\":\"Mission: Impossible\",\"original_language\":\"en\",\"original_title\":\"Mission: Impossible\",\"overview\":\"When Ethan Hunt, the leader of a crack espionage team whose perilous operation has gone awry with no explanation, discovers that a mole has penetrated the CIA, he's surprised to learn that he's the No. 1 suspect.\",\"poster_path\":\"/VklAv2g1wsCbYN5RuMBVkGp1MI.jpg\",\"media_type\":\"movie\",\"genre_ids\":[12,28,53],\"popularity\":44.234,\"release_date\":\"1996-05-22\",\"video\":false,\"vote_average\":7.031,\"vote_count\":6018}]}],\"total_pages\":42,\"total_results\":834}"
+        }
+      },
+      "recorded_at": "Sun, 13 Jul 2025 19:30:00 GMT"
+    }
+  ],
+  "recorded_with": "VCR 6.2.0"
+}

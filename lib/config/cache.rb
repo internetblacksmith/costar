@@ -75,7 +75,6 @@ class Cache
           connect_timeout: 3,      # Reduced for faster failures
           read_timeout: 3,         # Reduced for better performance
           write_timeout: 3,        # Reduced for better performance
-          tcp_keepalive: 60,       # Keep connections alive
           driver: :ruby            # Use fastest available driver
         )
       end

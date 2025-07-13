@@ -49,6 +49,17 @@
     box-shadow: 0 4px 8px var(--shadow-color);
     padding: var(--spacing-md);
     z-index: 1000;
+    margin-top: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* HTMX indicator handling */
+.suggestions-loading.htmx-indicator {
+    display: none;
+}
+
+.suggestions-loading.htmx-request {
+    display: block !important;
 }
 
 .loading-content {
@@ -92,7 +103,12 @@
     z-index: 1000;
     margin-top: 4px;
     border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
+    transition: opacity 0.2s ease;
+}
+
+/* Hide suggestions when loading */
+.search-field-container:has(.htmx-request) .suggestions {
+    opacity: 0.5;
 }
 
 .suggestions:empty {

@@ -67,7 +67,7 @@ Backend (Ruby/Sinatra + Security Middleware)
 - **Request Protection**: Rate limiting (30-120 req/min), CORS policy, user agent filtering
 - **Response Security**: CSP headers, HSTS, X-Frame-Options, X-XSS-Protection
 - **Transport Security**: HTTPS enforcement, secure headers
-- **API Security**: Input validation, output encoding, standardized error handling
+- **API Security**: Input validation, output encoding, standardized error handling with typed exceptions
 
 ## Performance & Reliability
 - **Caching Strategy**: Redis with TTL management and connection pooling
@@ -75,6 +75,8 @@ Backend (Ruby/Sinatra + Security Middleware)
 - **Request Optimization**: Gzip compression, performance headers
 - **Connection Management**: Pooled Redis connections, HTTP keep-alive
 - **Monitoring**: Real-time performance tracking and alerting
+- **Response Standardization**: ApiResponseBuilder ensures consistent JSON/HTML responses
+- **Error Handling**: Typed exceptions with ErrorHandlerModule for consistent error patterns
 
 ## Development Progress
 - [x] Project architecture designed
@@ -121,7 +123,8 @@ actorsync/
 │   │   ├── resilient_tmdb_client.rb      # Circuit breaker client
 │   │   ├── tmdb_service.rb               # API integration + caching
 │   │   ├── actor_comparison_service.rb   # Timeline orchestration
-│   │   └── timeline_builder.rb           # Performance-optimized rendering
+│   │   ├── timeline_builder.rb           # Performance-optimized rendering
+│   │   └── api_response_builder.rb       # Standardized API response formatting
 │   ├── controllers/               # Request handling
 │   │   ├── api_controller.rb             # API routes with CORS
 │   │   ├── api_handlers.rb               # Input validation
@@ -132,8 +135,10 @@ actorsync/
 │   │   └── errors.rb                     # Custom error classes with hierarchy
 │   └── middleware/                # Request processing
 │       ├── request_logger.rb             # Request/response logging
-│       └── performance_headers.rb        # Caching optimization
-├── spec/                          # Test suite (178 examples)
+│       ├── performance_headers.rb        # Caching optimization
+│       ├── error_handler_module.rb       # Standardized error handling patterns
+│       └── error_handler_tmdb.rb         # TMDB-specific error handlers
+├── spec/                          # Test suite (202 examples)
 │   ├── lib/                       # Service and component tests
 │   ├── requests/                  # API integration tests
 │   └── support/                   # Test helpers and mocks
@@ -183,7 +188,7 @@ actorsync/
 ## Production Readiness Status
 - **Security Hardening**: Complete ✅
 - **Infrastructure**: Complete ✅ (Redis, health checks, monitoring)
-- **Testing**: Complete ✅ (178 examples, 0 failures)
+- **Testing**: Complete ✅ (202 examples, 0 failures)
 - **Code Quality**: Complete ✅ (RuboCop compliant)
 - **Error Handling**: Complete ✅ (Circuit breaker, structured logging, standardized error types)
 - **Performance**: Complete ✅ (Caching, optimization)

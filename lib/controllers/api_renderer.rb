@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../services/api_response_builder"
+
 ##
 # Rendering utilities for API responses
 #
@@ -50,8 +52,8 @@ module ApiRenderer
   # @return [String] JSON response
   #
   def render_actor_movies_json(app, movies)
-    app.content_type :json
-    movies.to_json
+    response_builder = ApiResponseBuilder.new(app)
+    response_builder.success({ movies: movies })
   end
 
   ##
@@ -112,7 +114,8 @@ module ApiRenderer
   # @param message [String] Error message
   #
   def render_json_error(app, code, message)
-    app.halt code, { error: message }.to_json
+    response_builder = ApiResponseBuilder.new(app)
+    app.halt response_builder.error(message, code: code)
   end
 
   private

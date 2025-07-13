@@ -15,8 +15,9 @@ RSpec.describe "API Endpoints", type: :request do
       expect(last_response.content_type).to include("application/json")
 
       response_data = json_response
-      expect(response_data["status"]).to eq("healthy")
-      expect(response_data["checks"]["cache"]["status"]).to eq("healthy")
+      expect(response_data["status"]).to eq("success")
+      expect(response_data["data"]["status"]).to eq("healthy")
+      expect(response_data["data"]["checks"]["cache"]["status"]).to eq("healthy")
     end
 
     it "returns degraded status when cache is unhealthy" do
@@ -26,8 +27,10 @@ RSpec.describe "API Endpoints", type: :request do
 
       expect(last_response.status).to eq(503)
       response_data = json_response
-      expect(response_data["status"]).to eq("degraded")
-      expect(response_data["checks"]["cache"]["status"]).to eq("unhealthy")
+      expect(response_data["status"]).to eq("error")
+      expect(response_data["message"]).to eq("Service degraded")
+      expect(response_data["details"]["status"]).to eq("degraded")
+      expect(response_data["details"]["checks"]["cache"]["status"]).to eq("unhealthy")
     end
   end
 
@@ -161,9 +164,14 @@ RSpec.describe "API Endpoints", type: :request do
           expect(last_response.content_type).to include("application/json")
 
           response_data = json_response
-          expect(response_data).to be_an(Array)
-          expect(response_data.length).to be > 0
-          expect(response_data.first).to have_key("title")
+          expect(response_data).to have_key("status")
+          expect(response_data["status"]).to eq("success")
+          expect(response_data["data"]).to have_key("movies")
+
+          movies = response_data["data"]["movies"]
+          expect(movies).to be_an(Array)
+          expect(movies.length).to be > 0
+          expect(movies.first).to have_key("title")
         end
       end
 
@@ -185,7 +193,8 @@ RSpec.describe "API Endpoints", type: :request do
           expect(last_response.status).to eq(200)
           response_data = json_response
           # Service catches errors and returns empty array
-          expect(response_data).to eq([])
+          expect(response_data["status"]).to eq("success")
+          expect(response_data["data"]["movies"]).to eq([])
         end
       end
     end

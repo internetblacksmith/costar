@@ -23,9 +23,9 @@ class EnvironmentChecker
       validation: ->(value) { value.start_with?("redis://") }
     },
     "RACK_ENV" => {
-      description: "Application environment (should be 'production')",
+      description: "Application environment (development, staging, or production)",
       required: true,
-      validation: ->(value) { value == "production" }
+      validation: ->(value) { %w[development staging production].include?(value) }
     },
     "SENTRY_DSN" => {
       description: "Sentry error tracking DSN",
@@ -45,7 +45,7 @@ class EnvironmentChecker
     "ALLOWED_ORIGINS" => {
       description: "Comma-separated list of allowed CORS origins",
       required: false,
-      validation: ->(value) { value.include?("internetblacksmith.dev") }
+      validation: ->(value) { value.include?("internetblacksmith.dev") || value.include?("localhost") }
     }
   }.freeze
 

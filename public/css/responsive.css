@@ -106,7 +106,7 @@
     .movie-left,
     .movie-right {
         width: 100%;
-        padding: 0 var(--spacing-xs);
+        padding: 0;
         display: flex;
         justify-content: center;
         position: relative;
@@ -142,7 +142,7 @@
     .movie-left:has(.movie-card)::before {
         content: '';
         position: absolute;
-        left: -25%;
+        left: 25%;
         top: 50%;
         width: 10px;
         height: 10px;
@@ -156,7 +156,7 @@
     .movie-right:has(.movie-card)::before {
         content: '';
         position: absolute;
-        right: -25%;
+        right: 25%;
         top: 50%;
         width: 10px;
         height: 10px;
@@ -171,23 +171,25 @@
     .movie-left:has(.movie-card)::after {
         content: '';
         position: absolute;
-        left: -25%;
-        right: 50%;
+        left: 25%;
+        right: 70%;
         top: 50%;
         height: 2px;
         background: var(--primary-color);
         z-index: 2;
+        transform: translateY(-50%);
     }
     
     .movie-right:has(.movie-card)::after {
         content: '';
         position: absolute;
-        right: -25%;
-        left: 50%;
+        right: 25%;
+        left: 70%;
         top: 50%;
         height: 2px;
         background: var(--secondary-color);
         z-index: 2;
+        transform: translateY(-50%);
     }
     
     /* Shared movie rows - show both cards */
@@ -240,7 +242,8 @@
     .movie-card {
         flex-direction: column !important;
         width: 100%;
-        max-width: 140px;
+        max-width: 120px;
+        margin: 0 auto;
     }
     
     /* Override the directional styles for mobile */
@@ -323,21 +326,21 @@
     
     /* Adjust connection dot and line positions */
     .movie-left:has(.movie-card)::before {
-        left: -30%;
+        left: 20%;
     }
     
     .movie-left:has(.movie-card)::after {
-        left: -30%;
-        right: 50%;
+        left: 20%;
+        right: 65%;
     }
     
     .movie-right:has(.movie-card)::before {
-        right: -30%;
+        right: 20%;
     }
     
     .movie-right:has(.movie-card)::after {
-        right: -30%;
-        left: 50%;
+        right: 20%;
+        left: 65%;
     }
     
     .shared-movie-row::after {

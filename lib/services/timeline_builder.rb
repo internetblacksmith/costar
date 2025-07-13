@@ -13,7 +13,8 @@ class TimelineBuilder
     {
       years: sorted_years,
       shared_movies: shared_movies,
-      processed_movies: processed_movies_by_year
+      processed_movies: processed_movies_by_year,
+      shared_movies_by_year: shared_movies_by_year
     }
   end
 
@@ -41,6 +42,16 @@ class TimelineBuilder
 
     sorted_years.each do |year|
       result[year] = process_movies_for_year(year)
+    end
+
+    result
+  end
+
+  def shared_movies_by_year
+    result = {}
+
+    sorted_years.each do |year|
+      result[year] = shared_movies.select { |m| m[:year] == year }
     end
 
     result

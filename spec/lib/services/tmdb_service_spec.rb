@@ -3,12 +3,17 @@
 require "spec_helper"
 
 RSpec.describe TMDBService do
-  let(:service) { TMDBService.new }
+  let(:client) { instance_double(ResilientTMDBClient) }
+  let(:cache_manager) { instance_double(CacheManager) }
+  let(:service) { TMDBService.new(client: client, cache: cache_manager) }
   let(:api_key) { "test_api_key" }
 
   before do
     allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with("TMDB_API_KEY").and_return(api_key)
+
+    # Add default circuit breaker status mock
+    allow(client).to receive(:circuit_breaker_status).and_return({ state: "closed", failure_count: 0 })
   end
 
   describe "#search_actors" do
@@ -41,7 +46,8 @@ RSpec.describe TMDBService do
       end
 
       before do
-        allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+        allow(cache_manager).to receive(:cache_search_results).with(query).and_yield
+        allow(client).to receive(:request)
           .with("search/person", query: query)
           .and_return(mock_response)
       end
@@ -55,18 +61,19 @@ RSpec.describe TMDBService do
         expect(results.first[:id]).to eq(6193)
       end
 
-      it "caches the results" do
-        # First call should make HTTP request
-        results1 = service.search_actors(query)
-        expect(results1.first[:name]).to eq("Leonardo DiCaprio")
+      it "uses cache manager for caching" do
+        # First time: cache miss, yields to block
+        allow(cache_manager).to receive(:cache_search_results)
+          .with(query)
+          .and_yield
+          .once
 
-        # Clear cache and ensure second call uses cached result
-        # Second call should use cache (no new HTTP requests)
-        results2 = service.search_actors(query)
-        expect(results2.first[:name]).to eq("Leonardo DiCaprio")
+        # Make the call
+        results = service.search_actors(query)
+        expect(results.first[:name]).to eq("Leonardo DiCaprio")
 
-        # Verify we received the same cached results
-        expect(results1).to eq(results2)
+        # Verify cache manager was called
+        expect(cache_manager).to have_received(:cache_search_results).with(query)
       end
     end
 
@@ -86,7 +93,8 @@ RSpec.describe TMDBService do
       let(:query) { "test" }
 
       before do
-        allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+        allow(cache_manager).to receive(:cache_search_results).and_yield
+        allow(client).to receive(:request)
           .with("search/person", query: query)
           .and_raise(StandardError.new("API Error"))
       end
@@ -122,7 +130,8 @@ RSpec.describe TMDBService do
     end
 
     before do
-      allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+      allow(cache_manager).to receive(:cache_actor_movies).with(actor_id).and_yield
+      allow(client).to receive(:request)
         .with("person/#{actor_id}/movie_credits")
         .and_return(mock_movies)
     end
@@ -136,22 +145,18 @@ RSpec.describe TMDBService do
       expect(movies.first[:character]).to eq("Dom Cobb")
     end
 
-    it "caches the results" do
-      # First call should make HTTP request
-      movies1 = service.get_actor_movies(actor_id)
-      expect(movies1.first[:title]).to eq("Inception")
+    it "uses cache manager for caching" do
+      movies = service.get_actor_movies(actor_id)
+      expect(movies.first[:title]).to eq("Inception")
 
-      # Second call should use cache (no new HTTP requests)
-      movies2 = service.get_actor_movies(actor_id)
-      expect(movies2.first[:title]).to eq("Inception")
-
-      # Verify we received the same cached results
-      expect(movies1).to eq(movies2)
+      # Verify cache manager was called
+      expect(cache_manager).to have_received(:cache_actor_movies).with(actor_id)
     end
 
     context "with invalid actor ID" do
       before do
-        allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+        allow(cache_manager).to receive(:cache_actor_movies).with(999_999).and_yield
+        allow(client).to receive(:request)
           .with("person/999999/movie_credits")
           .and_raise(StandardError.new("Not found"))
       end
@@ -177,7 +182,8 @@ RSpec.describe TMDBService do
     end
 
     before do
-      allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+      allow(cache_manager).to receive(:cache_actor_profile).with(actor_id).and_yield
+      allow(client).to receive(:request)
         .with("person/#{actor_id}")
         .and_return(mock_profile)
     end
@@ -190,24 +196,21 @@ RSpec.describe TMDBService do
       expect(profile[:place_of_birth]).to eq("Los Angeles, California, USA")
     end
 
-    it "caches the results" do
-      # First call should make HTTP request
-      profile1 = service.get_actor_profile(actor_id)
-      expect(profile1[:name]).to eq("Leonardo DiCaprio")
+    it "uses cache manager for caching" do
+      profile = service.get_actor_profile(actor_id)
+      expect(profile[:name]).to eq("Leonardo DiCaprio")
 
-      # Second call should use cache (no new HTTP requests)
-      profile2 = service.get_actor_profile(actor_id)
-      expect(profile2[:name]).to eq("Leonardo DiCaprio")
-
-      # Verify we received the same cached results
-      expect(profile1).to eq(profile2)
+      # Verify cache manager was called
+      expect(cache_manager).to have_received(:cache_actor_profile).with(actor_id)
     end
   end
 
   describe "error handling" do
     context "when network request fails" do
       before do
-        allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+        allow(cache_manager).to receive(:cache_search_results).and_yield
+        allow(cache_manager).to receive(:cache_actor_movies).and_yield
+        allow(client).to receive(:request)
           .and_raise(StandardError.new("Network error"))
       end
 
@@ -224,7 +227,8 @@ RSpec.describe TMDBService do
 
     context "when API returns invalid JSON" do
       before do
-        allow_any_instance_of(ResilientTMDBClient).to receive(:request)
+        allow(cache_manager).to receive(:cache_search_results).and_yield
+        allow(client).to receive(:request)
           .and_raise(JSON::ParserError.new("Invalid JSON"))
       end
 

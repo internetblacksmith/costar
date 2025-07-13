@@ -6,9 +6,10 @@ require_relative "../middleware/error_handler_module"
 # Service for comparing actors and building timeline data
 class ActorComparisonService
   include ErrorHandlerModule
-  def initialize(tmdb_service = nil)
+  def initialize(tmdb_service: nil, timeline_builder: nil, cache: nil)
     @tmdb_service = tmdb_service || TMDBService.new
-    @cache_manager = CacheManager.new
+    @timeline_builder = timeline_builder # TimelineBuilder is created per comparison
+    @cache_manager = cache || CacheManager.new
   end
 
   def compare(actor1_id, actor2_id, actor1_name, actor2_name)

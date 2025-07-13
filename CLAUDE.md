@@ -100,6 +100,12 @@ actorsync/
 - **TTL Management**: Intelligent cache expiration (5-30 minutes)
 - **Cache Keys**: MD5-hashed for consistency and security
 
+### Architecture Patterns
+- **Dependency Injection**: ServiceContainer manages service initialization and dependencies
+- **Service Registration**: Centralized service configuration in ServiceInitializer
+- **Response Standardization**: ApiResponseBuilder ensures consistent API responses
+- **Error Handling Module**: Consistent error handling patterns with typed exceptions
+
 ### Error Handling
 - **Standardized Error Types**: Specific error classes for different failure scenarios (TMDBTimeoutError, TMDBAuthError, TMDBRateLimitError, TMDBNotFoundError, TMDBServiceError)
 - **Error Handling Module**: Consistent error handling patterns with `with_error_handling`, `with_tmdb_error_handling`, and `with_cache_error_handling` methods
@@ -109,7 +115,7 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 178 examples with 100% pass rate
+- **RSpec Framework**: 224 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures

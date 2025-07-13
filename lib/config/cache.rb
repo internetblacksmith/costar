@@ -17,11 +17,28 @@ class Cache
     end
 
     def get(key)
-      initialize_cache.get(key)
+      start_time = Time.now
+      result = initialize_cache.get(key)
+      duration_ms = (Time.now - start_time) * 1000
+
+      # Track cache performance if monitor is available
+      if defined?(PerformanceMonitor) && PerformanceMonitor.respond_to?(:track_cache_performance)
+        hit = !result.nil?
+        PerformanceMonitor.track_cache_performance("get", key, hit, duration_ms)
+      end
+
+      result
     end
 
     def set(key, value, ttl = 300)
-      initialize_cache.set(key, value, ttl)
+      start_time = Time.now
+      result = initialize_cache.set(key, value, ttl)
+      duration_ms = (Time.now - start_time) * 1000
+
+      # Track cache performance if monitor is available (set is always a "miss" since we're writing)
+      PerformanceMonitor.track_cache_performance("set", key, false, duration_ms) if defined?(PerformanceMonitor) && PerformanceMonitor.respond_to?(:track_cache_performance)
+
+      result
     end
 
     def clear
@@ -47,13 +64,19 @@ class Cache
   # Redis-based cache for production
   class RedisCache
     def initialize
-      @pool = ConnectionPool.new(size: 5, timeout: 5) do
+      # Optimize connection pool size based on expected concurrency
+      pool_size = ENV.fetch("REDIS_POOL_SIZE", "10").to_i
+      pool_timeout = ENV.fetch("REDIS_POOL_TIMEOUT", "5").to_i
+
+      @pool = ConnectionPool.new(size: pool_size, timeout: pool_timeout) do
         Redis.new(
           url: ENV.fetch("REDIS_URL", "redis://localhost:6379"),
           reconnect_attempts: 3,
-          connect_timeout: 5,
-          read_timeout: 5,
-          write_timeout: 5
+          connect_timeout: 3,      # Reduced for faster failures
+          read_timeout: 3,         # Reduced for better performance
+          write_timeout: 3,        # Reduced for better performance
+          tcp_keepalive: 60,       # Keep connections alive
+          driver: :ruby            # Use fastest available driver
         )
       end
     end

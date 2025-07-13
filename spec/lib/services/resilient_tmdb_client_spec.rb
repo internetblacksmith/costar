@@ -5,7 +5,7 @@ require "spec_helper"
 RSpec.describe ResilientTMDBClient do
   let(:api_key) { "test_api_key" }
   let(:client) { described_class.new(api_key) }
-  
+
   before do
     # Reset circuit breaker state between tests
     client.instance_variable_get(:@circuit_breaker).reset!
@@ -27,7 +27,7 @@ RSpec.describe ResilientTMDBClient do
   describe "#circuit_breaker_status" do
     it "returns circuit breaker state information" do
       status = client.circuit_breaker_status
-      
+
       expect(status).to include(:state, :failure_count, :last_failure_time, :next_attempt_time)
       expect(status[:state]).to eq("closed")
       expect(status[:failure_count]).to eq(0)
@@ -45,7 +45,7 @@ RSpec.describe ResilientTMDBClient do
           )
 
         result = client.request("search/person", { query: "test" })
-        
+
         expect(result).to eq("results" => [{ "name" => "Test Actor" }])
       end
 
@@ -82,7 +82,7 @@ RSpec.describe ResilientTMDBClient do
           .to_timeout
 
         result = client.request("search/person", { query: "test" })
-        
+
         expect(result).to include("results" => [])
         expect(result["total_results"]).to eq(0)
       end
@@ -94,7 +94,7 @@ RSpec.describe ResilientTMDBClient do
           .to_return(status: 500, body: "Internal Server Error")
 
         result = client.request("search/person")
-        
+
         expect(result).to include("results" => [])
       end
 
@@ -103,7 +103,7 @@ RSpec.describe ResilientTMDBClient do
           .to_return(status: 404, body: "Not Found")
 
         result = client.request("person/123")
-        
+
         expect(result).to include("name" => "Unknown Actor")
         expect(result["id"]).to eq(0)
       end
@@ -115,7 +115,7 @@ RSpec.describe ResilientTMDBClient do
           .to_return(status: 200, body: "invalid json")
 
         result = client.request("search/person")
-        
+
         expect(result).to include("results" => [])
       end
     end
@@ -125,7 +125,7 @@ RSpec.describe ResilientTMDBClient do
 
       it "raises TMDBError for missing API key" do
         result = client.request("search/person")
-        
+
         # Should return fallback data instead of raising
         expect(result).to include("results" => [])
       end
@@ -149,7 +149,7 @@ RSpec.describe ResilientTMDBClient do
         allow(circuit_breaker).to receive(:call).and_raise(CircuitBreaker::CircuitOpenError)
 
         result = client.request("search/person")
-        
+
         expect(result).to include("results" => [])
       end
     end
@@ -163,7 +163,7 @@ RSpec.describe ResilientTMDBClient do
 
       it "generates appropriate fallback for search endpoints" do
         result = client.request("search/person")
-        
+
         expect(result).to include(
           "results" => [],
           "total_results" => 0,
@@ -174,7 +174,7 @@ RSpec.describe ResilientTMDBClient do
 
       it "generates appropriate fallback for movie credits" do
         result = client.request("person/123/movie_credits")
-        
+
         expect(result).to include(
           "cast" => [],
           "crew" => [],
@@ -184,7 +184,7 @@ RSpec.describe ResilientTMDBClient do
 
       it "generates appropriate fallback for person profile" do
         result = client.request("person/123")
-        
+
         expect(result).to include(
           "id" => 0,
           "name" => "Unknown Actor",
@@ -195,7 +195,7 @@ RSpec.describe ResilientTMDBClient do
 
       it "generates generic fallback for unknown endpoints" do
         result = client.request("unknown/endpoint")
-        
+
         expect(result).to include(
           "error" => "Service temporarily unavailable",
           "fallback" => true

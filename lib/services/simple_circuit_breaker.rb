@@ -3,6 +3,11 @@
 # Simple circuit breaker implementation for API resilience
 class SimpleCircuitBreaker
   attr_reader :failure_count, :last_failure_time, :state
+  
+  def next_attempt_time
+    return nil unless @state == :open && @last_failure_time
+    @last_failure_time + @recovery_timeout
+  end
 
   def initialize(failure_threshold: 5, recovery_timeout: 60, expected_errors: [])
     @failure_threshold = failure_threshold
@@ -18,12 +23,11 @@ class SimpleCircuitBreaker
     when :closed
       call_with_failure_tracking(&block)
     when :open
-      if time_to_retry?
-        @state = :half_open
-        call_with_recovery_tracking(&block)
-      else
-        raise CircuitOpenError, "Circuit breaker is open"
-      end
+      raise CircuitOpenError, "Circuit breaker is open" unless time_to_retry?
+
+      @state = :half_open
+      call_with_recovery_tracking(&block)
+
     when :half_open
       call_with_recovery_tracking(&block)
     end
@@ -37,23 +41,23 @@ class SimpleCircuitBreaker
 
   private
 
-  def call_with_failure_tracking(&block)
+  def call_with_failure_tracking
     result = yield
     reset_on_success
     result
-  rescue => error
-    record_failure(error)
+  rescue StandardError => e
+    record_failure(e)
     raise
   end
 
-  def call_with_recovery_tracking(&block)
+  def call_with_recovery_tracking
     result = yield
     @state = :closed
     @failure_count = 0
     result
-  rescue => error
+  rescue StandardError => e
     @state = :open
-    record_failure(error)
+    record_failure(e)
     raise
   end
 
@@ -67,7 +71,7 @@ class SimpleCircuitBreaker
   end
 
   def reset_on_success
-    @failure_count = 0 if @failure_count > 0
+    @failure_count = 0 if @failure_count.positive?
   end
 
   def expected_error?(error)

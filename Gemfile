@@ -13,6 +13,7 @@ gem "ostruct" # Required for Ruby 3.5+ compatibility
 gem "puma"
 gem "rack-attack" # Rate limiting and security
 gem "rack-ssl" # HTTPS enforcement
+gem "rackup" # Rack server command
 gem "redis", "~> 5.0" # Redis client
 gem "retries", "~> 0.0.5" # Exponential backoff retries
 gem "sentry-ruby" # Error tracking and Rack integration

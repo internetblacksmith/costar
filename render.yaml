@@ -18,6 +18,14 @@ services:
           type: redis
           name: actorsync-redis
           property: connectionString
+      - key: REDIS_POOL_SIZE
+        value: "15"
+      - key: REDIS_POOL_TIMEOUT
+        value: "5"
+      - key: CDN_BASE_URL
+        value: ""
+      - key: CDN_PROVIDER
+        value: "none"
     healthCheckPath: /health/simple
     plan: free
     region: oregon

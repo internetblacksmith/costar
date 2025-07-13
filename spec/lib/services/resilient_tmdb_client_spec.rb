@@ -9,9 +9,7 @@ RSpec.describe ResilientTMDBClient do
   before do |example|
     # Force production mode for these tests to test circuit breaker functionality
     # Skip ENV stubbing for VCR tests that need real API key
-    unless example.metadata[:vcr]
-      allow(ENV).to receive(:[]).with("RACK_ENV").and_return("production")
-    end
+    allow(ENV).to receive(:[]).with("RACK_ENV").and_return("production") unless example.metadata[:vcr]
 
     # Reset circuit breaker state between tests
     client.instance_variable_get(:@circuit_breaker).reset!
@@ -47,11 +45,11 @@ RSpec.describe ResilientTMDBClient do
     context "with successful API response" do
       it "returns parsed JSON data", vcr: { cassette_name: "resilient_client_successful_search" } do
         # Use real TMDB API key for VCR recording
-        real_client = described_class.new(ENV['TMDB_API_KEY'])
+        real_client = described_class.new(ENV.fetch("TMDB_API_KEY", nil))
         # Force production mode and reset circuit breaker for this client
         real_client.instance_variable_set(:@test_mode, false)
         real_client.instance_variable_get(:@circuit_breaker).reset!
-        
+
         result = real_client.request("search/person", { query: "test" })
 
         expect(result).to have_key("results")
@@ -65,10 +63,10 @@ RSpec.describe ResilientTMDBClient do
         ).at_least(:once)
 
         # Use real TMDB API key for VCR recording
-        real_client = described_class.new(ENV['TMDB_API_KEY'])
+        real_client = described_class.new(ENV.fetch("TMDB_API_KEY", nil))
         real_client.instance_variable_set(:@test_mode, false)
         real_client.instance_variable_get(:@circuit_breaker).reset!
-        
+
         real_client.request("search/person", { query: "test" })
       end
     end
@@ -223,10 +221,10 @@ RSpec.describe ResilientTMDBClient do
       )
 
       # Use real TMDB API key for VCR recording
-      real_client = described_class.new(ENV['TMDB_API_KEY'])
+      real_client = described_class.new(ENV.fetch("TMDB_API_KEY", nil))
       real_client.instance_variable_set(:@test_mode, false)
       real_client.instance_variable_get(:@circuit_breaker).reset!
-      
+
       real_client.request("search/person", { query: "test" })
     end
 

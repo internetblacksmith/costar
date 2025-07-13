@@ -16,7 +16,8 @@ end
 
 # Load test environment
 ENV["RACK_ENV"] = "test"
-# Don't set a default API key - let VCR handle it
+# Set a dummy API key for VCR tests
+ENV["TMDB_API_KEY"] = "test_api_key_for_vcr" unless ENV["TMDB_API_KEY"]
 
 # Require the main application
 require_relative "../app"
@@ -63,12 +64,17 @@ RSpec.configure do |config|
     allow(PerformanceMonitor).to receive(:track_cache_performance).and_return(nil) if defined?(PerformanceMonitor)
     allow(PerformanceMonitor).to receive(:track_api_performance).and_return(nil) if defined?(PerformanceMonitor)
 
-    # Skip mocking for VCR tests - let real HTTP calls happen so VCR can intercept them
-    unless example.metadata[:vcr]
-      # Disable circuit breaker fallbacks during tests to allow proper mocking
+    # For VCR tests, disable caching to ensure HTTP interactions are recorded/replayed
+    if example.metadata[:vcr]
+      # Mock Cache.get to always return nil (cache miss)
+      allow(Cache).to receive(:get).and_return(nil)
+      # Mock Cache.set to be a no-op
+      allow(Cache).to receive(:set).and_return(true)
+    else
+      # Disable circuit breaker fallbacks during non-VCR tests to allow proper mocking
       allow_any_instance_of(SimpleCircuitBreaker).to receive(:call).and_yield if defined?(SimpleCircuitBreaker)
 
-      # Disable retry mechanisms during tests
+      # Disable retry mechanisms during non-VCR tests
       allow_any_instance_of(ResilientTMDBClient).to receive(:with_retries).and_yield if defined?(ResilientTMDBClient)
     end
   end

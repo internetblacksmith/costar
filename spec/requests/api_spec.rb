@@ -122,7 +122,7 @@ RSpec.describe "API Endpoints", type: :request do
       context "when searching for common terms" do
         it "returns actor suggestions for search term", vcr: { cassette_name: "api_failure_search" } do
           get "/api/actors/search", { q: "test", field: "actor1" }
-          
+
           expect(last_response.status).to eq(200)
           # API returns results for the search term "test"
           expect(last_response.body).to include("suggestion-item")

@@ -19,8 +19,8 @@
                     <span class="material-icons shared-star">star</span>
                 <% end %>
             </div>
-            <div class="movie-character">as <%= movie[:character] || 'Unknown' %></div>
             <div class="movie-actor"><%= actor_name %></div>
+            <div class="movie-character">as <%= movie[:character] || 'Unknown' %></div>
             <% if shared && mobile_actors_info %>
                 <div class="mobile-shared-actors">
                     <% mobile_actors_info.each_with_index do |actor_info, index| %>

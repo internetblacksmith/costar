@@ -35,6 +35,18 @@
     margin: 0 auto;
 }
 
+/* Hide mobile timeline lines on desktop */
+.mobile-timeline-left,
+.mobile-timeline-right {
+    display: none;
+}
+
+/* Show desktop-only content */
+.desktop-only {
+    display: block;
+    width: 100%;
+}
+
 .timeline::before {
     content: '';
     position: absolute;
@@ -114,6 +126,14 @@
     justify-content: flex-start;
     padding-left: var(--spacing-sm);
     width: 100%;
+}
+
+/* Make movie items span full width of their containers */
+.movie-left .movie-item,
+.movie-right .movie-item {
+    width: 100%;
+    max-width: none;
+    flex: 1;
 }
 
 .movie-center {

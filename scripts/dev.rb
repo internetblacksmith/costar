@@ -4,12 +4,12 @@
 # Development startup script for ActorSync
 # This script ensures proper environment setup and starts the development server
 
-require 'fileutils'
-require 'open3'
+require "fileutils"
+require "open3"
 
 class DevServer
   def initialize
-    @project_root = File.expand_path('..', __dir__)
+    @project_root = File.expand_path("..", __dir__)
     @required_commands = %w[bundle ruby]
     @optional_commands = %w[doppler]
   end
@@ -17,7 +17,7 @@ class DevServer
   def start
     puts "🎬 ActorSync Development Server"
     puts "================================\n"
-    
+
     check_project_directory
     check_dependencies
     check_environment_setup
@@ -29,7 +29,7 @@ class DevServer
   private
 
   def check_project_directory
-    unless File.exist?(File.join(@project_root, 'app.rb'))
+    unless File.exist?(File.join(@project_root, "app.rb"))
       puts "❌ Error: Not in ActorSync project directory"
       puts "   Expected to find app.rb in #{@project_root}"
       exit(1)
@@ -39,21 +39,19 @@ class DevServer
 
   def check_dependencies
     missing_commands = []
-    
+
     @required_commands.each do |cmd|
-      unless command_available?(cmd)
-        missing_commands << cmd
-      end
+      missing_commands << cmd unless command_available?(cmd)
     end
 
     unless missing_commands.empty?
-      puts "❌ Missing required commands: #{missing_commands.join(', ')}"
+      puts "❌ Missing required commands: #{missing_commands.join(", ")}"
       puts "   Please install Ruby and Bundler before continuing"
       exit(1)
     end
 
     puts "✅ Required dependencies available"
-    
+
     # Check optional commands
     @optional_commands.each do |cmd|
       if command_available?(cmd)
@@ -66,11 +64,11 @@ class DevServer
 
   def check_environment_setup
     puts "\n🔍 Checking environment configuration..."
-    
+
     if doppler_configured?
       puts "✅ Doppler configured for this project"
       @use_doppler = true
-    elsif File.exist?(File.join(@project_root, '.env'))
+    elsif File.exist?(File.join(@project_root, ".env"))
       puts "✅ .env file found"
       puts "💡 Consider switching to Doppler for better secret management"
       @use_doppler = false
@@ -90,33 +88,33 @@ class DevServer
 
   def validate_environment
     puts "\n🔍 Validating environment variables..."
-    
+
     # Run validation using our Configuration class
     validation_cmd = if @use_doppler
-      "doppler run -- ruby -e \"require './lib/config/configuration'; Configuration.instance\""
-    else
-      "ruby -e \"require './lib/config/configuration'; Configuration.instance\""
-    end
+                       "doppler run -- ruby -e \"require './lib/config/configuration'; Configuration.instance\""
+                     else
+                       "ruby -e \"require './lib/config/configuration'; Configuration.instance\""
+                     end
 
     output, status = Open3.capture2e(validation_cmd, chdir: @project_root)
-    
+
     unless status.success?
       puts "❌ Environment validation failed:"
       puts output
       puts "\nPlease fix the configuration issues before starting the server."
       exit(1)
     end
-    
-    puts output if output.strip.length > 0
+
+    puts output if output.strip.length.positive?
   end
 
   def install_dependencies
     puts "\n📦 Installing dependencies..."
-    
-    gemfile_lock = File.join(@project_root, 'Gemfile.lock')
+
+    gemfile_lock = File.join(@project_root, "Gemfile.lock")
     if File.exist?(gemfile_lock)
       # Check if dependencies are up to date
-      output, status = Open3.capture2e('bundle check', chdir: @project_root)
+      _, status = Open3.capture2e("bundle check", chdir: @project_root)
       if status.success?
         puts "✅ Dependencies are up to date"
         return
@@ -124,14 +122,14 @@ class DevServer
     end
 
     puts "   Running bundle install..."
-    output, status = Open3.capture2e('bundle install', chdir: @project_root)
-    
+    output, status = Open3.capture2e("bundle install", chdir: @project_root)
+
     unless status.success?
       puts "❌ Failed to install dependencies:"
       puts output
       exit(1)
     end
-    
+
     puts "✅ Dependencies installed successfully"
   end
 
@@ -139,16 +137,16 @@ class DevServer
     puts "\n🚀 Starting development server..."
     puts "   Server will be available at: http://localhost:4567"
     puts "   Press Ctrl+C to stop\n"
-    
+
     server_cmd = if @use_doppler
-      "doppler run -- ./scripts/server"
-    else
-      "./scripts/server"
-    end
+                   "doppler run -- ./scripts/server"
+                 else
+                   "./scripts/server"
+                 end
 
     puts "Command: #{server_cmd}"
     puts "=" * 50
-    
+
     # Start the server
     Dir.chdir(@project_root) do
       exec(server_cmd)
@@ -160,15 +158,13 @@ class DevServer
   end
 
   def doppler_configured?
-    return false unless command_available?('doppler')
-    
+    return false unless command_available?("doppler")
+
     # Check if doppler is configured for this project
-    output, status = Open3.capture2e('doppler secrets --silent', chdir: @project_root)
+    _, status = Open3.capture2e("doppler secrets --silent", chdir: @project_root)
     status.success?
   end
 end
 
 # Check if we're being run directly
-if __FILE__ == $0
-  DevServer.new.start
-end
+DevServer.new.start if __FILE__ == $PROGRAM_NAME

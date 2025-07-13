@@ -16,3 +16,6 @@
 
 /* Responsive design */
 @import url('./responsive.css');
+
+/* Modern UI enhancements */
+@import url('./modern-ui.css');

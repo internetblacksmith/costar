@@ -64,7 +64,7 @@ RSpec.describe "Actor Search Flow Integration", :vcr do
       end
 
       VCR.use_cassette("actor_search_field_params_actor2") do
-        # Test with actor2 field
+        # Test with actor2 field - use different query to avoid cache
         get "/api/actors/search", { q: "Brad", field: "actor2" }
 
         html = last_response.body

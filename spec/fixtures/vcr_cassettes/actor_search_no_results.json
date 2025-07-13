@@ -36,31 +36,31 @@
             "keep-alive"
           ],
           "Date": [
-            "Sun, 13 Jul 2025 14:30:30 GMT"
+            "Sun, 13 Jul 2025 14:54:09 GMT"
           ],
           "Server": [
             "openresty"
           ],
           "Cache-Control": [
-            "public, max-age=21665"
+            "public, max-age=20246"
           ],
           "X-Memc": [
-            "MISS, STORE"
+            "HIT"
           ],
           "X-Memc-Key": [
             "57759f49bb09e3c66ff43e4df79b8888ee837b154cb034e7d161ce25b0116af9"
           ],
           "X-Memc-Age": [
-            "0"
+            "1419"
           ],
           "X-Memc-Expires": [
-            "21665"
+            "20246"
           ],
           "X-Az": [
-            "us-east-1b"
+            "us-east-1a"
           ],
           "X-Task-Id": [
-            "f9c53df32445444d91202c48f5cf8823"
+            "3cb2411ae41b42ccb10d82afd9090f28"
           ],
           "Etag": [
             "W/\"0e23279b004381f72a34159d5c7dfd1f\""
@@ -70,19 +70,22 @@
             "accept-encoding"
           ],
           "X-Cache": [
-            "Miss from cloudfront"
+            "Hit from cloudfront"
           ],
           "Via": [
-            "1.1 71fab3812d3ca29aef88f4dc095b47da.cloudfront.net (CloudFront)"
+            "1.1 5b945cce9efcabde778966bdff946d7a.cloudfront.net (CloudFront)"
           ],
           "X-Amz-Cf-Pop": [
-            "CDG50-C1"
+            "TXL50-P3"
           ],
           "Alt-Svc": [
             "h3=\":443\"; ma=86400"
           ],
           "X-Amz-Cf-Id": [
-            "JMpWEDZbQAo13tuRBKrT9HgQlb7XXwyelRP3cHSWHAu7ZdFlVMDMUg=="
+            "ab3MNiP00RM5Q29IWabZbfwvFpSBMXUrXXhzjP_cKNjreAA_NXK4MQ=="
+          ],
+          "Age": [
+            "96"
           ]
         },
         "body": {
@@ -90,7 +93,7 @@
           "string": "{\"page\":1,\"results\":[],\"total_pages\":1,\"total_results\":0}"
         }
       },
-      "recorded_at": "Sun, 13 Jul 2025 14:30:30 GMT"
+      "recorded_at": "Sun, 13 Jul 2025 14:55:46 GMT"
     }
   ],
   "recorded_with": "VCR 6.3.1"

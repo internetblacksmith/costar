@@ -35,6 +35,7 @@ group :test do
   gem "rspec", "~> 3.12"
   gem "rspec_junit_formatter", "~> 0.6" # JUnit format for CI
   gem "simplecov", "~> 0.22"
+  gem "vcr", "~> 6.2" # Record and replay HTTP interactions
   gem "webmock", "~> 3.18"
 end
 

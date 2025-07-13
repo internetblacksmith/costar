@@ -22,10 +22,7 @@ class Cache
       duration_ms = (Time.now - start_time) * 1000
 
       # Track cache performance if monitor is available
-      if defined?(PerformanceMonitor) && PerformanceMonitor.respond_to?(:track_cache_performance)
-        hit = !result.nil?
-        PerformanceMonitor.track_cache_performance("get", key, hit, duration_ms)
-      end
+      track_cache_performance("get", key, !result.nil?, duration_ms)
 
       result
     end
@@ -36,7 +33,7 @@ class Cache
       duration_ms = (Time.now - start_time) * 1000
 
       # Track cache performance if monitor is available (set is always a "miss" since we're writing)
-      PerformanceMonitor.track_cache_performance("set", key, false, duration_ms) if defined?(PerformanceMonitor) && PerformanceMonitor.respond_to?(:track_cache_performance)
+      track_cache_performance("set", key, false, duration_ms)
 
       result
     end
@@ -58,6 +55,16 @@ class Cache
     def production?
       env = ENV.fetch("RACK_ENV", "development")
       %w[production deployment].include?(env)
+    end
+
+    def track_cache_performance(operation, key, hit, duration_ms)
+      return unless defined?(PerformanceMonitor)
+      return unless PerformanceMonitor.respond_to?(:track_cache_performance)
+
+      PerformanceMonitor.track_cache_performance(operation, key, hit, duration_ms)
+    rescue StandardError => e
+      # Silently fail in development to avoid breaking the application
+      warn("Cache performance tracking error: #{e.message}") if ENV["RACK_ENV"] == "development"
     end
   end
 

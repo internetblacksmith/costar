@@ -11,6 +11,11 @@ class ActorComparisonService
 
     movies_data = fetch_actor_movies(actor1_id, actor2_id)
     profiles_data = fetch_actor_profiles(actor1_id, actor2_id)
+    
+    # Get actor names from API if not provided
+    actor1_name ||= get_actor_name(actor1_id)
+    actor2_name ||= get_actor_name(actor2_id)
+    
     timeline_data = build_timeline_data(movies_data, actor1_name, actor2_name)
 
     build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name, actor1_id, actor2_id)
@@ -76,6 +81,24 @@ class ActorComparisonService
     rescue TMDBError => e
       puts "TMDB Error getting profile: #{e.message}" if Configuration.instance.development?
       { profile_path: nil }
+    end
+  end
+  
+  def get_actor_name(actor_id)
+    # Try to get from cache first
+    cache_key = "actor_name_#{actor_id}"
+    cached_name = Cache.get(cache_key)
+    return cached_name if cached_name
+    
+    # Fetch actor details from TMDB
+    begin
+      actor_details = @tmdb_service.get_actor_details(actor_id)
+      name = actor_details[:name] || "Unknown Actor"
+      Cache.set(cache_key, name, 3600) # 1 hour cache
+      name
+    rescue TMDBError => e
+      puts "TMDB Error getting actor name: #{e.message}" if Configuration.instance.development?
+      "Unknown Actor"
     end
   end
 end

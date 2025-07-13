@@ -20,12 +20,29 @@ class TimelineBuilder
 
   private
 
+  # Helper methods to support both DTOs and hashes
+  def movie_id(movie)
+    movie.respond_to?(:id) ? movie.id : movie[:id]
+  end
+
+  def movie_year(movie)
+    movie.respond_to?(:year) ? movie.year : movie[:year]
+  end
+
+  def movie_title(movie)
+    movie.respond_to?(:title) ? movie.title : movie[:title]
+  end
+
+  def movie_release_date(movie)
+    movie.respond_to?(:release_date) ? movie.release_date : movie[:release_date]
+  end
+
   def sorted_years
     all_years.uniq.compact.sort.reverse
   end
 
   def all_years
-    (@actor1_movies + @actor2_movies).map { |m| m[:year] }
+    (@actor1_movies + @actor2_movies).map { |m| movie_year(m) }
   end
 
   def shared_movies
@@ -33,8 +50,8 @@ class TimelineBuilder
   end
 
   def find_shared_movies
-    actor1_movie_ids = @actor1_movies.map { |m| m[:id] }
-    @actor2_movies.select { |movie| actor1_movie_ids.include?(movie[:id]) }
+    actor1_movie_ids = @actor1_movies.map { |m| movie_id(m) }
+    @actor2_movies.select { |movie| actor1_movie_ids.include?(movie_id(movie)) }
   end
 
   def processed_movies_by_year
@@ -51,20 +68,20 @@ class TimelineBuilder
     result = {}
 
     sorted_years.each do |year|
-      result[year] = shared_movies.select { |m| m[:year] == year }
+      result[year] = shared_movies.select { |m| movie_year(m) == year }
     end
 
     result
   end
 
   def process_movies_for_year(year)
-    actor1_movies = @actor1_movies.select { |m| m[:year] == year }
-    actor2_movies = @actor2_movies.select { |m| m[:year] == year }
+    actor1_movies = @actor1_movies.select { |m| movie_year(m) == year }
+    actor2_movies = @actor2_movies.select { |m| movie_year(m) == year }
 
     return [] if actor1_movies.empty? && actor2_movies.empty?
 
     all_movies_this_year = build_movie_list_for_year(actor1_movies, actor2_movies)
-    all_movies_this_year.sort_by! { |item| item[:movie][:release_date] || "0000-00-00" }
+    all_movies_this_year.sort_by! { |item| movie_release_date(item[:movie]) || "0000-00-00" }
 
     group_shared_movies(all_movies_this_year)
   end
@@ -90,7 +107,7 @@ class TimelineBuilder
       movie: movie,
       actor: actor_name,
       side: side,
-      is_shared: shared_movies.any? { |shared| shared[:id] == movie[:id] }
+      is_shared: shared_movies.any? { |shared| movie_id(shared) == movie_id(movie) }
     }
   end
 
@@ -99,11 +116,11 @@ class TimelineBuilder
     shared_movie_ids = []
 
     movies.each do |item|
-      if item[:is_shared] && !shared_movie_ids.include?(item[:movie][:id])
+      if item[:is_shared] && !shared_movie_ids.include?(movie_id(item[:movie]))
         # Find both versions of this shared movie
-        shared_versions = movies.select { |m| m[:movie][:id] == item[:movie][:id] }
+        shared_versions = movies.select { |m| movie_id(m[:movie]) == movie_id(item[:movie]) }
         processed_movies << { type: :shared, movies: shared_versions }
-        shared_movie_ids << item[:movie][:id]
+        shared_movie_ids << movie_id(item[:movie])
       elsif !item[:is_shared]
         processed_movies << { type: :single, movie: item }
       end

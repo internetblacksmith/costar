@@ -5,6 +5,8 @@ require_relative "tmdb_data_processor"
 require_relative "cache_manager"
 require_relative "../config/logger"
 require_relative "../middleware/error_handler_module"
+require_relative "../dto/dto_factory"
+require_relative "../dto/search_results_dto"
 
 # High-level service for interacting with The Movie Database API
 class TMDBService
@@ -23,23 +25,38 @@ class TMDBService
   end
 
   def search_actors(query)
-    return [] if query.nil? || query.empty?
+    return SearchResultsDTO.new(actors: []) if query.nil? || query.empty?
 
-    @cache_manager.cache_search_results(query) do
+    cached_data = @cache_manager.cache_search_results(query) do
       fetch_actors_from_api(query)
     end
+
+    # Convert to DTO if not already
+    return cached_data if cached_data.is_a?(SearchResultsDTO)
+
+    DTOFactory.search_results_from_api(cached_data)
   end
 
   def get_actor_movies(actor_id)
-    @cache_manager.cache_actor_movies(actor_id) do
+    cached_data = @cache_manager.cache_actor_movies(actor_id) do
       fetch_movies_from_api(actor_id)
     end
+
+    # Convert array of movie hashes to MovieDTOs
+    return cached_data if cached_data.is_a?(Array) && cached_data.first.is_a?(MovieDTO)
+
+    (cached_data || []).map { |movie_data| DTOFactory.movie_from_api(movie_data) }.compact
   end
 
   def get_actor_profile(actor_id)
-    @cache_manager.cache_actor_profile(actor_id) do
+    cached_data = @cache_manager.cache_actor_profile(actor_id) do
       fetch_profile_from_api(actor_id)
     end
+
+    # Convert to ActorDTO
+    return cached_data if cached_data.is_a?(ActorDTO)
+
+    DTOFactory.actor_from_api(cached_data)
   end
 
   def get_actor_details(actor_id)
@@ -56,14 +73,14 @@ class TMDBService
       data = @client.request("search/person", query: query)
       api_duration = (Time.now - api_start_time) * 1000
 
-      actors = TMDBDataProcessor.process_actor_search_results(data)
       log_api_call("search/person", api_duration)
 
-      actors
+      # Return raw API response for DTO conversion
+      data
     end
   rescue TMDBError => e
     handle_service_error(e, "search_actors")
-    []
+    { "results" => [] }
   end
 
   def handle_service_error(error, method_name)
@@ -86,10 +103,10 @@ class TMDBService
       data = @client.request(endpoint)
       api_duration = (Time.now - api_start_time) * 1000
 
-      movies = TMDBDataProcessor.process_movie_credits(data)
       log_api_call(endpoint, api_duration)
 
-      movies
+      # Process and return movie data
+      TMDBDataProcessor.process_movie_credits(data)
     end
   rescue TMDBError => e
     handle_service_error(e, "get_actor_movies")
@@ -104,14 +121,14 @@ class TMDBService
       data = @client.request(endpoint)
       api_duration = (Time.now - api_start_time) * 1000
 
-      profile = TMDBDataProcessor.normalize_actor_profile(data)
       log_api_call(endpoint, api_duration)
 
-      profile
+      # Return raw API response for DTO conversion
+      data
     end
   rescue TMDBError => e
     handle_service_error(e, "get_actor_profile")
-    default_actor_profile(actor_id)
+    nil
   end
 
   def default_actor_profile(actor_id)

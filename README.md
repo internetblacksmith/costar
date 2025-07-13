@@ -110,7 +110,7 @@ actorsync/
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
 │   └── styles.css            # Modern CSS with responsive design
-├── spec/                     # Test suite (202 examples, 0 failures)
+├── spec/                     # Test suite (265 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -257,7 +257,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (202 examples, 0 failures)
+- **RSpec** test framework (265 examples, 0 failures)
 - **WebMock** for API testing
 - **RuboCop** for code quality
 - **Brakeman** for security scanning

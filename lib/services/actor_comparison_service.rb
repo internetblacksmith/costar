@@ -2,6 +2,8 @@
 
 require_relative "cache_manager"
 require_relative "../middleware/error_handler_module"
+require_relative "../dto/dto_factory"
+require_relative "../dto/comparison_result_dto"
 
 # Service for comparing actors and building timeline data
 class ActorComparisonService
@@ -16,9 +18,14 @@ class ActorComparisonService
     validate_actor_ids(actor1_id, actor2_id)
 
     # Cache the entire comparison result to avoid redundant processing
-    @cache_manager.cache_actor_comparison(actor1_id, actor2_id) do
+    cached_data = @cache_manager.cache_actor_comparison(actor1_id, actor2_id) do
       perform_comparison(actor1_id, actor2_id, actor1_name, actor2_name)
     end
+
+    # Convert to DTO if not already
+    return cached_data if cached_data.is_a?(ComparisonResultDTO)
+
+    DTOFactory.comparison_result_from_service(cached_data)
   end
 
   private
@@ -120,13 +127,29 @@ class ActorComparisonService
       actor2_name: actor_names[:actor2],
       actor1_id: actor_ids[:actor1],
       actor2_id: actor_ids[:actor2],
-      actor1_profile: profiles_data[:actor1],
-      actor2_profile: profiles_data[:actor2],
+      actor1_profile_path: extract_profile_path(profiles_data[:actor1]),
+      actor2_profile_path: extract_profile_path(profiles_data[:actor2]),
       years: timeline_data[:years],
       shared_movies: timeline_data[:shared_movies],
       processed_movies: timeline_data[:processed_movies],
-      shared_movies_by_year: timeline_data[:shared_movies_by_year]
+      shared_movies_by_year: timeline_data[:shared_movies_by_year],
+      timeline_data: {
+        years: timeline_data[:years],
+        shared_movies: timeline_data[:shared_movies],
+        processed_movies: timeline_data[:processed_movies],
+        shared_movies_by_year: timeline_data[:shared_movies_by_year]
+      }
     }
+  end
+
+  def extract_profile_path(profile_data)
+    return nil unless profile_data
+
+    if profile_data.respond_to?(:profile_path)
+      profile_data.profile_path
+    elsif profile_data.is_a?(Hash)
+      profile_data[:profile_path] || profile_data["profile_path"]
+    end
   end
 
   def handle_tmdb_error(error, operation)

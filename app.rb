@@ -128,11 +128,11 @@ class ActorSyncApp < Sinatra::Base
     # Build Content Security Policy
     policies = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://unpkg.com", # HTMX from CDN
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "script-src 'self' 'unsafe-inline' https://unpkg.com https://app.posthog.com", # HTMX from CDN + PostHog
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com", # Allow CSS imports and external styles
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' https://image.tmdb.org data:", # TMDB images
-      "connect-src 'self'",
+      "connect-src 'self' https://api.themoviedb.org https://app.posthog.com", # API calls
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'"

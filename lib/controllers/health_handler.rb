@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require_relative "../services/performance_monitor"
+require_relative "../services/api_response_builder"
 
 # Health check handler for monitoring application status
 class HealthHandler
   def initialize(app)
     @app = app
+    @response_builder = ApiResponseBuilder.new(app)
   end
 
   def handle
@@ -45,9 +47,14 @@ class HealthHandler
     overall_healthy = cache_healthy && tmdb_healthy
     status_code = overall_healthy ? 200 : 503
 
-    @app.status status_code
-    create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, performance_summary,
-                         overall_healthy).to_json
+    data = create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, performance_summary,
+                                overall_healthy)
+
+    if overall_healthy
+      @response_builder.success(data)
+    else
+      @response_builder.error("Service degraded", code: status_code, details: data)
+    end
   end
 
   def create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, performance_summary, overall_healthy)
@@ -82,11 +89,6 @@ class HealthHandler
   end
 
   def build_error_response(error)
-    @app.status 500
-    {
-      status: "error",
-      timestamp: Time.now.iso8601,
-      error: "Health check failed: #{error.message}"
-    }.to_json
+    @response_builder.error("Health check failed: #{error.message}", code: 500)
   end
 end

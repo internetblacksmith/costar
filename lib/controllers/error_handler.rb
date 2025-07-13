@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "error_handler_tmdb"
+require_relative "../services/api_response_builder"
 
 # Error handling controller for application-wide error management
 module ErrorHandler
@@ -24,9 +25,8 @@ module ErrorHandler
       error APIError do
         error = env["sinatra.error"]
         Sentry.capture_exception(error) if ENV["SENTRY_DSN"]
-        status error.code
-        content_type :json
-        { error: error.message }.to_json
+        response_builder = ApiResponseBuilder.new(self)
+        halt response_builder.error(error.message, code: error.code)
       end
     end
 
@@ -34,9 +34,8 @@ module ErrorHandler
       error ValidationError do
         error = env["sinatra.error"]
         Sentry.capture_exception(error) if ENV["SENTRY_DSN"]
-        status 400
-        content_type :json
-        { error: error.message }.to_json
+        response_builder = ApiResponseBuilder.new(self)
+        halt response_builder.validation_error(error.message.split(", "))
       end
     end
 
@@ -90,11 +89,11 @@ module ErrorHandler
                               user_agent: request.user_agent,
                               referrer: request.referrer)
 
-        status 404
         if request.xhr? || request.content_type&.include?("application/json")
-          content_type :json
-          { error: "Not found" }.to_json
+          response_builder = ApiResponseBuilder.new(self)
+          halt response_builder.error("Not found", code: 404)
         else
+          status 404
           send_file File.join(settings.public_folder, "errors", "404.html")
         end
       end
@@ -122,13 +121,11 @@ module ErrorHandler
       Sentry.capture_exception(error) if defined?(Sentry)
 
       if request.xhr? || request.content_type&.include?("application/json")
-        status error.respond_to?(:code) ? error.code : 500
-        content_type :json
-        {
-          error: "Service temporarily unavailable",
-          message: "Please try again later",
-          fallback: true
-        }.to_json
+        response_builder = ApiResponseBuilder.new(self)
+        code = error.respond_to?(:code) ? error.code : 500
+        halt response_builder.error("Service temporarily unavailable",
+                                    code: code,
+                                    details: { message: "Please try again later", fallback: true })
       else
         status 500
         send_error_page("500.html")
@@ -143,11 +140,11 @@ module ErrorHandler
                             user_agent: request.user_agent,
                             referrer: request.referrer)
 
-      status 404
       if request.xhr? || request.content_type&.include?("application/json")
-        content_type :json
-        { error: "Not found" }.to_json
+        response_builder = ApiResponseBuilder.new(self)
+        halt response_builder.error("Not found", code: 404)
       else
+        status 404
         send_error_page("404.html")
       end
     end
@@ -166,11 +163,11 @@ module ErrorHandler
       # Send to Sentry if available
       Sentry.capture_exception(error) if defined?(Sentry)
 
-      status 500
       if request.xhr? || request.content_type&.include?("application/json")
-        content_type :json
-        { error: "Internal server error" }.to_json
+        response_builder = ApiResponseBuilder.new(self)
+        halt response_builder.error("Internal server error", code: 500)
       else
+        status 500
         send_error_page("500.html")
       end
     end

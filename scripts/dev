@@ -1,0 +1,5 @@
+#!/bin/bash
+# Simple shell wrapper for the Ruby dev script
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ruby "$SCRIPT_DIR/dev.rb" "$@"

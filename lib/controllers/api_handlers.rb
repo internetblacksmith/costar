@@ -3,150 +3,122 @@
 require_relative "../config/logger"
 require_relative "api_error_handler"
 require_relative "api_renderer"
+require_relative "input_validator"
+require_relative "api_business_logic"
 
-# API handlers for actor search and comparison
+##
+# Orchestrates API request handling with separated concerns
+#
+# Coordinates input validation, business logic, and rendering
+# while maintaining clean separation of responsibilities.
+#
 class ApiHandlers
   include ApiErrorHandler
   include ApiRenderer
+
   def initialize(app)
     @app = app
-  end
-
-  def handle_actor_search
-    query = sanitize_search_query(@app.params[:q])
-    field = sanitize_field_name(@app.params[:field])
-
-    return render_empty_suggestions(field) if query.nil? || query.empty?
-
-    search_actors(query, field)
-  end
-
-  def handle_actor_movies
-    actor_id = sanitize_actor_id(@app.params[:id])
-    @app.halt 400, { error: "Actor ID required" }.to_json if actor_id.nil?
-
-    fetch_actor_movies(actor_id)
-  end
-
-  def handle_actor_comparison
-    actor_ids = extract_actor_params
-    return error_missing_actors if actor_ids[:actor1_id].nil? || actor_ids[:actor2_id].nil?
-
-    perform_comparison(actor_ids)
-  end
-
-  private
-
-  def search_actors(query, field)
-    set_search_variables(query, field)
-    @app.erb :suggestions, layout: false
-  rescue TMDBError => e
-    handle_api_error(e, "search_actors")
-    render_search_error(e.message)
-  rescue StandardError => e
-    handle_unexpected_error(e, "search_actors")
-    render_unexpected_error
-  end
-
-  def fetch_actor_movies(actor_id)
-    movies = @app.settings.tmdb_service.get_actor_movies(actor_id)
-    @app.content_type :json
-    movies.to_json
-  rescue TMDBError => e
-    handle_api_error_with_context(e, "fetch_actor_movies", actor_id: actor_id)
-    @app.halt e.code, { error: e.message }.to_json
-  rescue StandardError => e
-    handle_unexpected_error_with_context(e, "fetch_actor_movies", actor_id: actor_id)
-    @app.halt 500, { error: "Failed to get actor movies" }.to_json
-  end
-
-  def extract_actor_params
-    {
-      actor1_id: sanitize_actor_id(@app.params[:actor1_id]),
-      actor2_id: sanitize_actor_id(@app.params[:actor2_id]),
-      actor1_name: sanitize_actor_name(@app.params[:actor1_name]),
-      actor2_name: sanitize_actor_name(@app.params[:actor2_name])
-    }
-  end
-
-  def perform_comparison(actor_ids)
-    comparison_data = fetch_comparison_data(actor_ids)
-    assign_timeline_variables(comparison_data)
-    @app.erb :timeline, layout: false
-  rescue ValidationError => e
-    "<div class=\"error\">#{e.message}</div>"
-  rescue TMDBError => e
-    "<div class=\"error\">API Error: #{e.message}</div>"
-  rescue StandardError
-    "<div class=\"error\">Failed to compare actors. Please try again.</div>"
-  end
-
-  def fetch_comparison_data(actor_ids)
-    @app.settings.comparison_service.compare(
-      actor_ids[:actor1_id], actor_ids[:actor2_id],
-      actor_ids[:actor1_name], actor_ids[:actor2_name]
+    @validator = InputValidator.new
+    @business_logic = ApiBusinessLogic.new(
+      app.settings.tmdb_service,
+      app.settings.comparison_service
     )
   end
 
-  def assign_timeline_variables(data)
-    @app.instance_variable_set(:@actor1_movies, data[:actor1_movies])
-    @app.instance_variable_set(:@actor2_movies, data[:actor2_movies])
-    @app.instance_variable_set(:@shared_movies, data[:shared_movies])
-    @app.instance_variable_set(:@actor1_name, data[:actor1_name])
-    @app.instance_variable_set(:@actor2_name, data[:actor2_name])
-    @app.instance_variable_set(:@actor1_profile, data[:actor1_profile])
-    @app.instance_variable_set(:@actor2_profile, data[:actor2_profile])
-    @app.instance_variable_set(:@years, data[:years])
-    @app.instance_variable_set(:@processed_movies, data[:processed_movies])
-    # Add actor IDs for share functionality
-    @app.instance_variable_set(:@actor1_id, data[:actor1_id])
-    @app.instance_variable_set(:@actor2_id, data[:actor2_id])
+  ##
+  # Handles actor search requests
+  #
+  # @return [String] Rendered HTML response
+  #
+  def handle_actor_search(params = nil)
+    # Use provided params or fall back to app params
+    request_params = params || @app.params
+
+    # Validate input
+    validation = @validator.validate_actor_search(request_params)
+
+    # Handle empty query (valid case)
+    return render_empty_suggestions(@app, validation.field) if validation.query.nil?
+
+    begin
+      # Execute business logic
+      actors = @business_logic.search_actors(validation.query)
+
+      # Render response
+      render_actor_suggestions(@app, actors, validation.field)
+    rescue TMDBError => e
+      handle_api_error(e, "search_actors")
+      render_search_error(e.message)
+    rescue StandardError => e
+      handle_unexpected_error(e, "search_actors")
+      render_unexpected_error
+    end
   end
 
-  # Input sanitization methods
-  def sanitize_search_query(query)
-    return nil if query.nil?
+  ##
+  # Handles actor movies requests
+  #
+  # @return [String] JSON response
+  #
+  def handle_actor_movies(params = nil)
+    # Use provided params or fall back to app params
+    request_params = params || @app.params
 
-    # Strip whitespace and limit length
-    sanitized = query.to_s.strip
-    return nil if sanitized.empty?
-    return nil if sanitized.length > 100 # Reasonable search query limit
+    # Validate input
+    validation = @validator.validate_actor_id(request_params)
 
-    # Remove potentially dangerous characters but allow international names
-    # Allow letters, numbers, spaces, apostrophes, hyphens, and periods
-    sanitized.gsub(/[^\p{L}\p{N}\s'\-\.]/, "").strip
+    return render_json_error(@app, 400, validation.errors.first) unless validation.valid?
+
+    begin
+      # Execute business logic
+      movies = @business_logic.fetch_actor_movies(validation.actor_id)
+
+      # Render response
+      render_actor_movies_json(@app, movies)
+    rescue TMDBError => e
+      handle_api_error_with_context(e, "fetch_actor_movies", actor_id: validation.actor_id)
+      render_json_error(@app, e.code, e.message)
+    rescue StandardError => e
+      handle_unexpected_error_with_context(e, "fetch_actor_movies", actor_id: validation.actor_id)
+      render_json_error(@app, 500, "Failed to get actor movies")
+    end
   end
 
-  def sanitize_field_name(field)
-    return "actor1" if field.nil?
+  ##
+  # Handles actor comparison requests
+  #
+  # @return [String] Rendered HTML response
+  #
+  def handle_actor_comparison(params = nil)
+    # Use provided params or fall back to app params
+    request_params = params || @app.params
 
-    # Only allow predefined field names
-    %w[actor1 actor2].include?(field.to_s) ? field.to_s : "actor1"
-  end
+    # Validate input
+    validation = @validator.validate_actor_comparison(request_params)
 
-  def sanitize_actor_id(actor_id)
-    return nil if actor_id.nil? || actor_id.to_s.strip.empty?
+    unless validation.valid?
+      # Check if this is a missing actor ID error - use generic message for UX consistency
+      return render_missing_actors_error if validation.errors.any? { |error| error.include?("Actor") && error.include?("ID is required") }
 
-    # Actor IDs should be positive integers
-    id = actor_id.to_s.strip
-    return nil unless id.match?(/\A\d+\z/) # Only digits
+      return render_validation_errors(validation.errors)
 
-    parsed_id = id.to_i
-    return nil if parsed_id <= 0 || parsed_id > 999_999_999 # Reasonable limits
+    end
 
-    parsed_id
-  end
+    begin
+      # Execute business logic
+      comparison_data = @business_logic.compare_actors(
+        validation.actor1_id, validation.actor2_id,
+        validation.actor1_name, validation.actor2_name
+      )
 
-  def sanitize_actor_name(name)
-    return nil if name.nil?
-
-    # Strip whitespace and limit length
-    sanitized = name.to_s.strip
-    return nil if sanitized.empty?
-    return nil if sanitized.length > 200 # Reasonable name limit
-
-    # Allow letters, numbers, spaces, apostrophes, hyphens, periods, and common punctuation
-    # Remove potentially dangerous characters but preserve international names
-    sanitized.gsub(/[^\p{L}\p{N}\s'\-\.\(\)]/, "").strip
+      # Render response
+      render_actor_timeline(@app, comparison_data)
+    rescue ValidationError => e
+      render_comparison_error(e.message)
+    rescue TMDBError => e
+      render_comparison_error("API Error: #{e.message}")
+    rescue StandardError
+      render_comparison_error("Failed to compare actors. Please try again.")
+    end
   end
 end

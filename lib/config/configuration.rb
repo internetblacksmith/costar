@@ -74,50 +74,74 @@ class Configuration
   end
 
   def validate_required_env_vars
+    errors = validate_critical_vars
+    warnings = validate_optional_vars + validate_critical_var_warnings
+
+    print_validation_results(errors, warnings)
+    { errors: errors, warnings: warnings, valid: errors.empty? }
+  end
+
+  def validate_critical_vars
     errors = []
-    warnings = []
-
-    # Critical environment variables that must be present
-    critical_vars = %w[TMDB_API_KEY]
-
-    critical_vars.each do |var|
+    %w[TMDB_API_KEY].each do |var|
       value = ENV.fetch(var, nil)
-      if value.nil? || value.empty? || value == "changeme"
-        errors << "❌ #{var} is missing or not properly configured"
-      elsif value.length < 10 # API keys should be longer
-        warnings << "⚠️  #{var} seems too short (#{value.length} chars) - verify it's correct"
-      end
+      errors << "❌ #{var} is missing or not properly configured" if missing_or_invalid?(value)
     end
+    errors
+  end
 
-    # Optional but recommended variables
-    optional_vars = {
+  def validate_critical_var_warnings
+    warnings = []
+    %w[TMDB_API_KEY].each do |var|
+      value = ENV.fetch(var, nil)
+      next if missing_or_invalid?(value)
+
+      warnings << "⚠️  #{var} seems too short (#{value.length} chars) - verify it's correct" if value.length < 10
+    end
+    warnings
+  end
+
+  def missing_or_invalid?(value)
+    value.nil? || value.empty? || value == "changeme"
+  end
+
+  def validate_optional_vars
+    warnings = []
+    optional_vars_config.each do |var, consequence|
+      value = ENV.fetch(var, nil)
+      warnings << "⚠️  #{var} not set - #{consequence}" if value.nil? || value.empty?
+    end
+    warnings
+  end
+
+  def optional_vars_config
+    {
       "POSTHOG_API_KEY" => "Analytics tracking will be disabled",
       "SENTRY_DSN" => "Error tracking will be disabled",
       "REDIS_URL" => "Will use memory cache instead of Redis"
     }
+  end
 
-    optional_vars.each do |var, consequence|
-      value = ENV.fetch(var, nil)
-      warnings << "⚠️  #{var} not set - #{consequence}" if value.nil? || value.empty?
-    end
+  def print_validation_results(errors, warnings)
+    print_errors(errors) unless errors.empty?
+    print_warnings(warnings) unless warnings.empty?
+    print_success_message if errors.empty? && warnings.empty?
+  end
 
-    # Print results
-    unless errors.empty?
-      puts "\n🚨 CRITICAL CONFIGURATION ERRORS:"
-      errors.each { |error| puts "   #{error}" }
-      puts "\n   The application may not work correctly!"
-      puts "   Please check your environment configuration.\n"
-    end
+  def print_errors(errors)
+    puts "\n🚨 CRITICAL CONFIGURATION ERRORS:"
+    errors.each { |error| puts "   #{error}" }
+    puts "\n   The application may not work correctly!"
+    puts "   Please check your environment configuration.\n"
+  end
 
-    unless warnings.empty?
-      puts "\n⚠️  CONFIGURATION WARNINGS:"
-      warnings.each { |warning| puts "   #{warning}" }
-      puts ""
-    end
+  def print_warnings(warnings)
+    puts "\n⚠️  CONFIGURATION WARNINGS:"
+    warnings.each { |warning| puts "   #{warning}" }
+    puts ""
+  end
 
-    puts "✅ All required environment variables are configured" if errors.empty? && warnings.empty?
-
-    # Return validation status
-    { errors: errors, warnings: warnings, valid: errors.empty? }
+  def print_success_message
+    puts "✅ All required environment variables are configured"
   end
 end

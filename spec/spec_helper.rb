@@ -45,13 +45,10 @@ RSpec.configure do |config|
   end
 
   # WebMock configuration
-  config.before(:each) do |example|
+  config.before(:each) do |_example|
     WebMock.reset!
-    if example.metadata[:vcr]
-      # For VCR tests, allow external HTTP connections but still block localhost for safety
-    else
-      # For regular tests, block all external connections
-    end
+    # For VCR tests we allow external connections, for regular tests we block them
+    # All tests block localhost for safety
     WebMock.disable_net_connect!(allow_localhost: true)
   end
 

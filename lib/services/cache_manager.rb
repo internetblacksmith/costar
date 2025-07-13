@@ -81,43 +81,51 @@ class CacheManager
   # @yield [Array<String>] Block receives array of missing keys
   # @return [Hash] Hash of key => value pairs
   #
-  def fetch_multi(keys, ttl: 300, policy: nil)
-    effective_ttl = policy ? TTL_POLICIES[policy] || ttl : ttl
-    results = {}
+  def fetch_multi(keys, ttl: 300, policy: nil, &block)
+    effective_ttl = calculate_effective_ttl(ttl, policy)
 
-    # Get existing cached values
     cached_values = get_multi(keys)
-    results.merge!(cached_values)
-
-    # Find missing keys
     missing_keys = keys - cached_values.keys
 
-    # Fetch missing values if any
-    if missing_keys.any? && block_given?
-      missing_values = yield(missing_keys)
-
-      # Store missing values and add to results
-      if missing_values.is_a?(Hash)
-        missing_values.each do |key, value|
-          set(key, value, ttl: effective_ttl)
-          results[key] = value
-        end
-      end
-    end
-
-    results
+    fetch_and_cache_missing_values(missing_keys, cached_values, effective_ttl, &block)
   rescue StandardError => e
+    handle_fetch_multi_error(e, keys, effective_ttl, &block)
+  end
+
+  private
+
+  def calculate_effective_ttl(ttl, policy)
+    policy ? TTL_POLICIES[policy] || ttl : ttl
+  end
+
+  def fetch_and_cache_missing_values(missing_keys, cached_values, effective_ttl, &block)
+    return cached_values unless missing_keys.any? && block
+
+    missing_values = block.call(missing_keys)
+    store_missing_values(missing_values, effective_ttl) if missing_values.is_a?(Hash)
+
+    cached_values.merge(missing_values || {})
+  end
+
+  def store_missing_values(missing_values, effective_ttl)
+    missing_values.each do |key, value|
+      set(key, value, ttl: effective_ttl)
+    end
+  end
+
+  def handle_fetch_multi_error(error, keys, effective_ttl, &block)
     StructuredLogger.error(
       "Cache multi-fetch failed",
       type: "cache_error",
       keys: keys,
       ttl: effective_ttl,
-      error: e.message
+      error: error.message
     )
 
-    # Execute block with all keys if cache fails
-    block_given? ? yield(keys) : {}
+    block ? block.call(keys) : {}
   end
+
+  public
 
   ##
   # Set a value in cache

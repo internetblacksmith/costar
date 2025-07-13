@@ -367,6 +367,286 @@
         }
       },
       "recorded_at": "Sun, 13 Jul 2025 19:52:15 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/6193/movie_credits?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Sun, 13 Jul 2025 22:23:41 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 5b6e22c950501920595c86fc25834582.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "FRA60-P3"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "o4nsJYOHzBN9kfN-besPokdrLVZDgG3DtIaC752MVVBz12ZYfPHe0w=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Sun, 13 Jul 2025 22:23:41 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/31/movie_credits?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Sun, 13 Jul 2025 22:23:42 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 39e6266db143f6443f194d8c60e22480.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "FRA60-P3"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "AXgavjFXuZUro6SV1-jfDMHXHcLUOBd4du_viloOHr_KZ4wsH8r0Og=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Sun, 13 Jul 2025 22:23:42 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/6193?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Sun, 13 Jul 2025 22:23:42 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 5b6e22c950501920595c86fc25834582.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "FRA60-P3"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "u1gZX-QDwztqY5RgEP1rPmqhDSXtAavQONpVLAMbgjgdH5Bu2-GZpw=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Sun, 13 Jul 2025 22:23:42 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/31?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Sun, 13 Jul 2025 22:23:43 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 8b889e35789d2b97f2ba8771acc9a008.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "FRA60-P3"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "K2-vc7NJrzDu7rtXgJbrpajZpIkKM9bFBgAeF0Dq2AZNfV6vsOLqHg=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Sun, 13 Jul 2025 22:23:43 GMT"
     }
   ],
   "recorded_with": "VCR 6.3.1"

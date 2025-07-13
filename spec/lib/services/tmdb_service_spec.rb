@@ -55,10 +55,10 @@ RSpec.describe TMDBService do
       it "returns actor search results" do
         results = service.search_actors(query)
 
-        expect(results).to be_an(Array)
-        expect(results.length).to eq(2)
-        expect(results.first[:name]).to eq("Leonardo DiCaprio")
-        expect(results.first[:id]).to eq(6193)
+        expect(results).to be_a(SearchResultsDTO)
+        expect(results.actors.length).to eq(2)
+        expect(results.actors.first.name).to eq("Leonardo DiCaprio")
+        expect(results.actors.first.id).to eq(6193)
       end
 
       it "uses cache manager for caching" do
@@ -70,7 +70,7 @@ RSpec.describe TMDBService do
 
         # Make the call
         results = service.search_actors(query)
-        expect(results.first[:name]).to eq("Leonardo DiCaprio")
+        expect(results.actors.first.name).to eq("Leonardo DiCaprio")
 
         # Verify cache manager was called
         expect(cache_manager).to have_received(:cache_search_results).with(query)
@@ -78,14 +78,16 @@ RSpec.describe TMDBService do
     end
 
     context "with empty query" do
-      it "returns empty array for empty string" do
+      it "returns empty results for empty string" do
         result = service.search_actors("")
-        expect(result).to eq([])
+        expect(result).to be_a(SearchResultsDTO)
+        expect(result.actors).to eq([])
       end
 
-      it "returns empty array for nil query" do
+      it "returns empty results for nil query" do
         result = service.search_actors(nil)
-        expect(result).to eq([])
+        expect(result).to be_a(SearchResultsDTO)
+        expect(result.actors).to eq([])
       end
     end
 
@@ -99,9 +101,10 @@ RSpec.describe TMDBService do
           .and_raise(StandardError.new("API Error"))
       end
 
-      it "returns empty array on API error" do
-        result = service.search_actors(query)
-        expect(result).to eq([])
+      it "returns empty results on API error" do
+        result = service.search_actors("test")
+        expect(result).to be_a(SearchResultsDTO)
+        expect(result.actors).to eq([])
       end
     end
   end
@@ -141,13 +144,14 @@ RSpec.describe TMDBService do
 
       expect(movies).to be_an(Array)
       expect(movies.length).to eq(2)
-      expect(movies.first[:title]).to eq("Inception")
-      expect(movies.first[:character]).to eq("Dom Cobb")
+      expect(movies.first).to be_a(MovieDTO)
+      expect(movies.first.title).to eq("Inception")
+      expect(movies.first.character).to eq("Dom Cobb")
     end
 
     it "uses cache manager for caching" do
       movies = service.get_actor_movies(actor_id)
-      expect(movies.first[:title]).to eq("Inception")
+      expect(movies.first.title).to eq("Inception")
 
       # Verify cache manager was called
       expect(cache_manager).to have_received(:cache_actor_movies).with(actor_id)
@@ -191,14 +195,15 @@ RSpec.describe TMDBService do
     it "returns actor profile" do
       profile = service.get_actor_profile(actor_id)
 
-      expect(profile[:name]).to eq("Leonardo DiCaprio")
-      expect(profile[:birthday]).to eq("1974-11-11")
-      expect(profile[:place_of_birth]).to eq("Los Angeles, California, USA")
+      expect(profile).to be_a(ActorDTO)
+      expect(profile.name).to eq("Leonardo DiCaprio")
+      expect(profile.birthday).to eq("1974-11-11")
+      expect(profile.place_of_birth).to eq("Los Angeles, California, USA")
     end
 
     it "uses cache manager for caching" do
       profile = service.get_actor_profile(actor_id)
-      expect(profile[:name]).to eq("Leonardo DiCaprio")
+      expect(profile.name).to eq("Leonardo DiCaprio")
 
       # Verify cache manager was called
       expect(cache_manager).to have_received(:cache_actor_profile).with(actor_id)
@@ -214,9 +219,10 @@ RSpec.describe TMDBService do
           .and_raise(StandardError.new("Network error"))
       end
 
-      it "returns empty array for search_actors" do
+      it "returns empty results for search_actors" do
         result = service.search_actors("test")
-        expect(result).to eq([])
+        expect(result).to be_a(SearchResultsDTO)
+        expect(result.actors).to eq([])
       end
 
       it "returns empty array for get_actor_movies" do
@@ -232,9 +238,10 @@ RSpec.describe TMDBService do
           .and_raise(JSON::ParserError.new("Invalid JSON"))
       end
 
-      it "returns empty array on invalid JSON" do
+      it "returns empty results on invalid JSON" do
         result = service.search_actors("test")
-        expect(result).to eq([])
+        expect(result).to be_a(SearchResultsDTO)
+        expect(result.actors).to eq([])
       end
     end
   end

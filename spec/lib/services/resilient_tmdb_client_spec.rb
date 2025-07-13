@@ -6,9 +6,12 @@ RSpec.describe ResilientTMDBClient do
   let(:api_key) { "test_api_key" }
   let(:client) { described_class.new(api_key) }
 
-  before do
+  before do |example|
     # Force production mode for these tests to test circuit breaker functionality
-    allow(ENV).to receive(:[]).with("RACK_ENV").and_return("production")
+    # Skip ENV stubbing for VCR tests that need real API key
+    unless example.metadata[:vcr]
+      allow(ENV).to receive(:[]).with("RACK_ENV").and_return("production")
+    end
 
     # Reset circuit breaker state between tests
     client.instance_variable_get(:@circuit_breaker).reset!
@@ -42,29 +45,31 @@ RSpec.describe ResilientTMDBClient do
 
   describe "#request" do
     context "with successful API response" do
-      it "returns parsed JSON data" do
-        stub_request(:get, /api\.themoviedb\.org/)
-          .to_return(
-            status: 200,
-            body: { results: [{ name: "Test Actor" }] }.to_json,
-            headers: { "Content-Type" => "application/json" }
-          )
+      it "returns parsed JSON data", vcr: { cassette_name: "resilient_client_successful_search" } do
+        # Use real TMDB API key for VCR recording
+        real_client = described_class.new(ENV['TMDB_API_KEY'])
+        # Force production mode and reset circuit breaker for this client
+        real_client.instance_variable_set(:@test_mode, false)
+        real_client.instance_variable_get(:@circuit_breaker).reset!
+        
+        result = real_client.request("search/person", { query: "test" })
 
-        result = client.request("search/person", { query: "test" })
-
-        expect(result).to eq("results" => [{ "name" => "Test Actor" }])
+        expect(result).to have_key("results")
+        expect(result["results"]).to be_an(Array)
       end
 
-      it "logs successful request" do
-        stub_request(:get, /api\.themoviedb\.org/)
-          .to_return(status: 200, body: "{}", headers: { "Content-Type" => "application/json" })
-
+      it "logs successful request", vcr: { cassette_name: "resilient_client_logging_test" } do
         expect(StructuredLogger).to receive(:info).with(
           "TMDB API Success",
-          hash_including(type: "api_success", endpoint: "test")
+          hash_including(type: "api_success", endpoint: "search/person")
         ).at_least(:once)
 
-        client.request("test")
+        # Use real TMDB API key for VCR recording
+        real_client = described_class.new(ENV['TMDB_API_KEY'])
+        real_client.instance_variable_set(:@test_mode, false)
+        real_client.instance_variable_get(:@circuit_breaker).reset!
+        
+        real_client.request("search/person", { query: "test" })
       end
     end
 
@@ -207,20 +212,22 @@ RSpec.describe ResilientTMDBClient do
   end
 
   describe "logging integration" do
-    it "logs API requests with circuit breaker context" do
-      stub_request(:get, /api\.themoviedb\.org/)
-        .to_return(status: 200, body: "{}")
-
+    it "logs API requests with circuit breaker context", vcr: { cassette_name: "resilient_client_logging_request" } do
       expect(StructuredLogger).to receive(:debug).with(
         "TMDB API Request",
         hash_including(
           type: "api_request",
-          endpoint: "test",
+          endpoint: "search/person",
           circuit_state: "closed"
         )
       )
 
-      client.request("test")
+      # Use real TMDB API key for VCR recording
+      real_client = described_class.new(ENV['TMDB_API_KEY'])
+      real_client.instance_variable_set(:@test_mode, false)
+      real_client.instance_variable_get(:@circuit_breaker).reset!
+      
+      real_client.request("search/person", { query: "test" })
     end
 
     it "logs errors with proper context" do

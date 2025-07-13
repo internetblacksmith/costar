@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require_relative "cache_manager"
+require_relative "../middleware/error_handler_module"
 
 # Service for comparing actors and building timeline data
 class ActorComparisonService
+  include ErrorHandlerModule
   def initialize(tmdb_service = nil)
     @tmdb_service = tmdb_service || TMDBService.new
     @cache_manager = CacheManager.new

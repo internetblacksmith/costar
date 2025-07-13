@@ -87,7 +87,7 @@ class ResilientTMDBClient
   def validate_api_key!
     return unless @api_key.nil? || @api_key.empty? || @api_key == "changeme"
 
-    raise TMDBError.new(401, "TMDB API key not configured")
+    raise TMDBAuthError, "TMDB API key not configured"
   end
 
   def with_retries
@@ -122,11 +122,11 @@ class ResilientTMDBClient
   rescue Net::OpenTimeout => e
     duration = (Time.now - start_time) * 1000
     log_request_error(endpoint, e, duration, "timeout")
-    raise TMDBError.new(408, "Request timeout")
+    raise TMDBTimeoutError, "Request timeout: #{e.message}"
   rescue Net::HTTPError => e
     duration = (Time.now - start_time) * 1000
     log_request_error(endpoint, e, duration, "http_error")
-    raise TMDBError.new(503, "HTTP error: #{e.message}")
+    handle_http_error(e.response)
   end
 
   def build_url(endpoint, params)
@@ -161,7 +161,22 @@ class ResilientTMDBClient
                            type: "api_error",
                            error: e.message,
                            response_body: response.body[0..500]) # Log first 500 chars
-    raise TMDBError.new(502, "Invalid JSON response from TMDB")
+    raise TMDBServiceError, "Invalid JSON response from TMDB"
+  end
+
+  def handle_http_error(response)
+    case response.code.to_i
+    when 401
+      raise TMDBAuthError, "API key invalid or expired"
+    when 404
+      raise TMDBNotFoundError, "Resource not found"
+    when 429
+      raise TMDBRateLimitError, "Rate limit exceeded"
+    when 500, 502, 503, 504
+      raise TMDBServiceError, "TMDB service error: #{response.code}"
+    else
+      raise TMDBError.new(response.code.to_i, "HTTP error: #{response.code} #{response.message}")
+    end
   end
 
   def log_successful_request(endpoint, duration, response)

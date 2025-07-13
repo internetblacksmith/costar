@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "error_handler_tmdb"
+
 # Error handling controller for application-wide error management
 module ErrorHandler
   def self.included(base)
@@ -7,10 +9,13 @@ module ErrorHandler
   end
 
   module ClassMethods
+    include ErrorHandlerTMDB
     def setup_error_handlers
       setup_api_error_handler
       setup_validation_error_handler
       setup_tmdb_error_handler
+      setup_specific_tmdb_error_handlers
+      setup_cache_error_handlers
       setup_not_found_handler
       setup_standard_error_handler
     end
@@ -39,6 +44,40 @@ module ErrorHandler
       error TMDBError do
         error = env["sinatra.error"]
         handle_tmdb_error(error)
+      end
+    end
+
+    def setup_specific_tmdb_error_handlers
+      error TMDBTimeoutError do
+        error = env["sinatra.error"]
+        handle_tmdb_timeout_error(error)
+      end
+
+      error TMDBAuthError do
+        error = env["sinatra.error"]
+        handle_tmdb_auth_error(error)
+      end
+
+      error TMDBRateLimitError do
+        error = env["sinatra.error"]
+        handle_tmdb_rate_limit_error(error)
+      end
+
+      error TMDBNotFoundError do
+        error = env["sinatra.error"]
+        handle_tmdb_not_found_error(error)
+      end
+
+      error TMDBServiceError do
+        error = env["sinatra.error"]
+        handle_tmdb_service_error(error)
+      end
+    end
+
+    def setup_cache_error_handlers
+      error CacheError do
+        error = env["sinatra.error"]
+        handle_cache_error(error)
       end
     end
 
@@ -133,15 +172,6 @@ module ErrorHandler
         { error: "Internal server error" }.to_json
       else
         send_error_page("500.html")
-      end
-    end
-
-    def send_error_page(filename)
-      error_file = File.join(settings.public_folder, "errors", filename)
-      if File.exist?(error_file)
-        send_file error_file, type: "text/html"
-      else
-        "An error occurred"
       end
     end
   end

@@ -1,7 +1,7 @@
-<% if @actors && @actors.any? %>
-    <% @actors.each do |actor| %>
+<% if actors && actors.any? %>
+    <% actors.each do |actor| %>
         <div class="suggestion-item" 
-             onclick="selectActor('<%= actor[:id] %>', '<%= actor[:name].gsub("'", "\\'") %>', '<%= @field %>')">
+             onclick="selectActor('<%= actor[:id] %>', '<%= actor[:name].gsub("'", "\\'") %>', '<%= field %>')">
             <strong><%= actor[:name] %></strong>
             <% if actor[:known_for] && actor[:known_for].any? %>
                 <br><small>Known for: <%= actor[:known_for].map { |item| item[:title] }.join(', ') %></small>

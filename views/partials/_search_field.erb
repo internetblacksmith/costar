@@ -9,12 +9,20 @@
                hx-get="/api/actors/search" 
                hx-trigger="keyup changed delay:300ms" 
                hx-target="#suggestions<%= suggestion_id %>"
+               hx-indicator="#loadingIndicator<%= suggestion_id %>"
                hx-include="this"
                hx-vals='{"field": "<%= field %>"}'
                name="q">
         <span class="mdc-line-ripple"></span>
     </label>
+    
     <div class="suggestions" id="suggestions<%= suggestion_id %>"></div>
+    <div class="suggestions-loading" id="loadingIndicator<%= suggestion_id %>" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <span class="loading-text">Searching actors...</span>
+        </div>
+    </div>
     <input type="hidden" id="<%= field %>_id" name="<%= field %>_id">
     <input type="hidden" id="<%= field %>_name" name="<%= field %>_name">
 </div>

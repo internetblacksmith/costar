@@ -12,7 +12,15 @@ module APIController
     def api_routes
       namespace "/api" do
         before do
-          headers "Access-Control-Allow-Origin" => "*"
+          configure_cors_headers
+        end
+
+        # Handle preflight requests for CORS
+        options "*" do
+          response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+          response.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept, User-Agent"
+          response.headers["Access-Control-Max-Age"] = "3600"
+          200
         end
 
         get "/actors/search" do

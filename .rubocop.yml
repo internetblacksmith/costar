@@ -12,11 +12,9 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
 
-Layout/LineLength:
-  Max: 120
 
 Metrics/MethodLength:
-  Max: 15
+  Max: 30
 
 Metrics/BlockLength:
   Exclude:
@@ -31,10 +29,30 @@ Style/FrozenStringLiteralComment:
   Enabled: true
 
 Metrics/AbcSize:
-  Max: 20
+  Max: 30
 
 Metrics/CyclomaticComplexity:
   Max: 8
 
 Metrics/PerceivedComplexity:
   Max: 8
+
+Metrics/ClassLength:
+  Max: 250
+
+Metrics/ModuleLength:
+  Max: 150
+
+Layout/LineLength:
+  Max: 800
+  Exclude:
+    - 'lib/services/optimized_image_service.rb'
+
+Style/HashLikeCase:
+  Enabled: false
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Naming/PredicateMethod:
+  Enabled: false

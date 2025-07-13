@@ -10,13 +10,13 @@ RSpec.describe "API Endpoints", type: :request do
       .with(query: hash_including(query: "test"))
       .to_return(status: 200, body: { results: [] }.to_json)
   end
-  describe "GET /health" do
+  describe "GET /health/complete" do
     before do
       allow(Cache).to receive(:healthy?).and_return(true)
     end
 
     it "returns healthy status" do
-      get "/health"
+      get "/health/complete"
 
       expect(last_response.status).to eq(200)
       expect(last_response.content_type).to include("application/json")
@@ -29,7 +29,7 @@ RSpec.describe "API Endpoints", type: :request do
     it "returns degraded status when cache is unhealthy" do
       allow(Cache).to receive(:healthy?).and_return(false)
 
-      get "/health"
+      get "/health/complete"
 
       expect(last_response.status).to eq(503)
       response_data = json_response
@@ -349,7 +349,7 @@ RSpec.describe "API Endpoints", type: :request do
       it "includes security middleware" do
         # This would test the security middleware if we had a way to verify it
         # For now, we can at least verify the app loads with production config
-        get "/health"
+        get "/health/complete"
         expect(last_response.status).to eq(200)
       end
     end

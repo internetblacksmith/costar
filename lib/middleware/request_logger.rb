@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../config/logger"
+require_relative "../services/performance_monitor"
 
 # Middleware for structured request/response logging
 class RequestLogger
@@ -30,6 +31,7 @@ class RequestLogger
   def log_successful_request(env, status, start_time)
     duration_ms = (Time.now - start_time) * 1000
     StructuredLogger.log_request(env, status, duration_ms)
+    PerformanceMonitor.track_request(env, status, duration_ms)
   end
 
   def log_request_error(env, error, start_time)
@@ -42,6 +44,9 @@ class RequestLogger
                            error_class: error.class.name,
                            duration_ms: duration_ms.round(2),
                            timestamp: Time.now.iso8601)
+
+    # Track performance for error requests as 500 status
+    PerformanceMonitor.track_request(env, 500, duration_ms)
   end
 
   def skip_logging?(env)

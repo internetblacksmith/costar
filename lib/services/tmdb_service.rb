@@ -2,14 +2,14 @@
 
 require_relative "resilient_tmdb_client"
 require_relative "tmdb_data_processor"
-require_relative "tmdb_cache_helper"
+require_relative "cache_manager"
 require_relative "../config/logger"
 
 # High-level service for interacting with The Movie Database API
 class TMDBService
-  include TMDBCacheHelper
   def initialize(api_key = nil)
     @client = ResilientTMDBClient.new(api_key)
+    @cache_manager = CacheManager.new
   end
 
   def healthy?
@@ -23,50 +23,38 @@ class TMDBService
   def search_actors(query)
     return [] if query.nil? || query.empty?
 
-    cache_key = "search_actors_#{query}"
-    cached_result = get_cached_result(cache_key)
-    return cached_result if cached_result
-
-    fetch_and_cache_actors(query, cache_key)
+    @cache_manager.cache_search_results(query) do
+      fetch_actors_from_api(query)
+    end
   end
 
   def get_actor_movies(actor_id)
-    cache_key = "actor_movies_#{actor_id}"
-    cached_result = get_cached_result(cache_key)
-    return cached_result if cached_result
-
-    fetch_and_cache_movies(actor_id, cache_key)
+    @cache_manager.cache_actor_movies(actor_id) do
+      fetch_movies_from_api(actor_id)
+    end
   end
 
   def get_actor_profile(actor_id)
-    cache_key = "actor_profile_#{actor_id}"
-    cached_result = get_cached_result(cache_key)
-    return cached_result if cached_result
-
-    fetch_and_cache_profile(actor_id, cache_key)
+    @cache_manager.cache_actor_profile(actor_id) do
+      fetch_profile_from_api(actor_id)
+    end
   end
 
   def get_actor_details(actor_id)
-    cache_key = "actor_details_#{actor_id}"
-    cached_result = get_cached_result(cache_key)
-    return cached_result if cached_result
-
-    fetch_and_cache_details(actor_id, cache_key)
+    # Actor details is the same as profile, so reuse the profile cache
+    get_actor_profile(actor_id)
   end
 
   private
 
-  def fetch_and_cache_actors(query, cache_key)
-    start_time = Time.now
+  def fetch_actors_from_api(query)
     api_start_time = Time.now
 
     data = @client.request("search/person", query: query)
     api_duration = (Time.now - api_start_time) * 1000
 
     actors = TMDBDataProcessor.process_actor_search_results(data)
-
-    cache_result(cache_key, actors, 300) # 5 minute cache
-    log_cache_miss_and_api_success(cache_key, start_time, "search/person", api_duration)
+    log_api_call("search/person", api_duration)
 
     actors
   rescue StandardError => e
@@ -86,34 +74,32 @@ class TMDBService
     Sentry.capture_exception(error) if defined?(Sentry)
   end
 
-  def fetch_and_cache_movies(actor_id, cache_key)
-    start_time = Time.now
+  def fetch_movies_from_api(actor_id)
     api_start_time = Time.now
 
     endpoint = "person/#{actor_id}/movie_credits"
     data = @client.request(endpoint)
     api_duration = (Time.now - api_start_time) * 1000
-    movies = TMDBDataProcessor.process_movie_credits(data)
 
-    cache_result(cache_key, movies, 600) # 10 minute cache
-    log_cache_miss_and_api_success(cache_key, start_time, endpoint, api_duration)
+    movies = TMDBDataProcessor.process_movie_credits(data)
+    log_api_call(endpoint, api_duration)
+
     movies
   rescue StandardError => e
     handle_service_error(e, "get_actor_movies")
     []
   end
 
-  def fetch_and_cache_profile(actor_id, cache_key)
-    start_time = Time.now
+  def fetch_profile_from_api(actor_id)
     api_start_time = Time.now
 
     endpoint = "person/#{actor_id}"
     data = @client.request(endpoint)
     api_duration = (Time.now - api_start_time) * 1000
-    profile = TMDBDataProcessor.normalize_actor_profile(data)
 
-    cache_result(cache_key, profile, 600) # 10 minute cache
-    log_cache_miss_and_api_success(cache_key, start_time, endpoint, api_duration)
+    profile = TMDBDataProcessor.normalize_actor_profile(data)
+    log_api_call(endpoint, api_duration)
+
     profile
   rescue StandardError => e
     handle_service_error(e, "get_actor_profile")
@@ -129,10 +115,7 @@ class TMDBService
     }
   end
 
-  def fetch_and_cache_details(actor_id, cache_key)
-    # Use the same endpoint as profile since it contains all details
-    profile = get_actor_profile(actor_id)
-    cache_result(cache_key, profile, 600) # 10 minute cache
-    profile
+  def log_api_call(endpoint, duration)
+    StructuredLogger.log_api_call("tmdb", endpoint, duration, success: true)
   end
 end

@@ -121,7 +121,16 @@ class ActorSyncApp < Sinatra::Base
 
   # Main page
   get "/" do
-    erb :index
+    # Check if actor IDs are provided in URL parameters
+    actor1_id = params[:actor1_id]
+    actor2_id = params[:actor2_id]
+    
+    if actor1_id && actor2_id
+      # Redirect to timeline comparison if both IDs provided
+      redirect "/api/actors/compare?actor1_id=#{actor1_id}&actor2_id=#{actor2_id}"
+    else
+      erb :index
+    end
   end
 
   # API endpoints

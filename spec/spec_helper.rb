@@ -16,6 +16,7 @@ end
 
 # Load test environment
 ENV["RACK_ENV"] = "test"
+# Don't set a default API key - let VCR handle it
 
 # Require the main application
 require_relative "../app"
@@ -43,13 +44,19 @@ RSpec.configure do |config|
   end
 
   # WebMock configuration
-  config.before(:each) do
+  config.before(:each) do |example|
     WebMock.reset!
-    WebMock.disable_net_connect!(allow_localhost: true)
+    if example.metadata[:vcr]
+      # For VCR tests, allow external HTTP connections but still block localhost for safety
+      WebMock.disable_net_connect!(allow_localhost: true)
+    else
+      # For regular tests, block all external connections
+      WebMock.disable_net_connect!(allow_localhost: true)
+    end
   end
 
   # Clear cache between tests and disable performance monitoring
-  config.before(:each) do
+  config.before(:each) do |example|
     Cache.clear if defined?(Cache)
 
     # Disable performance monitoring during tests
@@ -57,11 +64,14 @@ RSpec.configure do |config|
     allow(PerformanceMonitor).to receive(:track_cache_performance).and_return(nil) if defined?(PerformanceMonitor)
     allow(PerformanceMonitor).to receive(:track_api_performance).and_return(nil) if defined?(PerformanceMonitor)
 
-    # Disable circuit breaker fallbacks during tests to allow proper mocking
-    allow_any_instance_of(SimpleCircuitBreaker).to receive(:call).and_yield if defined?(SimpleCircuitBreaker)
+    # Skip mocking for VCR tests - let real HTTP calls happen so VCR can intercept them
+    unless example.metadata[:vcr]
+      # Disable circuit breaker fallbacks during tests to allow proper mocking
+      allow_any_instance_of(SimpleCircuitBreaker).to receive(:call).and_yield if defined?(SimpleCircuitBreaker)
 
-    # Disable retry mechanisms during tests
-    allow_any_instance_of(ResilientTMDBClient).to receive(:with_retries).and_yield if defined?(ResilientTMDBClient)
+      # Disable retry mechanisms during tests
+      allow_any_instance_of(ResilientTMDBClient).to receive(:with_retries).and_yield if defined?(ResilientTMDBClient)
+    end
   end
 
   # Expectations configuration

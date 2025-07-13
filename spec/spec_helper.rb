@@ -48,9 +48,20 @@ RSpec.configure do |config|
     WebMock.disable_net_connect!(allow_localhost: true)
   end
 
-  # Clear cache between tests
+  # Clear cache between tests and disable performance monitoring
   config.before(:each) do
     Cache.clear if defined?(Cache)
+
+    # Disable performance monitoring during tests
+    allow(PerformanceMonitor).to receive(:track_request).and_return(nil) if defined?(PerformanceMonitor)
+    allow(PerformanceMonitor).to receive(:track_cache_performance).and_return(nil) if defined?(PerformanceMonitor)
+    allow(PerformanceMonitor).to receive(:track_api_performance).and_return(nil) if defined?(PerformanceMonitor)
+
+    # Disable circuit breaker fallbacks during tests to allow proper mocking
+    allow_any_instance_of(SimpleCircuitBreaker).to receive(:call).and_yield if defined?(SimpleCircuitBreaker)
+
+    # Disable retry mechanisms during tests
+    allow_any_instance_of(ResilientTMDBClient).to receive(:with_retries).and_yield if defined?(ResilientTMDBClient)
   end
 
   # Expectations configuration

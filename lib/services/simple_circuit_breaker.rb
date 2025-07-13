@@ -3,9 +3,10 @@
 # Simple circuit breaker implementation for API resilience
 class SimpleCircuitBreaker
   attr_reader :failure_count, :last_failure_time, :state
-  
+
   def next_attempt_time
     return nil unless @state == :open && @last_failure_time
+
     @last_failure_time + @recovery_timeout
   end
 

@@ -120,10 +120,10 @@ RSpec.describe ResilientTMDBClient do
     end
 
     context "with missing API key" do
-      let(:client) { described_class.new(nil) }
-
       it "raises TMDBError for missing API key" do
-        expect { client.request("search/person") }.to raise_error(TMDBError, "TMDB API key not configured")
+        # Create a client with empty API key
+        client_without_key = described_class.new("")
+        expect { client_without_key.request("search/person") }.to raise_error(TMDBError, "TMDB API key not configured")
       end
     end
 

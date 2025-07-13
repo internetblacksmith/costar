@@ -13,7 +13,7 @@ class ActorComparisonService
     profiles_data = fetch_actor_profiles(actor1_id, actor2_id)
     timeline_data = build_timeline_data(movies_data, actor1_name, actor2_name)
 
-    build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name)
+    build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name, actor1_id, actor2_id)
   end
 
   private
@@ -46,12 +46,14 @@ class ActorComparisonService
     timeline_builder.build
   end
 
-  def build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name)
+  def build_comparison_result(movies_data, profiles_data, timeline_data, actor1_name, actor2_name, actor1_id, actor2_id)
     {
       actor1_movies: movies_data[:actor1],
       actor2_movies: movies_data[:actor2],
       actor1_name: actor1_name,
       actor2_name: actor2_name,
+      actor1_id: actor1_id,
+      actor2_id: actor2_id,
       actor1_profile: profiles_data[:actor1],
       actor2_profile: profiles_data[:actor2],
       years: timeline_data[:years],

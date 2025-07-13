@@ -24,15 +24,15 @@ module APIController
         end
 
         get "/actors/search" do
-          ApiHandlers.new(self).handle_actor_search
+          ApiHandlers.new(self).handle_actor_search(params)
         end
 
         get "/actors/:id/movies" do
-          ApiHandlers.new(self).handle_actor_movies
+          ApiHandlers.new(self).handle_actor_movies(params)
         end
 
         get "/actors/compare" do
-          ApiHandlers.new(self).handle_actor_comparison
+          ApiHandlers.new(self).handle_actor_comparison(params)
         end
       end
     end

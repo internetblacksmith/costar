@@ -31,3 +31,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# VCR cassettes - we commit these but VCR filters sensitive data
+# If you need to re-record, delete the cassette and run the test

@@ -8,7 +8,14 @@
             } %>
         </div>
         <div class="actor-portrait-center">
-            <div class="vs-indicator">vs</div>
+            <div class="connection-indicator">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3L4 7L8 11"></path>
+                    <path d="M16 3L20 7L16 11"></path>
+                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                </svg>
+                <span class="connection-text">explore together</span>
+            </div>
         </div>
         <div class="actor-portrait-right">
             <%= erb :'partials/_actor_portrait', locals: { 

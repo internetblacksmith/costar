@@ -44,7 +44,7 @@ RSpec.describe "API Endpoints", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(last_response.body).to include("ActorSync")
-      expect(last_response.body).to include("Compare Filmographies")
+      expect(last_response.body).to include("Explore Filmographies Together")
     end
   end
 

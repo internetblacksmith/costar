@@ -74,6 +74,11 @@ class ActorSyncApp < Sinatra::Base
         except: [:json_csrf], # Allow JSON requests
         use: %i[authenticity_token encrypted_cookie form_token frame_options
                 http_origin ip_spoofing path_traversal session_hijacking xss_header]
+
+    # Custom security headers
+    before do
+      add_security_headers if ENV.fetch("RACK_ENV", "development") == "production"
+    end
   end
 
   # Rate limiting configuration
@@ -108,6 +113,53 @@ class ActorSyncApp < Sinatra::Base
 
   # API endpoints
   api_routes
+
+  private
+
+  # Add comprehensive security headers for production
+  def add_security_headers
+    response.headers["Content-Security-Policy"] = build_csp_header
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+  end
+
+  def build_csp_header
+    # Build Content Security Policy
+    policies = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://unpkg.com", # HTMX from CDN
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' https://image.tmdb.org data:", # TMDB images
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'"
+    ]
+    policies.join("; ")
+  end
+
+  def configure_cors_headers
+    # Configure CORS based on environment
+    if ENV.fetch("RACK_ENV", "development") == "production"
+      # In production, be more restrictive with CORS
+      allowed_origins = ENV.fetch("ALLOWED_ORIGINS", "").split(",").map(&:strip)
+      origin = request.env["HTTP_ORIGIN"]
+
+      headers "Access-Control-Allow-Origin" => origin || "*" if allowed_origins.empty? || allowed_origins.include?(origin)
+    else
+      # In development, allow all origins
+      headers "Access-Control-Allow-Origin" => "*"
+    end
+
+    # Common security headers for all environments
+    headers "Access-Control-Allow-Credentials" => "false"
+    headers "Access-Control-Expose-Headers" => "X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset"
+    headers "X-Content-Type-Options" => "nosniff"
+    headers "X-Frame-Options" => "DENY"
+    headers "X-XSS-Protection" => "1; mode=block"
+  end
 end
 
 # Run the app when executed directly

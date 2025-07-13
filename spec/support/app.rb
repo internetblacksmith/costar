@@ -48,8 +48,8 @@ module TestHelpers
     allow(tmdb_service).to receive(:get_actor_profile).with(actor_id.to_i).and_return(profile)
     allow(tmdb_service).to receive(:get_actor_profile).with(actor_id.to_s).and_return(profile)
 
-    # Also stub HTTP requests as fallback
-    stub_request(:get, %r{api\.themoviedb\.org/3/person/#{actor_id}$})
+    # Also stub HTTP requests as fallback (with or without query params)
+    stub_request(:get, %r{api\.themoviedb\.org/3/person/#{actor_id}(\?|$)})
       .to_return(
         status: 200,
         body: profile.to_json,

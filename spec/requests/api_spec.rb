@@ -88,6 +88,19 @@ RSpec.describe "API Endpoints", type: :request do
           expect(last_response.status).to eq(200)
           expect(last_response.body).to include("'actor2'")
         end
+
+        it "properly displays known_for information" do
+          get "/api/actors/search", { q: "Leonardo", field: "actor1" }
+
+          expect(last_response.status).to eq(200)
+          # Should display "Known for: Inception, The Wolf of Wall Street"
+          expect(last_response.body).to include("Known for: Inception, The Wolf of Wall Street")
+          # Should NOT display the raw hash format
+          # Ensure the "Known for:" text is not truncated
+          expect(last_response.body).not_to match(/>\s*wn\s+for:/)
+          expect(last_response.body).not_to include("{title:")
+          expect(last_response.body).not_to include("title: &quot;")
+        end
       end
 
       context "with empty query" do
@@ -105,6 +118,32 @@ RSpec.describe "API Endpoints", type: :request do
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to be_empty
+        end
+      end
+
+      context "with actors having no known_for data" do
+        let(:actor_without_known_for) do
+          {
+            id: 12_345,
+            name: "Test Actor",
+            popularity: 5.0,
+            profile_path: "/test.jpg",
+            known_for_department: "Acting",
+            known_for: []
+          }
+        end
+
+        before do
+          mock_tmdb_actor_search("Test", [actor_without_known_for])
+        end
+
+        it "handles actors without known_for gracefully" do
+          get "/api/actors/search", { q: "Test", field: "actor1" }
+
+          expect(last_response.status).to eq(200)
+          expect(last_response.body).to include("Test Actor")
+          # Should not show "Known for:" section if empty
+          expect(last_response.body).not_to include("Known for:")
         end
       end
 

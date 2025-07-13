@@ -23,10 +23,19 @@ To record new cassettes with real TMDB API responses:
 
 4. The cassettes will be created with the API responses, and VCR will automatically filter out your API key, replacing it with `<TMDB_API_KEY>`
 
+## Running VCR Tests
+
+To run the VCR integration tests, set the API key to match the cassettes:
+
+```bash
+TMDB_API_KEY=test_api_key bundle exec rspec spec/integration/actor_search_flow_spec.rb
+```
+
 ## Important Notes
 
 - VCR cassettes are committed to the repository to ensure consistent test runs
 - Sensitive data (API keys) are automatically filtered by VCR configuration
+- The cassettes expect `TMDB_API_KEY=test_api_key` to match recorded interactions
 - If the TMDB API response format changes, delete and re-record the cassettes
 - The cassettes use JSON format for better readability
 

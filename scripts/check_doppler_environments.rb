@@ -33,7 +33,7 @@ class DopplerEnvironmentChecker
     "RACK_ENV" => {
       description: "Application environment",
       required: true,
-      validation: ->(value, env) {
+      validation: lambda { |value, env|
         case env
         when "dev" then value == "development"
         when "stg" then value == "staging"
@@ -46,7 +46,7 @@ class DopplerEnvironmentChecker
     "ALLOWED_ORIGINS" => {
       description: "Comma-separated list of allowed CORS origins",
       required: true,
-      validation: ->(value, env) {
+      validation: lambda { |value, env|
         case env
         when "dev" then value.include?("localhost")
         when "stg", "prd" then value.include?("internetblacksmith.dev")
@@ -58,7 +58,7 @@ class DopplerEnvironmentChecker
     "PORT" => {
       description: "Port number for the web server",
       required: true,
-      validation: ->(value, env) {
+      validation: lambda { |value, env|
         case env
         when "dev" then value == "4567"
         when "stg", "prd" then value == "10000"
@@ -98,7 +98,7 @@ class DopplerEnvironmentChecker
     },
     "CACHE_PREFIX" => {
       description: "Cache key prefix for Redis",
-      validation: ->(value) { value.length > 0 },
+      validation: ->(value) { value.length.positive? },
       environments: %w[dev stg prd]
     },
     "CDN_DOMAIN" => {
@@ -148,11 +148,11 @@ class DopplerEnvironmentChecker
     puts
 
     check_doppler_availability
-    
+
     ENVIRONMENTS.each do |env|
       puts "#{environment_emoji(env)} #{env.upcase} ENVIRONMENT"
       puts "-" * 40
-      
+
       secrets = fetch_doppler_secrets(env)
       if secrets
         @results[env] = analyze_environment(env, secrets)
@@ -162,7 +162,7 @@ class DopplerEnvironmentChecker
         puts "❌ Failed to fetch secrets from Doppler"
         @overall_status = false
       end
-      
+
       puts
     end
 
@@ -173,8 +173,8 @@ class DopplerEnvironmentChecker
   private
 
   def check_doppler_availability
-    stdout, stderr, status = Open3.capture3("doppler --version")
-    
+    stdout, _, status = Open3.capture3("doppler --version")
+
     unless status.success?
       puts "❌ Doppler CLI not available. Please install it first:"
       puts "   https://docs.doppler.com/docs/install-cli"
@@ -187,20 +187,18 @@ class DopplerEnvironmentChecker
 
   def fetch_doppler_secrets(env)
     stdout, stderr, status = Open3.capture3("doppler secrets --config #{env} --json")
-    
+
     if status.success?
       # Parse the JSON response which contains secrets in Doppler format
       response = JSON.parse(stdout)
-      
+
       # Extract computed values from Doppler response format
       # Each key has format: {"computed": "value", "computedValueType": {...}, ...}
       secrets = {}
       response.each do |key, data|
-        if data.is_a?(Hash) && data["computed"]
-          secrets[key] = data["computed"]
-        end
+        secrets[key] = data["computed"] if data.is_a?(Hash) && data["computed"]
       end
-      
+
       secrets
     else
       puts "❌ Error fetching secrets for #{env}: #{stderr}"
@@ -222,14 +220,12 @@ class DopplerEnvironmentChecker
 
     # Check required variables
     check_variable_group(REQUIRED_VARS, secrets, env, result, required: true)
-    
+
     # Check optional variables
     check_variable_group(OPTIONAL_VARS, secrets, env, result, required: false)
-    
+
     # Check production-specific variables
-    if env == "prd"
-      check_variable_group(PRODUCTION_VARS, secrets, env, result, required: false)
-    end
+    check_variable_group(PRODUCTION_VARS, secrets, env, result, required: false) if env == "prd"
 
     # Check for common issues
     check_common_issues(secrets, env, result)
@@ -260,10 +256,10 @@ class DopplerEnvironmentChecker
       elsif config[:validation]
         # Handle validation functions that take environment parameter
         validation_result = if config[:validation].arity == 2
-                             config[:validation].call(value, env)
-                           else
-                             config[:validation].call(value)
-                           end
+                              config[:validation].call(value, env)
+                            else
+                              config[:validation].call(value)
+                            end
 
         if validation_result
           puts "✅ #{var_name}: OK"
@@ -287,7 +283,7 @@ class DopplerEnvironmentChecker
     # Check PostHog consistency
     posthog_key = secrets["POSTHOG_API_KEY"]
     posthog_host = secrets["POSTHOG_HOST"]
-    
+
     if posthog_key && !posthog_host
       result[:warnings] << "POSTHOG_API_KEY set but POSTHOG_HOST missing"
       puts "⚠️  PostHog incomplete: missing POSTHOG_HOST"
@@ -308,27 +304,25 @@ class DopplerEnvironmentChecker
 
   def check_development_config(secrets, result)
     redis_url = secrets["REDIS_URL"]
-    if redis_url && !redis_url.include?("localhost")
-      result[:warnings] << "Development should use local Redis (localhost)"
-    end
+    return unless redis_url && !redis_url.include?("localhost")
+
+    result[:warnings] << "Development should use local Redis (localhost)"
   end
 
   def check_production_config(secrets, result)
     redis_url = secrets["REDIS_URL"]
-    if redis_url && redis_url.include?("localhost")
-      result[:errors] << "Production should not use localhost Redis"
-    end
+    result[:errors] << "Production should not use localhost Redis" if redis_url&.include?("localhost")
 
     # Check for performance optimizations
     perf_vars = %w[REDIS_POOL_SIZE REDIS_POOL_TIMEOUT PUMA_THREADS WEB_CONCURRENCY]
     missing_perf = perf_vars.select { |var| secrets[var].nil? || secrets[var].empty? }
-    
-    if missing_perf.any?
-      result[:suggestions] << "Consider adding performance variables: #{missing_perf.join(', ')}"
-    end
+
+    return unless missing_perf.any?
+
+    result[:suggestions] << "Consider adding performance variables: #{missing_perf.join(", ")}"
   end
 
-  def print_environment_summary(env, result)
+  def print_environment_summary(_env, result)
     case result[:status]
     when :success
       puts "✅ Status: All configured correctly"
@@ -339,21 +333,21 @@ class DopplerEnvironmentChecker
     end
 
     puts "📊 Variables: #{result[:variables].keys.length} total"
-    
+
     if result[:errors].any?
       puts "🚨 Errors: #{result[:errors].length}"
       result[:errors].each { |error| puts "   • #{error}" }
     end
-    
+
     if result[:warnings].any?
       puts "⚠️  Warnings: #{result[:warnings].length}"
       result[:warnings].each { |warning| puts "   • #{warning}" }
     end
 
-    if result[:suggestions].any?
-      puts "💡 Suggestions: #{result[:suggestions].length}"
-      result[:suggestions].each { |suggestion| puts "   • #{suggestion}" }
-    end
+    return unless result[:suggestions].any?
+
+    puts "💡 Suggestions: #{result[:suggestions].length}"
+    result[:suggestions].each { |suggestion| puts "   • #{suggestion}" }
   end
 
   def print_overall_summary
@@ -365,16 +359,16 @@ class DopplerEnvironmentChecker
       puts "   Your application is ready for deployment across all environments."
     else
       puts "⚠️  Some environments need attention:"
-      
+
       ENVIRONMENTS.each do |env|
         result = @results[env]
         status_emoji = case result[:status]
-                      when :success then "✅"
-                      when :warning then "⚠️ "
-                      when :error then "❌"
-                      else "❓"
-                      end
-        
+                       when :success then "✅"
+                       when :warning then "⚠️ "
+                       when :error then "❌"
+                       else "❓"
+                       end
+
         puts "   #{status_emoji} #{env.upcase}: #{result[:status]}"
       end
     end
@@ -386,15 +380,15 @@ class DopplerEnvironmentChecker
     puts "=" * 60
 
     error_envs = @results.select { |_, result| result[:status] == :error }.keys
-    
+
     if error_envs.any?
-      puts "1. Fix critical errors in: #{error_envs.map(&:upcase).join(', ')}"
-      
+      puts "1. Fix critical errors in: #{error_envs.map(&:upcase).join(", ")}"
+
       error_envs.each do |env|
         puts "\n   #{env.upcase}:"
         @results[env][:errors].each do |error|
           var_name = error.split(":").first
-          
+
           case var_name
           when "SESSION_SECRET"
             puts "   doppler secrets set SESSION_SECRET=$(openssl rand -hex 32) --config #{env}"
@@ -405,10 +399,10 @@ class DopplerEnvironmentChecker
             puts "   doppler secrets set REDIS_URL=#{default_redis} --config #{env}"
           when "RACK_ENV"
             rack_env = case env
-                      when "dev" then "development"
-                      when "stg" then "staging"
-                      when "prd" then "production"
-                      end
+                       when "dev" then "development"
+                       when "stg" then "staging"
+                       when "prd" then "production"
+                       end
             puts "   doppler secrets set RACK_ENV=#{rack_env} --config #{env}"
           when "ALLOWED_ORIGINS"
             origins = env == "dev" ? "localhost:4567,127.0.0.1:4567" : "as.internetblacksmith.dev"

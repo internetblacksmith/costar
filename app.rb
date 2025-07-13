@@ -66,8 +66,8 @@ class ActorSyncApp < Sinatra::Base
     # Enable gzip compression for all responses
     use Rack::Deflater
 
-    # Force HTTPS
-    use Rack::SSL
+    # Force HTTPS (exclude health checks for internal monitoring)
+    use Rack::SSL, exclude: ->(env) { env["PATH_INFO"].start_with?("/health") }
 
     # Additional security headers
     use Rack::Protection,

@@ -121,8 +121,9 @@ class PerformanceHeaders
     # Build resource preload hints for critical resources
     hints = []
 
-    # Preload critical CSS
-    hints << "</css/main.css>; rel=preload; as=style"
+    # Don't preload main.css since it uses @import statements which delay usage
+    # The browser warning occurs because @import creates additional network requests
+    # after the preloaded CSS file is downloaded but before it's "used"
 
     # Preload critical JavaScript
     hints << "</js/app.js>; rel=preload; as=script"

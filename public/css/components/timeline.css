@@ -10,9 +10,9 @@
 
 /* Share button styling */
 .share-button-container {
-    position: absolute;
-    top: -50px;
-    right: 0;
+    position: relative;
+    text-align: right;
+    margin-bottom: var(--spacing-md);
     z-index: 10;
 }
 

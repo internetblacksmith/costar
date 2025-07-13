@@ -21,9 +21,6 @@
     }
     
     /* Mobile timeline layout - dual timelines */
-    .timeline::before {
-        display: none; /* Hide the single center line */
-    }
     
     /* Year header spans both columns */
     .year-header {
@@ -90,16 +87,20 @@
         z-index: 1;
     }
     
-    /* Right timeline line for actor 2 - using ::before */
+    /* Override desktop center line to create right timeline for actor 2 */
     .timeline::before {
-        content: '';
-        position: absolute;
-        top: 200px; /* Start after actor portraits */
-        bottom: 20px;
-        right: 25%;
-        width: 2px;
-        background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color));
-        z-index: 1;
+        content: '' !important;
+        position: absolute !important;
+        top: 200px !important; /* Start after actor portraits */
+        bottom: 20px !important;
+        left: auto !important;
+        right: 25% !important;
+        transform: none !important;
+        width: 2px !important;
+        background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color)) !important;
+        z-index: 1 !important;
+        display: block !important;
+        height: auto !important;
     }
     
     .movie-left,
@@ -237,18 +238,26 @@
     
     /* Mobile movie card adjustments for two-column layout */
     .movie-card {
-        flex-direction: column;
+        flex-direction: column !important;
         width: 100%;
         max-width: 140px;
     }
     
+    /* Override the directional styles for mobile */
+    .movie-left .movie-item .movie-card,
+    .movie-right .movie-item .movie-card {
+        flex-direction: column !important;
+    }
+    
     .movie-poster-container {
-        width: 100%;
+        width: 100% !important;
         height: 100px;
     }
     
-    .movie-poster {
-        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    .movie-poster,
+    .movie-left .movie-poster,
+    .movie-right .movie-poster {
+        border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
     }
     
     .movie-content {

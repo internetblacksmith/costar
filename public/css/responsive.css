@@ -4,6 +4,13 @@
         padding: var(--spacing-sm);
     }
     
+    /* Share button on mobile */
+    .share-button-container {
+        position: static !important;
+        margin-bottom: var(--spacing-md);
+        text-align: center;
+    }
+    
     header h1 {
         font-size: 2rem;
     }

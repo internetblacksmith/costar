@@ -9,13 +9,13 @@ class Configuration
   def initialize
     setup_environment
     @validation_result = validate_required_env_vars
-    
+
     # Fail fast in development if critical vars are missing
-    if development? && !@validation_result[:valid]
-      puts "\n🛑 STOPPING: Critical environment variables are missing."
-      puts "   Please configure your environment before starting the application."
-      exit(1)
-    end
+    return unless development? && !@validation_result[:valid]
+
+    puts "\n🛑 STOPPING: Critical environment variables are missing."
+    puts "   Please configure your environment before starting the application."
+    exit(1)
   end
 
   def tmdb_api_key
@@ -55,7 +55,7 @@ class Configuration
       puts "🔐 Using Doppler for environment variables"
       return
     end
-    
+
     # Fallback to .env file
     if File.exist?(".env")
       require "dotenv"
@@ -67,7 +67,7 @@ class Configuration
       puts "   Or create a .env file with required variables."
     end
   end
-  
+
   def doppler_available?
     # Check if doppler command is available and configured for this project
     system("doppler secrets --silent > /dev/null 2>&1")
@@ -79,12 +79,12 @@ class Configuration
 
     # Critical environment variables that must be present
     critical_vars = %w[TMDB_API_KEY]
-    
+
     critical_vars.each do |var|
       value = ENV.fetch(var, nil)
       if value.nil? || value.empty? || value == "changeme"
         errors << "❌ #{var} is missing or not properly configured"
-      elsif value.length < 10  # API keys should be longer
+      elsif value.length < 10 # API keys should be longer
         warnings << "⚠️  #{var} seems too short (#{value.length} chars) - verify it's correct"
       end
     end
@@ -98,9 +98,7 @@ class Configuration
 
     optional_vars.each do |var, consequence|
       value = ENV.fetch(var, nil)
-      if value.nil? || value.empty?
-        warnings << "⚠️  #{var} not set - #{consequence}"
-      end
+      warnings << "⚠️  #{var} not set - #{consequence}" if value.nil? || value.empty?
     end
 
     # Print results
@@ -117,9 +115,7 @@ class Configuration
       puts ""
     end
 
-    if errors.empty? && warnings.empty?
-      puts "✅ All required environment variables are configured"
-    end
+    puts "✅ All required environment variables are configured" if errors.empty? && warnings.empty?
 
     # Return validation status
     { errors: errors, warnings: warnings, valid: errors.empty? }

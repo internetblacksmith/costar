@@ -8,22 +8,25 @@ class PerformanceMonitor
     # Completely disable in development to avoid argument errors
     def track_request(*args)
       return nil if ENV["RACK_ENV"] == "development"
+
       track_request_production(*args)
     end
 
     def track_cache_performance(*args)
       return nil if ENV["RACK_ENV"] == "development"
+
       track_cache_performance_production(*args)
     end
 
     def track_api_performance(*args, **kwargs)
       return nil if ENV["RACK_ENV"] == "development"
+
       track_api_performance_production(*args, **kwargs)
     end
 
     # Override method_missing to handle any mocking issues
     def method_missing(method_name, *args, &block)
-      if method_name.to_s.start_with?('track_')
+      if method_name.to_s.start_with?("track_")
         puts "\n=== PerformanceMonitor method_missing DEBUG ==="
         puts "Method: #{method_name}"
         puts "Args count: #{args.length}"
@@ -35,6 +38,7 @@ class PerformanceMonitor
       end
       super
     end
+
     def track_request_production(env, status, duration_ms)
       return unless logger_available? && cache_available?
 

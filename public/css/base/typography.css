@@ -1,11 +1,13 @@
 /* Typography and Base Styles */
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-family-primary);
     margin: 0;
     padding: 0;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 400;
+    letter-spacing: -0.01em;
 }
 
 .container {

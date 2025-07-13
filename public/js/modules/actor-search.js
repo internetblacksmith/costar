@@ -113,6 +113,12 @@ class ActorSearch {
         document.getElementById(field + '_name').value = actorName;
         document.getElementById('suggestions' + suggestionId).innerHTML = '';
         
+        // Also set backup fields
+        const idBackup = document.getElementById(field + '_id_backup');
+        const nameBackup = document.getElementById(field + '_name_backup');
+        if (idBackup) idBackup.value = actorId;
+        if (nameBackup) nameBackup.value = actorName;
+        
         // Replace the input field with a chip but keep hidden fields
         const container = document.getElementById(field + 'Container');
         container.innerHTML = `
@@ -121,7 +127,7 @@ class ActorSearch {
                 <span class="mdc-chip__primary-action">
                     <span class="mdc-chip__text">${actorName}</span>
                 </span>
-                <span class="mdc-chip__trailing-icon material-icons" onclick="actorSearch.removeActor('${field}')" tabindex="0" role="button">cancel</span>
+                <span class="mdc-chip__trailing-icon material-icons" onclick="window.actorSearch.removeActor('${field}')" tabindex="0" role="button">cancel</span>
             </div>
             <input type="hidden" id="${field}_id" name="${field}_id" value="${actorId}">
             <input type="hidden" id="${field}_name" name="${field}_name" value="${actorName}">
@@ -150,6 +156,12 @@ class ActorSearch {
         // Clear the hidden fields
         document.getElementById(field + '_id').value = '';
         document.getElementById(field + '_name').value = '';
+        
+        // Clear backup fields
+        const idBackup = document.getElementById(field + '_id_backup');
+        const nameBackup = document.getElementById(field + '_name_backup');
+        if (idBackup) idBackup.value = '';
+        if (nameBackup) nameBackup.value = '';
         
         // Restore the input field
         const container = document.getElementById(field + 'Container');
@@ -200,6 +212,17 @@ class ActorSearch {
     }
 
     clearInputFields() {
+        // Check if we have actor IDs in the URL (from share link)
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasActor1Id = urlParams.has('actor1_id');
+        const hasActor2Id = urlParams.has('actor2_id');
+        
+        // Don't clear fields if we're loading from a share link
+        if (hasActor1Id && hasActor2Id) {
+            console.log('Preserving pre-populated fields from share link');
+            return;
+        }
+        
         // Clear all input fields on page load to ensure clean state
         ['actor1', 'actor2'].forEach(field => {
             const inputField = document.getElementById(field);
@@ -212,6 +235,12 @@ class ActorSearch {
             const nameField = document.getElementById(field + '_name');
             if (idField) idField.value = '';
             if (nameField) nameField.value = '';
+            
+            // Clear backup fields
+            const idBackup = document.getElementById(field + '_id_backup');
+            const nameBackup = document.getElementById(field + '_name_backup');
+            if (idBackup) idBackup.value = '';
+            if (nameBackup) nameBackup.value = '';
         });
     }
 }

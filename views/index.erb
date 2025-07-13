@@ -5,14 +5,20 @@
                 <%= erb :'partials/_search_field', locals: { 
                     field: 'actor1', 
                     label: 'First Actor', 
-                    suggestion_id: '1' 
+                    suggestion_id: '1'
                 } %>
                 
                 <%= erb :'partials/_search_field', locals: { 
                     field: 'actor2', 
                     label: 'Second Actor', 
-                    suggestion_id: '2' 
+                    suggestion_id: '2'
                 } %>
+                
+                <!-- Keep hidden fields outside containers to ensure they persist -->
+                <input type="hidden" id="actor1_id_backup" name="actor1_id_backup">
+                <input type="hidden" id="actor2_id_backup" name="actor2_id_backup">
+                <input type="hidden" id="actor1_name_backup" name="actor1_name_backup">
+                <input type="hidden" id="actor2_name_backup" name="actor2_name_backup">
             </div>
             
             <div class="compare-button-container">
@@ -21,8 +27,12 @@
                         data-mdc-auto-init="MDCRipple"
                         hx-get="/api/actors/compare"
                         hx-target="#timeline"
-                        hx-include="#actor1_id, #actor2_id, #actor1_name, #actor2_name"
-                        hx-vals='js:{"actor1_id": document.getElementById("actor1_id").value, "actor2_id": document.getElementById("actor2_id").value}'
+                        hx-vals='js:{
+                            "actor1_id": document.getElementById("actor1_id_backup").value, 
+                            "actor2_id": document.getElementById("actor2_id_backup").value, 
+                            "actor1_name": document.getElementById("actor1_name_backup").value, 
+                            "actor2_name": document.getElementById("actor2_name_backup").value
+                        }'
                         hx-indicator="#timeline"
                         onclick="trackComparison();">
                     <span class="mdc-button__ripple"></span>
@@ -62,55 +72,46 @@
 
 <% if @actor1_id && @actor2_id %>
 <script>
+// Pre-populate backup fields immediately
+document.getElementById('actor1_id_backup').value = '<%= @actor1_id %>';
+document.getElementById('actor2_id_backup').value = '<%= @actor2_id %>';
+<% if @actor1_name %>
+document.getElementById('actor1_name_backup').value = '<%= @actor1_name.gsub("'", "\\'") %>';
+<% end %>
+<% if @actor2_name %>
+document.getElementById('actor2_name_backup').value = '<%= @actor2_name.gsub("'", "\\'") %>';
+<% end %>
+
 // Auto-trigger comparison when actor IDs are provided
 document.addEventListener('DOMContentLoaded', function() {
-    // Set the actor IDs in hidden fields
-    document.getElementById('actor1_id').value = '<%= @actor1_id %>';
-    document.getElementById('actor2_id').value = '<%= @actor2_id %>';
-    
-    // Trigger the compare button click
-    const compareBtn = document.getElementById('compareBtn');
-    if (compareBtn) {
-        // Small delay to ensure HTMX is initialized
-        setTimeout(function() {
-            compareBtn.click();
-        }, 100);
-    }
-    
-    // Optionally fetch and display actor names
-    fetchActorName('<%= @actor1_id %>', 'actor1');
-    fetchActorName('<%= @actor2_id %>', 'actor2');
-});
-
-function fetchActorName(actorId, field) {
-    fetch(`/api/actors/${actorId}/movies`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.actor_name) {
-                // Set the hidden name field
-                const nameField = document.getElementById(`${field}_name`);
-                if (nameField) {
-                    nameField.value = data.actor_name;
-                }
-                
-                // Set the visible search input
-                const searchInput = document.getElementById(field);
-                if (searchInput) {
-                    searchInput.value = data.actor_name;
-                    // Trigger MDC text field to float the label
-                    const textField = searchInput.closest('.mdc-text-field');
-                    if (textField) {
-                        textField.classList.add('mdc-text-field--label-floating');
-                        // If MDC is initialized, update it
-                        if (window.mdc && textField.MDCTextField) {
-                            textField.MDCTextField.value = data.actor_name;
-                        }
-                    }
-                }
+    // Wait for actorSearch to be available and show pills
+    const showPillsAndCompare = function() {
+        if (!window.actorSearch) {
+            setTimeout(showPillsAndCompare, 10);
+            return;
+        }
+        
+        // Show pills for selected actors
+        <% if @actor1_name && @actor1_id %>
+        window.actorSearch.selectActor('<%= @actor1_id %>', '<%= @actor1_name.gsub("'", "\\'") %>', 'actor1');
+        <% end %>
+        
+        <% if @actor2_name && @actor2_id %>
+        window.actorSearch.selectActor('<%= @actor2_id %>', '<%= @actor2_name.gsub("'", "\\'") %>', 'actor2');
+        <% end %>
+        
+        // Trigger comparison immediately using requestAnimationFrame to ensure DOM updates
+        requestAnimationFrame(function() {
+            const compareBtn = document.getElementById('compareBtn');
+            if (compareBtn) {
+                compareBtn.click();
             }
-        })
-        .catch(err => console.error('Error fetching actor name:', err));
-}
+        });
+    };
+    
+    // Start immediately
+    showPillsAndCompare();
+});
 </script>
 <% end %>
 

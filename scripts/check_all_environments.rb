@@ -9,18 +9,18 @@ puts "=" * 70
 puts
 
 # Check if we're running with Doppler
-doppler_env = ENV["DOPPLER_ENVIRONMENT"]
+doppler_env = ENV.fetch("DOPPLER_ENVIRONMENT", nil)
 if doppler_env
   puts "🔗 Running with Doppler environment: #{doppler_env.upcase}"
   puts "Checking current environment variables..."
   puts
-  
+
   # Run the original environment checker for current context
   require_relative "check_env_variables"
   checker = EnvironmentChecker.new
   checker.check_environment
-  
-  puts "\n" + "=" * 70
+
+  puts "\n#{"=" * 70}"
   puts
 end
 
@@ -32,7 +32,7 @@ require_relative "check_doppler_environments"
 doppler_checker = DopplerEnvironmentChecker.new
 doppler_checker.check_all_environments
 
-puts "\n" + "=" * 70
+puts "\n#{"=" * 70}"
 puts "✅ Complete environment validation finished!"
 puts
 

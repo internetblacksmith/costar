@@ -179,6 +179,7 @@ All endpoints include:
 2. Code style compliance: `bundle exec rubocop -A`
 3. Security scan clean: `bundle exec brakeman`
 4. No dependency vulnerabilities: `bundle exec bundle-audit`
+5. Doppler environment variables up-to-date: `ruby scripts/check_doppler_environments.rb`
 
 ### Git Workflow
 - Feature branches with descriptive names

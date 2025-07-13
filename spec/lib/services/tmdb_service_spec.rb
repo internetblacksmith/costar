@@ -16,25 +16,25 @@ RSpec.describe TMDBService do
       let(:query) { "Leonardo DiCaprio" }
       let(:mock_response) do
         {
-          results: [
+          "results" => [
             {
-              id: 6193,
-              name: "Leonardo DiCaprio",
-              popularity: 45.8,
-              profile_path: "/wo2hJpn04vbtmh0B9utCFdsQhxM.jpg",
-              known_for_department: "Acting",
-              known_for: [
-                { title: "Inception" },
-                { title: "The Wolf of Wall Street" }
+              "id" => 6193,
+              "name" => "Leonardo DiCaprio",
+              "popularity" => 45.8,
+              "profile_path" => "/wo2hJpn04vbtmh0B9utCFdsQhxM.jpg",
+              "known_for_department" => "Acting",
+              "known_for" => [
+                { "title" => "Inception" },
+                { "title" => "The Wolf of Wall Street" }
               ]
             },
             {
-              id: 123,
-              name: "Leonardo Nam",
-              popularity: 5.2,
-              profile_path: "/test.jpg",
-              known_for_department: "Acting",
-              known_for: []
+              "id" => 123,
+              "name" => "Leonardo Nam",
+              "popularity" => 5.2,
+              "profile_path" => "/test.jpg",
+              "known_for_department" => "Acting",
+              "known_for" => []
             }
           ]
         }

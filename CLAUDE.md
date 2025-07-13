@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (178 examples, 0 failures)
+- **Testing**: RSpec test suite (265 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -59,12 +59,23 @@ actorsync/
 │   ├── config/               # Configuration and utilities
 │   │   ├── cache.rb                  # Redis/Memory cache abstraction
 │   │   ├── logger.rb                 # Structured JSON logging
-│   │   └── errors.rb                 # Custom error classes with hierarchy
+│   │   ├── errors.rb                 # Custom error classes with hierarchy
+│   │   ├── service_container.rb      # Dependency injection container
+│   │   └── service_initializer.rb    # Service registration and configuration
+│   ├── dto/                  # Data Transfer Objects
+│   │   ├── base_dto.rb               # Base DTO with validation and serialization
+│   │   ├── actor_dto.rb              # Actor data structure
+│   │   ├── movie_dto.rb              # Movie data structure
+│   │   ├── search_results_dto.rb     # Search results wrapper
+│   │   ├── comparison_result_dto.rb  # Timeline comparison results
+│   │   ├── actor_search_request.rb   # Search request validation
+│   │   ├── actor_comparison_request.rb # Comparison request validation
+│   │   └── dto_factory.rb            # DTO creation from API responses
 │   └── middleware/           # Request processing pipeline
 │       ├── request_logger.rb         # Request/response logging
 │       ├── performance_headers.rb    # Caching optimization headers
 │       └── error_handler_module.rb   # Standardized error handling patterns
-├── spec/                     # Test suite (178 examples, 0 failures)
+├── spec/                     # Test suite (265 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -86,6 +97,14 @@ actorsync/
 ```
 
 ## Key Development Notes
+
+### Data Transfer Objects (DTOs)
+- **Type Safety**: Structured data objects with validation and serialization
+- **API Consistency**: Standardized request/response formats across all endpoints
+- **Validation**: Built-in input validation with clear error messages
+- **Backward Compatibility**: Maintains compatibility with legacy hash-based systems
+- **Factory Pattern**: DTOFactory converts API responses to typed objects
+- **Dependency Injection**: ServiceContainer manages service lifecycle and dependencies
 
 ### Security Implementation
 - **Input Validation**: All user inputs sanitized and validated
@@ -115,10 +134,11 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 224 examples with 100% pass rate
-- **Test Coverage**: Unit tests, integration tests, security tests
+- **RSpec Framework**: 265 examples with 100% pass rate
+- **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
+- **DTO Testing**: Comprehensive validation, serialization, and factory pattern tests
 
 ### Dependency Management
 - **Version Pinning**: All gems pinned to exact versions for production stability
@@ -171,7 +191,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 68 examples, 0 failures
+- **Testing**: 265 examples, 0 failures
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging
@@ -179,6 +199,8 @@ The application includes comprehensive environment validation that will:
 
 ### Key Features
 - Circuit breaker pattern for API resilience
+- Data Transfer Objects (DTOs) for type safety and validation
+- Dependency injection with service container
 - Rate limiting with Redis persistence
 - Input validation and sanitization
 - Security headers and CORS protection

@@ -18,7 +18,17 @@ module ApiRenderer
   # @return [String] Rendered HTML
   #
   def render_actor_suggestions(app, actors, field)
-    app.erb :suggestions, locals: { actors: actors, field: field }, layout: false
+    # Convert DTOs to hashes if needed
+    actor_hashes = if actors.respond_to?(:actors)
+                     # It's a SearchResultsDTO
+                     actors.actors.map(&:to_h)
+                   elsif actors.is_a?(Array)
+                     actors.map { |actor| actor.respond_to?(:to_h) ? actor.to_h : actor }
+                   else
+                     []
+                   end
+
+    app.erb :suggestions, locals: { actors: actor_hashes, field: field }, layout: false
   end
 
   ##
@@ -52,8 +62,15 @@ module ApiRenderer
   # @return [String] JSON response
   #
   def render_actor_movies_json(app, movies)
+    # Convert DTOs to hashes if needed
+    movie_hashes = if movies.is_a?(Array)
+                     movies.map { |movie| movie.respond_to?(:to_h) ? movie.to_h : movie }
+                   else
+                     []
+                   end
+
     response_builder = ApiResponseBuilder.new(app)
-    response_builder.success({ movies: movies })
+    response_builder.success({ movies: movie_hashes })
   end
 
   ##
@@ -127,6 +144,32 @@ module ApiRenderer
   # @param data [Hash] Comparison data
   #
   def assign_timeline_variables(app, data)
+    # Handle both DTO and hash formats
+    if data.respond_to?(:actor1)
+      assign_dto_timeline_variables(app, data)
+    else
+      assign_hash_timeline_variables(app, data)
+    end
+  end
+
+  def assign_dto_timeline_variables(app, data)
+    # It's a ComparisonResultDTO
+    app.instance_variable_set(:@actor1_movies, data.actor1_movies.map(&:to_h))
+    app.instance_variable_set(:@actor2_movies, data.actor2_movies.map(&:to_h))
+    app.instance_variable_set(:@shared_movies, data.shared_movies.map(&:to_h))
+    app.instance_variable_set(:@actor1_name, data.actor1.name)
+    app.instance_variable_set(:@actor2_name, data.actor2.name)
+    app.instance_variable_set(:@actor1_profile, data.actor1.profile_path)
+    app.instance_variable_set(:@actor2_profile, data.actor2.profile_path)
+    app.instance_variable_set(:@years, data.timeline_data[:years])
+    app.instance_variable_set(:@processed_movies, data.timeline_data[:processed_movies])
+    app.instance_variable_set(:@shared_movies_by_year, data.timeline_data[:shared_movies_by_year])
+    app.instance_variable_set(:@actor1_id, data.actor1.id)
+    app.instance_variable_set(:@actor2_id, data.actor2.id)
+  end
+
+  def assign_hash_timeline_variables(app, data)
+    # Legacy hash format
     app.instance_variable_set(:@actor1_movies, data[:actor1_movies])
     app.instance_variable_set(:@actor2_movies, data[:actor2_movies])
     app.instance_variable_set(:@shared_movies, data[:shared_movies])
@@ -137,7 +180,6 @@ module ApiRenderer
     app.instance_variable_set(:@years, data[:years])
     app.instance_variable_set(:@processed_movies, data[:processed_movies])
     app.instance_variable_set(:@shared_movies_by_year, data[:shared_movies_by_year])
-    # Add actor IDs for share functionality
     app.instance_variable_set(:@actor1_id, data[:actor1_id])
     app.instance_variable_set(:@actor2_id, data[:actor2_id])
   end

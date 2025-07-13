@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../services/api_response_builder"
+
 # TMDB-specific error handlers
 module ErrorHandlerTMDB
   private
@@ -10,11 +12,11 @@ module ErrorHandlerTMDB
                           error: error.message,
                           request_path: request.path)
 
-    status 504
     if request.xhr? || request.content_type&.include?("application/json")
-      content_type :json
-      { error: "Request timed out", message: "Please try again" }.to_json
+      response_builder = ApiResponseBuilder.new(self)
+      halt response_builder.error("Request timed out", code: 504, details: { message: "Please try again" })
     else
+      status 504
       send_error_page("504.html", fallback: "Please try again later")
     end
   end
@@ -26,11 +28,11 @@ module ErrorHandlerTMDB
 
     Sentry.capture_exception(error) if defined?(Sentry)
 
-    status 401
     if request.xhr? || request.content_type&.include?("application/json")
-      content_type :json
-      { error: "Authentication failed" }.to_json
+      response_builder = ApiResponseBuilder.new(self)
+      halt response_builder.error("Authentication failed", code: 401)
     else
+      status 401
       send_error_page("401.html", fallback: "Authentication error")
     end
   end
@@ -41,11 +43,11 @@ module ErrorHandlerTMDB
                           error: error.message,
                           request_path: request.path)
 
-    status 429
     if request.xhr? || request.content_type&.include?("application/json")
-      content_type :json
-      { error: "Rate limit exceeded", retry_after: 60 }.to_json
+      response_builder = ApiResponseBuilder.new(self)
+      halt response_builder.error("Rate limit exceeded", code: 429, details: { retry_after: 60 })
     else
+      status 429
       send_error_page("429.html", fallback: "Too many requests. Please wait a moment.")
     end
   end
@@ -56,11 +58,11 @@ module ErrorHandlerTMDB
                           error: error.message,
                           request_path: request.path)
 
-    status 404
     if request.xhr? || request.content_type&.include?("application/json")
-      content_type :json
-      { error: "Resource not found" }.to_json
+      response_builder = ApiResponseBuilder.new(self)
+      halt response_builder.error("Resource not found", code: 404)
     else
+      status 404
       send_error_page("404.html")
     end
   end
@@ -71,11 +73,11 @@ module ErrorHandlerTMDB
                            error: error.message,
                            request_path: request.path)
 
-    status 503
     if request.xhr? || request.content_type&.include?("application/json")
-      content_type :json
-      { error: "Service unavailable", message: "Please try again later" }.to_json
+      response_builder = ApiResponseBuilder.new(self)
+      halt response_builder.error("Service unavailable", code: 503, details: { message: "Please try again later" })
     else
+      status 503
       send_error_page("503.html", fallback: "Service temporarily unavailable")
     end
   end

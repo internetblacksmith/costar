@@ -15,12 +15,15 @@ Style/StringLiteralsInInterpolation:
 
 Metrics/MethodLength:
   Max: 30
+  Exclude:
+    - 'scripts/**/*'
 
 Metrics/BlockLength:
   Exclude:
     - 'config/**/*'
     - 'spec/**/*'
     - 'test/**/*'
+    - 'scripts/**/*'
 
 Style/Documentation:
   Enabled: false
@@ -30,15 +33,23 @@ Style/FrozenStringLiteralComment:
 
 Metrics/AbcSize:
   Max: 30
+  Exclude:
+    - 'scripts/**/*'
 
 Metrics/CyclomaticComplexity:
   Max: 8
+  Exclude:
+    - 'scripts/**/*'
 
 Metrics/PerceivedComplexity:
   Max: 8
+  Exclude:
+    - 'scripts/**/*'
 
 Metrics/ClassLength:
   Max: 250
+  Exclude:
+    - 'scripts/**/*'
 
 Metrics/ModuleLength:
   Max: 150

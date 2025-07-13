@@ -4,7 +4,8 @@ require "spec_helper"
 
 RSpec.describe ResilientTMDBClient do
   let(:api_key) { "test_api_key" }
-  let(:client) { described_class.new(api_key) }
+  let(:cache_manager) { instance_double(CacheManager) }
+  let(:client) { described_class.new(api_key: api_key, cache: cache_manager) }
 
   before do |example|
     # Force production mode for these tests to test circuit breaker functionality
@@ -45,7 +46,7 @@ RSpec.describe ResilientTMDBClient do
     context "with successful API response" do
       it "returns parsed JSON data", vcr: { cassette_name: "resilient_client_successful_search" } do
         # Use real TMDB API key for VCR recording
-        real_client = described_class.new(ENV.fetch("TMDB_API_KEY", nil))
+        real_client = described_class.new(api_key: ENV.fetch("TMDB_API_KEY", nil))
         # Force production mode and reset circuit breaker for this client
         real_client.instance_variable_set(:@test_mode, false)
         real_client.instance_variable_get(:@circuit_breaker).reset!
@@ -63,7 +64,7 @@ RSpec.describe ResilientTMDBClient do
         ).at_least(:once)
 
         # Use real TMDB API key for VCR recording
-        real_client = described_class.new(ENV.fetch("TMDB_API_KEY", nil))
+        real_client = described_class.new(api_key: ENV.fetch("TMDB_API_KEY", nil))
         real_client.instance_variable_set(:@test_mode, false)
         real_client.instance_variable_get(:@circuit_breaker).reset!
 
@@ -125,7 +126,7 @@ RSpec.describe ResilientTMDBClient do
     context "with missing API key" do
       it "raises TMDBError for missing API key" do
         # Create a client with empty API key
-        client_without_key = described_class.new("")
+        client_without_key = described_class.new(api_key: "")
         expect { client_without_key.request("search/person") }.to raise_error(TMDBError, "TMDB API key not configured")
       end
     end
@@ -221,7 +222,7 @@ RSpec.describe ResilientTMDBClient do
       )
 
       # Use real TMDB API key for VCR recording
-      real_client = described_class.new(ENV.fetch("TMDB_API_KEY", nil))
+      real_client = described_class.new(api_key: ENV.fetch("TMDB_API_KEY", nil))
       real_client.instance_variable_set(:@test_mode, false)
       real_client.instance_variable_get(:@circuit_breaker).reset!
 

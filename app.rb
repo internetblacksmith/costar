@@ -17,6 +17,8 @@ require_relative "lib/config/configuration"
 require_relative "lib/config/cache"
 require_relative "lib/config/errors"
 require_relative "lib/config/logger"
+require_relative "lib/config/service_container"
+require_relative "lib/config/service_initializer"
 require_relative "lib/middleware/request_logger"
 require_relative "lib/middleware/performance_headers"
 require_relative "lib/services/cache_key_builder"
@@ -69,9 +71,10 @@ class ActorSyncApp < Sinatra::Base
       set :bind, "0.0.0.0"
     end
 
-    # Initialize services
-    set :tmdb_service, TMDBService.new
-    set :comparison_service, ActorComparisonService.new
+    # Initialize services using dependency injection
+    ServiceInitializer.initialize_services
+    set :tmdb_service, ServiceContainer.get(:tmdb_service)
+    set :comparison_service, ServiceContainer.get(:comparison_service)
   end
 
   # Production security and performance configuration

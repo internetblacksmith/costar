@@ -77,6 +77,7 @@ Backend (Ruby/Sinatra + Security Middleware)
 - **Monitoring**: Real-time performance tracking and alerting
 - **Response Standardization**: ApiResponseBuilder ensures consistent JSON/HTML responses
 - **Error Handling**: Typed exceptions with ErrorHandlerModule for consistent error patterns
+- **Dependency Injection**: ServiceContainer manages service initialization and dependencies
 
 ## Development Progress
 - [x] Project architecture designed
@@ -132,7 +133,9 @@ actorsync/
 │   ├── config/                    # Configuration & utilities
 │   │   ├── cache.rb                      # Redis/Memory abstraction
 │   │   ├── logger.rb                     # Structured logging
-│   │   └── errors.rb                     # Custom error classes with hierarchy
+│   │   ├── errors.rb                     # Custom error classes with hierarchy
+│   │   ├── service_container.rb          # Dependency injection container
+│   │   └── service_initializer.rb        # Service registration and initialization
 │   └── middleware/                # Request processing
 │       ├── request_logger.rb             # Request/response logging
 │       ├── performance_headers.rb        # Caching optimization

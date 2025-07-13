@@ -1,4 +1,13 @@
 <div class="timeline">
+    <!-- Share Button -->
+    <div class="share-button-container">
+        <button class="mdc-button mdc-button--raised share-button" onclick="shareTimeline()">
+            <span class="mdc-button__ripple"></span>
+            <span class="material-icons mdc-button__icon">share</span>
+            <span class="mdc-button__label">Share Timeline</span>
+        </button>
+    </div>
+    
     <!-- Actor Portrait Header -->
     <div class="actor-portrait-header" style="display: flex !important; flex-direction: row !important; align-items: center !important;">
         <div class="actor-portrait-left" style="flex: 1 !important;">
@@ -117,3 +126,44 @@
         </div>
     <% end %>
 </div>
+
+<script>
+function shareTimeline() {
+    // Get actor IDs from the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const actor1Id = urlParams.get('actor1_id');
+    const actor2Id = urlParams.get('actor2_id');
+    
+    // Build the shareable URL
+    const shareUrl = `${window.location.origin}/?actor1_id=${actor1Id}&actor2_id=${actor2Id}`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        // Show success message using Material Design snackbar
+        const snackbar = document.createElement('div');
+        snackbar.className = 'mdc-snackbar mdc-snackbar--open';
+        snackbar.innerHTML = `
+            <div class="mdc-snackbar__surface">
+                <div class="mdc-snackbar__label">Timeline link copied to clipboard!</div>
+            </div>
+        `;
+        document.body.appendChild(snackbar);
+        
+        // Remove snackbar after 3 seconds
+        setTimeout(() => {
+            snackbar.remove();
+        }, 3000);
+    }).catch(err => {
+        // Fallback for older browsers
+        const tempInput = document.createElement('input');
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        
+        // Show success message
+        alert('Timeline link copied to clipboard!');
+    });
+}
+</script>

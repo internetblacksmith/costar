@@ -8,6 +8,27 @@
     padding: 0;
 }
 
+/* Share button styling */
+.share-button-container {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    z-index: 10;
+}
+
+.share-button {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.share-button:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+.share-button .material-icons {
+    margin-right: 8px;
+}
+
 .timeline {
     position: relative;
     max-width: 100%;

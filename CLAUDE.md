@@ -9,11 +9,11 @@ ActorSync is a production-ready web application for comparing actor filmographie
 ## Architecture
 
 - **Backend**: Ruby with Sinatra framework + Resilient Service Layer
-- **Frontend**: HTMX for dynamic interactions (no JavaScript framework)
+- **Frontend**: HTMX for dynamic interactions with comprehensive error handling
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (333 examples, 0 failures)
+- **Testing**: RSpec test suite (344 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -81,7 +81,7 @@ actorsync/
 │       ├── performance_headers.rb    # Caching optimization headers
 │       ├── error_handler_module.rb   # Standardized error handling patterns
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                     # Test suite (333 examples, 0 failures)
+├── spec/                     # Test suite (344 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -94,7 +94,15 @@ actorsync/
 │   ├── suggestions.erb       # Search suggestion partial
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
-│   └── styles.css            # Modern responsive CSS
+│   ├── css/
+│   │   └── main.css          # Modern responsive CSS
+│   └── js/                   # JavaScript modules
+│       ├── app.js            # Main application initialization
+│       └── modules/          # Modular JavaScript components
+│           ├── error-reporter.js    # Frontend error handling and reporting
+│           ├── snackbar.js          # User notification system
+│           ├── scroll-to-top.js     # Scroll behavior
+│           └── actor-search.js      # Actor search functionality
 └── docs/                     # Comprehensive documentation
     ├── SECURITY.md           # Security implementation details
     ├── ARCHITECTURE.md       # Technical architecture guide
@@ -140,7 +148,7 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 333 examples with 100% pass rate
+- **RSpec Framework**: 344 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
@@ -197,7 +205,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 333 examples, 0 failures
+- **Testing**: 344 examples, 0 failures
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging

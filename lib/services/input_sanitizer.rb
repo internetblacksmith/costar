@@ -235,4 +235,3 @@ class InputSanitizer
     sanitized.compact
   end
 end
-

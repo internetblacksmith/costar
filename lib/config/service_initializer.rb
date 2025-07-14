@@ -32,6 +32,11 @@ module ServiceInitializer
   end
 
   def self.register_api_services
+    # Register request throttler
+    ServiceContainer.register(:request_throttler) do
+      RequestThrottler.new
+    end
+
     # Register TMDB client with circuit breaker
     ServiceContainer.register(:tmdb_client) do |container|
       ResilientTMDBClient.new(
@@ -45,7 +50,8 @@ module ServiceInitializer
       # Get dependencies first to avoid recursive locking
       client = container.get(:tmdb_client)
       cache = container.get(:cache_manager)
-      TMDBService.new(client: client, cache: cache)
+      throttler = container.get(:request_throttler)
+      TMDBService.new(client: client, cache: cache, throttler: throttler)
     end
 
     # Register actor comparison service

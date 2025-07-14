@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (355 examples, 0 failures)
+- **Testing**: RSpec test suite (375 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -50,6 +50,7 @@ actorsync/
 │   │   ├── tmdb_service.rb           # TMDB API integration with caching
 │   │   ├── actor_comparison_service.rb # Timeline comparison logic
 │   │   ├── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── request_throttler.rb       # Per-client request throttling
 │   │   ├── input_sanitizer.rb        # Centralized input sanitization
 │   │   ├── api_response_builder.rb   # Standardized API response formatting
 │   │   ├── cache_manager.rb          # Centralized cache operations
@@ -81,7 +82,7 @@ actorsync/
 │       ├── performance_headers.rb    # Caching optimization headers
 │       ├── error_handler_module.rb   # Standardized error handling patterns
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                     # Test suite (355 examples, 0 failures)
+├── spec/                     # Test suite (375 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -126,7 +127,7 @@ actorsync/
 
 ### Security Implementation
 - **Input Validation**: All user inputs sanitized and validated
-- **Rate Limiting**: Rack::Attack with Redis backend (30-120 req/min)
+- **Rate Limiting**: Rack::Attack with Redis backend (30-120 req/min) + per-client throttling
 - **Security Headers**: CSP, HSTS, X-Frame-Options, X-XSS-Protection
 - **CORS**: Environment-based origin restrictions
 - **HTTPS**: Enforced in production with Rack::SSL
@@ -152,7 +153,7 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 355 examples with 100% pass rate
+- **RSpec Framework**: 375 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
@@ -209,7 +210,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 355 examples, 0 failures
+- **Testing**: 375 examples, 0 failures
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging
@@ -219,7 +220,7 @@ The application includes comprehensive environment validation that will:
 - Circuit breaker pattern for API resilience
 - Data Transfer Objects (DTOs) for type safety and validation
 - Dependency injection with service container
-- Rate limiting with Redis persistence
+- Rate limiting with Redis persistence and per-client throttling
 - Input validation and sanitization
 - Security headers and CORS protection
 - Structured logging and error tracking
@@ -311,4 +312,4 @@ All endpoints include:
 
 ---
 
-*This file reflects the current production-ready state of ActorSync as of 2025-07-13*
+*This file reflects the current production-ready state of ActorSync as of 2025-07-14*

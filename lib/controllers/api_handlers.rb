@@ -114,10 +114,13 @@ class ApiHandlers
       # Render response
       render_actor_timeline(@app, comparison_data)
     rescue ValidationError => e
+      handle_validation_error_with_context(e, "compare_actors", validation: validation)
       render_comparison_error(e.message)
     rescue TMDBError => e
+      handle_api_error_with_context(e, "compare_actors", validation: validation)
       render_comparison_error("API Error: #{e.message}")
-    rescue StandardError
+    rescue StandardError => e
+      handle_unexpected_error_with_context(e, "compare_actors", validation: validation)
       render_comparison_error("Failed to compare actors. Please try again.")
     end
   end

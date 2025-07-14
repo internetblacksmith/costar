@@ -20,6 +20,7 @@ require_relative "lib/config/logger"
 require_relative "lib/config/service_container"
 require_relative "lib/config/service_initializer"
 require_relative "lib/middleware/request_logger"
+require_relative "lib/middleware/request_context_middleware"
 require_relative "lib/middleware/performance_headers"
 require_relative "lib/services/cache_key_builder"
 require_relative "lib/services/cache_manager"
@@ -102,6 +103,9 @@ class ActorSyncApp < Sinatra::Base
   # Rate limiting configuration
   require_relative "config/rack_attack"
   use Rack::Attack
+
+  # Request context middleware (must be early in the stack)
+  use RequestContextMiddleware
 
   # Performance optimization middleware
   use PerformanceHeaders

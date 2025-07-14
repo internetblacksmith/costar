@@ -64,6 +64,7 @@ ActorSync features a resilient, production-ready architecture:
 - **ResilientTMDBClient**: Circuit breaker pattern for API resilience
 - **ActorComparisonService**: Timeline generation and movie analysis
 - **TimelineBuilder**: Performance-optimized timeline rendering
+- **RequestThrottler**: Per-client request rate limiting and throttling
 
 ### Security & Performance
 - **Rate Limiting**: Rack::Attack with Redis backend
@@ -92,6 +93,7 @@ actorsync/
 │   │   ├── resilient_tmdb_client.rb  # Circuit breaker client
 │   │   ├── actor_comparison_service.rb # Timeline comparison
 │   │   ├── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── request_throttler.rb      # Per-client request throttling
 │   │   ├── input_sanitizer.rb        # Centralized input sanitization
 │   │   ├── api_response_builder.rb   # Standardized API response formatting
 │   │   ├── cache_manager.rb          # Centralized cache operations
@@ -131,7 +133,7 @@ actorsync/
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
 │   └── styles.css            # Modern CSS with responsive design
-├── spec/                     # Test suite (355 examples, 0 failures)
+├── spec/                     # Test suite (375 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -248,6 +250,7 @@ ActorSync implements comprehensive security hardening:
 - **Field Whitelisting**: Only approved field names accepted
 
 ### Request Protection  
+- **Per-Client Throttling**: Individual client rate limiting by method
 - **Rate Limiting**: Tiered limits by endpoint complexity
 - **CORS Policy**: Environment-based origin restrictions
 - **User Agent Filtering**: Blocks suspicious bots and scrapers
@@ -278,7 +281,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (355 examples, 0 failures)
+- **RSpec** test framework (375 examples, 0 failures)
 - **WebMock** for API testing
 - **RuboCop** for code quality
 - **Brakeman** for security scanning

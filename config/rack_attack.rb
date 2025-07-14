@@ -11,7 +11,7 @@ require_relative "../lib/config/logger"
 module Rack
   class Attack
     # Disable Rack::Attack in test environment
-    unless ENV.fetch("RACK_ENV", "development") == "test"
+    unless %w[test].include?(ENV.fetch("RACK_ENV", "development"))
 
       # Configure cache store - use Redis in production, memory for development
       rack_env = ENV.fetch("RACK_ENV", "development")
@@ -68,13 +68,16 @@ module Rack
         req.ip if req.path.start_with?("/api/")
       end
 
-      # Block requests with suspicious user agents
+      # Block requests with suspicious user agents (only in production)
       blocklist("block bad user agents") do |req|
-        # Block requests with empty or suspicious user agents
+        # Skip blocking in development and test environments
+        next false if %w[development test].include?(ENV.fetch("RACK_ENV", "development"))
+        
+        # Block requests with empty or suspicious user agents in production
         user_agent = req.user_agent
         user_agent.nil? ||
           user_agent.empty? ||
-          user_agent.match(/curl|wget|python|java|go-http|bot/i)
+          user_agent.match(/malicious-crawler|attack-tool|spam-bot/i)
       end
 
       # Block requests with suspicious referers
@@ -83,9 +86,9 @@ module Rack
         referer&.match(/malicious|spam|attack/i)
       end
 
-      # Allow requests from localhost in development
+      # Allow requests from localhost in development and test
       safelist("allow localhost") do |req|
-        ENV.fetch("RACK_ENV", "development") == "development" &&
+        %w[development test].include?(ENV.fetch("RACK_ENV", "development")) &&
           ["127.0.0.1", "::1"].include?(req.ip)
       end
 

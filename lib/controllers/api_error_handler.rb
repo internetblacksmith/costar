@@ -25,21 +25,30 @@ module ApiErrorHandler
 
   def handle_api_error_with_context(error, endpoint, context = {})
     StructuredLogger.error("API TMDB Error",
-                           { type: "api_error", endpoint: endpoint, error: error.message,
-                             error_class: error.class.name }.merge(context))
+                           type: "api_error", 
+                           endpoint: endpoint, 
+                           error: error.message,
+                           error_class: error.class.name,
+                           **context)
     Sentry.capture_exception(error) if defined?(Sentry)
   end
 
   def handle_unexpected_error_with_context(error, endpoint, context = {})
     StructuredLogger.error("API Unexpected Error",
-                           { type: "api_error", endpoint: endpoint, error: error.message,
-                             error_class: error.class.name }.merge(context))
+                           type: "api_error", 
+                           endpoint: endpoint, 
+                           error: error.message,
+                           error_class: error.class.name,
+                           **context)
     Sentry.capture_exception(error) if defined?(Sentry)
   end
 
   def handle_validation_error_with_context(error, endpoint, context = {})
     StructuredLogger.warn("API Validation Error",
-                          { type: "validation_error", endpoint: endpoint, error: error.message,
-                            error_class: error.class.name }.merge(context))
+                          type: "validation_error", 
+                          endpoint: endpoint, 
+                          error: error.message,
+                          error_class: error.class.name,
+                          **context)
   end
 end

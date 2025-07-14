@@ -11,7 +11,7 @@ A production-ready web application that visualizes actor filmographies in a time
 - **TMDB Integration**: Uses The Movie Database API with circuit breaker resilience
 - **Production Security**: Rate limiting, CORS protection, input sanitization, and security headers
 - **Redis Caching**: High-performance caching with connection pooling
-- **Monitoring**: Structured logging, error tracking (Sentry), and health checks
+- **Monitoring**: Structured logging, error tracking (Sentry for backend and frontend), and health checks
 - **CI/CD Ready**: Comprehensive test suite and automated deployment
 
 ## Prerequisites
@@ -131,7 +131,7 @@ actorsync/
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
 │   └── styles.css            # Modern CSS with responsive design
-├── spec/                     # Test suite (333 examples, 0 failures)
+├── spec/                     # Test suite (344 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -278,7 +278,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (333 examples, 0 failures)
+- **RSpec** test framework (344 examples, 0 failures)
 - **WebMock** for API testing
 - **RuboCop** for code quality
 - **Brakeman** for security scanning

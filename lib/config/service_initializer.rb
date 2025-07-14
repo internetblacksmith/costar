@@ -8,6 +8,8 @@ require_relative "../services/timeline_builder"
 require_relative "../services/api_response_builder"
 require_relative "../services/cache_manager"
 require_relative "../services/performance_monitor"
+require_relative "../services/input_sanitizer"
+require_relative "../controllers/input_validator"
 
 # Initializes and configures all application services
 module ServiceInitializer
@@ -78,6 +80,16 @@ module ServiceInitializer
     # Register logger
     ServiceContainer.register(:logger) do
       StructuredLogger
+    end
+
+    # Register input sanitizer
+    ServiceContainer.register(:input_sanitizer) do
+      InputSanitizer.new
+    end
+
+    # Register input validator
+    ServiceContainer.register(:input_validator) do
+      InputValidator.new
     end
   end
 

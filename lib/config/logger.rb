@@ -8,7 +8,7 @@ require_relative "log_formatter"
 class StructuredLogger
   class << self
     def setup
-      @logger ||= create_logger
+      @setup ||= create_logger
     end
 
     def info(message, **context)

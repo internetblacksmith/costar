@@ -15,9 +15,10 @@ class HealthHandler
     tmdb_healthy = tmdb_healthy?
     cb_status = circuit_breaker_status
     throttler_status = throttler_status()
+    cleaner_status = cache_cleaner_status
     perf_summary = performance_summary
 
-    build_response(cache_healthy, tmdb_healthy, cb_status, throttler_status, perf_summary)
+    build_response(cache_healthy, tmdb_healthy, cb_status, throttler_status, cleaner_status, perf_summary)
   rescue StandardError => e
     build_error_response(e)
   end
@@ -44,17 +45,24 @@ class HealthHandler
     { error: "Unable to get throttler status: #{e.message}" }
   end
 
+  def cache_cleaner_status
+    cleaner = ServiceContainer.get(:cache_cleaner)
+    cleaner.status
+  rescue StandardError => e
+    { error: "Unable to get cache cleaner status: #{e.message}" }
+  end
+
   def performance_summary
     PerformanceMonitor.performance_summary
   rescue StandardError => e
     { error: "Unable to get performance summary: #{e.message}" }
   end
 
-  def build_response(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, performance_summary)
+  def build_response(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, cleaner_status, performance_summary)
     overall_healthy = cache_healthy && tmdb_healthy
     status_code = overall_healthy ? 200 : 503
 
-    data = create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, performance_summary,
+    data = create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, cleaner_status, performance_summary,
                                 overall_healthy)
 
     if overall_healthy
@@ -64,24 +72,25 @@ class HealthHandler
     end
   end
 
-  def create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, performance_summary, overall_healthy)
+  def create_response_data(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, cleaner_status, performance_summary, overall_healthy)
     {
       status: overall_healthy ? "healthy" : "degraded",
       timestamp: Time.now.iso8601,
       version: ENV.fetch("APP_VERSION", "unknown"),
       environment: ENV.fetch("RACK_ENV", "development"),
-      checks: build_checks(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status),
+      checks: build_checks(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, cleaner_status),
       performance: performance_summary
     }
   end
 
-  def build_checks(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status)
+  def build_checks(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, cleaner_status)
     cache_type = production_env? ? "redis" : "memory"
 
     {
       cache: {
         status: cache_healthy ? "healthy" : "unhealthy",
-        type: cache_type
+        type: cache_type,
+        cleaner: cleaner_status
       },
       tmdb_api: {
         status: tmdb_healthy ? "healthy" : "unhealthy",

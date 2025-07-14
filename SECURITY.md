@@ -373,7 +373,7 @@ bundle exec rubocop        # Code quality and security patterns
 **Redis Rate Limiting:**
 - Connection pooling prevents performance degradation
 - Efficient key patterns for fast lookups
-- TTL-based cleanup prevents memory leaks
+- TTL-based cleanup with automatic background service prevents memory leaks
 
 **Input Validation:**
 - Regex compilation optimized for performance

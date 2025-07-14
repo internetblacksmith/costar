@@ -50,6 +50,10 @@ class Cache
       initialize_cache.healthy?
     end
 
+    def cleanup_expired(batch_size = 100)
+      initialize_cache.cleanup_expired(batch_size)
+    end
+
     private
 
     def production?

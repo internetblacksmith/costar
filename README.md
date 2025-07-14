@@ -65,13 +65,14 @@ ActorSync features a resilient, production-ready architecture:
 - **ActorComparisonService**: Timeline generation and movie analysis
 - **TimelineBuilder**: Performance-optimized timeline rendering
 - **RequestThrottler**: Per-client request rate limiting and throttling
+- **CacheCleaner**: Background service for automatic TTL-based cache cleanup
 
 ### Security & Performance
 - **Rate Limiting**: Rack::Attack with Redis backend
 - **Input Validation**: Comprehensive sanitization for all user inputs
 - **Security Headers**: CSP, HSTS, X-Frame-Options, and more
 - **CORS Protection**: Environment-based origin allowlisting
-- **Caching**: Redis with connection pooling (production) / Memory (development)
+- **Caching**: Redis with connection pooling (production) / Memory (development) with automatic TTL cleanup
 
 ### Monitoring & Reliability
 - **Circuit Breaker**: Automatic API failure handling
@@ -93,6 +94,7 @@ actorsync/
 │   │   ├── resilient_tmdb_client.rb  # Circuit breaker client
 │   │   ├── actor_comparison_service.rb # Timeline comparison
 │   │   ├── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── cache_cleaner.rb          # Background service for TTL cache cleanup
 │   │   ├── request_throttler.rb      # Per-client request throttling
 │   │   ├── input_sanitizer.rb        # Centralized input sanitization
 │   │   ├── api_response_builder.rb   # Standardized API response formatting
@@ -133,7 +135,7 @@ actorsync/
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
 │   └── styles.css            # Modern CSS with responsive design
-├── spec/                     # Test suite (375 examples, 0 failures)
+├── spec/                     # Test suite (390 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -281,7 +283,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (375 examples, 0 failures)
+- **RSpec** test framework (390 examples, 0 failures)
 - **WebMock** for API testing
 - **RuboCop** for code quality
 - **Brakeman** for security scanning

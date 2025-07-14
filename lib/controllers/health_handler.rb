@@ -2,6 +2,7 @@
 
 require_relative "../services/performance_monitor"
 require_relative "../services/api_response_builder"
+require_relative "../config/configuration_policy"
 
 # Health check handler for monitoring application status
 class HealthHandler
@@ -79,6 +80,7 @@ class HealthHandler
       version: ENV.fetch("APP_VERSION", "unknown"),
       environment: ENV.fetch("RACK_ENV", "development"),
       checks: build_checks(cache_healthy, tmdb_healthy, circuit_breaker_status, throttler_status, cleaner_status),
+      configuration: configuration_summary,
       performance: performance_summary
     }
   end
@@ -103,6 +105,27 @@ class HealthHandler
   def production_env?
     env = ENV.fetch("RACK_ENV", "development")
     %w[production deployment].include?(env)
+  end
+
+  def configuration_summary
+    {
+      cache: {
+        ttl: ConfigurationPolicy.get(:cache, :ttl),
+        cleanup_interval: ConfigurationPolicy.get(:cache, :cleanup_interval),
+        batch_size: ConfigurationPolicy.get(:cache, :batch_size)
+      },
+      rate_limiting: {
+        max_requests: ConfigurationPolicy.get(:rate_limiting, :max_requests),
+        window_size: ConfigurationPolicy.get(:rate_limiting, :window_size)
+      },
+      api: {
+        timeout: ConfigurationPolicy.get(:api, :timeout),
+        max_retries: ConfigurationPolicy.get(:api, :max_retries),
+        circuit_breaker_threshold: ConfigurationPolicy.get(:api, :circuit_breaker_threshold)
+      }
+    }
+  rescue StandardError => e
+    { error: "Unable to get configuration: #{e.message}" }
   end
 
   def build_error_response(error)

@@ -4,18 +4,33 @@ require_relative "../config/logger"
 
 # Background service for cleaning expired cache entries
 class CacheCleaner
-  DEFAULT_CLEANUP_INTERVAL = 300 # 5 minutes
-  DEFAULT_BATCH_SIZE = 100
-
-  def initialize(cache: nil, cleanup_interval: DEFAULT_CLEANUP_INTERVAL, batch_size: DEFAULT_BATCH_SIZE)
+  def initialize(cache: nil, cleanup_interval: nil, batch_size: nil)
     @cache = cache || Cache
-    @cleanup_interval = cleanup_interval
-    @batch_size = batch_size
+
+    configure_intervals(cleanup_interval, batch_size)
+    initialize_state
+  end
+
+  private
+
+  def configure_intervals(cleanup_interval, batch_size)
+    if defined?(ConfigurationPolicy) && ConfigurationPolicy.get(:cache, :cleanup_interval)
+      @cleanup_interval = cleanup_interval || ConfigurationPolicy.get(:cache, :cleanup_interval)
+      @batch_size = batch_size || ConfigurationPolicy.get(:cache, :batch_size)
+    else
+      @cleanup_interval = cleanup_interval || 300
+      @batch_size = batch_size || 100
+    end
+  end
+
+  def initialize_state
     @running = false
     @thread = nil
     @mutex = Mutex.new
     @last_cleanup = Time.now
   end
+
+  public
 
   def start
     @mutex.synchronize do
@@ -107,7 +122,7 @@ class CacheCleaner
 end
 
 # Extension for MemoryCache to support TTL cleanup
-module Cache
+class Cache
   class MemoryCache
     def cleanup_expired(batch_size = 100)
       removed = 0
@@ -145,7 +160,7 @@ module Cache
 end
 
 # Extension for RedisCache to support TTL cleanup
-module Cache
+class Cache
   class RedisCache
     def cleanup_expired(_batch_size = 100)
       # Redis handles TTL cleanup automatically
@@ -158,4 +173,3 @@ module Cache
     end
   end
 end
-

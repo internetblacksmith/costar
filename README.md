@@ -66,6 +66,8 @@ ActorSync features a resilient, production-ready architecture:
 - **TimelineBuilder**: Performance-optimized timeline rendering
 - **RequestThrottler**: Per-client request rate limiting and throttling
 - **CacheCleaner**: Background service for automatic TTL-based cache cleanup
+- **ConfigurationPolicy**: Policy-based configuration management with validation
+- **ConfigurationValidator**: Environment variable validation with type checking
 
 ### Security & Performance
 - **Rate Limiting**: Rack::Attack with Redis backend
@@ -113,6 +115,8 @@ actorsync/
 │   │   ├── errors.rb                 # Custom error classes with hierarchy
 │   │   ├── service_container.rb      # Dependency injection container
 │   │   ├── service_initializer.rb    # Service registration and initialization
+│   │   ├── configuration_policy.rb   # Policy-based configuration system
+│   │   ├── configuration_validator.rb # Environment variable validation
 │   │   └── request_context.rb        # Thread-local request context management
 │   ├── dto/                  # Data Transfer Objects
 │   │   ├── base_dto.rb               # Base DTO with validation and serialization
@@ -134,8 +138,18 @@ actorsync/
 │   ├── suggestions.erb       # Actor search suggestions
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
-│   └── styles.css            # Modern CSS with responsive design
-├── spec/                     # Test suite (390 examples, 0 failures)
+│   ├── css/                  # Modular CSS architecture
+│   │   ├── main.css          # Main entry point and imports
+│   │   ├── base/             # Foundation styles (reset, variables, typography)
+│   │   ├── components/       # Component-specific styles
+│   │   ├── utilities/        # Utility classes and animations
+│   │   ├── responsive.css    # Responsive breakpoints
+│   │   └── modern-ui.css     # Modern UI enhancements
+│   ├── js/                   # JavaScript modules
+│   │   ├── app.js            # Main application initialization
+│   │   └── modules/          # Modular JavaScript components
+│   └── errors/               # Custom error pages
+├── spec/                     # Test suite (429 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -274,8 +288,18 @@ See `SECURITY.md` for complete security implementation details.
 
 ### Frontend  
 - **HTMX** for dynamic interactions without JavaScript
-- **Modern CSS** with responsive design
+- **Modular CSS Architecture** with ITCSS methodology and design system
 - **ERB** templating with security-focused layouts
+
+### CSS Architecture
+- **ITCSS Methodology** for scalable, maintainable stylesheets
+- **Design System** with CSS custom properties for theming
+- **Component-Based** organization with clear separation of concerns
+- **Utility-First** approach with helper classes for common patterns
+- **Responsive Design** with mobile-first approach
+- **Performance Optimized** with minimal specificity and efficient selectors
+- **Theme Support** with light/dark mode capability
+- **Modern Features** including CSS Grid, Custom Properties, and animations
 
 ### External Services
 - **TMDB API v3** for movie data
@@ -283,7 +307,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (390 examples, 0 failures)
+- **RSpec** test framework (429 examples, 0 failures)
 - **WebMock** for API testing
 - **RuboCop** for code quality
 - **Brakeman** for security scanning

@@ -213,4 +213,3 @@ RSpec.describe Cache::RedisCache do
     end
   end
 end
-

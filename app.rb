@@ -14,6 +14,8 @@ require_relative "config/sentry"
 
 # Load configuration and services
 require_relative "lib/config/configuration"
+require_relative "lib/config/configuration_policy"
+require_relative "lib/services/configuration_validator"
 require_relative "lib/config/cache"
 require_relative "lib/config/errors"
 require_relative "lib/config/logger"
@@ -46,6 +48,12 @@ class ActorSyncApp < Sinatra::Base
   configure do
     # Initialize configuration (loads .env file in development)
     Configuration.instance
+
+    # Initialize configuration policies
+    ConfigurationPolicy.initialize!
+
+    # Validate configuration
+    ConfigurationValidator.validate!
 
     set :public_folder, "public"
     set :views, "views"

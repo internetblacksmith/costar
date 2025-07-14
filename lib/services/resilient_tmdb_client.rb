@@ -12,7 +12,7 @@ require_relative "performance_monitor"
 
 # Resilient TMDB API client with circuit breaker and retry mechanisms
 class ResilientTMDBClient
-  # Circuit breaker configuration
+  # Circuit breaker configuration defaults
   CIRCUIT_BREAKER_THRESHOLD = 5      # Number of failures before opening
   CIRCUIT_BREAKER_TIMEOUT = 60       # Seconds before trying again
   CIRCUIT_BREAKER_EXPECTED_ERRORS = [Net::OpenTimeout, Net::HTTPError, TMDBError].freeze
@@ -28,8 +28,15 @@ class ResilientTMDBClient
     @base_url = "https://api.themoviedb.org/3"
     @test_mode = ENV["RACK_ENV"] == "test"
     @cache_manager = cache
+    # Use configuration policy if available
+    threshold = if defined?(ConfigurationPolicy)
+                  ConfigurationPolicy.get(:api, :circuit_breaker_threshold)
+                else
+                  CIRCUIT_BREAKER_THRESHOLD
+                end
+
     @circuit_breaker = circuit_breaker || SimpleCircuitBreaker.new(
-      failure_threshold: CIRCUIT_BREAKER_THRESHOLD,
+      failure_threshold: threshold,
       recovery_timeout: CIRCUIT_BREAKER_TIMEOUT,
       expected_errors: CIRCUIT_BREAKER_EXPECTED_ERRORS
     )

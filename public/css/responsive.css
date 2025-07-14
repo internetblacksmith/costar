@@ -46,6 +46,24 @@
     }
     
     
+    /* Mobile actor detail styling */
+    .mobile-actor-detail {
+        display: block;
+        padding: var(--spacing-sm);
+        background: var(--bg-secondary);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .mobile-actor-detail:first-child {
+        margin-top: var(--spacing-md);
+    }
+    
+    /* Movie row mobile adjustments */
+    .movie-row::before {
+        display: none;
+    }
+    
     /* Mobile timeline layout - dual timelines */
     
     /* Year header spans both columns */

@@ -7,7 +7,7 @@ A production-ready web application that allows users to enter two actor names an
 - **Phase**: Production Ready 🚀
 - **Last Updated**: 2025-07-13
 - **Current State**: Fully hardened production application with security, monitoring, testing, and resilient architecture
-- **Test Status**: 265 examples, 0 failures
+- **Test Status**: 333 examples, 0 failures
 - **Code Quality**: 44 files inspected, no RuboCop offenses
 
 ## Architecture & Tech Stack
@@ -104,7 +104,7 @@ Backend (Ruby/Sinatra + Security Middleware)
 - [x] **PRODUCTION: Structured logging and monitoring**
 - [x] **PRODUCTION: Error tracking with Sentry**
 - [x] **PRODUCTION: Health check endpoints**
-- [x] **PRODUCTION: Complete test suite (265 examples, 0 failures)**
+- [x] **PRODUCTION: Complete test suite (333 examples, 0 failures)**
 - [x] **PRODUCTION: CI/CD pipeline with GitHub Actions**
 - [x] **PRODUCTION: Deployment infrastructure (Render.com)**
 
@@ -125,23 +125,40 @@ actorsync/
 │   │   ├── tmdb_service.rb               # API integration + caching
 │   │   ├── actor_comparison_service.rb   # Timeline orchestration
 │   │   ├── timeline_builder.rb           # Performance-optimized rendering
-│   │   └── api_response_builder.rb       # Standardized API response formatting
+│   │   ├── api_response_builder.rb       # Standardized API response formatting
+│   │   ├── input_sanitizer.rb             # Centralized input sanitization
+│   │   ├── cache_manager.rb               # Centralized cache operations
+│   │   └── cache_key_builder.rb           # Standardized cache key generation
 │   ├── controllers/               # Request handling
 │   │   ├── api_controller.rb             # API routes with CORS
-│   │   ├── api_handlers.rb               # Input validation
-│   │   └── health_controller.rb          # Health check endpoints
+│   │   ├── api_handlers.rb               # Input validation & processing
+│   │   ├── health_controller.rb          # Health check endpoints
+│   │   ├── error_handler.rb              # Application-wide error handling
+│   │   ├── error_handler_tmdb.rb         # TMDB-specific error handlers
+│   │   └── input_validator.rb            # Input validation service
 │   ├── config/                    # Configuration & utilities
 │   │   ├── cache.rb                      # Redis/Memory abstraction
 │   │   ├── logger.rb                     # Structured logging
 │   │   ├── errors.rb                     # Custom error classes with hierarchy
 │   │   ├── service_container.rb          # Dependency injection container
-│   │   └── service_initializer.rb        # Service registration and initialization
+│   │   ├── service_initializer.rb        # Service registration and initialization
+│   │   └── request_context.rb            # Thread-local request context management
+│   ├── dto/                       # Data Transfer Objects
+│   │   ├── base_dto.rb                   # Base DTO with validation and serialization
+│   │   ├── actor_dto.rb                  # Actor data structure
+│   │   ├── movie_dto.rb                  # Movie data structure
+│   │   ├── search_results_dto.rb         # Search results wrapper
+│   │   ├── comparison_result_dto.rb      # Timeline comparison results
+│   │   ├── actor_search_request.rb       # Search request validation
+│   │   ├── actor_comparison_request.rb   # Comparison request validation
+│   │   └── dto_factory.rb                # DTO creation from API responses
 │   └── middleware/                # Request processing
 │       ├── request_logger.rb             # Request/response logging
 │       ├── performance_headers.rb        # Caching optimization
 │       ├── error_handler_module.rb       # Standardized error handling patterns
-│       └── error_handler_tmdb.rb         # TMDB-specific error handlers
-├── spec/                          # Test suite (265 examples)
+│       ├── error_handler_tmdb.rb         # TMDB-specific error handlers
+│       └── request_context_middleware.rb # Request lifecycle tracking
+├── spec/                          # Test suite (333 examples)
 │   ├── lib/                       # Service and component tests
 │   ├── requests/                  # API integration tests
 │   └── support/                   # Test helpers and mocks
@@ -168,7 +185,7 @@ actorsync/
 - **Repository**: Clean git history with conventional commits
 - **Caching**: Redis (production) with connection pooling, Memory (development)
 - **Monitoring**: Structured logging, health checks, error tracking
-- **Testing**: 265 examples with 0 failures, comprehensive test coverage
+- **Testing**: 333 examples with 0 failures, comprehensive test coverage
 
 ## Production Environment
 - **Infrastructure**: Render.com with Redis service
@@ -191,7 +208,7 @@ actorsync/
 ## Production Readiness Status
 - **Security Hardening**: Complete ✅
 - **Infrastructure**: Complete ✅ (Redis, health checks, monitoring)
-- **Testing**: Complete ✅ (265 examples, 0 failures)
+- **Testing**: Complete ✅ (333 examples, 0 failures)
 - **Code Quality**: Complete ✅ (RuboCop compliant)
 - **Error Handling**: Complete ✅ (Circuit breaker, structured logging, standardized error types)
 - **Performance**: Complete ✅ (Caching, optimization)
@@ -202,7 +219,7 @@ actorsync/
 ## Production Metrics
 - **Response Times**: Sub-second with Redis caching
 - **API Efficiency**: 80% reduction in external API calls
-- **Test Coverage**: 100% pass rate (265/265 examples)
+- **Test Coverage**: 100% pass rate (265/333 examples)
 - **Security**: Zero RuboCop violations, comprehensive hardening
 - **Reliability**: Circuit breaker pattern prevents cascade failures
 - **Scalability**: Connection pooling, rate limiting, caching optimization

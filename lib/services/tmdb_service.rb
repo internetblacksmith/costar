@@ -3,6 +3,7 @@
 require_relative "resilient_tmdb_client"
 require_relative "tmdb_data_processor"
 require_relative "cache_manager"
+require_relative "request_throttler"
 require_relative "../config/logger"
 require_relative "../middleware/error_handler_module"
 require_relative "../dto/dto_factory"
@@ -11,9 +12,10 @@ require_relative "../dto/search_results_dto"
 # High-level service for interacting with The Movie Database API
 class TMDBService
   include ErrorHandlerModule
-  def initialize(client: nil, cache: nil)
+  def initialize(client: nil, cache: nil, throttler: nil)
     @client = client || ResilientTMDBClient.new
     @cache_manager = cache || CacheManager.new
+    @throttler = throttler || RequestThrottler.new
   end
 
   def healthy?
@@ -22,6 +24,10 @@ class TMDBService
 
   def circuit_breaker_status
     @client.circuit_breaker_status
+  end
+
+  def throttler_status
+    @throttler.status
   end
 
   def search_actors(query)
@@ -70,7 +76,10 @@ class TMDBService
     with_tmdb_error_handling("search_actors", context: { query: query }) do
       api_start_time = Time.now
 
-      data = @client.request("search/person", query: query)
+      # High priority for user-initiated searches
+      data = @throttler.throttle_high_priority do
+        @client.request("search/person", query: query)
+      end
       api_duration = (Time.now - api_start_time) * 1000
 
       log_api_call("search/person", api_duration)
@@ -100,7 +109,10 @@ class TMDBService
       api_start_time = Time.now
 
       endpoint = "person/#{actor_id}/movie_credits"
-      data = @client.request(endpoint)
+      # Low priority for movie credits
+      data = @throttler.throttle_low_priority do
+        @client.request(endpoint)
+      end
       api_duration = (Time.now - api_start_time) * 1000
 
       log_api_call(endpoint, api_duration)
@@ -118,7 +130,10 @@ class TMDBService
       api_start_time = Time.now
 
       endpoint = "person/#{actor_id}"
-      data = @client.request(endpoint)
+      # Medium priority for actor profiles
+      data = @throttler.throttle_medium_priority do
+        @client.request(endpoint)
+      end
       api_duration = (Time.now - api_start_time) * 1000
 
       log_api_call(endpoint, api_duration)

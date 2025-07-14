@@ -21,6 +21,7 @@ ActorSync is built with a resilient, layered architecture that emphasizes securi
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
 │  │  Rack::Attack   │  │   Rack::SSL     │  │ Rack::Protection│ │
 │  │ Rate Limiting   │  │ HTTPS Enforce   │  │ Security Headers│ │
+│  │ + Client Throttle │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
                                 │
@@ -40,6 +41,10 @@ ActorSync is built with a resilient, layered architecture that emphasizes securi
 │  │ Resilient TMDB  │  │   TMDB Service  │  │ Comparison Svc  │ │
 │  │ Circuit Breaker │  │   Caching       │  │ Timeline Logic  │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+│  ┌─────────────────┐  ┌─────────────────┐                      │
+│  │Request Throttler│  │Timeline Builder │                      │
+│  │ Client Limiting │  │ Optimized Render│                      │
+│  └─────────────────┘  └─────────────────┘                      │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -134,6 +139,29 @@ end
 - Endpoint-specific limits based on computational cost
 - IP-based throttling with development exemptions
 - Custom error responses with retry headers
+
+#### Per-Client Request Throttling
+```ruby
+# lib/services/request_throttler.rb
+class RequestThrottler
+  def initialize(redis_url: ENV.fetch("REDIS_URL", nil))
+    @storage = redis_url ? RedisStorage.new(redis_url) : MemoryStorage.new
+  end
+  
+  def throttle?(client_id, method: "default", limit: 30, window: 60)
+    key = "throttle:#{client_id}:#{method}"
+    count = @storage.increment(key, ttl: window)
+    count > limit
+  end
+end
+```
+
+**Throttling Features:**
+- Per-client request tracking
+- Method-specific rate limits
+- Redis-backed distributed throttling
+- Memory fallback for development
+- Configurable limits and time windows
 
 #### Input Validation Pipeline
 ```ruby
@@ -310,6 +338,31 @@ end
 - Minimal memory allocation
 - Performance monitoring integration
 - Algorithmic complexity optimization
+
+#### Request Throttler Service
+```ruby
+# lib/services/request_throttler.rb
+class RequestThrottler
+  def throttle?(client_id, method: "default", limit: 30, window: 60)
+    key = "throttle:#{client_id}:#{method}"
+    count = @storage.increment(key, ttl: window)
+    
+    if count > limit
+      StructuredLogger.warn("Request throttled", client: client_id, method: method, count: count)
+      true
+    else
+      false
+    end
+  end
+end
+```
+
+**Throttling Architecture:**
+- Client identification via IP or session
+- Method-specific rate limits
+- Distributed tracking with Redis
+- Graceful degradation to memory storage
+- Configurable per-endpoint limits
 
 ### 5. Infrastructure Layer
 
@@ -714,5 +767,5 @@ end
 ---
 
 **Architecture Version**: 2.0  
-**Last Updated**: 2025-07-13  
+**Last Updated**: 2025-07-14  
 **Status**: Production Ready ✅

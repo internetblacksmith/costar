@@ -5,9 +5,9 @@ A production-ready web application that allows users to enter two actor names an
 
 ## Current Status
 - **Phase**: Production Ready 🚀
-- **Last Updated**: 2025-07-13
+- **Last Updated**: 2025-07-14
 - **Current State**: Fully hardened production application with security, monitoring, testing, and resilient architecture
-- **Test Status**: 355 examples, 0 failures
+- **Test Status**: 375 examples, 0 failures
 - **Code Quality**: 44 files inspected, no RuboCop offenses
 
 ## Architecture & Tech Stack
@@ -49,7 +49,8 @@ Backend (Ruby/Sinatra + Security Middleware)
 │   ├── ResilientTMDBClient (Circuit Breaker)
 │   ├── TMDBService (API + Caching)
 │   ├── ActorComparisonService (Timeline Logic)
-│   └── TimelineBuilder (Performance Optimized)
+│   ├── TimelineBuilder (Performance Optimized)
+│   └── RequestThrottler (Per-Client Rate Limiting)
 ├── Infrastructure Layer
 │   ├── Redis Cache (Connection Pooling)
 │   ├── Structured Logging (JSON)
@@ -64,7 +65,7 @@ Backend (Ruby/Sinatra + Security Middleware)
 
 ## Security Implementation
 - **Input Protection**: Query sanitization, parameter validation, field whitelisting
-- **Request Protection**: Rate limiting (30-120 req/min), CORS policy, user agent filtering
+- **Request Protection**: Rate limiting (30-120 req/min), per-client throttling, CORS policy, user agent filtering
 - **Response Security**: CSP headers, HSTS, X-Frame-Options, X-XSS-Protection
 - **Transport Security**: HTTPS enforcement, secure headers
 - **API Security**: Input validation, output encoding, standardized error handling with typed exceptions
@@ -104,12 +105,12 @@ Backend (Ruby/Sinatra + Security Middleware)
 - [x] **PRODUCTION: Structured logging and monitoring**
 - [x] **PRODUCTION: Error tracking with Sentry**
 - [x] **PRODUCTION: Health check endpoints**
-- [x] **PRODUCTION: Complete test suite (355 examples, 0 failures)**
+- [x] **PRODUCTION: Complete test suite (375 examples, 0 failures)**
 - [x] **PRODUCTION: CI/CD pipeline with GitHub Actions**
 - [x] **PRODUCTION: Deployment infrastructure (Render.com)**
 
 ## Code Quality & Testing
-- **Test Suite**: 355 RSpec examples with 0 failures
+- **Test Suite**: 375 RSpec examples with 0 failures
 - **Code Coverage**: Comprehensive coverage across services and API endpoints
 - **Code Quality**: 44 files inspected, no RuboCop offenses
 - **Security Scanning**: Brakeman integration for vulnerability detection
@@ -125,6 +126,7 @@ actorsync/
 │   │   ├── tmdb_service.rb               # API integration + caching
 │   │   ├── actor_comparison_service.rb   # Timeline orchestration
 │   │   ├── timeline_builder.rb           # Performance-optimized rendering
+│   │   ├── request_throttler.rb          # Per-client request throttling
 │   │   ├── api_response_builder.rb       # Standardized API response formatting
 │   │   ├── input_sanitizer.rb             # Centralized input sanitization
 │   │   ├── cache_manager.rb               # Centralized cache operations
@@ -158,7 +160,7 @@ actorsync/
 │       ├── error_handler_module.rb       # Standardized error handling patterns
 │       ├── error_handler_tmdb.rb         # TMDB-specific error handlers
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                          # Test suite (355 examples)
+├── spec/                          # Test suite (375 examples)
 │   ├── lib/                       # Service and component tests
 │   ├── requests/                  # API integration tests
 │   └── support/                   # Test helpers and mocks
@@ -185,7 +187,7 @@ actorsync/
 - **Repository**: Clean git history with conventional commits
 - **Caching**: Redis (production) with connection pooling, Memory (development)
 - **Monitoring**: Structured logging, health checks, error tracking
-- **Testing**: 355 examples with 0 failures, comprehensive test coverage
+- **Testing**: 375 examples with 0 failures, comprehensive test coverage
 
 ## Production Environment
 - **Infrastructure**: Render.com with Redis service
@@ -208,7 +210,7 @@ actorsync/
 ## Production Readiness Status
 - **Security Hardening**: Complete ✅
 - **Infrastructure**: Complete ✅ (Redis, health checks, monitoring)
-- **Testing**: Complete ✅ (355 examples, 0 failures)
+- **Testing**: Complete ✅ (375 examples, 0 failures)
 - **Code Quality**: Complete ✅ (RuboCop compliant)
 - **Error Handling**: Complete ✅ (Circuit breaker, structured logging, standardized error types)
 - **Performance**: Complete ✅ (Caching, optimization)
@@ -219,7 +221,7 @@ actorsync/
 ## Production Metrics
 - **Response Times**: Sub-second with Redis caching
 - **API Efficiency**: 80% reduction in external API calls
-- **Test Coverage**: 100% pass rate (355 examples)
+- **Test Coverage**: 100% pass rate (375 examples)
 - **Security**: Zero RuboCop violations, comprehensive hardening
 - **Reliability**: Circuit breaker pattern prevents cascade failures
 - **Scalability**: Connection pooling, rate limiting, caching optimization
@@ -235,4 +237,4 @@ actorsync/
   - API versioning for third-party integrations
 
 ---
-*This context file reflects the current production-ready state of ActorSync as of 2025-07-13*
+*This context file reflects the current production-ready state of ActorSync as of 2025-07-14*

@@ -8,7 +8,7 @@ require_relative "log_formatter"
 class StructuredLogger
   class << self
     def setup
-      @setup ||= create_logger
+      @logger ||= create_logger
     end
 
     def info(message, **context)
@@ -84,7 +84,16 @@ class StructuredLogger
         message: message,
         app: "actorsync",
         environment: ENV.fetch("RACK_ENV", "development")
-      }.merge(context)
+      }
+
+      # Include request context if available
+      if defined?(RequestContext) && RequestContext.current
+        log_entry[:request_id] = RequestContext.current.request_id
+        log_entry[:request_path] = RequestContext.current.path
+        log_entry[:request_method] = RequestContext.current.method
+      end
+
+      log_entry.merge!(context)
 
       @logger.send(level, log_entry.to_json)
     end

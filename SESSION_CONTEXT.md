@@ -119,18 +119,75 @@ Feature: Actor Comparison Through Full Stack
     And not a generic error
 ```
 
-#### VCR Configuration:
+#### Dual-Mode VCR Configuration (CI/CD vs Development):
+
+**Environment-based VCR setup** for maximum flexibility:
+
 ```ruby
+# spec/support/vcr.rb
 VCR.configure do |config|
   config.cassette_library_dir = "spec/cassettes"
   config.hook_into :webmock
   config.configure_rspec_metadata!
   config.filter_sensitive_data('<TMDB_API_KEY>') { ENV['TMDB_API_KEY'] }
-  config.default_cassette_options = {
-    record: :once,
-    allow_playback_repeats: true
-  }
+  
+  # CI/CD Mode: Use cassettes only (fast, reliable)
+  # DEV Mode: Allow real API calls (catch API changes)
+  if ENV['VCR_MODE'] == 'ci' || ENV['CI']
+    config.default_cassette_options = {
+      record: :none,                    # Never record in CI
+      allow_playback_repeats: true
+    }
+    # Fail fast if cassette missing in CI
+    config.default_cassette_options[:allow_unused_http_interactions] = false
+  else
+    # Development mode - allow real API calls
+    config.default_cassette_options = {
+      record: :once,                    # Record new interactions
+      re_record_interval: 7.days,       # Refresh weekly
+      allow_playback_repeats: true
+    }
+    # Allow real HTTP for development testing
+    config.allow_http_connections_when_no_cassette = true
+  end
+  
+  # Ignore localhost connections (our app server)
+  config.ignore_localhost = true
+  config.ignore_hosts 'localhost', '127.0.0.1', '0.0.0.0'
 end
+```
+
+#### Test Commands for Different Modes:
+
+```bash
+# CI/CD Mode (cassettes only, fast)
+VCR_MODE=ci bundle exec cucumber
+VCR_MODE=ci bundle exec rspec spec/features/
+
+# Development Mode (real API calls)
+VCR_MODE=dev bundle exec cucumber
+bundle exec cucumber  # defaults to dev mode
+
+# Update cassettes (when TMDB API changes)
+VCR_MODE=record bundle exec cucumber
+```
+
+#### CI/CD Pipeline Integration:
+
+```yaml
+# .github/workflows/test.yml (or similar)
+- name: Run Cucumber E2E Tests
+  env:
+    VCR_MODE: ci
+    TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  run: |
+    bundle exec cucumber --format junit --out tmp/cucumber_results.xml
+    
+- name: Validate Cassettes Exist
+  run: |
+    # Ensure critical cassettes are present
+    test -f spec/cassettes/tmdb_actor_search.yml
+    test -f spec/cassettes/tmdb_comparison.yml
 ```
 
 #### Required Gems:
@@ -144,7 +201,27 @@ group :test do
 end
 ```
 
-**This would provide the reliability and confidence that the current test suite clearly lacks.**
+#### Benefits of Dual-Mode Approach:
+
+**CI/CD Mode (VCR Cassettes)**:
+- ⚡ **Fast**: No real API calls, sub-second test runs
+- 🔒 **Reliable**: Same responses every time, no network issues
+- 💰 **Cost-effective**: No API rate limits or costs
+- 🚀 **Parallel**: Multiple CI jobs can run simultaneously
+
+**Development Mode (Real API)**:
+- 🔍 **Current**: Catches TMDB API changes immediately
+- 🛡️ **Validation**: Ensures our integration still works
+- 🔧 **Debugging**: Real responses for troubleshooting
+- 📊 **Freshness**: Always testing against live data
+
+#### Workflow:
+1. **Daily development**: Run with real API calls
+2. **CI/CD pipeline**: Use fast cassettes
+3. **Weekly**: Refresh cassettes to stay current
+4. **API changes**: Record mode to update cassettes
+
+**This would provide the reliability and confidence that the current test suite clearly lacks, with the flexibility to run fast in CI and thorough in development.**
 
 ### Files to Investigate
 - `app.rb` - main route configuration

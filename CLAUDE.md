@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (390 examples, 0 failures)
+- **Testing**: RSpec test suite (429 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -68,6 +68,8 @@ actorsync/
 │   │   ├── errors.rb                 # Custom error classes with hierarchy
 │   │   ├── service_container.rb      # Dependency injection container
 │   │   ├── service_initializer.rb    # Service registration and configuration
+│   │   ├── configuration_policy.rb   # Policy-based configuration system
+│   │   ├── configuration_validator.rb # Environment variable validation
 │   │   └── request_context.rb        # Thread-local request context management
 │   ├── dto/                  # Data Transfer Objects
 │   │   ├── base_dto.rb               # Base DTO with validation and serialization
@@ -83,7 +85,7 @@ actorsync/
 │       ├── performance_headers.rb    # Caching optimization headers
 │       ├── error_handler_module.rb   # Standardized error handling patterns
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                     # Test suite (390 examples, 0 failures)
+├── spec/                     # Test suite (429 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -96,8 +98,28 @@ actorsync/
 │   ├── suggestions.erb       # Search suggestion partial
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
-│   ├── css/
-│   │   └── main.css          # Modern responsive CSS
+│   ├── css/                  # Modular CSS architecture (ITCSS methodology)
+│   │   ├── main.css          # Main entry point and imports
+│   │   ├── base/             # Foundation styles
+│   │   │   ├── reset.css     # Modern CSS reset
+│   │   │   ├── variables.css # CSS custom properties & design tokens
+│   │   │   └── typography.css # Typography system
+│   │   ├── components/       # Component-specific styles
+│   │   │   ├── header.css    # Header component
+│   │   │   ├── search.css    # Search functionality
+│   │   │   ├── timeline.css   # Timeline visualization
+│   │   │   ├── movies.css    # Movie cards and lists
+│   │   │   ├── loading.css   # Loading states
+│   │   │   ├── footer.css    # Footer component
+│   │   │   ├── actor-portrait.css # Actor portrait styling
+│   │   │   └── mdc-overrides.css # Material Design overrides
+│   │   ├── utilities/        # Utility classes and animations
+│   │   │   ├── helpers.css   # Utility classes for common patterns
+│   │   │   ├── animations.css # Animation keyframes and classes
+│   │   │   └── performance.css # Performance optimization utilities
+│   │   ├── responsive.css    # Responsive breakpoints and media queries
+│   │   ├── modern-ui.css     # Modern UI enhancements
+│   │   └── themes/           # Theme support (light/dark mode)
 │   └── js/                   # JavaScript modules
 │       ├── app.js            # Main application initialization
 │       └── modules/          # Modular JavaScript components
@@ -139,7 +161,23 @@ actorsync/
 - **TTL Management**: Intelligent cache expiration (5-30 minutes) with automatic cleanup
 - **Cache Keys**: MD5-hashed for consistency and security
 
+### CSS Architecture & Design System
+- **ITCSS Methodology**: Inverted Triangle CSS for scalable, maintainable stylesheets
+- **Component-Based Organization**: Clear separation of concerns with isolated component styles
+- **Design System**: CSS custom properties for theming, colors, spacing, and transitions
+- **Utility-First Approach**: Helper classes for common patterns and rapid development
+- **Performance Optimized**: Minimal specificity, efficient selectors, and optimized loading
+- **Responsive Design**: Mobile-first approach with progressive enhancement
+- **Theme Support**: Light/dark mode capability with CSS custom properties
+- **Modern CSS Features**: CSS Grid, Custom Properties, animations, and modern selectors
+
 ### Architecture Patterns
+### Configuration Management
+- **Policy-Based Configuration**: ConfigurationPolicy defines validation rules and default values
+- **Type-Safe Validation**: ConfigurationValidator ensures environment variables meet type and format requirements
+- **Centralized Policies**: All configuration rules defined in one place for consistency
+- **Runtime Validation**: Configuration validated at startup with clear error messages
+
 - **Dependency Injection**: ServiceContainer manages service initialization and dependencies
 - **Service Registration**: Centralized service configuration in ServiceInitializer
 - **Response Standardization**: ApiResponseBuilder ensures consistent API responses
@@ -154,7 +192,7 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 390 examples with 100% pass rate
+- **RSpec Framework**: 429 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
@@ -211,7 +249,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 390 examples, 0 failures
+- **Testing**: 429 examples, 0 failures
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging
@@ -224,6 +262,7 @@ The application includes comprehensive environment validation that will:
 - Rate limiting with Redis persistence and per-client throttling
 - Input validation and sanitization
 - Security headers and CORS protection
+- Policy-based configuration management with validation
 - Structured logging and error tracking
 - Health check endpoints for monitoring
 - Performance optimization with caching

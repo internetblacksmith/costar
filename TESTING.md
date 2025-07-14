@@ -106,6 +106,19 @@ Test individual classes and methods in isolation:
 - Thread safety
 - Data type handling
 
+**Configuration Policy Tests** (`spec/lib/config/configuration_policy_spec.rb`)
+- Policy definition validation
+- Required/optional field handling
+- Type conversion testing
+- Default value application
+- Custom validation rules
+
+**Configuration Validator Tests** (`spec/lib/config/configuration_validator_spec.rb`)
+- Environment variable validation
+- Type checking and conversion
+- Error message clarity
+- Edge case handling
+
 **Service Tests** (`spec/lib/services/`)
 - TMDB API integration (with mocked HTTP requests)
 - Timeline building logic

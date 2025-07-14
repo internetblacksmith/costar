@@ -41,10 +41,10 @@ ActorSync is built with a resilient, layered architecture that emphasizes securi
 │  │ Resilient TMDB  │  │   TMDB Service  │  │ Comparison Svc  │ │
 │  │ Circuit Breaker │  │   Caching       │  │ Timeline Logic  │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
-│  ┌─────────────────┐  ┌─────────────────┐                      │
-│  │Request Throttler│  │Timeline Builder │                      │
-│  │ Client Limiting │  │ Optimized Render│                      │
-│  └─────────────────┘  └─────────────────┘                      │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │Request Throttler│  │Timeline Builder │  │ Cache Cleaner   │ │
+│  │ Client Limiting │  │ Optimized Render│  │ TTL Cleanup     │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -309,6 +309,7 @@ end
 - Redis-backed persistent caching
 - Intelligent cache key generation
 - TTL optimization for different data types
+- Automatic TTL cleanup with CacheCleaner service
 - Cache warming and invalidation strategies
 
 #### Timeline Processing
@@ -363,6 +364,44 @@ end
 - Distributed tracking with Redis
 - Graceful degradation to memory storage
 - Configurable per-endpoint limits
+
+#### Cache Cleaner Service
+```ruby
+# lib/services/cache_cleaner.rb
+class CacheCleaner
+  def initialize(cache: nil, cleanup_interval: 300, batch_size: 100)
+    @cache = cache || Cache
+    @cleanup_interval = cleanup_interval
+    @batch_size = batch_size
+    @running = false
+    @thread = nil
+  end
+  
+  def start
+    @running = true
+    @thread = Thread.new do
+      run_cleanup_loop
+    end
+  end
+  
+  def cleanup_now
+    cache_instance = @cache.initialize_cache
+    if cache_instance.respond_to?(:cleanup_expired)
+      result = cache_instance.cleanup_expired(@batch_size)
+      @last_cleanup = Time.now
+      result
+    end
+  end
+end
+```
+
+**Cache Cleanup Features:**
+- Background thread for automatic TTL cleanup
+- Configurable cleanup interval (default 5 minutes)
+- Batch processing to prevent performance impact
+- Works with MemoryCache (automatic cleanup for Redis)
+- Thread-safe operation with mutex protection
+- Graceful shutdown support
 
 ### 5. Infrastructure Layer
 

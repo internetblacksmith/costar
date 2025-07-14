@@ -173,6 +173,7 @@ use Rack::Protection              # Security headers
 - Movie data: 60 minutes TTL
 - Profile data: 24 hours TTL
 - Connection pooling: 15 connections
+- Automatic TTL cleanup service (CacheCleaner)
 - Automatic reconnection with circuit breaker
 
 **Performance Metrics:**

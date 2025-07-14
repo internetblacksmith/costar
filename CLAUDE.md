@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (375 examples, 0 failures)
+- **Testing**: RSpec test suite (390 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -50,6 +50,7 @@ actorsync/
 │   │   ├── tmdb_service.rb           # TMDB API integration with caching
 │   │   ├── actor_comparison_service.rb # Timeline comparison logic
 │   │   ├── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── cache_cleaner.rb          # Background service for TTL cache cleanup
 │   │   ├── request_throttler.rb       # Per-client request throttling
 │   │   ├── input_sanitizer.rb        # Centralized input sanitization
 │   │   ├── api_response_builder.rb   # Standardized API response formatting
@@ -82,7 +83,7 @@ actorsync/
 │       ├── performance_headers.rb    # Caching optimization headers
 │       ├── error_handler_module.rb   # Standardized error handling patterns
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                     # Test suite (375 examples, 0 failures)
+├── spec/                     # Test suite (390 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -135,7 +136,7 @@ actorsync/
 ### Caching Strategy
 - **Redis**: Production caching with connection pooling
 - **Memory**: Development caching for local testing
-- **TTL Management**: Intelligent cache expiration (5-30 minutes)
+- **TTL Management**: Intelligent cache expiration (5-30 minutes) with automatic cleanup
 - **Cache Keys**: MD5-hashed for consistency and security
 
 ### Architecture Patterns
@@ -153,7 +154,7 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 375 examples with 100% pass rate
+- **RSpec Framework**: 390 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
@@ -210,7 +211,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 375 examples, 0 failures
+- **Testing**: 390 examples, 0 failures
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging

@@ -222,4 +222,3 @@ class ThrottledRequest
     end
   end
 end
-

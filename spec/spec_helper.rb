@@ -55,6 +55,7 @@ RSpec.configure do |config|
   # Clear cache between tests and disable performance monitoring
   config.before(:each) do |example|
     Cache.clear if defined?(Cache)
+    RequestContext.current = nil if defined?(RequestContext)
 
     # Disable performance monitoring during tests
     allow(PerformanceMonitor).to receive(:track_request).and_return(nil) if defined?(PerformanceMonitor)

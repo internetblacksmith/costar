@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (265 examples, 0 failures)
+- **Testing**: RSpec test suite (333 examples, 0 failures)
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -49,7 +49,11 @@ actorsync/
 │   │   ├── resilient_tmdb_client.rb  # Circuit breaker API client
 │   │   ├── tmdb_service.rb           # TMDB API integration with caching
 │   │   ├── actor_comparison_service.rb # Timeline comparison logic
-│   │   └── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── input_sanitizer.rb        # Centralized input sanitization
+│   │   ├── api_response_builder.rb   # Standardized API response formatting
+│   │   ├── cache_manager.rb          # Centralized cache operations
+│   │   └── cache_key_builder.rb      # Standardized cache key generation
 │   ├── controllers/          # Request handling
 │   │   ├── api_controller.rb         # API routes with CORS and security
 │   │   ├── api_handlers.rb           # Input validation and processing
@@ -61,7 +65,8 @@ actorsync/
 │   │   ├── logger.rb                 # Structured JSON logging
 │   │   ├── errors.rb                 # Custom error classes with hierarchy
 │   │   ├── service_container.rb      # Dependency injection container
-│   │   └── service_initializer.rb    # Service registration and configuration
+│   │   ├── service_initializer.rb    # Service registration and configuration
+│   │   └── request_context.rb        # Thread-local request context management
 │   ├── dto/                  # Data Transfer Objects
 │   │   ├── base_dto.rb               # Base DTO with validation and serialization
 │   │   ├── actor_dto.rb              # Actor data structure
@@ -74,8 +79,9 @@ actorsync/
 │   └── middleware/           # Request processing pipeline
 │       ├── request_logger.rb         # Request/response logging
 │       ├── performance_headers.rb    # Caching optimization headers
-│       └── error_handler_module.rb   # Standardized error handling patterns
-├── spec/                     # Test suite (265 examples, 0 failures)
+│       ├── error_handler_module.rb   # Standardized error handling patterns
+│       └── request_context_middleware.rb # Request lifecycle tracking
+├── spec/                     # Test suite (333 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -134,7 +140,7 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 265 examples with 100% pass rate
+- **RSpec Framework**: 333 examples with 100% pass rate
 - **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
 - **Mocking**: WebMock for external API testing
 - **Test Data**: FactoryBot for consistent test fixtures
@@ -191,7 +197,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 265 examples, 0 failures
+- **Testing**: 333 examples, 0 failures
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging
@@ -242,7 +248,14 @@ All endpoints include:
 2. Code style compliance: `bundle exec rubocop -A`
 3. Security scan clean: `bundle exec brakeman`
 4. No dependency vulnerabilities: `bundle exec bundle-audit`
-5. Doppler environment variables up-to-date: `ruby scripts/check_doppler_environments.rb`
+5. **Documentation must be updated**: Update all affected .md files (README, CLAUDE, CONTEXT, etc.) to reflect code changes
+6. Doppler environment variables up-to-date: `ruby scripts/check_doppler_environments.rb`
+
+**IMPORTANT**: Documentation updates are MANDATORY for all code changes. This includes:
+- Updating test counts when tests are added/removed
+- Updating file structure sections when files are added/moved/deleted
+- Updating feature descriptions when functionality changes
+- Updating configuration sections when settings change
 
 ### Git Workflow
 - Feature branches with descriptive names

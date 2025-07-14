@@ -91,18 +91,39 @@ actorsync/
 │   │   ├── tmdb_service.rb           # TMDB API integration
 │   │   ├── resilient_tmdb_client.rb  # Circuit breaker client
 │   │   ├── actor_comparison_service.rb # Timeline comparison
-│   │   └── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── timeline_builder.rb       # Performance-optimized rendering
+│   │   ├── input_sanitizer.rb        # Centralized input sanitization
+│   │   ├── api_response_builder.rb   # Standardized API response formatting
+│   │   ├── cache_manager.rb          # Centralized cache operations
+│   │   └── cache_key_builder.rb      # Standardized cache key generation
 │   ├── controllers/          # Request handlers
 │   │   ├── api_controller.rb         # API routes with CORS
 │   │   ├── api_handlers.rb           # Input validation & processing
-│   │   └── health_controller.rb      # Health check endpoints
+│   │   ├── health_controller.rb      # Health check endpoints
+│   │   ├── error_handler.rb          # Application-wide error handling
+│   │   ├── error_handler_tmdb.rb     # TMDB-specific error handlers
+│   │   └── input_validator.rb        # Input validation service
 │   ├── config/               # Configuration and utilities
 │   │   ├── cache.rb                  # Redis/Memory cache abstraction
 │   │   ├── logger.rb                 # Structured logging
-│   │   └── errors.rb                 # Custom error classes with hierarchy
+│   │   ├── errors.rb                 # Custom error classes with hierarchy
+│   │   ├── service_container.rb      # Dependency injection container
+│   │   ├── service_initializer.rb    # Service registration and initialization
+│   │   └── request_context.rb        # Thread-local request context management
+│   ├── dto/                  # Data Transfer Objects
+│   │   ├── base_dto.rb               # Base DTO with validation and serialization
+│   │   ├── actor_dto.rb              # Actor data structure
+│   │   ├── movie_dto.rb              # Movie data structure
+│   │   ├── search_results_dto.rb     # Search results wrapper
+│   │   ├── comparison_result_dto.rb  # Timeline comparison results
+│   │   ├── actor_search_request.rb   # Search request validation
+│   │   ├── actor_comparison_request.rb # Comparison request validation
+│   │   └── dto_factory.rb            # DTO creation from API responses
 │   └── middleware/           # Request processing
 │       ├── request_logger.rb         # Request/response logging
-│       └── performance_headers.rb    # Caching optimization
+│       ├── performance_headers.rb    # Caching optimization
+│       ├── error_handler_module.rb   # Standardized error handling patterns
+│       └── request_context_middleware.rb # Request lifecycle tracking
 ├── views/                    # ERB templates
 │   ├── layout.erb            # Main layout with security headers
 │   ├── index.erb             # Home page
@@ -110,7 +131,7 @@ actorsync/
 │   └── timeline.erb          # Timeline visualization
 ├── public/                   # Static assets
 │   └── styles.css            # Modern CSS with responsive design
-├── spec/                     # Test suite (265 examples, 0 failures)
+├── spec/                     # Test suite (333 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -257,7 +278,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (265 examples, 0 failures)
+- **RSpec** test framework (333 examples, 0 failures)
 - **WebMock** for API testing
 - **RuboCop** for code quality
 - **Brakeman** for security scanning

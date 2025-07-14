@@ -36,4 +36,10 @@ module ApiErrorHandler
                              error_class: error.class.name }.merge(context))
     Sentry.capture_exception(error) if defined?(Sentry)
   end
+
+  def handle_validation_error_with_context(error, endpoint, context = {})
+    StructuredLogger.warn("API Validation Error",
+                          { type: "validation_error", endpoint: endpoint, error: error.message,
+                            error_class: error.class.name }.merge(context))
+  end
 end

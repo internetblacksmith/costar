@@ -26,8 +26,8 @@ class ErrorReporter {
             });
         });
 
-        // HTMX error handling
-        if (typeof htmx !== 'undefined') {
+        // HTMX error handling - ensure document.body exists
+        if (typeof htmx !== 'undefined' && document.body) {
             document.body.addEventListener('htmx:responseError', (event) => {
                 this.handleHTMXError(event);
             });

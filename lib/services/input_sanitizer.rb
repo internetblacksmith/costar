@@ -21,13 +21,30 @@
 #   end
 #
 class InputSanitizer
-  # Maximum lengths for different input types
-  MAX_QUERY_LENGTH = 100
-  MAX_NAME_LENGTH = 200
+  # Default maximum lengths (can be overridden by configuration)
+  DEFAULT_MAX_QUERY_LENGTH = 100
+  DEFAULT_MAX_NAME_LENGTH = 200
   MAX_ACTOR_ID = 999_999_999
 
   # Allowed field names for actor search
   ALLOWED_FIELD_NAMES = %w[actor1 actor2].freeze
+
+  def initialize
+    # Load configuration if available
+    @max_input_length = if defined?(ConfigurationPolicy)
+                          ConfigurationPolicy.get(:security, :max_input_length)
+                        else
+                          DEFAULT_MAX_NAME_LENGTH
+                        end
+  end
+
+  def max_query_length
+    [DEFAULT_MAX_QUERY_LENGTH, @max_input_length].min
+  end
+
+  def max_name_length
+    @max_input_length
+  end
 
   ##
   # Sanitizes search query input
@@ -44,7 +61,7 @@ class InputSanitizer
     # Strip whitespace and enforce length limit
     sanitized = query.to_s.strip
     return nil if sanitized.empty?
-    return nil if sanitized.length > MAX_QUERY_LENGTH
+    return nil if sanitized.length > max_query_length
 
     # Remove potentially dangerous characters but allow international names
     # Allow: letters (any language), numbers, spaces, apostrophes, hyphens, periods
@@ -67,7 +84,7 @@ class InputSanitizer
     # Strip whitespace and enforce length limit
     sanitized = name.to_s.strip
     return nil if sanitized.empty?
-    return nil if sanitized.length > MAX_NAME_LENGTH
+    return nil if sanitized.length > max_name_length
 
     # Allow: letters, numbers, spaces, apostrophes, hyphens, periods, parentheses
     cleaned = sanitized.gsub(/[^\p{L}\p{N}\s'\-\.\(\)]/, "").strip

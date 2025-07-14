@@ -1,21 +1,27 @@
 /* Main CSS - ActorSync Application */
 
-/* Base styles */
+/* Base styles - Foundation */
+@import url('./base/reset.css');
 @import url('./base/variables.css');
 @import url('./base/typography.css');
 
-/* Components */
+/* Components - UI Building Blocks */
 @import url('./components/header.css');
 @import url('./components/search.css');
 @import url('./components/timeline.css');
 @import url('./components/movies.css');
 @import url('./components/loading.css');
 @import url('./components/footer.css');
-@import url('./components/mdc-overrides.css');
 @import url('./components/actor-portrait.css');
+@import url('./components/mdc-overrides.css');
 
-/* Responsive design */
+/* Utilities - Helper Classes */
+@import url('./utilities/helpers.css');
+@import url('./utilities/animations.css');
+@import url('./utilities/performance.css');
+
+/* Layout - Responsive Design */
 @import url('./responsive.css');
 
-/* Modern UI enhancements */
+/* Theme - Modern UI Enhancements */
 @import url('./modern-ui.css');

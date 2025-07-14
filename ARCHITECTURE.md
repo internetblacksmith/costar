@@ -86,33 +86,168 @@ ActorSync is built with a resilient, layered architecture that emphasizes securi
 - Progressive enhancement approach
 - SEO-friendly implementation
 
-#### Responsive CSS Architecture
+#### CSS Architecture & Design System
+
+ActorSync features a comprehensive CSS architecture built on modern principles and methodologies for scalability, maintainability, and performance.
+
+```
+CSS Architecture Structure:
+css/
+├── main.css              # Main entry point - imports all stylesheets
+├── base/                 # Foundation layer (ITCSS methodology)
+│   ├── reset.css        # Modern CSS reset for cross-browser consistency
+│   ├── variables.css    # CSS custom properties & design tokens
+│   └── typography.css   # Typography system and font definitions
+├── components/          # Component-specific styles
+│   ├── header.css       # Header component styling
+│   ├── search.css       # Search functionality and autocomplete
+│   ├── timeline.css     # Timeline visualization components
+│   ├── movies.css       # Movie cards and list styling
+│   ├── loading.css      # Loading states and animations
+│   ├── footer.css       # Footer component
+│   ├── actor-portrait.css # Actor portrait styling
+│   └── mdc-overrides.css # Material Design Component overrides
+├── utilities/           # Utility classes and animations
+│   ├── helpers.css      # Single-purpose utility classes
+│   ├── animations.css   # Keyframes and animation classes
+│   └── performance.css  # Performance optimization utilities
+├── responsive.css       # Responsive breakpoints and media queries
+├── modern-ui.css       # Modern UI enhancements and progressive features
+└── themes/             # Theme support directory
+```
+
+**ITCSS Methodology Implementation:**
 ```css
-/* public/styles.css - Component-based structure */
+/* 1. Settings - CSS custom properties and design tokens */
 :root {
-  --primary-color: #1976d2;
-  --spacing-unit: 8px;
-  --border-radius: 4px;
+  /* Color System */
+  --color-primary-50: #e3f2fd;
+  --color-primary-500: #2196f3;
+  --color-primary-900: #0d47a1;
+  
+  /* Spacing System (8px grid) */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  --spacing-xl: 2rem;     /* 32px */
+  
+  /* Typography Scale */
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  
+  /* Animation Timing */
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 250ms ease-out;
+  --transition-slow: 400ms ease-out;
 }
 
+/* 2. Tools - Mixins and functions (handled via CSS custom properties) */
+
+/* 3. Generic - Reset and normalize */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 4. Elements - Base element styles */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}
+
+/* 5. Objects - Layout patterns */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* 6. Components - UI components */
 .timeline-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-unit);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
 }
 
-@media (max-width: 768px) {
-  .timeline-container {
-    grid-template-columns: 1fr;
-  }
+/* 7. Utilities - Helper classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 ```
 
+**Design System Features:**
+
+1. **Color System**
+   ```css
+   /* Semantic color palette with theme support */
+   :root {
+     --color-primary: #2196f3;
+     --color-secondary: #00bcd4;
+     --color-accent: #ffc107;
+     --color-success: #4caf50;
+     --color-error: #f44336;
+     --color-text-primary: #212121;
+     --color-text-secondary: #757575;
+   }
+   
+   [data-theme="dark"] {
+     --color-text-primary: #ffffff;
+     --color-text-secondary: #b0b0b0;
+     --color-background: #121212;
+   }
+   ```
+
+2. **Spacing System**
+   ```css
+   /* Consistent spacing based on 8px grid */
+   .p-xs { padding: var(--spacing-xs); }
+   .p-sm { padding: var(--spacing-sm); }
+   .p-md { padding: var(--spacing-md); }
+   .p-lg { padding: var(--spacing-lg); }
+   .p-xl { padding: var(--spacing-xl); }
+   ```
+
+3. **Animation System**
+   ```css
+   /* Consistent animations with performance optimization */
+   @keyframes fadeIn {
+     from { opacity: 0; transform: translateY(10px); }
+     to { opacity: 1; transform: translateY(0); }
+   }
+   
+   .animate-fade-in {
+     animation: fadeIn var(--transition-normal) ease-out;
+   }
+   
+   .animate-slide-in {
+     animation: slideIn var(--transition-normal) ease-out;
+   }
+   ```
+
 **Architecture Principles:**
-- Mobile-first responsive design
-- CSS custom properties for theming
-- Component-based organization
-- Performance-optimized loading
+- **ITCSS Methodology**: Inverted Triangle CSS for scalable architecture
+- **Component Isolation**: Scoped styles prevent cascade conflicts
+- **Design Tokens**: CSS custom properties for consistent theming
+- **Utility-First**: Helper classes for rapid development
+- **Performance First**: Minimal specificity and efficient selectors
+- **Mobile-First**: Progressive enhancement for larger screens
+- **Accessibility**: Screen reader support and focus management
+- **Theme Support**: Light/dark mode with CSS custom properties
 
 ### 2. Security Middleware Stack
 
@@ -653,6 +788,67 @@ end
 - Default value management
 - Type conversion and validation
 - Runtime configuration updates
+
+### Policy-Based Configuration System
+```ruby
+# lib/config/configuration_policy.rb
+class ConfigurationPolicy
+  POLICIES = {
+    # Required configurations
+    tmdb_api_key: {
+      env_var: "TMDB_API_KEY",
+      type: :string,
+      required: true,
+      validation: ->(v) { v && !v.strip.empty? }
+    },
+    # Optional with defaults
+    redis_pool_size: {
+      env_var: "REDIS_POOL_SIZE",
+      type: :integer,
+      default: 15,
+      validation: ->(v) { v > 0 && v <= 100 }
+    }
+  }.freeze
+
+  def self.get(key)
+    policy = POLICIES[key]
+    ConfigurationValidator.validate_and_fetch(policy)
+  end
+end
+
+# lib/config/configuration_validator.rb
+class ConfigurationValidator
+  def self.validate_and_fetch(policy)
+    value = ENV[policy[:env_var]]
+    
+    # Check required
+    if policy[:required] && value.nil?
+      raise ConfigurationError, "Missing required: #{policy[:env_var]}"
+    end
+    
+    # Apply default
+    value ||= policy[:default]
+    
+    # Type conversion
+    value = convert_type(value, policy[:type])
+    
+    # Validate
+    if policy[:validation] && !policy[:validation].call(value)
+      raise ConfigurationError, "Invalid value for #{policy[:env_var]}"
+    end
+    
+    value
+  end
+end
+```
+
+**Configuration Features:**
+- Policy-based validation rules
+- Type checking and conversion
+- Default value management
+- Custom validation functions
+- Centralized configuration definitions
+- Runtime validation with clear error messages
 
 ### Deployment Configuration
 ```yaml

@@ -1,0 +1,77 @@
+/* Performance Optimizations */
+
+/* GPU Acceleration for animations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-auto {
+  will-change: auto;
+}
+
+/* Optimize Paint Performance */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-style {
+  contain: style;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* Optimize Rendering */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.transform-gpu {
+  transform: translateZ(0);
+}
+
+/* Font Display Optimization */
+@font-face {
+  font-display: swap;
+}
+
+/* Reduce Paint Areas */
+.isolate {
+  isolation: isolate;
+}
+
+/* Optimize Images */
+img {
+  content-visibility: auto;
+}
+
+/* Lazy Loading */
+img[loading="lazy"] {
+  content-visibility: auto;
+}
+
+/* Optimize Long Lists */
+.virtual-scroll {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Critical CSS Marker */
+.critical {
+  /* Marks critical above-the-fold content */
+}
+
+/* Non-Critical CSS Marker */
+.non-critical {
+  /* Marks below-the-fold content */
+  content-visibility: auto;
+}

@@ -15,9 +15,15 @@ class RequestThrottler
   PRIORITY_MEDIUM = 1  # Actor details/profiles
   PRIORITY_LOW = 2     # Movie credits, background loads
 
-  def initialize(max_requests: DEFAULT_MAX_REQUESTS, window_size: DEFAULT_WINDOW_SIZE)
-    @max_requests = max_requests
-    @window_size = window_size
+  def initialize(max_requests: nil, window_size: nil)
+    # Use configuration policy or defaults
+    if defined?(ConfigurationPolicy) && ConfigurationPolicy.get(:rate_limiting, :max_requests)
+      @max_requests = max_requests || ConfigurationPolicy.get(:rate_limiting, :max_requests)
+      @window_size = window_size || ConfigurationPolicy.get(:rate_limiting, :window_size)
+    else
+      @max_requests = max_requests || DEFAULT_MAX_REQUESTS
+      @window_size = window_size || DEFAULT_WINDOW_SIZE
+    end
     @requests = []
     @mutex = Mutex.new
     @condition = ConditionVariable.new

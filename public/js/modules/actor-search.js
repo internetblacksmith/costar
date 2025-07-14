@@ -1,8 +1,15 @@
 // Actor search and selection functionality
 class ActorSearch {
     constructor() {
-        this.setupEventListeners();
-        this.clearInputFields();
+        try {
+            this.setupEventListeners();
+            this.clearInputFields();
+        } catch (error) {
+            console.error('Error initializing ActorSearch:', error);
+            if (window.ErrorReporter) {
+                ErrorReporter.report(error, { phase: 'actor_search_init' });
+            }
+        }
     }
 
     setupEventListeners() {
@@ -100,7 +107,8 @@ class ActorSearch {
     }
 
     selectActor(actorId, actorName, field) {
-        const suggestionId = field === 'actor1' ? '1' : '2';
+        try {
+            const suggestionId = field === 'actor1' ? '1' : '2';
         
         // Clear the current input field value first
         const inputField = document.getElementById(field);
@@ -150,11 +158,22 @@ class ActorSearch {
                 field: field
             });
         }
+        } catch (error) {
+            console.error('Error selecting actor:', error);
+            if (window.ErrorReporter) {
+                ErrorReporter.report(error, { 
+                    phase: 'actor_selection',
+                    actorId: actorId,
+                    field: field
+                });
+            }
+        }
     }
 
     removeActor(field) {
-        // Clear the hidden fields
-        document.getElementById(field + '_id').value = '';
+        try {
+            // Clear the hidden fields
+            document.getElementById(field + '_id').value = '';
         document.getElementById(field + '_name').value = '';
         
         // Clear backup fields
@@ -197,6 +216,12 @@ class ActorSearch {
         
         if (window.snackbarModule) {
             window.snackbarModule.show('Actor removed');
+        }
+        } catch (error) {
+            console.error('Error removing actor:', error);
+            if (window.ErrorReporter) {
+                ErrorReporter.report(error, { phase: 'remove_actor', field: field });
+            }
         }
     }
 

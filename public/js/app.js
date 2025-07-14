@@ -32,6 +32,10 @@ class App {
             console.log('ActorSync app initialized successfully');
         } catch (error) {
             console.error('Error initializing app:', error);
+            // Report initialization errors
+            if (window.ErrorReporter) {
+                ErrorReporter.report(error, { phase: 'initialization' });
+            }
         }
     }
 }

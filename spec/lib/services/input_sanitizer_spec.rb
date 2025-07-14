@@ -305,4 +305,3 @@ RSpec.describe InputSanitizer do
     end
   end
 end
-

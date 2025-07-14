@@ -238,7 +238,7 @@ jobs:
 
 **Deployment Pipeline:**
 1. **Push to main** → Automatic deployment trigger
-2. **Tests run** → RSpec suite (344 examples)
+2. **Tests run** → RSpec suite (355 examples)
 3. **Security scan** → Brakeman vulnerability check
 4. **Deploy** → Render.com automatic deployment
 5. **Health check** → Post-deployment verification

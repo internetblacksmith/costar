@@ -244,4 +244,3 @@ RSpec.describe ThrottledRequest do
     end
   end
 end
-

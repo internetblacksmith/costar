@@ -9,6 +9,7 @@ require_relative "../services/api_response_builder"
 require_relative "../services/cache_manager"
 require_relative "../services/performance_monitor"
 require_relative "../services/input_sanitizer"
+require_relative "../services/cache_cleaner"
 require_relative "../controllers/input_validator"
 
 # Initializes and configures all application services
@@ -28,6 +29,14 @@ module ServiceInitializer
     # Register cache manager
     ServiceContainer.register(:cache_manager) do
       CacheManager.new
+    end
+
+    # Register cache cleaner
+    ServiceContainer.register(:cache_cleaner) do
+      cleaner = CacheCleaner.new
+      # Start cleaner only in production or if explicitly enabled
+      cleaner.start if ENV["RACK_ENV"] == "production" || ENV["ENABLE_CACHE_CLEANER"] == "true"
+      cleaner
     end
   end
 

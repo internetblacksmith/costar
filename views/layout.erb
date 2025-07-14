@@ -20,41 +20,31 @@
     <!-- Sentry Error Tracking for Frontend -->
     <script
       src="https://browser.sentry-cdn.com/7.77.0/bundle.min.js"
-      integrity="sha384-UOuLHv4qz9p1kxdP3Iq7MVFDmhCRWui+MvG5FL4YrDnaBJAfV2O0zkCF9RLpzrEf"
       crossorigin="anonymous"
     ></script>
     <script>
-      Sentry.init({
-        dsn: '<%= ENV['SENTRY_DSN'] %>',
-        environment: '<%= ENV['RACK_ENV'] || 'development' %>',
-        tracesSampleRate: 0.1,
-        beforeSend(event, hint) {
-          // Filter out errors from browser extensions
-          if (event.exception && event.exception.values) {
-            const error = event.exception.values[0];
-            if (error.stacktrace && error.stacktrace.frames) {
-              const frames = error.stacktrace.frames;
-              if (frames.some(frame => frame.filename && frame.filename.includes('extension://'))) {
-                return null;
+      if (typeof Sentry !== 'undefined') {
+        Sentry.init({
+          dsn: '<%= ENV['SENTRY_DSN'] %>',
+          environment: '<%= ENV['RACK_ENV'] || 'development' %>',
+          tracesSampleRate: 0.1,
+          beforeSend(event, hint) {
+            // Filter out errors from browser extensions
+            if (event.exception && event.exception.values) {
+              const error = event.exception.values[0];
+              if (error.stacktrace && error.stacktrace.frames) {
+                const frames = error.stacktrace.frames;
+                if (frames.some(frame => frame.filename && frame.filename.includes('extension://'))) {
+                  return null;
+                }
               }
             }
+            return event;
           }
-          return event;
-        }
-      });
+        });
+      }
     </script>
     <% end %>
-    
-    <!-- Application modules -->
-    <script src="/js/modules/error-reporter.js"></script>
-    <script src="/js/modules/snackbar.js"></script>
-    <script src="/js/modules/scroll-to-top.js"></script>
-    <script src="/js/modules/dom-manager.js"></script>
-    <script src="/js/modules/event-manager.js"></script>
-    <script src="/js/modules/analytics-tracker.js"></script>
-    <script src="/js/modules/field-manager.js"></script>
-    <script src="/js/modules/actor-search.js"></script>
-    <script src="/js/app.js"></script>
     
     <!-- Theme switching script -->
     <script>
@@ -142,5 +132,16 @@
             </div>
         </footer>
     </div>
+    
+    <!-- Application modules - loaded after DOM -->
+    <script src="/js/modules/error-reporter.js"></script>
+    <script src="/js/modules/snackbar.js"></script>
+    <script src="/js/modules/scroll-to-top.js"></script>
+    <script src="/js/modules/dom-manager.js"></script>
+    <script src="/js/modules/event-manager.js"></script>
+    <script src="/js/modules/analytics-tracker.js"></script>
+    <script src="/js/modules/field-manager.js"></script>
+    <script src="/js/modules/actor-search.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>

@@ -29,7 +29,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: 3.4
         bundler-cache: true
 
     - name: Set up test environment
@@ -47,12 +47,22 @@ jobs:
     - name: Run RSpec tests
       run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/rspec_results.xml
 
+    - name: Run Cucumber tests
+      run: |
+        mkdir -p tmp
+        bundle exec cucumber --format progress --format junit --out tmp/cucumber_results.xml
+      env:
+        CI: true
+        VCR_MODE: ci
+
     - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: rspec-results
-        path: tmp/rspec_results.xml
+        name: test-results
+        path: |
+          tmp/rspec_results.xml
+          tmp/cucumber_results.xml
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
@@ -73,7 +83,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: 3.4
         bundler-cache: true
 
     - name: Run bundle audit
@@ -104,7 +114,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: 3.4
         bundler-cache: true
 
     - name: Run RuboCop

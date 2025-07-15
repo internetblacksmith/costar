@@ -13,7 +13,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (429 examples, 0 failures)
+- **Testing**: RSpec test suite (429 examples) + Cucumber browser tests
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -48,14 +48,15 @@ actorsync/
 │   ├── services/             # Core business logic
 │   │   ├── resilient_tmdb_client.rb  # Circuit breaker API client
 │   │   ├── tmdb_service.rb           # TMDB API integration with caching
-│   │   ├── actor_comparison_service.rb # Timeline comparison logic
+│   │   ├── actor_comparison_service.rb # Timeline comparison logic (refactored)
 │   │   ├── timeline_builder.rb       # Performance-optimized rendering
 │   │   ├── cache_cleaner.rb          # Background service for TTL cache cleanup
 │   │   ├── request_throttler.rb       # Per-client request throttling
 │   │   ├── input_sanitizer.rb        # Centralized input sanitization
 │   │   ├── api_response_builder.rb   # Standardized API response formatting
 │   │   ├── cache_manager.rb          # Centralized cache operations
-│   │   └── cache_key_builder.rb      # Standardized cache key generation
+│   │   ├── cache_key_builder.rb      # Standardized cache key generation
+│   │   └── tmdb_fallback_provider.rb # Centralized fallback response provider
 │   ├── controllers/          # Request handling
 │   │   ├── api_controller.rb         # API routes with CORS and security
 │   │   ├── api_handlers.rb           # Input validation and processing
@@ -79,7 +80,8 @@ actorsync/
 │   │   ├── comparison_result_dto.rb  # Timeline comparison results
 │   │   ├── actor_search_request.rb   # Search request validation
 │   │   ├── actor_comparison_request.rb # Comparison request validation
-│   │   └── dto_factory.rb            # DTO creation from API responses
+│   │   ├── dto_factory.rb            # DTO creation from API responses
+│   │   └── health_check_result.rb    # Health check parameter object
 │   └── middleware/           # Request processing pipeline
 │       ├── request_logger.rb         # Request/response logging
 │       ├── performance_headers.rb    # Caching optimization headers
@@ -182,6 +184,8 @@ actorsync/
 - **Service Registration**: Centralized service configuration in ServiceInitializer
 - **Response Standardization**: ApiResponseBuilder ensures consistent API responses
 - **Error Handling Module**: Consistent error handling patterns with typed exceptions
+- **Parameter Objects**: HealthCheckResult reduces method parameters in health checks
+- **Fallback Provider**: TMDBFallbackProvider centralizes API fallback responses
 
 ### Error Handling
 - **Standardized Error Types**: Specific error classes for different failure scenarios (TMDBTimeoutError, TMDBAuthError, TMDBRateLimitError, TMDBNotFoundError, TMDBServiceError)
@@ -192,9 +196,11 @@ actorsync/
 - **Graceful Degradation**: Fallback responses for API failures and cache errors
 
 ### Testing Infrastructure
-- **RSpec Framework**: 429 examples with 100% pass rate
-- **Test Coverage**: Unit tests, integration tests, security tests, DTO validation tests
-- **Mocking**: WebMock for external API testing
+- **RSpec Framework**: 441 unit and integration tests (100% passing)
+- **Cucumber Framework**: 12 end-to-end browser simulation scenarios (100% passing)
+- **VCR Integration**: Dual-mode cassette system (record in dev, playback in CI)
+- **Test Coverage**: 77.3% line coverage with comprehensive unit, integration, and E2E tests
+- **Mocking**: WebMock for external API testing, VCR for consistent API responses
 - **Test Data**: FactoryBot for consistent test fixtures
 - **DTO Testing**: Comprehensive validation, serialization, and factory pattern tests
 
@@ -249,11 +255,11 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: 429 examples, 0 failures
+- **Testing**: RSpec (429 examples) + Cucumber E2E tests
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging
-- **Deployment**: Render.com configuration ready
+- **Deployment**: Render.com configuration ready with CI/CD
 
 ### Key Features
 - Circuit breaker pattern for API resilience

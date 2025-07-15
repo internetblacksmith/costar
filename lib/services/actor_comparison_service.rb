@@ -95,7 +95,7 @@ class ActorComparisonService
   def get_cached_actor_name(actor_id)
     @cache_manager.cache_actor_name(actor_id) do
       actor_details = @tmdb_service.get_actor_details(actor_id)
-      actor_details[:name] || "Unknown Actor"
+      actor_details.name || "Unknown Actor"
     rescue TMDBError => e
       handle_tmdb_error(e, "getting actor name")
       "Unknown Actor"

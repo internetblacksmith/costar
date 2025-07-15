@@ -39,6 +39,9 @@ group :development do
 end
 
 group :test do
+  gem "capybara", "3.40.0" # Browser simulation for Cucumber
+  gem "cucumber", "10.0.0" # BDD testing framework (Ruby 3.4+ compatible)
+  gem "cuprite", "0.15.1" # Headless Chrome driver for Capybara
   gem "factory_bot", "6.5.4" # Test data factories
   gem "faker", "3.5.2" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing

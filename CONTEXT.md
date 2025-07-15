@@ -4,10 +4,12 @@
 A production-ready web application that allows users to enter two actor names and visualize their filmographies in a timeline, highlighting movies they appeared in together. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.
 
 ## Current Status
-- **Phase**: Production Ready 🚀
-- **Last Updated**: 2025-07-14
-- **Current State**: Fully hardened production application with security, monitoring, testing, and resilient architecture
-- **Test Status**: 429 examples, 0 failures
+- **Phase**: Production Ready with Enhanced Testing 🚀
+- **Last Updated**: 2025-07-15
+- **Current State**: Fully hardened production application with security, monitoring, comprehensive testing including E2E browser tests
+- **Test Status**: 
+  - RSpec: 429 examples, 0 failures ✅
+  - Cucumber: 7/12 scenarios passing (5 scenarios need refinement)
 - **Code Quality**: 44 files inspected, no RuboCop offenses
 
 ## Architecture & Tech Stack
@@ -17,7 +19,7 @@ A production-ready web application that allows users to enter two actor names an
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, CORS, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite with 100% pass rate and comprehensive coverage
+- **Testing**: RSpec test suite + Cucumber E2E tests with browser simulation
 - **Deployment**: Render.com ready with automated CI/CD
 
 ## Key Features
@@ -117,12 +119,16 @@ Backend (Ruby/Sinatra + Security Middleware)
 - [x] **PRODUCTION: Deployment infrastructure (Render.com)**
 
 ## Code Quality & Testing
-- **Test Suite**: 429 RSpec examples with 0 failures
+- **Test Suite**: 
+  - RSpec: 429 examples with 0 failures (unit/integration tests)
+  - Cucumber: E2E browser tests with Chrome/Cuprite (7/12 scenarios passing)
+  - VCR: Dual-mode cassette system for reliable API testing
 - **Code Coverage**: Comprehensive coverage across services and API endpoints
 - **Code Quality**: 44 files inspected, no RuboCop offenses
 - **Security Scanning**: Brakeman integration for vulnerability detection
 - **Dependency Security**: Bundle-audit for dependency vulnerability scanning
 - **Performance**: Sub-second response times with caching optimization
+- **Browser Testing**: Real browser simulation catches middleware issues (e.g., Rack::Attack)
 
 ## Project Structure
 ```
@@ -170,10 +176,16 @@ actorsync/
 │       ├── error_handler_module.rb       # Standardized error handling patterns
 │       ├── error_handler_tmdb.rb         # TMDB-specific error handlers
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                          # Test suite (429 examples)
+├── spec/                          # RSpec test suite (429 examples)
 │   ├── lib/                       # Service and component tests
 │   ├── requests/                  # API integration tests
 │   └── support/                   # Test helpers and mocks
+├── features/                      # Cucumber E2E tests
+│   ├── actor_search.feature       # Actor search scenarios
+│   ├── actor_comparison.feature   # Timeline comparison scenarios
+│   ├── step_definitions/          # Test step implementations
+│   ├── support/                   # Cucumber configuration
+│   └── fixtures/vcr_cassettes/    # VCR recordings for API tests
 ├── config/                        # Configuration files
 │   ├── rack_attack.rb             # Rate limiting rules
 │   └── sentry.rb                  # Error tracking setup
@@ -204,7 +216,7 @@ actorsync/
 - **Repository**: Clean git history with conventional commits
 - **Caching**: Redis (production) with connection pooling, Memory (development)
 - **Monitoring**: Structured logging, health checks, error tracking
-- **Testing**: 429 examples with 0 failures, comprehensive test coverage
+- **Testing**: RSpec (429 examples, 0 failures) + Cucumber E2E browser tests
 
 ## Production Environment
 - **Infrastructure**: Render.com with Redis service
@@ -216,18 +228,21 @@ actorsync/
 
 ## Development Workflow
 1. Install dependencies: `bundle install`
-2. Configure environment: `cp .env.example .env` and add TMDB API key
-3. Run application: `bundle exec ruby app.rb`
+2. Configure environment: `cp .env.example .env` and add TMDB API key (or use Doppler)
+3. Run application: `make dev` or `bundle exec ruby app.rb`
 4. Development mode: `bundle exec rerun ruby app.rb`
-5. Run tests: `bundle exec rspec`
-6. Code quality: `bundle exec rubocop -A`
-7. Security scan: `bundle exec brakeman`
-8. Git workflow: feature branches, clean commits, descriptive messages
+5. Run all tests: `make test` (runs both RSpec and Cucumber)
+6. Run RSpec only: `make test-rspec` or `bundle exec rspec`
+7. Run Cucumber only: `make test-cucumber` or `bundle exec cucumber`
+8. Record VCR cassettes: `make cucumber-record`
+9. Code quality: `make lint` or `bundle exec rubocop -A`
+10. Security scan: `make security` or `bundle exec brakeman`
+11. Git workflow: feature branches, clean commits, descriptive messages
 
 ## Production Readiness Status
 - **Security Hardening**: Complete ✅
 - **Infrastructure**: Complete ✅ (Redis, health checks, monitoring)
-- **Testing**: Complete ✅ (429 examples, 0 failures)
+- **Testing**: Complete ✅ (RSpec: 429 examples, 0 failures; Cucumber: E2E browser tests)
 - **Code Quality**: Complete ✅ (RuboCop compliant)
 - **Error Handling**: Complete ✅ (Circuit breaker, structured logging, standardized error types)
 - **Performance**: Complete ✅ (Caching, optimization)
@@ -238,12 +253,24 @@ actorsync/
 ## Production Metrics
 - **Response Times**: Sub-second with Redis caching
 - **API Efficiency**: 80% reduction in external API calls
-- **Test Coverage**: 100% pass rate (429 examples)
+- **Test Coverage**: RSpec 100% pass rate (429 examples), Cucumber E2E tests
 - **Security**: Zero RuboCop violations, comprehensive hardening
 - **Reliability**: Circuit breaker pattern prevents cascade failures
 - **Scalability**: Connection pooling, rate limiting, caching optimization
 
+## Recent Updates (2025-07-15)
+- **Cucumber Testing**: Added E2E browser testing with Cuprite (headless Chrome)
+- **VCR Dual-Mode**: Implemented cassette-based API testing for CI/CD reliability
+- **Browser Simulation**: Tests now use real browser headers to catch middleware issues
+- **Test Coverage**: Expanded from unit/integration to include full E2E user flows
+
+## Known Issues to Address
+- **Cucumber Tests**: 5 scenarios need refinement (API endpoint tests, error handling)
+- **HTMX Timing**: Some tests need better wait strategies for HTMX responses
+- **Error Scenarios**: API error simulation needs proper VCR cassettes
+
 ## Next Steps
+- **Testing**: Fix remaining Cucumber scenarios for 100% pass rate
 - **Operations**: Deploy to production environment
 - **Monitoring**: Set up alerting and dashboards
 - **Performance**: Monitor and optimize based on production metrics
@@ -254,4 +281,4 @@ actorsync/
   - API versioning for third-party integrations
 
 ---
-*This context file reflects the current production-ready state of ActorSync as of 2025-07-14*
+*This context file reflects the current production-ready state of ActorSync as of 2025-07-15*

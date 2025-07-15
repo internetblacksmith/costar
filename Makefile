@@ -20,13 +20,26 @@ check-outdated: ## Check for outdated gems
 	@echo "🔍 Checking for outdated gems..."
 	@bundle outdated
 
-test: ## Run the test suite
-	@echo "🧪 Running tests..."
+test: ## Run all test suites (RSpec and Cucumber)
+	@echo "🧪 Running all tests..."
 	@bundle exec rspec
+	@bundle exec cucumber
+
+test-rspec: ## Run RSpec tests only
+	@echo "🧪 Running RSpec tests..."
+	@bundle exec rspec
+
+test-cucumber: ## Run Cucumber tests only
+	@echo "🥒 Running Cucumber tests..."
+	@bundle exec cucumber
 
 test-coverage: ## Run tests with coverage report
 	@echo "🧪 Running tests with coverage..."
 	@bundle exec rspec --format documentation
+
+cucumber-record: ## Run Cucumber tests and record new VCR cassettes
+	@echo "📼 Recording new VCR cassettes..."
+	@VCR_RECORD_MODE=new_episodes bundle exec cucumber
 
 lint: ## Run code style checks
 	@echo "🧹 Running code style checks..."

@@ -1,0 +1,13 @@
+# Cucumber profiles for different environments
+
+# Default profile - used for development
+default: --publish-quiet --format pretty --color
+
+# CI profile - used in continuous integration
+ci: --publish-quiet --format progress --format junit --out tmp/cucumber_results.xml --tags "not @wip"
+
+# Record profile - for recording new VCR cassettes
+record: --publish-quiet --format pretty --color VCR_RECORD_MODE=new_episodes
+
+# Rerun profile - for rerunning failed scenarios
+rerun: --publish-quiet --format pretty --color @rerun.txt

@@ -1,0 +1,97 @@
+{
+  "http_interactions": [
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/search/person?api_key=<TMDB_API_KEY>&query=Tom%20Hanks",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:04:55 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=12658"
+          ],
+          "X-Memc": [
+            "HIT"
+          ],
+          "X-Memc-Key": [
+            "0700532bee1cf5b6741cfc35359932cc19a7132b5e6f2de541e4b9a1f9fc1ffe"
+          ],
+          "X-Memc-Age": [
+            "9862"
+          ],
+          "X-Memc-Expires": [
+            "12658"
+          ],
+          "X-Az": [
+            "us-east-1c"
+          ],
+          "X-Task-Id": [
+            "68a071cbc6a34138809e7ff3821b5741"
+          ],
+          "Etag": [
+            "W/\"f6f65bfb1942a2308dc4ac6af9988ca7\""
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Miss from cloudfront"
+          ],
+          "Via": [
+            "1.1 a80cfefba1e25a9103271d8bd22be77e.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "NKEbAheoXKoV1VYEF12zu9XpRvyfgdZbFuOL4MfXtP-RT9VfPz2lhw=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJwYWdlIjoxLCJyZXN1bHRzIjpbeyJhZHVsdCI6ZmFsc2UsImdlbmRlciI6\nMiwiaWQiOjMxLCJrbm93bl9mb3JfZGVwYXJ0bWVudCI6IkFjdGluZyIsIm5h\nbWUiOiJUb20gSGFua3MiLCJvcmlnaW5hbF9uYW1lIjoiVG9tIEhhbmtzIiwi\ncG9wdWxhcml0eSI6MTAuMjQyLCJwcm9maWxlX3BhdGgiOiIvZUtGMXNHSlJy\nWkpiZkJHMUtpclB0MWNmTmQzLmpwZyIsImtub3duX2ZvciI6W3siYWR1bHQi\nOmZhbHNlLCJiYWNrZHJvcF9wYXRoIjoiL3RsRUZ1SWxheFJQWElZVkhYYk9T\nQU1DZldxay5qcGciLCJpZCI6MTMsInRpdGxlIjoiRm9ycmVzdCBHdW1wIiwi\nb3JpZ2luYWxfdGl0bGUiOiJGb3JyZXN0IEd1bXAiLCJvdmVydmlldyI6IkEg\nbWFuIHdpdGggYSBsb3cgSVEgaGFzIGFjY29tcGxpc2hlZCBncmVhdCB0aGlu\nZ3MgaW4gaGlzIGxpZmUgYW5kIGJlZW4gcHJlc2VudCBkdXJpbmcgc2lnbmlm\naWNhbnQgaGlzdG9yaWMgZXZlbnRz4oCUaW4gZWFjaCBjYXNlLCBmYXIgZXhj\nZWVkaW5nIHdoYXQgYW55b25lIGltYWdpbmVkIGhlIGNvdWxkIGRvLiBCdXQg\nZGVzcGl0ZSBhbGwgaGUgaGFzIGFjaGlldmVkLCBoaXMgb25lIHRydWUgbG92\nZSBlbHVkZXMgaGltLiIsInBvc3Rlcl9wYXRoIjoiL2FydzJ2Y0J2ZVdPVlpy\nNnB4ZDlYVGQxVGRRYS5qcGciLCJtZWRpYV90eXBlIjoibW92aWUiLCJvcmln\naW5hbF9sYW5ndWFnZSI6ImVuIiwiZ2VucmVfaWRzIjpbMzUsMTgsMTA3NDld\nLCJwb3B1bGFyaXR5IjoyMS41MzM4LCJyZWxlYXNlX2RhdGUiOiIxOTk0LTA2\nLTIzIiwidmlkZW8iOmZhbHNlLCJ2b3RlX2F2ZXJhZ2UiOjguNDY4LCJ2b3Rl\nX2NvdW50IjoyODM4Mn0seyJhZHVsdCI6ZmFsc2UsImJhY2tkcm9wX3BhdGgi\nOiIvM1Jmdmh5MU5sNnNTR0p3eWpiMFFpWnpaWWxCLmpwZyIsImlkIjo4NjIs\nInRpdGxlIjoiVG95IFN0b3J5Iiwib3JpZ2luYWxfdGl0bGUiOiJUb3kgU3Rv\ncnkiLCJvdmVydmlldyI6IkxlZCBieSBXb29keSwgQW5keSdzIHRveXMgbGl2\nZSBoYXBwaWx5IGluIGhpcyByb29tIHVudGlsIEFuZHkncyBiaXJ0aGRheSBi\ncmluZ3MgQnV6eiBMaWdodHllYXIgb250byB0aGUgc2NlbmUuIEFmcmFpZCBv\nZiBsb3NpbmcgaGlzIHBsYWNlIGluIEFuZHkncyBoZWFydCwgV29vZHkgcGxv\ndHMgYWdhaW5zdCBCdXp6LiBCdXQgd2hlbiBjaXJjdW1zdGFuY2VzIHNlcGFy\nYXRlIEJ1enogYW5kIFdvb2R5IGZyb20gdGhlaXIgb3duZXIsIHRoZSBkdW8g\nZXZlbnR1YWxseSBsZWFybnMgdG8gcHV0IGFzaWRlIHRoZWlyIGRpZmZlcmVu\nY2VzLiIsInBvc3Rlcl9wYXRoIjoiL3VYRGZqSmJkUDRpalc1aFdTQnJQcmxL\ncHhhYi5qcGciLCJtZWRpYV90eXBlIjoibW92aWUiLCJvcmlnaW5hbF9sYW5n\ndWFnZSI6ImVuIiwiZ2VucmVfaWRzIjpbMTYsMTIsMTA3NTEsMzVdLCJwb3B1\nbGFyaXR5IjoxOS4zMzQsInJlbGVhc2VfZGF0ZSI6IjE5OTUtMTEtMjIiLCJ2\naWRlbyI6ZmFsc2UsInZvdGVfYXZlcmFnZSI6Ny45Nywidm90ZV9jb3VudCI6\nMTg5NTR9LHsiYWR1bHQiOmZhbHNlLCJiYWNrZHJvcF9wYXRoIjoiL2FtWmF2\nRXJyanJkZ0R3aHNJZHBXeEhOZW5JeC5qcGciLCJpZCI6NDk3LCJ0aXRsZSI6\nIlRoZSBHcmVlbiBNaWxlIiwib3JpZ2luYWxfdGl0bGUiOiJUaGUgR3JlZW4g\nTWlsZSIsIm92ZXJ2aWV3IjoiQSBzdXBlcm5hdHVyYWwgdGFsZSBzZXQgb24g\nZGVhdGggcm93IGluIGEgU291dGhlcm4gcHJpc29uLCB3aGVyZSBnZW50bGUg\nZ2lhbnQgSm9obiBDb2ZmZXkgcG9zc2Vzc2VzIHRoZSBteXN0ZXJpb3VzIHBv\nd2VyIHRvIGhlYWwgcGVvcGxlJ3MgYWlsbWVudHMuIFdoZW4gdGhlIGNlbGwg\nYmxvY2sncyBoZWFkIGd1YXJkLCBQYXVsIEVkZ2Vjb21iLCByZWNvZ25pemVz\nIENvZmZleSdzIG1pcmFjdWxvdXMgZ2lmdCwgaGUgdHJpZXMgZGVzcGVyYXRl\nbHkgdG8gaGVscCBzdGF2ZSBvZmYgdGhlIGNvbmRlbW5lZCBtYW4ncyBleGVj\ndXRpb24uIiwicG9zdGVyX3BhdGgiOiIvOFZHOGZETml5NTBINEZlZEd3ZFNW\nVVBvYUplLmpwZyIsIm1lZGlhX3R5cGUiOiJtb3ZpZSIsIm9yaWdpbmFsX2xh\nbmd1YWdlIjoiZW4iLCJnZW5yZV9pZHMiOlsxNCwxOCw4MF0sInBvcHVsYXJp\ndHkiOjE1LjQ1NzQsInJlbGVhc2VfZGF0ZSI6IjE5OTktMTItMTAiLCJ2aWRl\nbyI6ZmFsc2UsInZvdGVfYXZlcmFnZSI6OC41MDQsInZvdGVfY291bnQiOjE4\nMjAxfV19LHsiYWR1bHQiOmZhbHNlLCJnZW5kZXIiOjAsImlkIjoxMTU2MDE0\nLCJrbm93bl9mb3JfZGVwYXJ0bWVudCI6IkRpcmVjdGluZyIsIm5hbWUiOiJU\nb20gSGFua2lucyIsIm9yaWdpbmFsX25hbWUiOiJUb20gSGFua2lucyIsInBv\ncHVsYXJpdHkiOjAuMDA3MSwicHJvZmlsZV9wYXRoIjpudWxsLCJrbm93bl9m\nb3IiOlt7ImFkdWx0IjpmYWxzZSwiYmFja2Ryb3BfcGF0aCI6bnVsbCwiaWQi\nOjE3MzI1MSwidGl0bGUiOiJNYWMgJ24gQ2hlZXNlIiwib3JpZ2luYWxfdGl0\nbGUiOiJNYWMgJ24gQ2hlZXNlIiwib3ZlcnZpZXciOiJXaGVuIHlvdSBmaW5k\nIHlvdXJzZWxmIHJ1bm5pbmcgc2NhcmVkIGFuZCBydW5uaW5nIG91dCBvZiBl\nbmVyZ3ksIHRoZXJlJ3Mgb25seSBhIGZldyBvcHRpb25zIGxlZnQgdG8gb3V0\ncnVuIHlvdXIgb3Bwb25lbnQgdGhyb3VnaCB0aGUgc291dGhlcm4gZGVzZXJ0\nLiBTdG9wcGluZyBhdCBub3RoaW5nLCB3YXRjaCB0aGVzZSB0d28gZ3V5cyB3\nZWFyIGVhY2ggb3RoZXIgb3V0IGFuZCByaXAgdGhyb3VnaCBib3VuZGFyaWVz\nIGhpdGhlcnRvIHVuYnJva2VuLiBFbmpveSB0aGUgcmlkZS4iLCJwb3N0ZXJf\ncGF0aCI6bnVsbCwibWVkaWFfdHlwZSI6Im1vdmllIiwib3JpZ2luYWxfbGFu\nZ3VhZ2UiOiJ4eCIsImdlbnJlX2lkcyI6WzE2LDI4XSwicG9wdWxhcml0eSI6\nMC4wMjg2LCJyZWxlYXNlX2RhdGUiOiIyMDExLTA4LTA4IiwidmlkZW8iOmZh\nbHNlLCJ2b3RlX2F2ZXJhZ2UiOjUuMywidm90ZV9jb3VudCI6Nn0seyJhZHVs\ndCI6ZmFsc2UsImJhY2tkcm9wX3BhdGgiOm51bGwsImlkIjoyMDcwMDAsInRp\ndGxlIjoiTWFjICduJyBDaGVlc2U6IFN1cGVybWFya2V0Iiwib3JpZ2luYWxf\ndGl0bGUiOiJNYWMgJ24nIENoZWVzZTogU3VwZXJtYXJrZXQiLCJvdmVydmll\ndyI6Ik1hYyAnbiBDaGVlc2UgdHJ5IHRvIHJlYWxpemUgdGhlaXIgZHJlYW0g\ndmFjYXRpb24gYnkgd29ya2luZyBpbiBhIGxvY2FsIHN1cGVybWFya2V0LiBU\naGluZ3MgZ28gYXdyeSB3aGVuIG5ldyBvcHBvcnR1bml0aWVzIGFyaXNlIHRv\nIG1ha2UgYSBidWNrLiBUaGlzIHNob3J0IHdhcyBzaG93biB0aGVhdHJpY2Fs\nbHkgYmVmb3JlIFdvcmxkIFdhciBaIGluIHRoZSBOZXRoZXJsYW5kcy4iLCJw\nb3N0ZXJfcGF0aCI6bnVsbCwibWVkaWFfdHlwZSI6Im1vdmllIiwib3JpZ2lu\nYWxfbGFuZ3VhZ2UiOiJ4eCIsImdlbnJlX2lkcyI6WzE2LDI4XSwicG9wdWxh\ncml0eSI6MC4wMzM4LCJyZWxlYXNlX2RhdGUiOiIyMDEzLTA2LTIwIiwidmlk\nZW8iOmZhbHNlLCJ2b3RlX2F2ZXJhZ2UiOjUuNSwidm90ZV9jb3VudCI6Mn1d\nfV0sInRvdGFsX3BhZ2VzIjoxLCJ0b3RhbF9yZXN1bHRzIjoyfQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:04:55 GMT"
+    }
+  ],
+  "recorded_with": "VCR 6.3.1"
+}

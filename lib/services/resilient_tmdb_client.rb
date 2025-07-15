@@ -9,6 +9,7 @@ require_relative "simple_circuit_breaker"
 require_relative "../config/logger"
 require_relative "../config/errors"
 require_relative "performance_monitor"
+require_relative "tmdb_fallback_provider"
 
 # Resilient TMDB API client with circuit breaker and retry mechanisms
 class ResilientTMDBClient
@@ -263,33 +264,6 @@ class ResilientTMDBClient
   end
 
   def generate_fallback_data(endpoint)
-    case endpoint
-    when %r{search/person}
-      {
-        "results" => [],
-        "total_results" => 0,
-        "total_pages" => 0,
-        "page" => 1
-      }
-    when %r{person/\d+/movie_credits}
-      {
-        "cast" => [],
-        "crew" => [],
-        "id" => 0
-      }
-    when %r{person/\d+$}
-      {
-        "id" => 0,
-        "name" => "Unknown Actor",
-        "biography" => "",
-        "profile_path" => nil,
-        "known_for_department" => "Acting"
-      }
-    else
-      {
-        "error" => "Service temporarily unavailable",
-        "fallback" => true
-      }
-    end
+    TMDBFallbackProvider.for_endpoint(endpoint)
   end
 end

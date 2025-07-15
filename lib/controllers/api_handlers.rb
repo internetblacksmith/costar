@@ -48,10 +48,12 @@ class ApiHandlers
       render_actor_suggestions(@app, actors, validation.field)
     rescue TMDBError => e
       handle_api_error(e, "search_actors")
-      render_search_error(e.message)
+      # Return the error HTML directly
+      return render_search_error(e.message)
     rescue StandardError => e
       handle_unexpected_error(e, "search_actors")
-      render_unexpected_error
+      # Return the error HTML directly
+      return render_unexpected_error
     end
   end
 

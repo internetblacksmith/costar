@@ -45,7 +45,7 @@ Feature: Actor Search
     Then all searches should complete successfully
     And no rate limiting errors should occur
 
-  @vcr @wip
+  @api_error
   Scenario: Search handles API errors gracefully
     Given the TMDB API is returning errors
     When I search for "Tom Hanks" in the first actor field

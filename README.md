@@ -149,10 +149,14 @@ actorsync/
 │   │   ├── app.js            # Main application initialization
 │   │   └── modules/          # Modular JavaScript components
 │   └── errors/               # Custom error pages
-├── spec/                     # Test suite (429 examples, 0 failures)
+├── spec/                     # RSpec test suite (429 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
+├── features/                 # Cucumber end-to-end tests
+│   ├── step_definitions/     # Test step implementations
+│   ├── support/              # Test configuration and helpers
+│   └── *.feature             # Feature specifications
 ├── config/                   # Configuration files
 │   ├── rack_attack.rb        # Rate limiting configuration
 │   └── sentry.rb             # Error tracking setup
@@ -186,14 +190,27 @@ All API endpoints include:
 
 ### Running Tests
 ```bash
-# Run complete test suite
+# Run all tests (RSpec + Cucumber)
+make test
+
+# Run RSpec unit/integration tests only
+make test-rspec
+# or
 bundle exec rspec
+
+# Run Cucumber end-to-end tests only
+make test-cucumber
+# or
+bundle exec cucumber
 
 # Run with coverage
 bundle exec rspec --format documentation
 
-# Run specific test file
+# Run specific RSpec test file
 bundle exec rspec spec/requests/api_spec.rb
+
+# Run specific Cucumber feature
+bundle exec cucumber features/actor_comparison.feature
 ```
 
 ### Code Quality
@@ -307,8 +324,10 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (429 examples, 0 failures)
-- **WebMock** for API testing
+- **RSpec** test framework (429 examples, 0 failures) for unit/integration tests
+- **Cucumber** for end-to-end browser simulation tests
+- **VCR** for reliable API testing in both RSpec and Cucumber
+- **WebMock** for API mocking in tests
 - **RuboCop** for code quality
 - **Brakeman** for security scanning
 - **SimpleCov** for test coverage

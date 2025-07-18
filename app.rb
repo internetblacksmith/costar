@@ -105,6 +105,11 @@ class MovieTogetherApp < Sinatra::Base
     # Custom security headers
     before do
       add_security_headers if ENV.fetch("RACK_ENV", "development") == "production"
+      
+      # Add cache control for static assets to prevent stale content
+      if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
+        cache_control :public, :must_revalidate, max_age: 3600
+      end
     end
   end
 

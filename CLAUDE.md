@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ActorSync is a production-ready web application for comparing actor filmographies in a timeline format. Built with a resilient Ruby/Sinatra backend, HTMX frontend, and comprehensive security hardening.
+MovieTogether is a production-ready web application for comparing actor filmographies in a timeline format. Built with a resilient Ruby/Sinatra backend, HTMX frontend, and comprehensive security hardening.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ ActorSync is a production-ready web application for comparing actor filmographie
 ## Project Structure
 
 ```
-actorsync/
+movie_together/
 ├── app.rb                     # Main Sinatra application with security middleware
 ├── config.ru                 # Rack configuration
 ├── Gemfile                   # Ruby dependencies (Redis, Sentry, security gems)
@@ -358,4 +358,4 @@ All endpoints include:
 
 ---
 
-*This file reflects the current production-ready state of ActorSync as of 2025-07-14*
+*This file reflects the current production-ready state of MovieTogether as of 2025-07-14*

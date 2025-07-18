@@ -5,7 +5,7 @@ A production-ready web application that allows users to enter two actor names an
 
 ## Current Status
 - **Phase**: Production Ready with Enhanced Testing 🚀
-- **Last Updated**: 2025-07-15
+- **Last Updated**: 2025-07-18
 - **Current State**: Fully hardened production application with security, monitoring, comprehensive testing including E2E browser tests
 - **Test Status**: 
   - RSpec: 429 examples, 0 failures ✅
@@ -132,7 +132,7 @@ Backend (Ruby/Sinatra + Security Middleware)
 
 ## Project Structure
 ```
-actorsync/
+movie_together/
 ├── lib/                           # Application logic
 │   ├── services/                  # Core business logic
 │   │   ├── resilient_tmdb_client.rb      # Circuit breaker client
@@ -208,7 +208,7 @@ actorsync/
 ```
 
 ## Important Notes
-- **App Name**: ActorSync
+- **App Name**: MovieTogether
 - **Architecture**: Resilient service-oriented Ruby/Sinatra + Security middleware
 - **Security**: Production-hardened with comprehensive protections
 - **Port**: Runs on localhost:4567 (development), configurable for production
@@ -258,7 +258,12 @@ actorsync/
 - **Reliability**: Circuit breaker pattern prevents cascade failures
 - **Scalability**: Connection pooling, rate limiting, caching optimization
 
-## Recent Updates (2025-07-15)
+## Recent Updates (2025-07-18)
+- **App Rename**: Changed project name from ActorSync to MovieTogether
+- **Branding Update**: Updated all references across codebase (UI, documentation, configuration)
+- **Repository**: Updated deployment configuration for new service names
+
+## Previous Updates (2025-07-15)
 - **Cucumber Testing**: Added E2E browser testing with Cuprite (headless Chrome)
 - **VCR Dual-Mode**: Implemented cassette-based API testing for CI/CD reliability
 - **Browser Simulation**: Tests now use real browser headers to catch middleware issues
@@ -281,4 +286,4 @@ actorsync/
   - API versioning for third-party integrations
 
 ---
-*This context file reflects the current production-ready state of ActorSync as of 2025-07-15*
+*This context file reflects the current production-ready state of MovieTogether as of 2025-07-18*

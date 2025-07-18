@@ -27,7 +27,7 @@ services:
       - key: CDN_PROVIDER
         value: "none"
       - key: ALLOWED_ORIGINS
-        value: ""
+        value: "https://as.internetblacksmith.dev"
     healthCheckPath: /health/simple
     plan: free
     region: oregon

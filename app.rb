@@ -39,7 +39,7 @@ require_relative "lib/controllers/health_controller"
 require_relative "lib/controllers/api_controller"
 require_relative "lib/controllers/error_handler"
 
-class ActorSyncApp < Sinatra::Base
+class MovieTogetherApp < Sinatra::Base
   register Sinatra::Namespace
   include HealthController
   include APIController
@@ -220,4 +220,4 @@ class ActorSyncApp < Sinatra::Base
 end
 
 # Run the app when executed directly
-ActorSyncApp.run! if __FILE__ == $PROGRAM_NAME
+MovieTogetherApp.run! if __FILE__ == $PROGRAM_NAME

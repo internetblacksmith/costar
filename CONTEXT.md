@@ -1,4 +1,4 @@
-# ActorSync - Project Context
+# MovieTogether - Project Context
 
 ## Project Overview
 A production-ready web application that allows users to enter two actor names and visualize their filmographies in a timeline, highlighting movies they appeared in together. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.

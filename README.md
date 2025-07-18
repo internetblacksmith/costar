@@ -1,4 +1,4 @@
-# 🎬 ActorSync
+# 🎬 MovieTogether
 
 A production-ready web application that visualizes actor filmographies in a timeline format, highlighting movies that two actors have appeared in together. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.
 
@@ -25,7 +25,7 @@ A production-ready web application that visualizes actor filmographies in a time
 1. **Clone and Install Dependencies**:
    ```bash
    git clone <repository-url>
-   cd actorsync
+   cd movie_together
    bundle install
    ```
 

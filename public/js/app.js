@@ -29,7 +29,7 @@ class App {
             // Make actor search available globally for onclick handlers
             window.actorSearch = this.actorSearch;
             
-            console.log('ActorSync app initialized successfully');
+            console.log('MovieTogether app initialized successfully');
         } catch (error) {
             console.error('Error initializing app:', error);
             // Report initialization errors

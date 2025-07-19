@@ -2,13 +2,13 @@
 
 require "spec_helper"
 
-RSpec.describe "ActorSync Application", type: :request do
+RSpec.describe "MovieTogether Application", type: :request do
   describe "GET /" do
     it "renders the main page" do
       get "/"
 
       expect(last_response.status).to eq(200)
-      expect(last_response.body).to include("ActorSync")
+      expect(last_response.body).to include("MovieTogether")
     end
   end
 

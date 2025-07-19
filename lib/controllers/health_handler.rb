@@ -79,12 +79,18 @@ class HealthHandler
     {
       status: result.status_string,
       timestamp: Time.now.iso8601,
-      version: ENV.fetch("APP_VERSION", "unknown"),
+      version: ENV.fetch("APP_VERSION", "1.0.0"),
+      git_sha: ENV.fetch("RENDER_GIT_COMMIT", get_local_git_sha),
       environment: ENV.fetch("RACK_ENV", "development"),
       checks: build_checks(result),
       configuration: configuration_summary,
       performance: result.performance_summary
     }
+  end
+
+  def get_local_git_sha
+    # For local development, get the current git SHA
+    `git rev-parse --short HEAD 2>/dev/null`.strip rescue "unknown"
   end
 
   def build_checks(result)

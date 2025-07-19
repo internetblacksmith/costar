@@ -67,6 +67,19 @@ doppler-setup: ## Set up Doppler for local development
 	@echo "3. Setup project: doppler setup"
 	@echo "4. Run: make dev"
 
+prod-test: ## Test production endpoints
+	@echo "🚀 Testing production endpoints..."
+	@ruby scripts/test_production.rb
+
+prod-test-verbose: ## Test production endpoints with verbose output
+	@echo "🚀 Testing production endpoints (verbose)..."
+	@ruby scripts/test_production.rb -v
+
+prod-test-wait: ## Test production after deployment (waits for new SHA)
+	@echo "🚀 Testing production deployment..."
+	@SHA=$$(git rev-parse --short HEAD) && \
+	ruby scripts/test_production.rb --sha $$SHA --wait -v
+
 help: ## Show this help message
 	@echo "ActorSync Development Commands:"
 	@echo ""

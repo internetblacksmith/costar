@@ -138,7 +138,10 @@ class MovieTogetherApp < Sinatra::Base
   # Simple health check for Render's internal monitoring (always returns 200)
   get "/health/simple" do
     content_type :json
-    { status: "ok" }.to_json
+    { 
+      status: "ok",
+      git_sha: ENV.fetch("RENDER_GIT_COMMIT", `git rev-parse --short HEAD 2>/dev/null`.strip) || "unknown"
+    }.to_json
   end
 
   # Main page

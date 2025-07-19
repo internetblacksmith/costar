@@ -151,7 +151,7 @@ class ResilientTMDBClient
                     use_ssl: uri.scheme == "https",
                     **@timeout_config) do |http|
       request = Net::HTTP::Get.new(uri.request_uri)
-      request["User-Agent"] = "ActorSync/1.0"
+      request["User-Agent"] = "MovieTogether/1.0"
       request["Accept"] = "application/json"
 
       response = http.request(request)

@@ -90,6 +90,8 @@ class ErrorReporter {
             const status = event.detail.xhr.status;
             if (status === 429) {
                 errorMessage = 'Too many requests. Please slow down and try again.';
+            } else if (status === 524) {
+                errorMessage = 'Server timeout. The server took too long to respond. Please try again.';
             } else if (status >= 500) {
                 errorMessage = 'Server error. Please try again later.';
             } else if (status === 404) {

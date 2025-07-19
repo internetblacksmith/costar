@@ -10,6 +10,7 @@ require_relative "../services/cache_manager"
 require_relative "../services/performance_monitor"
 require_relative "../services/input_sanitizer"
 require_relative "../services/cache_cleaner"
+require_relative "../services/simple_request_throttler"
 require_relative "../controllers/input_validator"
 
 # Initializes and configures all application services
@@ -41,9 +42,9 @@ module ServiceInitializer
   end
 
   def self.register_api_services
-    # Register request throttler
+    # Register request throttler (using simple version to avoid threading issues)
     ServiceContainer.register(:request_throttler) do
-      RequestThrottler.new
+      SimpleRequestThrottler.new
     end
 
     # Register TMDB client with circuit breaker

@@ -272,14 +272,20 @@ movie_together/
 5. ✅ Added proper error handling for 524 timeout errors
 6. ✅ Set ALLOWED_ORIGINS in render.yaml for production domain
 
-### Issues to Investigate Tomorrow:
-1. **Critical**: HTTP 524 timeout errors (100+ second response times) on actor search
-   - Check TMDB_API_KEY is properly set in production environment
-   - Verify Redis service is running and accessible
-   - Review production logs for specific error messages
-   - Check if rate limiting is causing the delays
-2. **Minor**: Material Design CSS source map warnings (cosmetic issue)
-3. **Monitor**: Cookie rejection and Grammarly CSS errors (browser extension issues, not app-related)
+### Recent Fixes (2025-07-19):
+1. **Fixed**: HTTP 524 timeout errors on `/api/actors/search` endpoint
+   - **Root Cause**: RequestThrottler's background thread was deadlocking in production
+   - **Solution**: Replaced complex thread-based RequestThrottler with SimpleRequestThrottler
+     - Synchronous rate limiting without background threads
+     - Same rate limiting behavior (30 requests per 10 seconds)
+     - No queue/priority system (requests execute immediately if under limit)
+   - **Result**: API endpoints should now respond properly without timeouts
+
+### Doppler Integration Notes:
+- **Important**: This project uses Doppler for environment variable management
+- **render.yaml**: Sensitive variables (TMDB_API_KEY, SENTRY_DSN) are NOT defined here
+- **Production Setup**: Doppler syncs environment variables directly to Render.com
+- **Documentation**: See CLAUDE.md for complete Doppler setup instructions
 
 ## Previous Updates (2025-07-18)
 - **App Rename**: Changed project name from ActorSync to MovieTogether

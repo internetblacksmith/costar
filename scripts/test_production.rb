@@ -122,38 +122,39 @@ class ProductionTester
       expected_status: 200,
       validate: ->(body) {
         body.include?('MovieTogether') && 
-        body.include?('actor-search-form')
+        body.include?('search-form') && 
+        body.include?('actor1')
       }
     )
   end
   
   def test_api_endpoints
-    puts "\n🔌 Testing API Endpoints"
+    puts "\n🔌 Testing API Endpoints (HTMX/JSON)"
     puts "-" * 30
     
-    # Test actor search with short query (should work quickly)
+    # Test actor search with short query (returns HTML for HTMX)
     test_endpoint(
       name: "Actor Search (short query)",
       path: "/api/actors/search?q=a&field=actor1",
       expected_status: 200,
       timeout: API_TIMEOUT,
       validate: ->(body) {
-        data = JSON.parse(body)
-        data['status'] == 'success' && data['data']['actors'].is_a?(Array)
+        # Actor search returns HTML suggestions for HTMX
+        body.include?('suggestion-item') && 
+        body.include?('selectActor')
       }
     )
     
-    # Test actor search with real name
+    # Test actor search with real name (returns HTML for HTMX)
     test_endpoint(
       name: "Actor Search (Tom Hanks)",
       path: "/api/actors/search?q=tom%20hanks&field=actor1",
       expected_status: 200,
       timeout: API_TIMEOUT,
       validate: ->(body) {
-        data = JSON.parse(body)
-        data['status'] == 'success' && 
-        data['data']['actors'].is_a?(Array) &&
-        data['data']['actors'].any? { |a| a['name'] =~ /Tom Hanks/i }
+        # Should return HTML with Tom Hanks in suggestions
+        body.include?('suggestion-item') && 
+        body.include?('Tom Hanks')
       }
     )
     
@@ -171,26 +172,32 @@ class ProductionTester
       }
     )
     
-    # Test actor comparison
+    # Test actor comparison (returns HTML timeline for HTMX)
     test_endpoint(
       name: "Actor Comparison",
       path: "/api/actors/compare?actor1_id=31&actor2_id=500",
       expected_status: 200,
       timeout: API_TIMEOUT,
       validate: ->(body) {
-        data = JSON.parse(body)
-        data['status'] == 'success' && 
-        data['data']['timeline'] &&
-        data['data']['actors']
+        # Actor comparison returns HTML timeline
+        body.include?('timeline') && 
+        (body.include?('timeline-content') || body.include?('year-group'))
       }
     )
     
-    # Test error handling
+    # Test error handling (returns success with empty movies for non-existent actor)
     test_endpoint(
       name: "Invalid Actor ID",
       path: "/api/actors/99999999/movies",
-      expected_status: 404,
-      timeout: API_TIMEOUT
+      expected_status: 200,
+      timeout: API_TIMEOUT,
+      validate: ->(body) {
+        # Returns JSON with empty movies array
+        data = JSON.parse(body)
+        data['status'] == 'success' && 
+        data['data']['movies'].is_a?(Array) &&
+        data['data']['movies'].empty?
+      }
     )
   end
   

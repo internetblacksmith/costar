@@ -258,7 +258,30 @@ movie_together/
 - **Reliability**: Circuit breaker pattern prevents cascade failures
 - **Scalability**: Connection pooling, rate limiting, caching optimization
 
-## Recent Updates (2025-07-18)
+## Recent Updates (2025-07-19)
+- **Production Fixes**: Resolved CSP issues for Sentry, added cache-busting for static assets
+- **Error Handling**: Added specific handling for Cloudflare 524 timeout errors
+- **CORS Configuration**: Set ALLOWED_ORIGINS for production domain (as.internetblacksmith.dev)
+- **Outstanding Issue**: HTTP 524 timeouts on /api/actors/search - needs investigation
+
+### Today's Changes:
+1. ✅ Fixed Content Security Policy to allow Sentry CDN
+2. ✅ Updated all "ActorSync" references to "MovieTogether" 
+3. ✅ Added cache-busting query parameters to JS/CSS files
+4. ✅ Fixed User-Agent header in TMDB client
+5. ✅ Added proper error handling for 524 timeout errors
+6. ✅ Set ALLOWED_ORIGINS in render.yaml for production domain
+
+### Issues to Investigate Tomorrow:
+1. **Critical**: HTTP 524 timeout errors (100+ second response times) on actor search
+   - Check TMDB_API_KEY is properly set in production environment
+   - Verify Redis service is running and accessible
+   - Review production logs for specific error messages
+   - Check if rate limiting is causing the delays
+2. **Minor**: Material Design CSS source map warnings (cosmetic issue)
+3. **Monitor**: Cookie rejection and Grammarly CSS errors (browser extension issues, not app-related)
+
+## Previous Updates (2025-07-18)
 - **App Rename**: Changed project name from ActorSync to MovieTogether
 - **Branding Update**: Updated all references across codebase (UI, documentation, configuration)
 - **Repository**: Updated deployment configuration for new service names
@@ -286,4 +309,4 @@ movie_together/
   - API versioning for third-party integrations
 
 ---
-*This context file reflects the current production-ready state of MovieTogether as of 2025-07-18*
+*This context file reflects the current production-ready state of MovieTogether as of 2025-07-19*

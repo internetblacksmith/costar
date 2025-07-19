@@ -243,6 +243,21 @@ CDN_BASE_URL=https://cdn.yourdomain.com
 3. `bundle install`
 4. `bundle exec rerun ruby app.rb`
 
+### Production Deployment with Doppler
+
+**IMPORTANT**: This project uses Doppler for environment variable management in production.
+
+1. **Doppler Integration**: Environment variables (TMDB_API_KEY, SENTRY_DSN, etc.) are synced from Doppler
+2. **render.yaml Configuration**: Do NOT define sensitive variables in render.yaml - they will be overridden by Doppler
+3. **Render.com Setup**: 
+   - Connect Doppler to your Render service via the Render dashboard
+   - Go to Environment → Sync with Doppler
+   - Select your Doppler project and config (usually "prd" for production)
+4. **Variables managed by Doppler**:
+   - `TMDB_API_KEY` - The Movie Database API key
+   - `SENTRY_DSN` - Error tracking configuration
+   - Any other sensitive configuration
+
 #### Environment Validation
 The application includes comprehensive environment validation that will:
 - ✅ Check for required environment variables (TMDB_API_KEY)

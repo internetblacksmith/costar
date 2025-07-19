@@ -2,7 +2,7 @@
 
 # App definition for Rack::Test
 def app
-  ActorSyncApp
+  MovieTogetherApp
 end
 
 # Helper methods for testing

@@ -3,7 +3,7 @@
 require_relative "resilient_tmdb_client"
 require_relative "tmdb_data_processor"
 require_relative "cache_manager"
-require_relative "request_throttler"
+require_relative "simple_request_throttler"
 require_relative "../config/logger"
 require_relative "../middleware/error_handler_module"
 require_relative "../dto/dto_factory"
@@ -15,7 +15,7 @@ class TMDBService
   def initialize(client: nil, cache: nil, throttler: nil)
     @client = client || ResilientTMDBClient.new
     @cache_manager = cache || CacheManager.new
-    @throttler = throttler || RequestThrottler.new
+    @throttler = throttler || SimpleRequestThrottler.new
   end
 
   def healthy?

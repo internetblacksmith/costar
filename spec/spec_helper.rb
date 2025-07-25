@@ -104,3 +104,11 @@ RSpec.configure do |config|
   # Shared configuration for request specs
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
+
+# Load support files
+Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
+
+# Load accessibility testing if running accessibility specs
+if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }
+  require "axe/rspec"
+end

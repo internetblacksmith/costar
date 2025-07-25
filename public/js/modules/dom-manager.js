@@ -102,6 +102,10 @@ class DOMManager {
         if (typeof mdc !== 'undefined') {
             mdc.autoInit(container);
         }
+        // Also process HTMX attributes on new elements
+        if (typeof htmx !== 'undefined') {
+            htmx.process(container);
+        }
     }
 }
 

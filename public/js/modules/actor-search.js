@@ -153,6 +153,17 @@ class ActorSearch {
         
         container.innerHTML = textFieldHTML + suggestionsHTML + hiddenInputsHTML;
         DOMManager.initializeMDC(container);
+        
+        // Give HTMX a moment to fully process the new elements
+        if (typeof htmx !== 'undefined') {
+            // Force HTMX to process immediately
+            setTimeout(() => {
+                const input = DOMManager.getElement(field);
+                if (input) {
+                    input.focus();
+                }
+            }, 50);
+        }
     }
 
     trackComparison() {

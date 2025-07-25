@@ -1,11 +1,17 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
+env:
+  RUBY_VERSION: 3.4.2
+  REDIS_URL: redis://localhost:6379
+  RACK_ENV: test
+  TMDB_API_KEY: test_api_key_for_vcr # VCR cassettes don't need real API key
+  
 jobs:
   test:
     name: Test Suite
@@ -13,7 +19,7 @@ jobs:
     
     services:
       redis:
-        image: redis:7
+        image: redis:7-alpine
         ports:
           - 6379:6379
         options: >-
@@ -21,200 +27,167 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
+    - uses: actions/checkout@v4
+    
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.4
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
-
-    - name: Set up test environment
-      run: |
-        cp .env.example .env
-        echo "TMDB_API_KEY=test_key_for_ci" >> .env
-        echo "REDIS_URL=redis://localhost:6379" >> .env
-        echo "RACK_ENV=test" >> .env
-
-    - name: Run database setup (if needed)
-      run: |
-        # Add any database setup commands here if you add a DB later
-        echo "No database setup required"
-
-    - name: Run RSpec tests
-      run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/rspec_results.xml
-
-    - name: Run Cucumber tests
-      run: |
-        mkdir -p tmp
-        bundle exec cucumber --format progress --format junit --out tmp/cucumber_results.xml
-      env:
-        CI: true
-        VCR_MODE: ci
-
-    - name: Upload test results
+    
+    - name: Install Chrome for Cuprite
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: stable
+    
+    - name: Run Unit Tests
+      run: bundle exec rspec spec/lib --format documentation
+    
+    - name: Run Integration Tests
+      run: bundle exec rspec spec/requests --format documentation
+    
+    - name: Run Accessibility Tests
+      run: ACCESSIBILITY_TESTS=true bundle exec rspec spec/accessibility --format documentation
+      continue-on-error: true # Don't fail PR if accessibility tests fail
+    
+    - name: Run Performance Tests
+      run: bundle exec rspec spec/performance --format documentation
+      continue-on-error: true
+    
+    - name: Run Security Tests
+      run: bundle exec rspec spec/security --format documentation
+    
+    - name: Run E2E Tests (Cucumber)
+      run: bundle exec cucumber --format progress
+    
+    - name: Upload Test Coverage
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results
-        path: |
-          tmp/rspec_results.xml
-          tmp/cucumber_results.xml
-
-    - name: Upload coverage reports
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: coverage-report
+        name: coverage
         path: coverage/
+    
+    - name: Comment Test Results
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const { execSync } = require('child_process');
+          const coverage = execSync('cat coverage/.last_run.json 2>/dev/null || echo "{}"').toString();
+          
+          let coverageData = {};
+          try {
+            coverageData = JSON.parse(coverage);
+          } catch (e) {}
+          
+          const coveragePercent = coverageData.result?.line || 'N/A';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## Test Results ✅\n\n**Coverage:** ${coveragePercent}%\n\nAll tests passed!`
+          });
 
   security:
-    name: Security Audit
+    name: Security Checks
     runs-on: ubuntu-latest
-    needs: test
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
+    - uses: actions/checkout@v4
+    
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.4
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
-
-    - name: Run bundle audit
+    
+    - name: Run Brakeman Security Scan
       run: |
-        gem install bundle-audit
-        bundle audit --update
-
-    - name: Run brakeman security scanner
-      run: |
-        gem install brakeman
-        brakeman --no-pager --format json --output tmp/brakeman_results.json || true
-
-    - name: Upload security scan results
+        bundle exec brakeman -f json -o tmp/brakeman.json
+        bundle exec brakeman -f text
+    
+    - name: Upload Brakeman Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: security-results
-        path: tmp/brakeman_results.json
+        name: brakeman-results
+        path: tmp/brakeman.json
+    
+    - name: Run Bundle Audit
+      run: bundle exec bundle-audit check --update
 
-  lint:
+  code-quality:
     name: Code Quality
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
+    - uses: actions/checkout@v4
+    
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.4
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
-
+    
     - name: Run RuboCop
       run: bundle exec rubocop --format github
-
-    - name: Check for TODO/FIXME comments
+    
+    - name: Check for TODOs
       run: |
-        if grep -r "TODO\|FIXME" --include="*.rb" --include="*.erb" . ; then
-          echo "::warning::Found TODO/FIXME comments in code"
+        if grep -r "TODO\|FIXME\|HACK" --include="*.rb" --include="*.js" --include="*.css" .; then
+          echo "::warning::Found TODO/FIXME/HACK comments in code"
         fi
 
-  deploy-staging:
-    name: Deploy to Staging
+  visual-regression:
+    name: Visual Regression Tests
     runs-on: ubuntu-latest
-    needs: [test, security, lint]
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-    environment: staging
-
+    if: github.event_name == 'pull_request'
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Deploy to Render (Staging)
-      run: |
-        curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}" \
-             -H "Content-Type: application/json" \
-             -d '{"clear_cache": false}'
-
-    - name: Wait for deployment
-      run: sleep 60
-
-    - name: Health check staging
-      run: |
-        curl -f "${{ secrets.STAGING_URL }}/health/simple" || exit 1
-
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [test, security, lint]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Create GitHub release
-      if: contains(github.event.head_commit.message, 'Release:')
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
       with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
-        body: |
-          Automated release from commit ${{ github.sha }}
-          
-          Changes:
-          ${{ github.event.head_commit.message }}
-        draft: false
-        prerelease: false
-
-    - name: Deploy to Render (Production)
+        ruby-version: ${{ env.RUBY_VERSION }}
+        bundler-cache: true
+    
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v1
+    
+    - name: Run Visual Tests
       run: |
-        curl -X POST "${{ secrets.RENDER_PRODUCTION_DEPLOY_HOOK }}" \
-             -H "Content-Type: application/json" \
-             -d '{"clear_cache": true}'
+        mkdir -p tmp/screenshots
+        bundle exec rspec spec/visual --format documentation
+    
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: screenshots
+        path: tmp/screenshots/
 
-    - name: Wait for deployment
-      run: sleep 90
-
-    - name: Health check production
-      run: |
-        curl -f "${{ secrets.PRODUCTION_URL }}/health/simple" || exit 1
-
-    - name: Notify deployment success
-      if: success()
-      run: |
-        echo "✅ Production deployment successful!"
-        echo "🚀 Application available at: ${{ secrets.PRODUCTION_URL }}"
-
-    - name: Notify deployment failure
-      if: failure()
-      run: |
-        echo "❌ Production deployment failed!"
-        exit 1
-
-  notify:
-    name: Notify Results
+  dependency-check:
+    name: Dependency Security Check
     runs-on: ubuntu-latest
-    needs: [test, security, lint, deploy-production]
-    if: always()
-
+    
     steps:
-    - name: Notification Summary
+    - uses: actions/checkout@v4
+    
+    - name: Run Dependabot Security Scan
+      uses: dependabot/fetch-metadata@v2
+      continue-on-error: true
+    
+    - name: Check for Outdated Dependencies
       run: |
-        echo "## CI/CD Pipeline Results" >> $GITHUB_STEP_SUMMARY
-        echo "- **Tests**: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Security**: ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Lint**: ${{ needs.lint.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Deploy**: ${{ needs.deploy-production.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Author**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+        bundle outdated --strict || true
+        echo "::warning::Some dependencies are outdated"

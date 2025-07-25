@@ -1,5 +1,9 @@
 # 🎬 MovieTogether
 
+[![CI](https://github.com/YOUR_USERNAME/movie_together/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/movie_together/actions/workflows/ci.yml)
+[![Ruby](https://img.shields.io/badge/ruby-3.4.2-red.svg)](https://www.ruby-lang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A production-ready web application that visualizes actor filmographies in a timeline format, highlighting movies that two actors have appeared in together. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.
 
 ## Features

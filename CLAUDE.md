@@ -13,7 +13,7 @@ MovieTogether is a production-ready web application for comparing actor filmogra
 - **Caching**: Redis (production) / Memory (development) with connection pooling
 - **Security**: Comprehensive hardening (rate limiting, input validation, security headers)
 - **Monitoring**: Structured logging, Sentry error tracking, health checks
-- **Testing**: RSpec test suite (429 examples) + Cucumber browser tests
+- **Testing**: RSpec test suite (441 examples) + Cucumber browser tests
 - **Deployment**: Render.com with automated CI/CD
 
 ## Development Commands
@@ -87,7 +87,7 @@ movie_together/
 │       ├── performance_headers.rb    # Caching optimization headers
 │       ├── error_handler_module.rb   # Standardized error handling patterns
 │       └── request_context_middleware.rb # Request lifecycle tracking
-├── spec/                     # Test suite (429 examples, 0 failures)
+├── spec/                     # Test suite (441 examples, 0 failures)
 │   ├── lib/                  # Unit tests for services and components
 │   ├── requests/             # Integration tests for API endpoints
 │   └── support/              # Test helpers and mocking utilities
@@ -270,7 +270,7 @@ The application includes comprehensive environment validation that will:
 ### Current Status: Production Ready ✅
 - **Security**: Comprehensive hardening complete
 - **Infrastructure**: Redis, health checks, monitoring
-- **Testing**: RSpec (429 examples) + Cucumber E2E tests
+- **Testing**: RSpec (441 examples) + Cucumber E2E tests
 - **Code Quality**: RuboCop compliant, Brakeman secure
 - **Performance**: Sub-second response times with caching
 - **Monitoring**: Sentry integration, structured logging
@@ -280,13 +280,14 @@ The application includes comprehensive environment validation that will:
 - Circuit breaker pattern for API resilience
 - Data Transfer Objects (DTOs) for type safety and validation
 - Dependency injection with service container
-- Rate limiting with Redis persistence and per-client throttling
+- Rate limiting with Redis persistence and SimpleRequestThrottler (no threading issues)
 - Input validation and sanitization
 - Security headers and CORS protection
 - Policy-based configuration management with validation
 - Structured logging and error tracking
-- Health check endpoints for monitoring
+- Health check endpoints for monitoring with Git SHA tracking
 - Performance optimization with caching
+- Production testing script for deployment verification
 
 ## API Endpoints
 

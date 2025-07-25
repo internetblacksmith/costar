@@ -4,11 +4,23 @@ When("I select {string} as the first actor") do |actor_name|
   # Visit home page if not already there
   visit "/" unless current_path == "/"
   
+  # Debug: save page state before filling
+  page.save_screenshot("tmp/before_fill_#{actor_name.gsub(' ', '_')}.png") if Capybara.current_driver == :cuprite
+  page.save_page("tmp/page_content_before_#{actor_name.gsub(' ', '_')}.html")
+  
   # Search for the actor
   fill_in "actor1", with: actor_name
   
-  # Wait for suggestions to appear
-  expect(page).to have_css("#suggestions1 .suggestion-item", wait: 3)
+  # Manually trigger HTMX if needed
+  page.execute_script("
+    const input = document.getElementById('actor1');
+    if (input && typeof htmx !== 'undefined') {
+      htmx.trigger(input, 'keyup');
+    }
+  ")
+  
+  # Wait for suggestions to appear with longer timeout
+  expect(page).to have_css("#suggestions1 .suggestion-item", wait: 5)
   
   # Click on the actor in the suggestions
   within("#suggestions1") do

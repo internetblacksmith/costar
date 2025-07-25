@@ -64,7 +64,7 @@ ActorSync features a resilient, production-ready architecture:
 - **ResilientTMDBClient**: Circuit breaker pattern for API resilience
 - **ActorComparisonService**: Timeline generation and movie analysis
 - **TimelineBuilder**: Performance-optimized timeline rendering
-- **RequestThrottler**: Per-client request rate limiting and throttling
+- **SimpleRequestThrottler**: Synchronous request rate limiting without threading
 - **CacheCleaner**: Background service for automatic TTL-based cache cleanup
 - **ConfigurationPolicy**: Policy-based configuration management with validation
 - **ConfigurationValidator**: Environment variable validation with type checking
@@ -97,7 +97,7 @@ actorsync/
 │   │   ├── actor_comparison_service.rb # Timeline comparison
 │   │   ├── timeline_builder.rb       # Performance-optimized rendering
 │   │   ├── cache_cleaner.rb          # Background service for TTL cache cleanup
-│   │   ├── request_throttler.rb      # Per-client request throttling
+│   │   ├── simple_request_throttler.rb # Synchronous request throttling
 │   │   ├── input_sanitizer.rb        # Centralized input sanitization
 │   │   ├── api_response_builder.rb   # Standardized API response formatting
 │   │   ├── cache_manager.rb          # Centralized cache operations
@@ -149,7 +149,7 @@ actorsync/
 │   │   ├── app.js            # Main application initialization
 │   │   └── modules/          # Modular JavaScript components
 │   └── errors/               # Custom error pages
-├── spec/                     # RSpec test suite (429 examples, 0 failures)
+├── spec/                     # RSpec test suite (441 examples, 0 failures)
 │   ├── lib/                  # Service and component tests
 │   ├── requests/             # API integration tests
 │   └── support/              # Test helpers and mocks
@@ -205,6 +205,11 @@ bundle exec cucumber
 
 # Run with coverage
 bundle exec rspec --format documentation
+
+# Test production endpoints
+make prod-test
+# or with verbose output
+make prod-test-verbose
 
 # Run specific RSpec test file
 bundle exec rspec spec/requests/api_spec.rb
@@ -324,7 +329,7 @@ See `SECURITY.md` for complete security implementation details.
 - **Render.com** for hosting (Redis included)
 
 ### Development & Testing
-- **RSpec** test framework (429 examples, 0 failures) for unit/integration tests
+- **RSpec** test framework (441 examples, 0 failures) for unit/integration tests
 - **Cucumber** for end-to-end browser simulation tests
 - **VCR** for reliable API testing in both RSpec and Cucumber
 - **WebMock** for API mocking in tests

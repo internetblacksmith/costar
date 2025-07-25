@@ -16,7 +16,7 @@ require_relative "vcr_config"
 require_relative "vcr_helpers"
 
 # Configure Capybara for browser simulation
-Capybara.app = ActorSyncApp
+Capybara.app = MovieTogetherApp
 Capybara.server = :puma
 Capybara.server_port = 9292
 Capybara.app_host = "http://localhost:9292"

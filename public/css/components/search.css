@@ -23,6 +23,26 @@
     position: relative;
 }
 
+/* Additional input field styling for better readability */
+.search-field-container .mdc-text-field {
+    transition: all var(--transition-fast);
+}
+
+.search-field-container .mdc-text-field:hover {
+    border-color: var(--primary-color);
+}
+
+/* Ensure good contrast for placeholder text */
+.search-field-container .mdc-text-field__input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 0.7;
+}
+
+[data-theme="dark"] .search-field-container .mdc-text-field__input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 0.8;
+}
+
 /* Selected actor chips in place of input fields */
 .selected-actor-chip {
     width: 100%;

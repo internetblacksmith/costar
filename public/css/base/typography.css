@@ -15,3 +15,24 @@ body {
     margin: 0 auto;
     padding: var(--spacing-md);
 }
+
+/* Link styles for WCAG AA compliance */
+a {
+    color: var(--primary-dark);
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Ensure links in dark mode have good contrast */
+[data-theme="dark"] a {
+    color: var(--primary-light);
+}
+
+[data-theme="dark"] a:hover {
+    color: var(--secondary-light);
+}

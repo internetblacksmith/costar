@@ -7,10 +7,26 @@
 
 .mdc-text-field--filled {
     background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+}
+
+/* Override MDC's default dark background */
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: var(--input-bg);
+}
+
+/* Remove the default MDC ripple background that makes inputs too dark */
+.mdc-text-field__ripple::before,
+.mdc-text-field__ripple::after {
+    background-color: var(--primary-color);
+    opacity: 0.08;
 }
 
 .mdc-text-field--filled .mdc-text-field__input {
     color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 .mdc-floating-label {
@@ -19,6 +35,19 @@
 
 .mdc-text-field--focused .mdc-floating-label {
     color: var(--primary-color);
+}
+
+/* Improve readability in dark mode */
+[data-theme="dark"] .mdc-text-field--filled {
+    background-color: var(--input-bg);
+}
+
+[data-theme="dark"] .mdc-text-field--filled .mdc-text-field__input {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .mdc-floating-label {
+    color: var(--text-secondary);
 }
 
 .mdc-text-field--focused .mdc-line-ripple::before {
@@ -83,10 +112,12 @@
 .mdc-button--raised {
     background-color: var(--primary-color);
     color: white;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .mdc-button--raised:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-dark);
 }
 
 .mdc-button--raised:disabled {

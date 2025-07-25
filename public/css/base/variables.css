@@ -23,8 +23,8 @@
     --header-text: #ffffff;
     
     /* Input Styling */
-    --input-bg: #ffffff;
-    --input-border: #d1d5db;
+    --input-bg: #f9fafb;
+    --input-border: #e5e7eb;
     --input-focus: #3b82f6;
     --suggestion-hover: #f3f4f6;
     
@@ -35,10 +35,10 @@
     --movie-hover-transform: translateY(-2px);
     --movie-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     
-    /* Primary Colors */
-    --primary-color: #3b82f6;
-    --primary-light: #60a5fa;
-    --primary-dark: #2563eb;
+    /* Primary Colors - WCAG AA compliant */
+    --primary-color: #2563eb;
+    --primary-light: #3b82f6;
+    --primary-dark: #1d4ed8;
     
     /* Secondary Colors */
     --secondary-color: #06b6d4;
@@ -98,9 +98,9 @@
     --header-bg: #000000;
     --header-text: #ffffff;
     
-    --input-bg: #1f2937;
-    --input-border: #374151;
-    --suggestion-hover: #374151;
+    --input-bg: #374151;
+    --input-border: #4b5563;
+    --suggestion-hover: #4b5563;
     
     --movie-shared-bg: #451a03;
     --movie-shared-text: #fbbf24;

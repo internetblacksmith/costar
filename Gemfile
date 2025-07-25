@@ -39,6 +39,7 @@ group :development do
 end
 
 group :test do
+  gem "axe-matchers", "2.6.1" # Accessibility testing with axe-core
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
   gem "cucumber", "10.0.0" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.15.1" # Headless Chrome driver for Capybara

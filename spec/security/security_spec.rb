@@ -1,0 +1,89 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+
+RSpec.describe "Security", type: :request do
+  describe "XSS Protection" do
+    it "escapes user input in search results" do
+      malicious_input = '<script>alert("XSS")</script>'
+      get "/api/actors/search", q: malicious_input, field: "actor1"
+      
+      expect(last_response.body).not_to include('<script>')
+      expect(last_response.body).not_to include('alert("XSS")')
+    end
+
+    it "has X-XSS-Protection header" do
+      get "/"
+      expect(last_response.headers["X-XSS-Protection"]).to eq("1; mode=block")
+    end
+  end
+
+  describe "SQL Injection Protection" do
+    it "handles malicious actor IDs safely" do
+      malicious_id = "1'; DROP TABLE users; --"
+      get "/api/actors/compare", actor1_id: malicious_id, actor2_id: "123"
+      
+      # Should handle gracefully without executing SQL
+      expect(last_response.status).to be_between(200, 499)
+    end
+  end
+
+  describe "CSRF Protection" do
+    it "includes security headers" do
+      get "/"
+      
+      expect(last_response.headers["X-Frame-Options"]).to eq("DENY")
+      expect(last_response.headers["X-Content-Type-Options"]).to eq("nosniff")
+    end
+  end
+
+  describe "Content Security Policy" do
+    it "has restrictive CSP header" do
+      get "/"
+      
+      csp = last_response.headers["Content-Security-Policy"]
+      expect(csp).to include("default-src")
+      expect(csp).to include("script-src")
+      expect(csp).to include("style-src")
+    end
+  end
+
+  describe "Rate Limiting" do
+    it "enforces rate limits" do
+      # This test would need to be configured based on your Rack::Attack settings
+      # Example: make 31 requests in rapid succession
+      31.times do
+        get "/api/actors/search?q=test&field=actor1"
+      end
+      
+      # The 31st request should be rate limited
+      expect(last_response.status).to eq(429)
+    end
+  end
+
+  describe "Input Validation" do
+    it "rejects oversized input" do
+      huge_input = "a" * 10_000
+      get "/api/actors/search", q: huge_input, field: "actor1"
+      
+      expect(last_response.status).to eq(400)
+    end
+
+    it "validates required parameters" do
+      get "/api/actors/compare" # Missing actor IDs
+      
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to include("error")
+    end
+  end
+
+  describe "HTTPS Enforcement" do
+    it "has Strict-Transport-Security header in production" do
+      allow(ENV).to receive(:[]).with("RACK_ENV").and_return("production")
+      
+      get "/"
+      
+      expect(last_response.headers["Strict-Transport-Security"]).to be_present
+    end
+  end
+end

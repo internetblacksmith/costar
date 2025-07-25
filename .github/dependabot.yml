@@ -1,0 +1,41 @@
+version: 2
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      development-dependencies:
+        patterns:
+          - "rspec*"
+          - "cucumber*"
+          - "capybara*"
+          - "factory_bot*"
+          - "faker*"
+          - "simplecov*"
+          - "vcr*"
+          - "webmock*"
+          - "rubocop*"
+          - "brakeman*"
+          - "bundle-audit*"
+      production-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "rspec*"
+          - "cucumber*"
+          - "capybara*"
+          - "factory_bot*"
+          - "faker*"
+          - "simplecov*"
+          - "vcr*"
+          - "webmock*"
+          - "rubocop*"
+          - "brakeman*"
+          - "bundle-audit*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

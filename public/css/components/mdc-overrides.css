@@ -13,7 +13,7 @@
 
 /* Override MDC's default dark background */
 .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    background-color: var(--input-bg);
+    background-color: var(--input-bg) !important;
 }
 
 /* Remove the default MDC ripple background that makes inputs too dark */
@@ -21,6 +21,34 @@
 .mdc-text-field__ripple::after {
     background-color: var(--primary-color);
     opacity: 0.08;
+}
+
+/* Force light background in light mode */
+[data-theme="light"] .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #f3f4f6 !important;
+}
+
+/* Force lighter background in dark mode - override all MDC defaults */
+[data-theme="dark"] .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #9ca3af !important;
+}
+
+[data-theme="dark"] .mdc-text-field--filled:hover:not(.mdc-text-field--disabled) {
+    background-color: #d1d5db !important;
+}
+
+/* Ensure text is always visible */
+[data-theme="dark"] .mdc-text-field--filled .mdc-text-field__input {
+    color: #1f2937 !important;
+}
+
+/* Fix floating label contrast in dark mode */
+[data-theme="dark"] .mdc-floating-label {
+    color: #1f2937 !important; /* Even darker for 4.5:1 contrast */
+}
+
+[data-theme="dark"] .mdc-text-field--focused .mdc-floating-label {
+    color: #1e40af !important; /* Darker blue for focused state */
 }
 
 .mdc-text-field--filled .mdc-text-field__input {
@@ -40,14 +68,23 @@
 /* Improve readability in dark mode */
 [data-theme="dark"] .mdc-text-field--filled {
     background-color: var(--input-bg);
+    /* Override MDC's default dark background */
+    background-color: var(--input-bg) !important;
 }
 
 [data-theme="dark"] .mdc-text-field--filled .mdc-text-field__input {
-    color: var(--text-primary);
+    color: #ffffff;
+    background-color: transparent;
 }
 
 [data-theme="dark"] .mdc-floating-label {
-    color: var(--text-secondary);
+    color: #e5e7eb;
+}
+
+/* Ensure placeholder text is visible in dark mode */
+[data-theme="dark"] .mdc-text-field__input::placeholder {
+    color: #d1d5db;
+    opacity: 1;
 }
 
 .mdc-text-field--focused .mdc-line-ripple::before {

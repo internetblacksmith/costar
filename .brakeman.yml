@@ -1,0 +1,31 @@
+# Brakeman configuration for Sinatra application
+app_path: "."
+quiet: false
+force_scan: true
+output_formats:
+  - json
+output_files:
+  - tmp/brakeman.json
+exit_on_warn: false
+exit_on_error: true
+print_report: true
+ignore_model_output: true
+
+# Sinatra-specific settings
+rails: false
+ignore_redirect_to_model: true
+ignore_file_access: false
+
+# Paths to scan
+paths:
+  - app.rb
+  - lib/
+  - config/
+
+# Paths to skip
+skip_files:
+  - spec/
+  - features/
+  - tmp/
+  - log/
+  - public/

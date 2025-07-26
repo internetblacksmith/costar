@@ -30,9 +30,9 @@ a:hover {
 
 /* Ensure links in dark mode have good contrast */
 [data-theme="dark"] a {
-    color: var(--primary-light);
+    color: #60a5fa; /* Lighter blue for WCAG AA contrast */
 }
 
 [data-theme="dark"] a:hover {
-    color: var(--secondary-light);
+    color: #93bbfc; /* Even lighter on hover */
 }

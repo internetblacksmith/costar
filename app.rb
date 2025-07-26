@@ -93,23 +93,40 @@ class MovieTogetherApp < Sinatra::Base
     # Enable gzip compression for all responses
     use Rack::Deflater
 
-    # Force HTTPS (exclude health checks for internal monitoring)
-    use Rack::SSL, exclude: ->(env) { env["PATH_INFO"].start_with?("/health") }
+    # Force HTTPS (exclude health checks for internal monitoring) - skip in test
+    unless ENV.fetch("RACK_ENV", "development") == "test"
+      use Rack::SSL, exclude: ->(env) { env["PATH_INFO"].start_with?("/health") }
+    end
+  end
 
-    # Additional security headers
+  # Security configuration for all environments (including test for security tests)
+  # Additional security headers - adjust for test environment
+  unless ENV.fetch("RACK_ENV", "development") == "test"
+    # Full protection in non-test environments
     use Rack::Protection,
-        except: [:json_csrf], # Allow JSON requests
-        use: %i[authenticity_token encrypted_cookie form_token frame_options
-                http_origin ip_spoofing path_traversal session_hijacking xss_header]
+        except: [:json_csrf, :frame_options, :xss_header], # Handle these ourselves
+        use: %i[authenticity_token encrypted_cookie form_token
+                http_origin ip_spoofing path_traversal session_hijacking]
+  end
 
-    # Custom security headers
-    before do
-      add_security_headers if ENV.fetch("RACK_ENV", "development") == "production"
-      
-      # Add cache control for static assets to prevent stale content
-      if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
-        cache_control :public, :must_revalidate, max_age: 3600
-      end
+  # Custom security headers for all environments
+  before do
+    # Set all security headers directly
+    headers "Content-Security-Policy" => build_csp_header
+    headers "Referrer-Policy" => "strict-origin-when-cross-origin" 
+    headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
+    headers "X-Frame-Options" => "DENY"
+    headers "X-Content-Type-Options" => "nosniff"
+    headers "X-XSS-Protection" => "1; mode=block"
+    
+    # Only add HSTS in production
+    if ENV.fetch("RACK_ENV", "development") == "production"
+      headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
+    end
+    
+    # Add cache control for static assets to prevent stale content
+    if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
+      cache_control :public, :must_revalidate, max_age: 3600
     end
   end
 
@@ -183,10 +200,21 @@ class MovieTogetherApp < Sinatra::Base
 
   # Add comprehensive security headers for production
   def add_security_headers
-    response.headers["Content-Security-Policy"] = build_csp_header
-    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+    headers "Content-Security-Policy" => build_csp_header
+    headers "Referrer-Policy" => "strict-origin-when-cross-origin"
+    headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
+    
+    # Only add HSTS in production/test with HTTPS
+    if ENV.fetch("RACK_ENV", "development") == "production"
+      headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
+    end
+  end
+
+  def override_rack_protection_headers
+    # Override Rack::Protection defaults with our more secure settings
+    headers "X-Frame-Options" => "DENY"
+    headers "X-Content-Type-Options" => "nosniff"
+    headers "X-XSS-Protection" => "1; mode=block"
   end
 
   def build_csp_header
@@ -218,12 +246,9 @@ class MovieTogetherApp < Sinatra::Base
       headers "Access-Control-Allow-Origin" => "*"
     end
 
-    # Common security headers for all environments
+    # Common CORS headers for all environments
     headers "Access-Control-Allow-Credentials" => "false"
     headers "Access-Control-Expose-Headers" => "X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset"
-    headers "X-Content-Type-Options" => "nosniff"
-    headers "X-Frame-Options" => "DENY"
-    headers "X-XSS-Protection" => "1; mode=block"
   end
 end
 

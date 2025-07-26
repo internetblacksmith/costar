@@ -25,8 +25,8 @@ module ApiErrorHandler
 
   def handle_api_error_with_context(error, endpoint, context = {})
     StructuredLogger.error("API TMDB Error",
-                           type: "api_error", 
-                           endpoint: endpoint, 
+                           type: "api_error",
+                           endpoint: endpoint,
                            error: error.message,
                            error_class: error.class.name,
                            **context)
@@ -35,8 +35,8 @@ module ApiErrorHandler
 
   def handle_unexpected_error_with_context(error, endpoint, context = {})
     StructuredLogger.error("API Unexpected Error",
-                           type: "api_error", 
-                           endpoint: endpoint, 
+                           type: "api_error",
+                           endpoint: endpoint,
                            error: error.message,
                            error_class: error.class.name,
                            **context)
@@ -45,8 +45,8 @@ module ApiErrorHandler
 
   def handle_validation_error_with_context(error, endpoint, context = {})
     StructuredLogger.warn("API Validation Error",
-                          type: "validation_error", 
-                          endpoint: endpoint, 
+                          type: "validation_error",
+                          endpoint: endpoint,
                           error: error.message,
                           error_class: error.class.name,
                           **context)

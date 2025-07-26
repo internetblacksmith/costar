@@ -41,7 +41,7 @@ class ApiHandlers
     unless validation.valid?
       # Use 400 status for security violations (oversized input)
       return render_validation_errors_with_400(validation.errors) if validation.security_violation?
-      
+
       # Use 200 status for other validation errors
       return render_validation_errors(validation.errors)
     end
@@ -58,11 +58,11 @@ class ApiHandlers
     rescue TMDBError => e
       handle_api_error(e, "search_actors")
       # Return the error HTML directly
-      return render_search_error(e.message)
+      render_search_error(e.message)
     rescue StandardError => e
       handle_unexpected_error(e, "search_actors")
       # Return the error HTML directly
-      return render_unexpected_error
+      render_unexpected_error
     end
   end
 

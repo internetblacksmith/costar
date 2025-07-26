@@ -12,13 +12,11 @@ end
 
 When("I search for {string} in the first actor field") do |search_term|
   # Make sure we're on the home page for JavaScript tests
-  if Capybara.current_driver == :cuprite && current_path != "/"
-    visit "/"
-  end
-  
+  visit "/" if Capybara.current_driver == :cuprite && current_path != "/"
+
   # Use the actor1 search field
   fill_in "actor1", with: search_term
-  
+
   # For JavaScript tests, trigger the input event and wait for HTMX
   if Capybara.current_driver == :cuprite
     # Trigger keyup event for HTMX
@@ -36,12 +34,10 @@ end
 
 When("I search for {string} in the second actor field") do |search_term|
   # Make sure we're on the home page for JavaScript tests
-  if Capybara.current_driver == :cuprite && current_path != "/"
-    visit "/"
-  end
-  
+  visit "/" if Capybara.current_driver == :cuprite && current_path != "/"
+
   fill_in "actor2", with: search_term
-  
+
   # For JavaScript tests, trigger the input event and wait for HTMX
   if Capybara.current_driver == :cuprite
     # Trigger keyup event for HTMX
@@ -75,12 +71,12 @@ end
 Then("the suggestions should include multiple actors containing {string}") do |search_term|
   # Check that we have multiple actors in the results
   body = page.body
-  
+
   # Count how many times we see "Known for:" which indicates an actor result
-  actor_count = body.scan(/Known for:/).size
-  
+  actor_count = body.scan("Known for:").size
+
   expect(actor_count).to be > 1, "Expected multiple actors, but found #{actor_count}"
-  
+
   # Verify the search term appears multiple times
   expect(body.downcase).to include(search_term.downcase)
 end
@@ -99,17 +95,17 @@ end
 
 When("I rapidly search for the following terms:") do |table|
   @search_responses = []
-  
+
   table.hashes.each do |row|
     search_term = row["search_term"]
     visit "/api/actors/search?q=#{CGI.escape(search_term)}&field=actor1"
-    
+
     @search_responses << {
       term: search_term,
       status: page.status_code,
       body: page.body
     }
-    
+
     # Small delay to simulate real typing speed
     sleep 0.1
   end
@@ -117,36 +113,36 @@ end
 
 Then("all searches should complete successfully") do
   @search_responses.each do |response|
-    expect(response[:status]).to eq(200), 
-      "Search for '#{response[:term]}' failed with status #{response[:status]}"
+    expect(response[:status]).to eq(200),
+                                 "Search for '#{response[:term]}' failed with status #{response[:status]}"
   end
 end
 
 Given("the TMDB API is returning errors") do
   # Disable VCR for this scenario to allow WebMock to work
   VCR.turn_off! if defined?(VCR)
-  
+
   # Enable WebMock
   WebMock.enable! if defined?(WebMock)
-  
+
   # Clear any existing WebMock stubs
   WebMock.reset!
-  
+
   # Stub Sentry to prevent error logging noise
   WebMock.stub_request(:post, /sentry\.io/)
-    .to_return(status: 200, body: "", headers: {})
-  
+         .to_return(status: 200, body: "", headers: {})
+
   # Directly stub the API response for error scenarios
   WebMock.stub_request(:get, /api\.themoviedb\.org/)
-    .to_return(
-      status: 503,
-      body: {
-        status_message: "The TMDB API is temporarily unavailable. Please try again later.",
-        status_code: 503
-      }.to_json,
-      headers: { 'Content-Type' => 'application/json' }
-    )
-  
+         .to_return(
+           status: 503,
+           body: {
+             status_message: "The TMDB API is temporarily unavailable. Please try again later.",
+             status_code: 503
+           }.to_json,
+           headers: { "Content-Type" => "application/json" }
+         )
+
   # Mark that we're in an error scenario
   @api_error_scenario = true
 end
@@ -164,19 +160,23 @@ Then("I should see an error message") do
     # Pass the test as the app handled the error gracefully without crashing
   elsif page.body.nil? || page.body.strip.empty?
     # For non-error scenarios, empty body is not expected
-    fail "Expected error message but got empty response"
+    raise "Expected error message but got empty response"
   elsif page.response_headers["Content-Type"]&.include?("json")
     expect_json_response
     # For JSON responses, check the body contains error
-    body = JSON.parse(page.body) rescue {}
+    body = begin
+      JSON.parse(page.body)
+    rescue StandardError
+      {}
+    end
     has_error_key = body.key?("error") || body.key?("message")
     expect(has_error_key).to eq(true)
   else
     # For HTML responses, check for error text
     # The search errors are rendered in suggestion items
     has_error = page.has_css?(".suggestion-item", text: /Search Error|Unexpected Error|failed/i, wait: 3) ||
-                page.has_css?(".error", wait: 2) || 
-                page.has_content?("error", wait: 2) || page.has_content?("Error", wait: 2) || 
+                page.has_css?(".error", wait: 2) ||
+                page.has_content?("error", wait: 2) || page.has_content?("Error", wait: 2) ||
                 page.has_content?("not found", wait: 2) || page.has_content?("failed", wait: 2) ||
                 page.has_content?("Failed", wait: 2) || page.has_content?("required", wait: 2) ||
                 page.has_content?("Search Error", wait: 2) || page.has_content?("Unexpected Error", wait: 2)

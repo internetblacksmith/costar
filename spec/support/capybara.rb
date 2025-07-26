@@ -13,15 +13,14 @@ Capybara.default_max_wait_time = 5
 # Configure Cuprite (headless Chrome)
 Capybara.register_driver :cuprite do |app|
   Capybara::Cuprite::Driver.new(app,
-    window_size: [1920, 1080],
-    browser_options: {
-      "no-sandbox": nil,
-      "disable-gpu": nil,
-      "disable-dev-shm-usage": nil
-    },
-    inspector: ENV["CUPRITE_DEBUG"] == "true",
-    headless: ENV["CUPRITE_HEADLESS"] != "false"
-  )
+                                window_size: [1920, 1080],
+                                browser_options: {
+                                  "no-sandbox": nil,
+                                  "disable-gpu": nil,
+                                  "disable-dev-shm-usage": nil
+                                },
+                                inspector: ENV["CUPRITE_DEBUG"] == "true",
+                                headless: ENV["CUPRITE_HEADLESS"] != "false")
 end
 
 # Helper for feature specs

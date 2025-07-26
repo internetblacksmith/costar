@@ -14,33 +14,31 @@ def check_accessibility(url)
     url: url,
     category: "accessibility"
   }
-  
+
   uri = URI(api_url)
   uri.query = URI.encode_www_form(params)
-  
+
   response = Net::HTTP.get_response(uri)
-  
+
   if response.code == "200"
     data = JSON.parse(response.body)
-    
+
     # Extract accessibility score
     score = data.dig("lighthouseResult", "categories", "accessibility", "score")
-    
+
     if score
       puts "Accessibility Score: #{(score * 100).round}%"
-      
+
       # Extract audit results
       audits = data.dig("lighthouseResult", "audits")
-      
+
       if audits
         puts "\nKey Accessibility Issues:"
-        audits.each do |audit_id, audit_data|
-          if audit_data["score"] && audit_data["score"] < 1 && audit_data["details"]
-            puts "\n- #{audit_data['title']}"
-            if audit_data["description"]
-              puts "  #{audit_data['description']}"
-            end
-          end
+        audits.each_value do |audit_data|
+          next unless audit_data["score"] && audit_data["score"] < 1 && audit_data["details"]
+
+          puts "\n- #{audit_data["title"]}"
+          puts "  #{audit_data["description"]}" if audit_data["description"]
         end
       end
     else
@@ -49,7 +47,7 @@ def check_accessibility(url)
   else
     puts "Error: #{response.code} - #{response.message}"
   end
-rescue => e
+rescue StandardError => e
   puts "Error running accessibility check: #{e.message}"
 end
 
@@ -58,7 +56,7 @@ def server_running?(url)
   uri = URI(url)
   response = Net::HTTP.get_response(uri)
   response.code == "200"
-rescue
+rescue StandardError
   false
 end
 

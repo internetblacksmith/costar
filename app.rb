@@ -94,9 +94,7 @@ class MovieTogetherApp < Sinatra::Base
     use Rack::Deflater
 
     # Force HTTPS (exclude health checks for internal monitoring) - skip in test
-    unless ENV.fetch("RACK_ENV", "development") == "test"
-      use Rack::SSL, exclude: ->(env) { env["PATH_INFO"].start_with?("/health") }
-    end
+    use Rack::SSL, exclude: ->(env) { env["PATH_INFO"].start_with?("/health") } unless ENV.fetch("RACK_ENV", "development") == "test"
   end
 
   # Security configuration for all environments (including test for security tests)
@@ -104,7 +102,7 @@ class MovieTogetherApp < Sinatra::Base
   unless ENV.fetch("RACK_ENV", "development") == "test"
     # Full protection in non-test environments
     use Rack::Protection,
-        except: [:json_csrf, :frame_options, :xss_header], # Handle these ourselves
+        except: %i[json_csrf frame_options xss_header], # Handle these ourselves
         use: %i[authenticity_token encrypted_cookie form_token
                 http_origin ip_spoofing path_traversal session_hijacking]
   end
@@ -113,21 +111,17 @@ class MovieTogetherApp < Sinatra::Base
   before do
     # Set all security headers directly
     headers "Content-Security-Policy" => build_csp_header
-    headers "Referrer-Policy" => "strict-origin-when-cross-origin" 
+    headers "Referrer-Policy" => "strict-origin-when-cross-origin"
     headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
     headers "X-Frame-Options" => "DENY"
     headers "X-Content-Type-Options" => "nosniff"
     headers "X-XSS-Protection" => "1; mode=block"
-    
+
     # Only add HSTS in production
-    if ENV.fetch("RACK_ENV", "development") == "production"
-      headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
-    end
-    
+    headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload" if ENV.fetch("RACK_ENV", "development") == "production"
+
     # Add cache control for static assets to prevent stale content
-    if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
-      cache_control :public, :must_revalidate, max_age: 3600
-    end
+    cache_control :public, :must_revalidate, max_age: 3600 if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
   end
 
   # Rate limiting configuration
@@ -155,7 +149,7 @@ class MovieTogetherApp < Sinatra::Base
   # Simple health check for Render's internal monitoring (always returns 200)
   get "/health/simple" do
     content_type :json
-    { 
+    {
       status: "ok",
       git_sha: ENV.fetch("RENDER_GIT_COMMIT", `git rev-parse --short HEAD 2>/dev/null`.strip) || "unknown"
     }.to_json
@@ -203,11 +197,11 @@ class MovieTogetherApp < Sinatra::Base
     headers "Content-Security-Policy" => build_csp_header
     headers "Referrer-Policy" => "strict-origin-when-cross-origin"
     headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
-    
+
     # Only add HSTS in production/test with HTTPS
-    if ENV.fetch("RACK_ENV", "development") == "production"
-      headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
-    end
+    return unless ENV.fetch("RACK_ENV", "development") == "production"
+
+    headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
   end
 
   def override_rack_protection_headers

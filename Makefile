@@ -47,7 +47,7 @@ lint: ## Run code style checks
 
 security: ## Run security scans
 	@echo "🔒 Running security scans..."
-	@bundle exec brakeman
+	@bundle exec brakeman --force
 	@bundle exec bundle-audit
 
 clean: ## Clean temporary files

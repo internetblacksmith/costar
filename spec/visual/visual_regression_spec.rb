@@ -6,6 +6,8 @@ require "capybara/rspec"
 RSpec.describe "Visual Regression", type: :feature, js: true do
   before do
     Capybara.current_driver = :cuprite
+    # Increase timeout for external resources
+    page.driver.browser.timeout = 10
   end
 
   # Note: These tests would require a visual regression tool like Percy or Applitools
@@ -54,7 +56,7 @@ RSpec.describe "Visual Regression", type: :feature, js: true do
       expect(page).to have_css(".mdc-text-field--focused")
     end
 
-    it "actor chip appearance" do
+    it "actor chip appearance", :pending => "Requires VCR cassette for TMDB API" do
       visit "/"
       
       # Select an actor

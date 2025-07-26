@@ -56,6 +56,10 @@ class InputValidator
     def actor2_name
       data[:actor2_name]
     end
+
+    def security_violation?
+      data[:security_violation] == true
+    end
   end
 
   ##
@@ -68,8 +72,17 @@ class InputValidator
     errors = []
     data = {}
 
+    # Check if input is too large before sanitizing
+    raw_query = params[:q]
+    if raw_query && raw_query.to_s.length > @sanitizer.max_query_length
+      # For overly long queries in search (security concern), return invalid with error
+      errors << "Query too long. Maximum length is #{@sanitizer.max_query_length} characters."
+      data[:security_violation] = true # Flag for 400 status
+      return ValidationResult.new(false, data, errors)
+    end
+
     # Validate and sanitize query
-    query = @sanitizer.sanitize_query(params[:q])
+    query = @sanitizer.sanitize_query(raw_query)
     if query.nil? || query.empty?
       data[:query] = nil
       data[:field] = @sanitizer.sanitize_field_name(params[:field])

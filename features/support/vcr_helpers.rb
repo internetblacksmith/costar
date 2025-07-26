@@ -5,7 +5,7 @@
 Around("@vcr") do |scenario, block|
   # Generate cassette name from scenario
   cassette_name = generate_cassette_name(scenario)
-  
+
   # Use VCR with the generated cassette name
   VCR.use_cassette(cassette_name, record: vcr_record_mode) do
     block.call
@@ -22,24 +22,22 @@ rescue VCR::Errors::UnhandledHTTPRequestError => e
   end
 end
 
-private
-
 def generate_cassette_name(scenario)
   # Create a cassette name from feature and scenario names
   # In Cucumber 10, the API has changed
-  feature_name = scenario.location.file.gsub(/^features\//, "").gsub(/\.feature$/, "")
+  feature_name = scenario.location.file.gsub(%r{^features/}, "").gsub(/\.feature$/, "")
   scenario_name = scenario.name.downcase.gsub(/\s+/, "_")
-  
+
   # Remove special characters
-  feature_name = feature_name.gsub(/[^a-z0-9_\/]/, "")
+  feature_name = feature_name.gsub(%r{[^a-z0-9_/]}, "")
   scenario_name = scenario_name.gsub(/[^a-z0-9_]/, "")
-  
+
   "#{feature_name}/#{scenario_name}"
 end
 
 def vcr_record_mode
   mode = ENV["VCR_RECORD_MODE"]&.to_sym
-  
+
   # Default modes based on environment
   if ENV["CI"] == "true"
     :none # Never record in CI

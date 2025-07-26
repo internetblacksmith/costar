@@ -109,6 +109,4 @@ end
 Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
 # Load accessibility testing if running accessibility specs
-if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }
-  require "axe/rspec"
-end
+require "axe/rspec" if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }

@@ -24,30 +24,30 @@ class SimpleRequestThrottler
   end
 
   # Execute a request with throttling (synchronous)
-  def throttle(priority: nil, &block)
+  def throttle(priority: nil)
     @mutex.synchronize do
       # Clean old requests
       clean_old_requests
-      
+
       # Wait if we're at rate limit
       wait_for_rate_limit if @requests.size >= @max_requests
-      
+
       # Record this request
       @requests << Time.now
     end
-    
+
     # Execute the block immediately
     start_time = Time.now
     begin
       result = yield
       StructuredLogger.debug("Throttled request completed",
-                           priority: priority,
-                           duration: Time.now - start_time)
+                             priority: priority,
+                             duration: Time.now - start_time)
       result
     rescue StandardError => e
       StructuredLogger.error("Throttled request failed",
-                           priority: priority,
-                           error: e.message)
+                             priority: priority,
+                             error: e.message)
       raise
     end
   end
@@ -94,16 +94,16 @@ class SimpleRequestThrottler
   def wait_for_rate_limit
     # Simple sleep until the oldest request expires
     return if @requests.empty?
-    
+
     oldest_request = @requests.first
     time_elapsed = Time.now - oldest_request
-    
-    if time_elapsed < @window_size
-      sleep_time = @window_size - time_elapsed + 0.1 # Add small buffer
-      StructuredLogger.debug("Rate limit reached, sleeping for #{sleep_time.round(2)}s")
-      sleep(sleep_time)
-      clean_old_requests
-    end
+
+    return unless time_elapsed < @window_size
+
+    sleep_time = @window_size - time_elapsed + 0.1 # Add small buffer
+    StructuredLogger.debug("Rate limit reached, sleeping for #{sleep_time.round(2)}s")
+    sleep(sleep_time)
+    clean_old_requests
   end
 
   def calculate_current_rate

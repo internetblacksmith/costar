@@ -12,13 +12,13 @@ end
 After do
   # Ensure VCR is turned back on if it was disabled
   VCR.turn_on! if defined?(VCR) && !VCR.turned_on?
-  
+
   # Clear instance variables
   @api_error_scenario = false
 end
 
 # Clean up after error scenarios specifically
-After('@api_error') do
+After("@api_error") do
   # Reset WebMock after error scenarios
   WebMock.reset! if defined?(WebMock)
 end

@@ -27,21 +27,20 @@ require "capybara/cuprite"
 # Configure Cuprite driver with browser-like headers
 Capybara.register_driver :cuprite do |app|
   Capybara::Cuprite::Driver.new(app,
-    headless: true,
-    window_size: [1200, 800],
-    browser_path: "/usr/bin/chromium",
-    browser_options: {
-      "no-sandbox": nil,
-      "disable-dev-shm-usage": nil,
-      "disable-gpu": nil
-    },
-    inspector: ENV["DEBUG"] == "true",
-    headers: {
-      "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-      "Accept-Language" => "en-US,en;q=0.9"
-    },
-    timeout: 30
-  )
+                                headless: true,
+                                window_size: [1200, 800],
+                                browser_path: "/usr/bin/chromium",
+                                browser_options: {
+                                  "no-sandbox": nil,
+                                  "disable-dev-shm-usage": nil,
+                                  "disable-gpu": nil
+                                },
+                                inspector: ENV["DEBUG"] == "true",
+                                headers: {
+                                  "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                                  "Accept-Language" => "en-US,en;q=0.9"
+                                },
+                                timeout: 30)
 end
 
 # Configure RackTest driver for non-JS tests (with browser headers)
@@ -93,46 +92,42 @@ VCR.configure do |config|
   config.hook_into :webmock
   config.default_cassette_options = {
     record: ENV["VCR_RECORD_MODE"]&.to_sym || :once,
-    match_requests_on: [:method, :uri, :body],
+    match_requests_on: %i[method uri body],
     serialize_with: :json,
     preserve_exact_body_bytes: true
   }
-  
+
   # Filter sensitive data
   config.filter_sensitive_data("<TMDB_API_KEY>") { ENV.fetch("TMDB_API_KEY", nil) }
-  
+
   # Ignore localhost and test hosts
   config.ignore_localhost = true
   config.ignore_hosts "127.0.0.1", "localhost", "o302014.ingest.us.sentry.io"
-  
+
   # Ignore Chrome DevTools Protocol requests
   config.ignore_request do |request|
     # Ignore Chrome DevTools requests
     request.uri.include?("devtools") || request.uri.include?("9222")
   end
-  
+
   # Allow real HTTP connections when no cassette is in use
   config.allow_http_connections_when_no_cassette = ENV["VCR_ALLOW_HTTP"] == "true"
 end
 
 # Cucumber hooks
-Before do |scenario|
+Before do |_scenario|
   # Clear any cached data between scenarios
-  if defined?(Rails) && Rails.cache
-    Rails.cache.clear
-  end
-  
+  Rails.cache.clear if defined?(Rails) && Rails.cache
+
   # Reset rack-attack throttles for testing
-  if defined?(Rack::Attack) && Rack::Attack.cache && Rack::Attack.cache.store
-    Rack::Attack.cache.store.clear
-  end
+  Rack::Attack.cache.store.clear if defined?(Rack::Attack) && Rack::Attack.cache && Rack::Attack.cache.store
 end
 
-Before('@javascript') do
+Before("@javascript") do
   Capybara.current_driver = :cuprite
 end
 
-After('@javascript') do
+After("@javascript") do
   Capybara.use_default_driver
 end
 
@@ -145,15 +140,15 @@ module CucumberHelpers
   def expect_successful_response
     expect(page.status_code).to eq(200)
   end
-  
+
   def expect_json_response
     expect(page.response_headers["Content-Type"]).to include("application/json")
   end
-  
+
   def parse_json_response
     JSON.parse(page.body)
   end
-  
+
   def with_vcr_cassette(cassette_name, &block)
     VCR.use_cassette(cassette_name, &block)
   end

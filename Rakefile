@@ -18,13 +18,13 @@ namespace :cucumber do
     ENV["VCR_RECORD_MODE"] = "none"
     Rake::Task["features"].invoke
   end
-  
+
   desc "Run Cucumber tests and record new VCR cassettes"
   task :record do
     ENV["VCR_RECORD_MODE"] = "new_episodes"
     Rake::Task["features"].invoke
   end
-  
+
   desc "Run Cucumber tests and re-record ALL VCR cassettes"
   task :rerecord do
     ENV["VCR_RECORD_MODE"] = "all"
@@ -33,7 +33,7 @@ namespace :cucumber do
 end
 
 # Default task runs all tests
-task default: [:spec, :features]
+task default: %i[spec features]
 
 desc "Run all tests (RSpec and Cucumber)"
-task test: [:spec, :features]
+task test: %i[spec features]

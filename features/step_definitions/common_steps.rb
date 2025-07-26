@@ -13,12 +13,12 @@ end
 When("I click {string}") do |text|
   # Debug: Check hidden field values before clicking
   if text.include?("Explore")
-    puts "Actor1 ID: #{find('#actor1_id_backup', visible: false).value}"
-    puts "Actor2 ID: #{find('#actor2_id_backup', visible: false).value}"
-    puts "Actor1 Name: #{find('#actor1_name_backup', visible: false).value}"
-    puts "Actor2 Name: #{find('#actor2_name_backup', visible: false).value}"
+    puts "Actor1 ID: #{find("#actor1_id_backup", visible: false).value}"
+    puts "Actor2 ID: #{find("#actor2_id_backup", visible: false).value}"
+    puts "Actor1 Name: #{find("#actor1_name_backup", visible: false).value}"
+    puts "Actor2 Name: #{find("#actor2_name_backup", visible: false).value}"
   end
-  
+
   click_on text
 end
 

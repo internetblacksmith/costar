@@ -37,6 +37,15 @@ class ApiHandlers
     # Validate input
     validation = @validator.validate_actor_search(request_params)
 
+    # Handle validation errors
+    unless validation.valid?
+      # Use 400 status for security violations (oversized input)
+      return render_validation_errors_with_400(validation.errors) if validation.security_violation?
+      
+      # Use 200 status for other validation errors
+      return render_validation_errors(validation.errors)
+    end
+
     # Handle empty query (valid case)
     return render_empty_suggestions(@app, validation.field) if validation.query.nil?
 

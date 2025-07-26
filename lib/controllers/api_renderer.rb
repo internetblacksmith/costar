@@ -105,6 +105,18 @@ module ApiRenderer
   end
 
   ##
+  # Renders validation error with 400 status (for security-critical validation)
+  #
+  # @param errors [Array<String>] Array of validation errors
+  # @return [String] Rendered error HTML
+  #
+  def render_validation_errors_with_400(errors)
+    @app.status 400
+    error_list = errors.join(", ")
+    "<div class=\"error\">Validation Error: #{error_list}</div>"
+  end
+
+  ##
   # Renders missing actors error
   #
   # @return [String] Rendered error HTML

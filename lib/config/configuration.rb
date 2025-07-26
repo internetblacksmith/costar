@@ -85,6 +85,9 @@ class Configuration
     errors = []
     %w[TMDB_API_KEY].each do |var|
       value = ENV.fetch(var, nil)
+      # Allow test environment to skip required variables
+      next if ENV["RACK_ENV"] == "test" && var == "TMDB_API_KEY" && missing_or_invalid?(value)
+
       errors << "❌ #{var} is missing or not properly configured" if missing_or_invalid?(value)
     end
     errors

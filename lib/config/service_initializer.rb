@@ -49,8 +49,15 @@ module ServiceInitializer
 
     # Register TMDB client with circuit breaker
     ServiceContainer.register(:tmdb_client) do |container|
+      # Allow tests to run without API key when using VCR cassettes
+      api_key = if ENV["RACK_ENV"] == "test"
+                  ENV["TMDB_API_KEY"] || "test_api_key_placeholder"
+                else
+                  ENV.fetch("TMDB_API_KEY")
+                end
+
       ResilientTMDBClient.new(
-        api_key: ENV.fetch("TMDB_API_KEY"),
+        api_key: api_key,
         cache: container.get(:cache_manager)
       )
     end

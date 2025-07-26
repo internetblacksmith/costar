@@ -98,7 +98,8 @@ VCR.configure do |config|
   }
 
   # Filter sensitive data
-  config.filter_sensitive_data("<TMDB_API_KEY>") { ENV.fetch("TMDB_API_KEY", nil) }
+  api_key = ENV["TMDB_API_KEY"] || "test_api_key_placeholder"
+  config.filter_sensitive_data("<TMDB_API_KEY>") { api_key }
 
   # Ignore localhost and test hosts
   config.ignore_localhost = true

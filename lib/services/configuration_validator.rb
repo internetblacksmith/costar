@@ -76,7 +76,10 @@ class ConfigurationValidator
       REQUIRED_ENV_VARS.each do |var|
         value = ENV.fetch(var, nil)
 
-        if value.nil? || value.empty?
+        # Allow test environment to skip required variables
+        if ENV["RACK_ENV"] == "test" && var == "TMDB_API_KEY" && (value.nil? || value.empty?)
+          results[:info] << "✅ #{var} will use test placeholder (test mode)"
+        elsif value.nil? || value.empty?
           results[:errors] << "❌ Required: #{var} is not set"
         elsif var == "TMDB_API_KEY" && value == "changeme"
           results[:errors] << "❌ Required: #{var} is still set to default value"

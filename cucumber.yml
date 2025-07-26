@@ -1,7 +1,7 @@
 # Cucumber profiles for different environments
 
 # Default profile - used for development
-default: --publish-quiet --format pretty --color
+default: --publish-quiet --format pretty --color --tags "not @wip"
 
 # CI profile - used in continuous integration
 ci: --publish-quiet --format progress --format junit --out tmp/cucumber_results.xml --tags "not @wip"

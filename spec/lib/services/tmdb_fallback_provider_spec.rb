@@ -46,7 +46,7 @@ RSpec.describe TMDBFallbackProvider do
     it "returns a copy of the fallback data" do
       result1 = described_class.for_endpoint("search/person")
       result2 = described_class.for_endpoint("search/person")
-      
+
       expect(result1).to eq(result2)
       expect(result1.object_id).not_to eq(result2.object_id)
     end

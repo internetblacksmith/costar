@@ -72,7 +72,7 @@ module Rack
       blocklist("block bad user agents") do |req|
         # Skip blocking in development and test environments
         next false if %w[development test].include?(ENV.fetch("RACK_ENV", "development"))
-        
+
         # Block requests with empty or suspicious user agents in production
         user_agent = req.user_agent
         user_agent.nil? ||

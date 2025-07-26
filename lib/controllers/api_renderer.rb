@@ -174,22 +174,22 @@ module ApiRenderer
     app.instance_variable_set(:@actor1_profile, { profile_path: data.actor1.profile_path })
     app.instance_variable_set(:@actor2_profile, { profile_path: data.actor2.profile_path })
     app.instance_variable_set(:@years, data.timeline_data[:years])
-    
+
     # Convert processed_movies DTOs to hashes
     processed_movies = convert_processed_movies_to_hashes(data.timeline_data[:processed_movies])
     app.instance_variable_set(:@processed_movies, processed_movies)
-    
+
     # Convert shared_movies_by_year DTOs to hashes
     shared_by_year = convert_shared_movies_by_year_to_hashes(data.timeline_data[:shared_movies_by_year])
     app.instance_variable_set(:@shared_movies_by_year, shared_by_year)
-    
+
     app.instance_variable_set(:@actor1_id, data.actor1.id)
     app.instance_variable_set(:@actor2_id, data.actor2.id)
   end
-  
+
   def convert_processed_movies_to_hashes(processed_movies)
     return processed_movies unless processed_movies.is_a?(Hash)
-    
+
     result = {}
     processed_movies.each do |year, entries|
       result[year] = entries.map do |entry|
@@ -220,10 +220,10 @@ module ApiRenderer
     end
     result
   end
-  
+
   def convert_shared_movies_by_year_to_hashes(shared_movies)
     return shared_movies unless shared_movies.is_a?(Hash)
-    
+
     result = {}
     shared_movies.each do |year, movies|
       result[year] = movies.map do |movie|

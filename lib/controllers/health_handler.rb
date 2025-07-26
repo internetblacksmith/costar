@@ -16,12 +16,12 @@ class HealthHandler
 
   def handle
     result = HealthCheckResult.new
-    
+
     # Collect health status from all components
     result.cache_healthy = cache_healthy?
     result.tmdb_healthy = tmdb_healthy?
     result.circuit_breaker_status = circuit_breaker_status
-    result.throttler_status = throttler_status()
+    result.throttler_status = throttler_status
     result.cleaner_status = cache_cleaner_status
     result.performance_summary = performance_summary
 
@@ -90,7 +90,10 @@ class HealthHandler
 
   def get_local_git_sha
     # For local development, get the current git SHA
-    `git rev-parse --short HEAD 2>/dev/null`.strip rescue "unknown"
+
+    `git rev-parse --short HEAD 2>/dev/null`.strip
+  rescue StandardError
+    "unknown"
   end
 
   def build_checks(result)

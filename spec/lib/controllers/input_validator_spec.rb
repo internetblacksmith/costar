@@ -83,8 +83,9 @@ RSpec.describe InputValidator do
         params = { q: "a" * 150, field: "actor1" }
         result = validator.validate_actor_search(params)
 
-        expect(result.valid?).to be true
-        expect(result.query).to be_nil
+        expect(result.valid?).to be false
+        expect(result.security_violation?).to be true
+        expect(result.errors).to include(/Query too long/)
       end
 
       it "defaults invalid field names" do

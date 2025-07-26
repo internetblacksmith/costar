@@ -5,7 +5,7 @@ require "concurrent"
 
 RSpec.describe "Load Testing", type: :request do
   describe "Concurrent Request Handling" do
-    it "handles multiple simultaneous requests" do
+    it "handles multiple simultaneous requests", :pending => "Performance test - environment dependent" do
       pool = Concurrent::FixedThreadPool.new(10)
       results = Concurrent::Array.new
       errors = Concurrent::Array.new

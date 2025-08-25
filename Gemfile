@@ -31,19 +31,19 @@ gem "sinatra", "4.1.1" # Web framework
 gem "sinatra-contrib", "4.1.1" # Sinatra extensions
 
 group :development do
-  gem "brakeman", "6.2.2" # Security scanner
+  gem "brakeman", "7.1.0" # Security scanner
   gem "bundle-audit", "0.1.0" # Dependency security scanner
   gem "filewatcher", "2.1.0" # File watching for auto-restart (replaces rerun)
   gem "pry", "0.15.2" # Interactive debugger
-  gem "rubocop", "1.78.0" # Code style and linting
+  gem "rubocop", "1.80.0" # Code style and linting
 end
 
 group :test do
   gem "axe-matchers", "2.6.1" # Accessibility testing with axe-core
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
-  gem "cucumber", "10.0.0" # BDD testing framework (Ruby 3.4+ compatible)
+  gem "cucumber", "10.1.0" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.15.1" # Headless Chrome driver for Capybara
-  gem "factory_bot", "6.5.4" # Test data factories
+  gem "factory_bot", "6.5.5" # Test data factories
   gem "faker", "3.5.2" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.1" # Testing framework

@@ -7,7 +7,16 @@
                 actor_profile: @actor1_profile 
             } %>
         </div>
-        <div class="actor-portrait-center" style="flex: 1 !important; display: flex !important; justify-content: center !important; align-items: center !important;">
+        <div class="actor-portrait-center" style="flex: 1 !important; display: flex !important; justify-content: center !important; align-items: center !important; gap: 12px !important;">
+            <!-- View Toggle -->
+            <div class="view-toggle-container">
+                <button class="mdc-button mdc-button--outlined" id="view-toggle" onclick="toggleView()">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="material-icons mdc-button__icon" id="toggle-icon">visibility</span>
+                    <span class="mdc-button__label" id="toggle-label">Show Full Filmographies</span>
+                </button>
+            </div>
+            
             <!-- Share Button -->
             <button class="mdc-button mdc-button--raised share-button" onclick="shareTimeline()">
                 <span class="mdc-button__ripple"></span>
@@ -34,7 +43,7 @@
         
         <% shared_movies_this_year = @shared_movies_by_year[year] || [] %>
         
-        <div class="year-group">
+        <div class="year-group" data-year="<%= year %>"<%= shared_movies_this_year.empty? ? ' style="display: none;"' : '' %>>
             <%= erb :'partials/_year_header', locals: { 
                 year: year, 
                 shared_movies_count: shared_movies_this_year.length 
@@ -88,7 +97,7 @@
                         </div>
                     <% else %>
                         <!-- Single movie on its own line -->
-                        <div class="movie-row single-movie-row">
+                        <div class="movie-row single-movie-row individual-movie" style="display: none;">
                             <% if entry[:movie][:side] == :left %>
                                 <div class="movie-left">
                                     <%= erb :'partials/_movie_card', locals: { 
@@ -126,6 +135,51 @@
 </div>
 
 <script>
+// View toggle state
+let showingFullFilmographies = false;
+
+function toggleView() {
+    const individualMovies = document.querySelectorAll('.individual-movie');
+    const yearGroups = document.querySelectorAll('.year-group');
+    const toggleButton = document.getElementById('view-toggle');
+    const toggleIcon = document.getElementById('toggle-icon');
+    const toggleLabel = document.getElementById('toggle-label');
+    
+    showingFullFilmographies = !showingFullFilmographies;
+    
+    if (showingFullFilmographies) {
+        // Show full filmographies
+        individualMovies.forEach(movie => {
+            movie.style.display = 'flex';
+        });
+        yearGroups.forEach(yearGroup => {
+            yearGroup.style.display = 'block';
+        });
+        toggleIcon.textContent = 'visibility_off';
+        toggleLabel.textContent = 'Show Only Shared Movies';
+        toggleButton.setAttribute('title', 'Hide individual movies and show only shared ones');
+    } else {
+        // Show only shared movies
+        individualMovies.forEach(movie => {
+            movie.style.display = 'none';
+        });
+        
+        // Hide year groups that have no shared movies
+        yearGroups.forEach(yearGroup => {
+            const hasSharedMovies = yearGroup.querySelector('.shared-movie-row');
+            if (!hasSharedMovies) {
+                yearGroup.style.display = 'none';
+            } else {
+                yearGroup.style.display = 'block';
+            }
+        });
+        
+        toggleIcon.textContent = 'visibility';
+        toggleLabel.textContent = 'Show Full Filmographies';
+        toggleButton.setAttribute('title', 'Show complete filmographies for both actors');
+    }
+}
+
 function shareTimeline() {
     // Get actor IDs from template variables
     const actor1Id = '<%= @actor1_id %>';

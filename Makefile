@@ -24,6 +24,7 @@ test: ## Run all test suites (RSpec and Cucumber)
 	@echo "🧪 Running all tests..."
 	@bundle exec rspec
 	@bundle exec cucumber
+	@./scripts/cleanup-test-servers
 
 test-rspec: ## Run RSpec tests only
 	@echo "🧪 Running RSpec tests..."
@@ -48,6 +49,7 @@ test-with-redis: ## Run tests with Redis support
 	@echo "🧪 Running tests with Redis support..."
 	@REDIS_URL=redis://localhost:6379 bundle exec rspec
 	@REDIS_URL=redis://localhost:6379 bundle exec cucumber
+	@./scripts/cleanup-test-servers
 
 test-teardown: ## Stop Redis test environment
 	@echo "🛑 Stopping Redis test environment..."
@@ -67,6 +69,11 @@ clean: ## Clean temporary files
 	@rm -rf tmp/
 	@rm -rf coverage/
 	@find . -name "*.tmp" -delete
+
+cleanup-servers: ## Kill any leftover test servers
+	@./scripts/cleanup-test-servers
+
+test-cleanup: cleanup-servers test ## Clean up servers and run tests
 
 validate-env: ## Validate environment configuration
 	@echo "🔍 Validating environment..."

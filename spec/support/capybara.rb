@@ -9,6 +9,8 @@ Capybara.app = MovieTogetherApp
 Capybara.default_driver = :rack_test
 Capybara.javascript_driver = :cuprite
 Capybara.default_max_wait_time = 5
+Capybara.reuse_server = false # Don't reuse servers between tests
+Capybara.server_port = 45_670 # Use dedicated test port to avoid conflicts with dev server
 
 # Configure Cuprite (headless Chrome)
 Capybara.register_driver :cuprite do |app|

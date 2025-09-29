@@ -1,0 +1,71 @@
+#!/bin/bash
+# frozen_string_literal: true
+
+# Test environment setup script
+# Sets up Redis via Docker Compose for comprehensive testing
+
+set -e
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}🧪 MovieTogether Test Environment Setup${NC}"
+
+# Check if Docker is available
+if ! command -v docker &> /dev/null; then
+    echo -e "${RED}❌ Docker is not installed or not in PATH${NC}"
+    echo "Please install Docker to use Redis for tests"
+    exit 1
+fi
+
+# Check if Docker Compose is available
+if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null 2>&1; then
+    echo -e "${RED}❌ Docker Compose is not available${NC}"
+    echo "Please install Docker Compose to use Redis for tests"
+    exit 1
+fi
+
+# Determine docker-compose command
+DOCKER_COMPOSE_CMD="docker-compose"
+if docker compose version &> /dev/null 2>&1; then
+    DOCKER_COMPOSE_CMD="docker compose"
+fi
+
+echo -e "${YELLOW}🐳 Starting Redis test container...${NC}"
+
+# Start Redis container
+$DOCKER_COMPOSE_CMD up -d redis-test
+
+# Wait for Redis to be ready
+echo -e "${YELLOW}⏳ Waiting for Redis to be ready...${NC}"
+timeout=30
+while [ $timeout -gt 0 ]; do
+    if docker exec movie_together_redis_test redis-cli ping &> /dev/null; then
+        echo -e "${GREEN}✅ Redis is ready!${NC}"
+        break
+    fi
+    sleep 1
+    timeout=$((timeout - 1))
+done
+
+if [ $timeout -eq 0 ]; then
+    echo -e "${RED}❌ Redis failed to start within 30 seconds${NC}"
+    $DOCKER_COMPOSE_CMD logs redis-test
+    exit 1
+fi
+
+# Set Redis URL for tests
+export REDIS_URL="redis://localhost:6379"
+
+echo -e "${GREEN}🎯 Test environment ready!${NC}"
+echo -e "${YELLOW}Redis URL: ${REDIS_URL}${NC}"
+echo ""
+echo -e "${GREEN}Now you can run tests with Redis support:${NC}"
+echo "  REDIS_URL=redis://localhost:6379 bundle exec rspec"
+echo "  REDIS_URL=redis://localhost:6379 make test"
+echo ""
+echo -e "${YELLOW}To stop the test environment:${NC}"
+echo "  $DOCKER_COMPOSE_CMD down"

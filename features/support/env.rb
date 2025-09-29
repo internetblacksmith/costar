@@ -18,8 +18,8 @@ require_relative "vcr_helpers"
 # Configure Capybara for browser simulation
 Capybara.app = MovieTogetherApp
 Capybara.server = :puma
-Capybara.server_port = 9292
-Capybara.app_host = "http://localhost:9292"
+Capybara.server_port = 45_670
+Capybara.app_host = "http://localhost:45670"
 
 # Load Cuprite for JavaScript support
 require "capybara/cuprite"

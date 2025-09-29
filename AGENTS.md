@@ -8,7 +8,13 @@
 - **Run with coverage**: `bundle exec rspec --format documentation`
 - **Lint code**: `make lint` or `bundle exec rubocop -A`
 - **Security scan**: `make security` or `bundle exec brakeman && bundle exec bundle-audit`
-- **Start dev server**: `make dev` or `./scripts/dev`
+- **Start dev server**: `make dev` or `./scripts/dev` (runs on port 4567)
+- **Clean up test servers**: `make cleanup-servers` (kills leftover Capybara/test servers)
+
+## Server Ports
+- **Development server**: Port 4567 (`make dev`)
+- **Test server**: Port 45670 (RSpec/Cucumber tests)
+- **Redis**: Port 6379 (Docker test environment)
 
 ## Redis Test Environment
 - **Setup Redis**: `make test-setup` (starts Docker Redis for comprehensive testing)

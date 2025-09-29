@@ -119,6 +119,16 @@ RSpec.configure do |config|
 
   # Shared configuration for request specs
   config.shared_context_metadata_behavior = :apply_to_host_groups
+
+  # Ensure Capybara servers are properly cleaned up after test suite
+  config.after(:suite) do
+    if defined?(Capybara)
+      # Clean up any Capybara servers
+      Capybara.reset_sessions!
+      # Kill any remaining Capybara server processes
+      Capybara.current_session.driver.quit if Capybara.current_session.driver.respond_to?(:quit)
+    end
+  end
 end
 
 # Load support files

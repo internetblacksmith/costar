@@ -17,6 +17,22 @@ After do
   @api_error_scenario = false
 end
 
+# Clean up after all scenarios complete
+at_exit do
+  if defined?(Capybara)
+    # Reset sessions and clean up any servers
+    Capybara.reset_sessions!
+    # Quit current driver if it supports it (for browser drivers)
+    if Capybara.current_session.driver.respond_to?(:quit)
+      begin
+        Capybara.current_session.driver.quit
+      rescue StandardError
+        # Ignore errors during cleanup
+      end
+    end
+  end
+end
+
 # Clean up after error scenarios specifically
 After("@api_error") do
   # Reset WebMock after error scenarios

@@ -1,0 +1,31 @@
+#!/bin/bash
+# Script to clean up any leftover test servers
+
+echo "🧹 Cleaning up test servers..."
+
+# Kill any puma processes running on test ports (45670 is our dedicated test port, others are fallbacks)
+for port in 45670 9292 3001 3000; do
+  if lsof -ti:$port >/dev/null 2>&1; then
+    echo "🔧 Killing process on port $port"
+    lsof -ti:$port | xargs kill -9 2>/dev/null || true
+  fi
+done
+
+# Also clean up dev server port if needed (but warn about it)
+if lsof -ti:4567 >/dev/null 2>&1; then
+  echo "⚠️  Found process on dev server port 4567 - this might be your dev server!"
+  echo "   If you want to keep it running, press Ctrl+C now. Otherwise, it will be killed in 3 seconds..."
+  sleep 3
+  echo "🔧 Killing process on port 4567"
+  lsof -ti:4567 | xargs kill -9 2>/dev/null || true
+fi
+
+# Kill any remaining puma processes with movie_together in the name
+pkill -f "puma.*movie_together" 2>/dev/null || true
+
+# Kill any Ruby processes running app.rb or related to testing
+pkill -f "ruby.*app\.rb" 2>/dev/null || true
+pkill -f "ruby.*rspec" 2>/dev/null || true
+pkill -f "ruby.*cucumber" 2>/dev/null || true
+
+echo "✅ Test server cleanup complete"

@@ -8,6 +8,49 @@
     padding: 0;
 }
 
+/* View toggle and share button container */
+.actor-portrait-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* View toggle button styling */
+.view-toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+#view-toggle {
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+}
+
+#view-toggle .mdc-button__icon {
+    margin-right: 8px !important;
+}
+
+/* Responsive toggle button for mobile */
+@media (max-width: 768px) {
+    #view-toggle .mdc-button__label {
+        display: none !important;
+    }
+    
+    #view-toggle .mdc-button__icon {
+        margin-right: 0 !important;
+    }
+    
+    #view-toggle {
+        width: 48px !important;
+        height: 48px !important;
+        padding: 0 !important;
+        min-width: 48px !important;
+    }
+}
+
 /* Share button styling */
 .share-button {
     width: 48px !important;
@@ -25,10 +68,30 @@
     display: none !important; /* Always hide text, show only icon */
 }
 
-/* Shrink share button when header is stuck */
+/* Shrink buttons when header is stuck */
 .actor-portrait-header.stuck .share-button {
     width: 36px !important;
     height: 36px !important;
+    min-width: 36px !important;
+}
+
+.actor-portrait-header.stuck #view-toggle {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+}
+
+.actor-portrait-header.stuck #view-toggle .mdc-button__label {
+    display: none !important;
+}
+
+.actor-portrait-header.stuck #view-toggle .mdc-button__icon {
+    margin-right: 0 !important;
+}
+
+.actor-portrait-header.stuck #view-toggle {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
     min-width: 36px !important;
 }
 

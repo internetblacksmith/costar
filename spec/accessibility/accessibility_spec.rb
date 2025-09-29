@@ -16,10 +16,13 @@ RSpec.describe "Accessibility", type: :feature, js: true do
 
   describe "Home page" do
     it "meets WCAG 2.0 AA accessibility standards" do
-      visit "/"
+      # Increase timeout for external font loading
+      using_wait_time 15 do
+        visit "/"
 
-      # Wait for page to fully load
-      expect(page).to have_css(".search-form")
+        # Wait for page to fully load
+        expect(page).to have_css(".search-form", wait: 10)
+      end
 
       # Run accessibility scan
       expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
@@ -45,11 +48,11 @@ RSpec.describe "Accessibility", type: :feature, js: true do
   end
 
   describe "Search functionality" do
-    it "search suggestions are accessible", pending: "Requires VCR cassette for TMDB API" do
+    it "search suggestions are accessible", vcr: { cassette_name: "actor_search_leonardo" } do
       visit "/"
 
-      # Trigger search
-      fill_in "actor1", with: "Tom"
+      # Trigger search using existing cassette name
+      fill_in "actor1", with: "Leonardo"
 
       # Wait for suggestions
       expect(page).to have_css(".suggestion-item", wait: 5)
@@ -58,7 +61,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
     end
 
-    it "selected actor chips are accessible", pending: "Requires VCR cassette for TMDB API" do
+    it "selected actor chips are accessible", vcr: { cassette_name: "actor_search_leonardo" } do
       visit "/"
 
       # Select an actor (using pre-recorded VCR cassette)
@@ -77,7 +80,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
   end
 
   describe "Timeline comparison" do
-    it "timeline view is accessible", pending: "Requires VCR cassette for TMDB API" do
+    it "timeline view is accessible", vcr: { cassette_name: "actor_compare_leonardo_tom" } do
       # Use direct URL to avoid needing to interact with search
       visit "/api/actors/compare?actor1_id=31&actor2_id=5344"
 

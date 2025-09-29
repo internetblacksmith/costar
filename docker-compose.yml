@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+# Docker Compose configuration for test environment
+# Provides Redis for testing cache functionality
+
+services:
+  redis-test:
+    image: redis:7-alpine
+    container_name: movie_together_redis_test
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_test_data:/data
+    networks:
+      - test_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  redis_test_data:
+    driver: local
+
+networks:
+  test_network:
+    driver: bridge

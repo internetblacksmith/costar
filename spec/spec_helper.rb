@@ -19,6 +19,22 @@ ENV["RACK_ENV"] = "test"
 # Set a dummy API key for VCR tests
 ENV["TMDB_API_KEY"] = "test_api_key_for_vcr" unless ENV["TMDB_API_KEY"]
 
+# Auto-detect Redis for comprehensive testing
+# If Redis is running on default port and no REDIS_URL is set, use it
+unless ENV["REDIS_URL"]
+  begin
+    require "redis"
+    redis = Redis.new(url: "redis://localhost:6379")
+    redis.ping
+    ENV["REDIS_URL"] = "redis://localhost:6379"
+    puts "✅ Auto-detected Redis at localhost:6379 for testing"
+    redis.close
+  rescue StandardError
+    # Redis not available, tests will use memory cache
+    puts "⚠️  Redis not available - using memory cache for tests"
+  end
+end
+
 # Require the main application
 require_relative "../app"
 

@@ -41,6 +41,18 @@ cucumber-record: ## Run Cucumber tests and record new VCR cassettes
 	@echo "📼 Recording new VCR cassettes..."
 	@VCR_RECORD_MODE=new_episodes bundle exec cucumber
 
+test-setup: ## Set up Redis test environment with Docker
+	@./scripts/test-setup
+
+test-with-redis: ## Run tests with Redis support
+	@echo "🧪 Running tests with Redis support..."
+	@REDIS_URL=redis://localhost:6379 bundle exec rspec
+	@REDIS_URL=redis://localhost:6379 bundle exec cucumber
+
+test-teardown: ## Stop Redis test environment
+	@echo "🛑 Stopping Redis test environment..."
+	@docker-compose down || docker compose down || true
+
 lint: ## Run code style checks
 	@echo "🧹 Running code style checks..."
 	@bundle exec rubocop -A

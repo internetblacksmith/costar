@@ -56,11 +56,11 @@ RSpec.describe "Visual Regression", type: :feature, js: true do
       expect(page).to have_css(".mdc-text-field--focused")
     end
 
-    it "actor chip appearance", pending: "Requires VCR cassette for TMDB API" do
+    it "actor chip appearance", vcr: { cassette_name: "actor_search_leonardo" } do
       visit "/"
 
-      # Select an actor
-      fill_in "actor1", with: "Tom Hanks"
+      # Select an actor using existing cassette name
+      fill_in "actor1", with: "Leonardo"
       page.execute_script("htmx.trigger(document.getElementById('actor1'), 'keyup');")
 
       expect(page).to have_css(".suggestion-item", wait: 5)

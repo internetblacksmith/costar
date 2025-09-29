@@ -12,7 +12,17 @@ bundle exec rspec spec/path/to/test_spec.rb
 
 # Run only previously failed tests
 bundle exec rspec --only-failures
+
+# Clean up any leftover test servers
+make cleanup-servers
 ```
+
+## Server Configuration
+- **Development server**: Port 4567 (`make dev`)
+- **Test server**: Port 45670 (automatically used by RSpec/Cucumber)
+- **Redis**: Port 6379 (Docker test environment)
+
+Tests can run simultaneously with the development server without port conflicts.
 
 ### Comprehensive Testing (With Redis)
 ```bash

@@ -99,7 +99,7 @@ jobs:
         brakeman --no-pager --format json --output security-report.json
 
     - name: Upload security report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: security-audit-report
         path: security-report.json

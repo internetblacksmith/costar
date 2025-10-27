@@ -63,7 +63,7 @@ jobs:
       run: bundle exec cucumber --format progress
     
     - name: Upload Test Coverage
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: always()
       with:
         name: coverage
@@ -110,7 +110,7 @@ jobs:
         bundle exec brakeman -f text
     
     - name: Upload Brakeman Results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: always()
       with:
         name: brakeman-results
@@ -170,7 +170,7 @@ jobs:
         bundle exec rspec spec/visual --format documentation
     
     - name: Upload Screenshots
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: always()
       with:
         name: screenshots

@@ -1,14 +1,7 @@
-# Doppler CLI configuration example
-# Copy this file to .doppler and update with your configuration
-#
-# Important: Local development and production deployment use separate Doppler configs:
-# - Local development: Use your own/default config (development, dev, personal env, etc.)
-# - Production deployment: ONLY uses 'prd' config (see Makefile deploy targets)
-#
-# This file is for local development only. For production, Doppler is configured
-# in the Makefile deploy targets which explicitly use --config prd
+# Doppler CLI configuration for local development
+# Copy this file to .doppler with the content below
 
 {
   "project": "movie_together",
-  "config": "development"
+  "config": "dev"
 }

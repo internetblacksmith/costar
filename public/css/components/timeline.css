@@ -22,28 +22,53 @@
     align-items: center;
 }
 
-#view-toggle {
+.view-toggle-button {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
     border-radius: 8px !important;
     padding: 8px 16px !important;
     font-size: 14px !important;
     transition: all 0.2s ease !important;
+    box-shadow: 0 1px 3px var(--shadow-color) !important;
 }
 
-#view-toggle .mdc-button__icon {
+.view-toggle-button:hover {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 6px var(--shadow-color) !important;
+}
+
+/* Dark theme specific styling */
+[data-theme="dark"] .view-toggle-button {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .view-toggle-button:hover {
+    background-color: var(--bg-card) !important;
+    border-color: var(--primary-light) !important;
+    color: var(--primary-light) !important;
+}
+
+.view-toggle-button .mdc-button__icon {
     margin-right: 8px !important;
 }
 
 /* Responsive toggle button for mobile */
 @media (max-width: 768px) {
-    #view-toggle .mdc-button__label {
+    .view-toggle-button .mdc-button__label {
         display: none !important;
     }
     
-    #view-toggle .mdc-button__icon {
+    .view-toggle-button .mdc-button__icon {
         margin-right: 0 !important;
     }
     
-    #view-toggle {
+    .view-toggle-button {
         width: 48px !important;
         height: 48px !important;
         padding: 0 !important;
@@ -75,24 +100,20 @@
     min-width: 36px !important;
 }
 
-.actor-portrait-header.stuck #view-toggle {
+.actor-portrait-header.stuck .view-toggle-button {
     font-size: 12px !important;
     padding: 6px 12px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
 }
 
-.actor-portrait-header.stuck #view-toggle .mdc-button__label {
+.actor-portrait-header.stuck .view-toggle-button .mdc-button__label {
     display: none !important;
 }
 
-.actor-portrait-header.stuck #view-toggle .mdc-button__icon {
+.actor-portrait-header.stuck .view-toggle-button .mdc-button__icon {
     margin-right: 0 !important;
-}
-
-.actor-portrait-header.stuck #view-toggle {
-    width: 36px !important;
-    height: 36px !important;
-    padding: 0 !important;
-    min-width: 36px !important;
 }
 
 .timeline {

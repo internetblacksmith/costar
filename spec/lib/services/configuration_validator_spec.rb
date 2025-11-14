@@ -23,7 +23,12 @@ RSpec.describe ConfigurationValidator do
         ENV.delete("TMDB_API_KEY")
 
         results = described_class.validate!
-        expect(results[:errors]).to include(/TMDB_API_KEY is not set/)
+        # In test mode, missing TMDB_API_KEY is allowed (uses test placeholder)
+        if ENV["RACK_ENV"] == "test"
+          expect(results[:info]).to include(/TMDB_API_KEY will use test placeholder/)
+        else
+          expect(results[:errors]).to include(/TMDB_API_KEY is not set/)
+        end
       end
 
       it "validates TMDB_API_KEY is not default" do

@@ -193,8 +193,8 @@ dev:
 	@echo "Press Ctrl+C to stop the server"
 	@echo ""
 	@if command -v doppler > /dev/null; then \
-		echo "🔐 Using Doppler for secrets (using local configured environment)..."; \
-		doppler run -- bundle exec rerun --pattern="**/*.{rb,erb}" -- ruby app.rb; \
+		echo "🔐 Using Doppler dev config for secrets..."; \
+		doppler run --config dev -- bundle exec rerun --pattern="**/*.{rb,erb}" -- ruby app.rb; \
 	else \
 		echo "⚠️  Doppler not found. Running without Doppler..."; \
 		bundle exec rerun --pattern="**/*.{rb,erb}" -- ruby app.rb; \

@@ -927,6 +927,426 @@
         }
       },
       "recorded_at": "Mon, 29 Sep 2025 07:39:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/5344/movie_credits?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "MovieTogether/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 29 Sep 2025 08:19:13 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 923b257861428e30a3cf7fb7a3374926.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "BRU50-P1"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "MZR5fzxcadxfy6PBaYFE33uZfV1xVksYH39WqpaTlYEuR0OEJaGJyA=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Mon, 29 Sep 2025 08:19:13 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/5344?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "MovieTogether/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 29 Sep 2025 08:19:14 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 2c4b655a5de1371195f92ed356802ebe.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "BRU50-P1"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "9GcvEvqAVB4BmgnK0BLJyJZKFlKZNM7ChlSANP8YrEEZvTXJSXTznA=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Mon, 29 Sep 2025 08:19:14 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/5344/movie_credits?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "MovieTogether/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 29 Sep 2025 08:19:15 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 47b02788927e4a826aab9351e0c1b010.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "BRU50-P1"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "w0ojsVfQv3lozaxZ5457JtL-hY4pVAtwI-Eo_zcWDEcERatXAR0UKg=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Mon, 29 Sep 2025 08:19:15 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/5344?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "MovieTogether/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 29 Sep 2025 08:19:15 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 0f203fd7b592f258a42a32f365eb241e.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "BRU50-P1"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "4gCDk5ie6HV3tt6LPXXyhYKHVePMX6ez7pKqNjxYm71KNKHmAStuow=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Mon, 29 Sep 2025 08:19:15 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/6193?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "MovieTogether/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 29 Sep 2025 08:23:37 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 0f203fd7b592f258a42a32f365eb241e.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "BRU50-P1"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "Pk9zuNdkT5jK-bTbzay91nKkh10kQ8piMueAUxKM472PJrtWHnQdYA=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Mon, 29 Sep 2025 08:23:38 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/31?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "MovieTogether/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Mon, 29 Sep 2025 08:23:39 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=300"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 9700f12bc5b1f03fd6480e2b7838d596.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "BRU50-P1"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "hbCOzXAaUKHbyW9LmBk61z0-xTu3MGk7GB4HcEmgdg-MSzPyq0j-Ww=="
+          ],
+          "Vary": [
+            "Origin"
+          ]
+        },
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"status_code\":7,\"status_message\":\"Invalid API key: You must be granted a valid key.\",\"success\":false}\n"
+        }
+      },
+      "recorded_at": "Mon, 29 Sep 2025 08:23:39 GMT"
     }
   ],
   "recorded_with": "VCR 6.3.1"

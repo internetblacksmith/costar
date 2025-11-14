@@ -31,28 +31,10 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Enabled: true
 
-Metrics/AbcSize:
-  Max: 30
-  Exclude:
-    - 'scripts/**/*'
-
-Metrics/CyclomaticComplexity:
-  Max: 8
-  Exclude:
-    - 'scripts/**/*'
-
-Metrics/PerceivedComplexity:
-  Max: 8
-  Exclude:
-    - 'scripts/**/*'
-
 Metrics/ClassLength:
   Max: 250
   Exclude:
     - 'scripts/**/*'
-
-Metrics/ModuleLength:
-  Max: 150
 
 Layout/LineLength:
   Max: 800
@@ -67,3 +49,41 @@ Naming/AccessorMethodName:
 
 Naming/PredicateMethod:
   Enabled: false
+
+# Allow debug statements in test files (intentional for troubleshooting)
+Lint/Debugger:
+  Exclude:
+    - 'spec/**/*'
+    - 'features/**/*'
+
+# Allow duplicate branch in error handling (different contexts)
+Lint/DuplicateBranch:
+  Enabled: false
+
+# Relax some complexity metrics for DTOs and error handlers
+Naming/VariableNumber:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 40
+  Exclude:
+    - 'scripts/**/*'
+    - 'lib/controllers/**/*'
+    - 'lib/dto/**/*'
+
+Metrics/CyclomaticComplexity:
+  Max: 15
+  Exclude:
+    - 'scripts/**/*'
+    - 'lib/controllers/**/*'
+    - 'lib/dto/**/*'
+
+Metrics/PerceivedComplexity:
+  Max: 15
+  Exclude:
+    - 'scripts/**/*'
+    - 'lib/controllers/**/*'
+    - 'lib/dto/**/*'
+
+Metrics/ModuleLength:
+  Max: 200

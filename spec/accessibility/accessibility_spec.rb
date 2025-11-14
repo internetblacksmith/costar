@@ -65,7 +65,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       visit "/"
 
       # Select an actor (using pre-recorded VCR cassette)
-      fill_in "actor1", with: "Tom Hanks"
+      fill_in "actor1", with: "Leonardo"
       page.execute_script("htmx.trigger(document.getElementById('actor1'), 'keyup');")
 
       expect(page).to have_css(".suggestion-item", wait: 5)

@@ -9,45 +9,45 @@ This guide explains how to set up Doppler secrets for MovieTogether development 
 **Deployment Method**: Kamal with Doppler (same as gcal-sinatra and the_void_chronicles)
 
 **Key Principle**: 
-- Local development uses **dev config** (`--config dev`)
-- Production deployment uses **prd config** (`--config prd`)
-- Clear separation between development and production
+- **Development machines**: Setup and use ONLY `dev` config
+- **Deployment commands**: Explicitly specify `prd` config
+- **Never set prd on dev machines**: Keeps environments completely separate
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Local Development (make dev)                           │
-│  - Uses: doppler run --config dev                       │
-│  - Developers get dev Doppler config access             │
-│  - Separate dev secrets from production                 │
+│  Local Development (Developer Machine)                  │
+│  - Setup: doppler setup --project movie_together        │
+│           --config dev                                  │
+│  - Use: make dev (reads dev config from .doppler)       │
+│  - Never has prd config                                 │
 └─────────────────────────────────────────────────────────┘
                            ↓
 ┌─────────────────────────────────────────────────────────┐
-│  Deployment (make deploy)                               │
-│  - Uses: doppler run --config prd                       │
-│  - Explicitly uses production Doppler config            │
-│  - All pre-commit checks run (lint, test, security)     │
-│  - Kamal deploys to VPS via production secrets          │
+│  Deployment (Any Machine)                               │
+│  - Uses: doppler run --config prd -- kamal deploy       │
+│  - Explicitly specifies prd (from CI/CD or ops team)    │
+│  - Never uses local .doppler file                       │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Step 1: Create Doppler Project (One-Time)
+## Step 1: Local Development Setup (Dev Machines Only)
+
+### Create Doppler Project (One-Time)
 
 ```bash
 # Login to Doppler
 doppler login
 
-# Create project (one-time)
+# Create project (one-time, can be done on any machine)
 doppler projects create movie_together
 ```
 
-## Step 2: Set Up Local Development with Dev Config
-
-### Setup dev Configuration
+### Setup Dev Config on Your Machine
 
 ```bash
-# Set up local development with dev config
+# Setup dev config ONLY (no prd on dev machines!)
 doppler setup --project movie_together --config dev
 
 # Add your development secrets
@@ -58,24 +58,35 @@ Enter development secrets:
 - `TMDB_API_KEY` - Your TMDB API key
 - `REDIS_URL` - `redis://localhost:6379` (local Redis)
 
+### Your .doppler File (Dev Machine)
+
+```json
+{
+  "project": "movie_together",
+  "config": "dev"
+}
+```
+
+This file should ONLY have `dev` config. Never add `prd` to your .doppler file.
+
 ### Use movie_together Locally
 
 ```bash
 cd movie_together
 
-# Create .doppler file for dev config (optional, already in .doppler.example)
+# Copy example .doppler file
 cp .doppler.example .doppler
 
-# Start development server (uses --config dev automatically)
+# Start development server (uses dev config from .doppler)
 make dev
 ```
 
-## Step 3: Create Production Config (For Deployment)
+## Step 2: Production Config Setup (Ops/CI-CD Only)
 
-This is done **once** by someone with production access:
+**This is NOT done on dev machines. Only authorized personnel set up prd config.**
 
 ```bash
-# Create the production config
+# On a secure machine with production access:
 doppler setup --project movie_together --config prd
 
 # Add production secrets
@@ -84,50 +95,64 @@ doppler secrets set --project movie_together --config prd
 
 Enter production secrets:
 - `KAMAL_REGISTRY_PASSWORD` - GitHub PAT token
-- `TMDB_API_KEY` - The Movie Database API key (can be same as dev)
+- `TMDB_API_KEY` - The Movie Database API key
 - `REDIS_URL` - `redis://redis:6380` (VPS Redis)
 - `SENTRY_DSN` - Sentry error tracking URL
 - `SENTRY_ENVIRONMENT` - `production`
 
+**Important**: Dev machines should NEVER have the prd config set up locally.
+
 ## Deployment
 
-Once production config is set up, anyone can deploy:
+When deploying from CI/CD or authorized ops machines:
 
 ```bash
 cd movie_together
 
-# 1. Run all checks
+# Run all checks (uses dev config)
 make pre-commit
 
-# 2. Deploy (uses --config prd automatically)
+# Deploy - explicitly specifies prd config
+# This works even though prd is NOT set up locally
 make deploy
-
-# Or use interactive menu
-make menu  # Option 18
 ```
 
-The deploy command will:
-1. ✅ Run lint, tests, security checks
-2. ✅ Load production secrets from Doppler prd config
-3. ✅ Build Docker image
-4. ✅ Push to GitHub Container Registry
-5. ✅ Deploy via Kamal to VPS
+The deploy command runs:
+```bash
+doppler run --config prd -- kamal deploy
+```
+
+This explicitly requests the `prd` config from Doppler, even if it's not in your local .doppler file.
+
+## How Doppler Works with Configs
+
+### On Dev Machines
+- `.doppler` file contains: `"config": "dev"`
+- `make dev` uses: `doppler run --config dev -- ...`
+- `make deploy` uses: `doppler run --config prd -- ...` (pulls from Doppler server)
+- You never have prd secrets locally
+
+### On CI/CD or Secure Machines
+- `.doppler` file contains: `"config": "prd"` (or handled by CI/CD env vars)
+- `doppler run --config prd -- ...` pulls production secrets
+- All secrets are from Doppler servers, never stored locally
 
 ## Required Secrets Reference
 
-### Development Config (dev)
+### Development Config (dev) - On Dev Machines
 
 | Secret | Example | Purpose |
 |--------|---------|---------|
 | `TMDB_API_KEY` | `abc123...` | Movie database API access |
 | `REDIS_URL` | `redis://localhost:6379` | Local Redis for caching |
 
-**Notes:**
-- Dev secrets use `--config dev`
-- No monitoring (Sentry/PostHog) in dev
-- Keep dev Redis on localhost
+**Setup on dev machines:**
+```bash
+doppler secrets set TMDB_API_KEY="YOUR_KEY" --config dev
+doppler secrets set REDIS_URL="redis://localhost:6379" --config dev
+```
 
-### Production Config (prd)
+### Production Config (prd) - Ops/CI-CD Only
 
 | Secret | Example | Purpose |
 |--------|---------|---------|
@@ -137,10 +162,14 @@ The deploy command will:
 | `SENTRY_DSN` | `https://xxx@sentry.io/123` | Error tracking endpoint |
 | `SENTRY_ENVIRONMENT` | `production` | Environment label for Sentry |
 
-**Notes:**
-- Production secrets use `--config prd`
-- All monitoring required in production
-- VPS Redis on port 6380
+**Setup by ops team:**
+```bash
+doppler secrets set KAMAL_REGISTRY_PASSWORD="ghp_..." --config prd
+doppler secrets set TMDB_API_KEY="YOUR_KEY" --config prd
+doppler secrets set REDIS_URL="redis://redis:6380" --config prd
+doppler secrets set SENTRY_DSN="https://..." --config prd
+doppler secrets set SENTRY_ENVIRONMENT="production" --config prd
+```
 
 ## Getting Required API Keys
 
@@ -150,7 +179,7 @@ The deploy command will:
 2. Register/Login if needed
 3. Accept API terms
 4. Create an API key
-5. Copy to both dev and prd Doppler configs (same key is fine)
+5. Add to your dev Doppler config (same key can be used in prod)
 
 ### GitHub Personal Access Token (PAT)
 
@@ -160,7 +189,7 @@ For production deployment only:
 2. Create new token with scopes:
    - ✅ `read:packages` - read container images
    - ✅ `write:packages` - push container images
-3. Copy token to Doppler prd config as `KAMAL_REGISTRY_PASSWORD`
+3. Add to prd Doppler config (ops team only)
 
 ### Sentry DSN (Optional for Production)
 
@@ -168,7 +197,7 @@ For error tracking in production:
 
 1. Create Sentry account: https://sentry.io
 2. Create new project (select Ruby/Sinatra)
-3. Copy DSN URL to Doppler prd config as `SENTRY_DSN`
+3. Add DSN URL to prd Doppler config (ops team only)
 
 ## Development Workflow
 
@@ -180,14 +209,14 @@ cd movie_together
 # Install dependencies
 make install
 
-# Set up dev environment (installs gems and pre-commit hooks)
+# Set up dev environment
 make setup-dev
 
-# Setup Doppler dev config
+# Setup Doppler dev config ONLY
 doppler setup --project movie_together --config dev
 doppler secrets set --project movie_together --config dev
 
-# Start development server (uses dev config)
+# Start development server
 make dev
 ```
 
@@ -196,7 +225,7 @@ make dev
 ```bash
 cd movie_together
 
-# Run all tests (uses dev config via setup-dev)
+# Run all tests (uses dev config)
 make test
 
 # Run specific test suite
@@ -212,7 +241,7 @@ make test-coverage
 ```bash
 cd movie_together
 
-# This automatically uses prd config
+# This explicitly uses --config prd
 make deploy
 
 # Watch logs
@@ -222,55 +251,43 @@ make deploy-logs
 make deploy-rollback
 ```
 
-## Doppler Configuration Files
-
-### .doppler (local machine)
-
-Created by running `doppler setup --project movie_together --config dev`:
-
-```json
-{
-  "project": "movie_together",
-  "config": "dev"
-}
-```
-
-This file tells Doppler CLI to use the dev config for local commands.
-
-### Makefile Deployment
-
-The Makefile explicitly specifies configs:
+## Important: Never Do This on Dev Machines
 
 ```bash
-# Development: uses .doppler file (dev config)
-doppler run --config dev -- bundle exec rerun...
+# ❌ DON'T DO THIS on your dev machine:
+doppler setup --project movie_together --config prd
 
-# Production: explicitly specifies prd
-doppler run --config prd -- kamal deploy
+# ❌ DON'T DO THIS:
+cp .doppler .doppler.bak
+# edit .doppler to add prd config
+
+# ✅ DO THIS INSTEAD:
+# Keep .doppler with only dev config
+# Let deployment commands specify --config prd
 ```
 
 ## Troubleshooting
 
-### "KAMAL_REGISTRY_PASSWORD not found" during deployment
+### "Config prd not found" when deploying
 
-Only an issue during deployment. Make sure it's set in Doppler prd config:
+This might happen if:
+1. Prd config hasn't been set up yet (ops team needs to do it)
+2. You don't have access to the prd config (check Doppler permissions)
 
-```bash
-doppler secrets get KAMAL_REGISTRY_PASSWORD --project movie_together --config prd
-```
+**Solution**: Ask your ops team to set up the prd config
 
 ### "Can't pull Docker image during deployment"
 
-1. Verify GitHub PAT token has `read:packages` and `write:packages` scopes
-2. Test token manually:
-   ```bash
-   echo $KAMAL_REGISTRY_PASSWORD | docker login ghcr.io -u jabawack81 --password-stdin
-   ```
-3. Check token is current in Doppler prd config
+Make sure the prd config has `KAMAL_REGISTRY_PASSWORD`:
+
+```bash
+# On a secure machine with prd access:
+doppler secrets get KAMAL_REGISTRY_PASSWORD --project movie_together --config prd
+```
 
 ### "Redis connection refused" during development
 
-Make sure Redis is running:
+Make sure Redis is running locally:
 
 ```bash
 # Start Redis
@@ -280,26 +297,18 @@ make redis-start
 make dev
 ```
 
-### "Doppler config not found" during dev
-
-Make sure you have the dev config set up:
-
-```bash
-doppler setup --project movie_together --config dev
-doppler secrets set --project movie_together --config dev
-```
-
 ## Environment Separation
 
-| Aspect | Dev | Production |
-|--------|-----|-----------|
-| Doppler config | `dev` | `prd` |
-| Setup command | `doppler setup --project movie_together --config dev` | `doppler setup --project movie_together --config prd` |
-| Dev command | `doppler run --config dev -- make dev` | N/A |
-| Deploy command | N/A | `doppler run --config prd -- kamal deploy` |
+| Aspect | Dev Machine | Deployment (CI/CD or Ops) |
+|--------|-------------|--------------------------|
+| Doppler config | `dev` only | `prd` (explicit param) |
+| .doppler file | `"config": "dev"` | N/A or `"config": "prd"` |
+| Dev command | `make dev` (uses dev config) | N/A |
+| Deploy command | `make deploy` (specifies --config prd) | `make deploy` (specifies --config prd) |
 | REDIS_URL | `redis://localhost:6379` | `redis://redis:6380` |
 | Monitoring | ❌ Disabled | ✅ Enabled |
-| .doppler file | Points to `dev` | N/A (deploy uses explicit --config prd) |
+| KAMAL_REGISTRY_PASSWORD | ❌ Not available | ✅ From prd config |
+| SENTRY_DSN | ❌ Not available | ✅ From prd config |
 
 ## Reference Links
 
@@ -311,13 +320,22 @@ doppler secrets set --project movie_together --config dev
 
 ## Summary
 
-**Local Development:**
-- Copy `.doppler.example` → `.doppler`
-- Run: `doppler setup --project movie_together --config dev`
-- Run: `doppler secrets set --project movie_together --config dev`
-- Run: `make dev` (automatically uses dev config)
+**What Dev Machines Do:**
+```bash
+# One-time setup
+doppler setup --project movie_together --config dev
+doppler secrets set --project movie_together --config dev
 
-**Production Deployment:**
-- Run: `doppler setup --project movie_together --config prd`
-- Run: `doppler secrets set --project movie_together --config prd`
-- Run: `make deploy` (automatically uses prd config)
+# Daily use
+make dev  # uses dev config from .doppler
+```
+
+**What Deployment Does:**
+```bash
+# Deployment explicitly specifies prd
+make deploy  # runs: doppler run --config prd -- kamal deploy
+
+# No need for prd to be in local .doppler or setup locally
+```
+
+**Key Rule: Dev machines NEVER have prd config**

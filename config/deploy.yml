@@ -1,0 +1,70 @@
+# MovieTogether Kamal Deployment Configuration
+service: movie-together
+
+# Docker image (GitHub Container Registry - free private images)
+image: ghcr.io/jabawack81/movie_together
+
+# SSH configuration for connecting to VPS (uses deploy user, not root)
+ssh:
+  user: deploy
+  port: 1447
+
+# Server configuration
+servers:
+  web:
+    hosts:
+      - digitalocean
+    labels:
+      # Traefik routing for HTTP/HTTPS
+      traefik.enable: true
+      traefik.http.routers.movie-web.rule: Host(`as.internetblacksmith.dev`)
+      traefik.http.routers.movie-web.entrypoints: websecure
+      traefik.http.routers.movie-web.tls.certresolver: letsencrypt
+      traefik.http.services.movie-web.loadbalancer.server.port: 4567
+      # HTTP to HTTPS redirect
+      traefik.http.routers.movie-web-http.rule: Host(`as.internetblacksmith.dev`)
+      traefik.http.routers.movie-web-http.entrypoints: web
+      traefik.http.routers.movie-web-http.middlewares: movie-redirect-https
+      traefik.http.middlewares.movie-redirect-https.redirectscheme.scheme: https
+      traefik.http.middlewares.movie-redirect-https.redirectscheme.permanent: true
+    cmd: bundle exec puma -C config/puma.rb
+    options:
+      network: "private"
+    proxy: false
+
+# Docker registry authentication (GitHub Container Registry)
+registry:
+  server: ghcr.io
+  username: jabawack81
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Builder configuration
+builder:
+  arch: amd64
+
+# Environment variables
+# Note: Secrets are injected during deployment via Doppler on local machine,
+# not fetched at runtime. These are passed to the container at runtime.
+env:
+  clear:
+    RACK_ENV: production
+  secret:
+    - TMDB_API_KEY
+    - REDIS_URL
+    - SENTRY_DSN
+    - SENTRY_ENVIRONMENT
+
+# Redis accessory for caching
+accessories:
+  redis:
+    image: redis:7.4-alpine
+    host: digitalocean
+    port: 6380
+    directories:
+      - data:/data
+    cmd: redis-server --save 60 1 --loglevel warning
+
+# Persistent volumes for application data
+volumes:
+  - movie-data:/app/data

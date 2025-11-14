@@ -90,13 +90,16 @@ setup-dev:
 	@echo "✅ Development environment setup complete!"
 	@echo ""
 	@echo "Next steps:"
-	@echo "  1. Setup Doppler (optional): doppler setup --project movie_together --config dev"
-	@echo "  2. Configure dev secrets in Doppler or use .env file"
+	@echo "  1. Setup Doppler (optional):"
+	@echo "     doppler setup --project movie_together"
+	@echo "     (Sets up your local/default config - not tied to dev or prd)"
+	@echo "  2. Configure local secrets in Doppler or use .env file"
 	@echo "  3. Run 'make redis-start' to start Redis (in separate terminal)"
 	@echo "  4. Run 'make dev' to start the local development server"
-	@echo "  5. Run 'make setup-deploy' to configure deployment (optional)"
+	@echo "  5. Run 'make setup-deploy' to configure production deployment (separate step)"
 	@echo ""
 	@echo "ℹ️  Git pre-commit hook is now active - it will run 'make pre-commit' before each commit"
+	@echo "ℹ️  Local development is independent - deployment uses 'prd' config"
 
 # Setup deployment environment (Kamal, Doppler)
 setup-deploy:
@@ -134,9 +137,8 @@ setup-deploy:
 	@echo ""
 	@echo "🔐 Checking Doppler configuration..."
 	@if ! doppler configure get project --plain 2>/dev/null | grep -q "movie_together"; then \
-		echo "⚠️  Doppler not configured. You'll need to set up:"; \
-		echo "   - dev config (for local development): doppler setup --project movie_together --config dev"; \
-		echo "   - prd config (for deployment): doppler setup --project movie_together --config prd"; \
+		echo "⚠️  Doppler not configured for deployment. You'll need to set up:"; \
+		echo "   doppler setup --project movie_together --config prd"; \
 	else \
 		echo "✅ Doppler project: movie_together"; \
 	fi
@@ -147,12 +149,16 @@ setup-deploy:
 	@echo "✅ Deployment environment setup complete!"
 	@echo ""
 	@echo "Next steps:"
-	@echo "  1. Configure Doppler environments:"
-	@echo "     - Dev: doppler setup --project movie_together --config dev"
-	@echo "     - Prd: doppler setup --project movie_together --config prd"
-	@echo "  2. Set secrets in Doppler (dev and prd configs separately)"
+	@echo "  1. Setup production Doppler config:"
+	@echo "     doppler setup --project movie_together --config prd"
+	@echo "  2. Set production secrets in Doppler prd config:"
+	@echo "     doppler secrets set --project movie_together --config prd"
 	@echo "  3. Test VPS connection: ssh digitalocean-deploy"
 	@echo "  4. Deploy: make deploy"
+	@echo ""
+	@echo "ℹ️  Local development and deployment use separate Doppler configs"
+	@echo "ℹ️  Local dev uses default config (no --config flag)"
+	@echo "ℹ️  Deployment always uses prd config (explicit --config prd)"
 
 # Full setup (both dev and deploy)
 setup: setup-dev setup-deploy

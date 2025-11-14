@@ -1,16 +1,38 @@
 # MovieTogether Deployment Secrets Guide
 
-This guide explains how to set up Doppler secrets for MovieTogether deployment to the VPS.
+This guide explains how to set up Doppler secrets for MovieTogether development and deployment.
 
 ## Overview
 
-MovieTogether is deployed to: **as.internetblacksmith.dev**
+**MovieTogether VPS Deployment**: `as.internetblacksmith.dev`
 
-Deployment method: **Kamal with Doppler** (same as gcal-sinatra and the_void_chronicles)
+**Deployment Method**: Kamal with Doppler (same as gcal-sinatra and the_void_chronicles)
 
-## Required Doppler Setup
+**Key Principle**: 
+- Local development uses **default Doppler config** (no explicit config specified)
+- Only deployment explicitly uses `prd` config
+- This allows flexibility: developers can use their own Doppler environment
 
-### 1. Create Doppler Project (if not already created)
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Local Development (make dev)                           │
+│  - Uses: doppler run (default config, no --config flag) │
+│  - Developers can set their own Doppler project config  │
+│  - Or run without Doppler if not installed              │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│  Deployment (make deploy)                               │
+│  - Uses: doppler run --config prd                       │
+│  - Explicitly uses production Doppler config            │
+│  - All pre-commit checks run (lint, test, security)     │
+│  - Kamal deploys to VPS via production secrets          │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Step 1: Create Doppler Project (One-Time)
 
 ```bash
 # Login to Doppler
@@ -20,162 +42,216 @@ doppler login
 doppler projects create movie_together
 ```
 
-### 2. Create Doppler Configs
+## Step 2: Set Up Your Local Development Environment
 
-Two configurations needed:
+### Option A: Use Doppler for Local Development
 
-#### Dev Config (Local Development)
 ```bash
-doppler setup --project movie_together --config dev
+# Set up local development with Doppler
+doppler setup --project movie_together
+
+# Add your local development secrets
+doppler secrets set
+# Enter: TMDB_API_KEY, REDIS_URL
 ```
 
-#### Production Config (VPS Deployment)
+Then use normally:
 ```bash
+cd movie_together
+make dev  # Uses doppler run with default config
+```
+
+### Option B: Run Without Doppler Locally
+
+If you don't want to use Doppler for development:
+
+```bash
+cd movie_together
+# Create .env file manually with your dev secrets
+cp .env.example .env
+# Edit .env with TMDB_API_KEY=your_key, REDIS_URL=redis://localhost:6379
+
+make dev  # Will detect no Doppler and run directly
+```
+
+## Step 3: Create Production Config (For Deployment)
+
+This is done **once** by someone with production access:
+
+```bash
+# Create the production config
 doppler setup --project movie_together --config prd
-```
 
-## Required Secrets
-
-### All Environments (dev + prd)
-
-| Secret | Description | Example |
-|--------|-------------|---------|
-| `TMDB_API_KEY` | The Movie Database API Key | `abc123...` |
-| `REDIS_URL` | Redis connection string | `redis://redis:6379` (dev) or `redis://localhost:6380` (prod) |
-
-### Production Only (prd)
-
-| Secret | Description | Example |
-|--------|-------------|---------|
-| `KAMAL_REGISTRY_PASSWORD` | GitHub PAT for ghcr.io (GitHub Container Registry) | `ghp_...` |
-| `SENTRY_DSN` | Sentry error tracking URL | `https://xxx@sentry.io/123` |
-| `SENTRY_ENVIRONMENT` | Sentry environment label | `production` |
-
-## Setting Up Secrets in Doppler
-
-### 1. Configure Dev Secrets
-
-```bash
-doppler secrets set --project movie_together --config dev
-```
-
-Then interactively enter:
-- `TMDB_API_KEY`: Your TMDB API key
-- `REDIS_URL`: `redis://localhost:6379` (local Redis)
-
-### 2. Configure Production Secrets
-
-```bash
+# Add production secrets
 doppler secrets set --project movie_together --config prd
 ```
 
-Then interactively enter:
-- `KAMAL_REGISTRY_PASSWORD`: GitHub PAT token
-- `TMDB_API_KEY`: Your TMDB API key (same as dev)
-- `REDIS_URL`: `redis://redis:6380` (VPS Redis port)
-- `SENTRY_DSN`: Your Sentry project URL
-- `SENTRY_ENVIRONMENT`: `production`
+Enter production secrets:
+- `KAMAL_REGISTRY_PASSWORD` - GitHub PAT token
+- `TMDB_API_KEY` - The Movie Database API key
+- `REDIS_URL` - `redis://redis:6380` (VPS Redis)
+- `SENTRY_DSN` - Sentry error tracking URL
+- `SENTRY_ENVIRONMENT` - `production`
+
+## Deployment
+
+Once production config is set up, anyone can deploy:
+
+```bash
+cd movie_together
+
+# 1. Run all checks
+make pre-commit
+
+# 2. Deploy (uses prd config automatically)
+make deploy
+
+# Or use interactive menu
+make menu  # Option 18
+```
+
+The deploy command will:
+1. ✅ Run lint, tests, security checks
+2. ✅ Load production secrets from Doppler prd config
+3. ✅ Build Docker image
+4. ✅ Push to GitHub Container Registry
+5. ✅ Deploy via Kamal to VPS
+
+## Required Secrets Reference
+
+### Development (your local config)
+
+| Secret | Example | Purpose |
+|--------|---------|---------|
+| `TMDB_API_KEY` | `abc123...` | Movie database API access |
+| `REDIS_URL` | `redis://localhost:6379` | Local Redis for caching |
+
+### Production (prd config)
+
+| Secret | Example | Purpose |
+|--------|---------|---------|
+| `KAMAL_REGISTRY_PASSWORD` | `ghp_...` | GitHub PAT for Docker registry |
+| `TMDB_API_KEY` | `abc123...` | Movie database API access |
+| `REDIS_URL` | `redis://redis:6380` | VPS Redis for caching |
+| `SENTRY_DSN` | `https://xxx@sentry.io/123` | Error tracking endpoint |
+| `SENTRY_ENVIRONMENT` | `production` | Environment label for Sentry |
 
 ## Getting Required API Keys
 
 ### TMDB API Key
 
 1. Visit: https://www.themoviedb.org/settings/api
-2. Register/Login to TMDB
-3. Accept terms and create an API key
-4. Copy the key and add to Doppler
+2. Register/Login if needed
+3. Accept API terms
+4. Create an API key
+5. Copy to your Doppler config (dev and/or prd)
 
-### GitHub PAT (Personal Access Token)
+### GitHub Personal Access Token (PAT)
 
-For `KAMAL_REGISTRY_PASSWORD`:
+For production deployment only:
 
 1. Visit: https://github.com/settings/tokens/new
 2. Create new token with scopes:
-   - `read:packages` - read container images
-   - `write:packages` - push container images
-3. Copy the token to Doppler
+   - ✅ `read:packages` - read container images
+   - ✅ `write:packages` - push container images
+3. Copy token to Doppler prd config as `KAMAL_REGISTRY_PASSWORD`
 
 ### Sentry DSN (Optional)
 
+For error tracking in production:
+
 1. Create Sentry account: https://sentry.io
 2. Create new project (select Ruby/Sinatra)
-3. Copy the DSN URL to Doppler
+3. Copy DSN URL to Doppler prd config as `SENTRY_DSN`
 
-## Deployment Workflow
+## Development Workflow
 
-### First-Time Deployment
+### First Time Setting Up Locally
 
 ```bash
-# 1. Setup dev environment
 cd movie_together
+
+# Install dependencies
+make install
+
+# Set up dev environment (Doppler optional)
 make setup-dev
 
-# 2. Setup deployment environment
-make setup-deploy
-
-# 3. Verify Doppler is configured
-doppler configure get project --plain
-
-# 4. Generate .kamal/secrets file
-make kamal-secrets-setup
-
-# 5. Deploy!
-make deploy
+# Start development server
+make dev
 ```
 
-### Subsequent Deployments
+### Running Tests Locally
 
 ```bash
 cd movie_together
 
-# Just deploy (all checks included)
-make deploy
+# Run all tests
+make test
 
-# Or use the interactive menu
-make menu
+# Run specific test suite
+make test-rspec
+make test-cucumber
+
+# Run with coverage
+make test-coverage
 ```
 
-## Environment-Specific Notes
+### Deploying to Production
 
-### Development (`dev` config)
+```bash
+cd movie_together
 
-- `REDIS_URL`: Points to localhost Redis
-- No error tracking (Sentry DSN optional)
-- Can skip KAMAL_REGISTRY_PASSWORD
+# This automatically uses prd config
+make deploy
 
-### Production (`prd` config)
+# Watch logs
+make deploy-logs
 
-- `REDIS_URL`: Points to VPS Redis (port 6380)
-- All secrets required
-- Sentry DSN recommended for error tracking
+# Rollback if needed
+make deploy-rollback
+```
 
 ## Troubleshooting
 
 ### "KAMAL_REGISTRY_PASSWORD not found"
 
-Make sure it's set in Doppler prd config:
+Only an issue during deployment. Make sure it's set in Doppler prd config:
+
 ```bash
 doppler secrets get KAMAL_REGISTRY_PASSWORD --project movie_together --config prd
 ```
 
-### "Can't pull Docker image"
+### "Can't pull Docker image during deployment"
 
-1. Verify PAT token has `read:packages` scope
-2. Check token is set correctly in Doppler
-3. Test manually: `echo $KAMAL_REGISTRY_PASSWORD | docker login ghcr.io -u jabawack81 --password-stdin`
+1. Verify GitHub PAT token has `read:packages` and `write:packages` scopes
+2. Test token manually:
+   ```bash
+   echo $KAMAL_REGISTRY_PASSWORD | docker login ghcr.io -u jabawack81 --password-stdin
+   ```
+3. Check token is current in Doppler prd config
 
-### "Redis connection refused"
+### "Doppler not found" during development
 
-1. Check `REDIS_URL` matches VPS Redis setup
-2. Verify Redis is running: `make redis-start`
-3. Verify port 6380 is not blocked
+This is okay! The app will run without Doppler if you have `.env` file:
 
-## Next Steps
+```bash
+cp .env.example .env
+# Edit with your dev secrets
+make dev
+```
 
-1. **Setup Doppler**: Run `doppler setup` for dev and prd
-2. **Add Secrets**: Use `doppler secrets set` for each config
-3. **Deploy**: Run `make deploy`
-4. **Monitor**: Check logs with `make deploy-logs`
+### "Redis connection refused" during development
+
+Make sure Redis is running:
+
+```bash
+# Start Redis
+make redis-start
+
+# In another terminal
+make dev
+```
 
 ## Reference Links
 
@@ -183,4 +259,15 @@ doppler secrets get KAMAL_REGISTRY_PASSWORD --project movie_together --config pr
 - **Kamal Docs**: https://kamal-deploy.org
 - **TMDB API**: https://developer.themoviedb.org/docs
 - **GitHub PAT**: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
-- **Sentry**: https://docs.sentry.io
+- **Sentry Docs**: https://docs.sentry.io
+
+## Summary
+
+| Task | Local Dev | Production |
+|------|-----------|-----------|
+| Doppler config | Optional (default or custom) | Required (prd) |
+| `make dev` | Uses default Doppler config | N/A |
+| `make deploy` | N/A | Uses prd config automatically |
+| Pre-commit hooks | Run before commit | Run before deploy |
+| Deploy user | N/A | `deploy` user on VPS |
+| Domain | localhost:4567 | as.internetblacksmith.dev |

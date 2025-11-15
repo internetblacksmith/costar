@@ -136,4 +136,4 @@ Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
 # Load accessibility testing if running accessibility specs
 # Using axe-core-rspec (maintained by Deque Systems - actively developed)
-require "axe-core-rspec" if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }
+require "axe/rspec" if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }

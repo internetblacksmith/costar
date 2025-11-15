@@ -31,27 +31,27 @@ gem "sinatra", "4.1.1" # Web framework
 gem "sinatra-contrib", "4.1.1" # Sinatra extensions
 
 group :development do
-  gem "brakeman", "6.2.2" # Security scanner
+  gem "brakeman", "7.1.1" # Security scanner
   gem "bundle-audit", "0.1.0" # Dependency security scanner
   gem "filewatcher", "2.1.0" # File watching for auto-restart (replaces rerun)
   gem "pry", "0.15.2" # Interactive debugger
-  gem "rubocop", "1.78.0" # Code style and linting
+  gem "rubocop", "1.81.7" # Code style and linting
 end
 
 group :test do
   gem "axe-core-rspec", "4.11.0" # Accessibility testing with axe-core (actively maintained by Deque Systems)
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
-  gem "cucumber", "10.0.0" # BDD testing framework (Ruby 3.4+ compatible)
+  gem "cucumber", "10.1.1" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.15.1" # Headless Chrome driver for Capybara (used by visual/compatibility tests)
-  gem "factory_bot", "6.5.4" # Test data factories
+  gem "factory_bot", "6.5.6" # Test data factories
   gem "faker", "3.5.2" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing
-  gem "rspec", "3.13.1" # Testing framework
+  gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
   gem "selenium-webdriver", "4.31.0" # Selenium WebDriver for accessibility testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.3.1" # Record and replay HTTP interactions
-  gem "webmock", "3.25.1" # HTTP request stubbing
+  gem "webmock", "3.26.1" # HTTP request stubbing
 end
 
 group :development, :test do

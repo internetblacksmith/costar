@@ -3,6 +3,7 @@
 
 require "json"
 require "open3"
+require "shellwords"
 
 # Comprehensive Doppler Environment Validation Script for ActorSync
 # Checks all Doppler configurations and provides detailed analysis
@@ -186,7 +187,7 @@ class DopplerEnvironmentChecker
   end
 
   def fetch_doppler_secrets(env)
-    stdout, stderr, status = Open3.capture3("doppler secrets --config #{env} --json")
+    stdout, stderr, status = Open3.capture3("doppler secrets --config #{Shellwords.escape(env)} --json")
 
     if status.success?
       # Parse the JSON response which contains secrets in Doppler format

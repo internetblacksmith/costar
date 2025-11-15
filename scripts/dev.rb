@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Development startup script for ActorSync
-# This script ensures proper environment setup and starts the development server
-
+require "sinatra"
 require "fileutils"
+require "dotenv"
 require "open3"
+require "shellwords"
 
 class DevServer
   def initialize
@@ -154,7 +154,7 @@ class DevServer
   end
 
   def command_available?(cmd)
-    system("which #{cmd} > /dev/null 2>&1")
+    system("which #{Shellwords.escape(cmd)} > /dev/null 2>&1")
   end
 
   def doppler_configured?

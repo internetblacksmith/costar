@@ -177,7 +177,7 @@ test: test-rspec test-cucumber
 test-rspec:
 	@echo "🧪 Running RSpec test suite..."
 	@echo "✅ Tests use mock environment - no secrets needed"
-	bundle exec rspec --format documentation
+	bundle exec rspec --format progress
 
 # Run Cucumber tests only
 test-cucumber:
@@ -188,7 +188,7 @@ test-cucumber:
 # Run tests with coverage
 test-coverage:
 	@echo "🧪 Running tests with coverage..."
-	bundle exec rspec --format documentation
+	bundle exec rspec --format progress
 	@echo "Coverage report generated"
 
 # Run development server

@@ -29,6 +29,7 @@ end
 Capybara.register_driver :cuprite do |app|
   Capybara::Cuprite::Driver.new(app,
                                 window_size: [1920, 1080],
+                                process_timeout: 60,
                                 browser_options: {
                                   "no-sandbox": nil,
                                   "disable-gpu": nil,

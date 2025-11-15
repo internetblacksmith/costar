@@ -2,7 +2,7 @@
 
 require "spec_helper"
 require "capybara/rspec"
-require "axe/rspec"
+require "axe-core-rspec"
 
 RSpec.describe "Accessibility", type: :feature, js: true do
   before do
@@ -25,7 +25,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       end
 
       # Run accessibility scan
-      expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
+      expect(page).to be_axe_clean.according_to(:wcag2aa)
     end
 
     it "has no accessibility violations in light mode" do
@@ -34,7 +34,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       # Ensure we're in light mode
       page.execute_script("localStorage.setItem('theme', 'light'); document.documentElement.setAttribute('data-theme', 'light');")
 
-      expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
+      expect(page).to be_axe_clean.according_to(:wcag2aa)
     end
 
     it "has no accessibility violations in dark mode" do
@@ -43,7 +43,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       # Switch to dark mode
       page.execute_script("localStorage.setItem('theme', 'dark'); document.documentElement.setAttribute('data-theme', 'dark');")
 
-      expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
+      expect(page).to be_axe_clean.according_to(:wcag2aa)
     end
   end
 
@@ -58,7 +58,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       expect(page).to have_css(".suggestion-item", wait: 5)
 
       # Check accessibility of the suggestions
-      expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
+      expect(page).to be_axe_clean.according_to(:wcag2aa)
     end
 
     it "selected actor chips are accessible", vcr: { cassette_name: "actor_search_leonardo" } do
@@ -75,7 +75,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       expect(page).to have_css(".selected-actor-chip")
 
       # Check accessibility
-      expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
+      expect(page).to be_axe_clean.according_to(:wcag2aa)
     end
   end
 
@@ -91,7 +91,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       end
 
       # Check accessibility of page interface regardless of API response
-      expect(page).to be_accessible.according_to :wcag2a, :wcag2aa
+      expect(page).to be_axe_clean.according_to(:wcag2aa)
     end
   end
 
@@ -103,7 +103,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       page.execute_script("localStorage.setItem('theme', 'light'); document.documentElement.setAttribute('data-theme', 'light');")
 
       # Specific contrast checks
-      expect(page).to be_accessible
+      expect(page).to be_axe_clean
         .according_to(:wcag2aa)
         .checking_only(:"color-contrast")
     end
@@ -115,7 +115,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       page.execute_script("localStorage.setItem('theme', 'dark'); document.documentElement.setAttribute('data-theme', 'dark');")
 
       # Specific contrast checks
-      expect(page).to be_accessible
+      expect(page).to be_axe_clean
         .according_to(:wcag2aa)
         .checking_only(:"color-contrast")
     end
@@ -126,7 +126,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       visit "/"
 
       # Check for keyboard accessibility using valid axe rules
-      expect(page).to be_accessible
+      expect(page).to be_axe_clean
         .according_to(:wcag2a)
         .checking_only(:tabindex)
     end
@@ -137,7 +137,7 @@ RSpec.describe "Accessibility", type: :feature, js: true do
       visit "/"
 
       # Check for proper labeling
-      expect(page).to be_accessible
+      expect(page).to be_axe_clean
         .according_to(:wcag2a)
         .checking_only(%i[label aria-required-attr aria-valid-attr])
     end

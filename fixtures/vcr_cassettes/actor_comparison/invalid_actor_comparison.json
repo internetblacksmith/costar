@@ -1,0 +1,707 @@
+{
+  "http_interactions": [
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999/movie_credits?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1a"
+          ],
+          "X-Task-Id": [
+            "00b275315a84461c8940633aab4f6138"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 95d28afec253ed681781482218879f5e.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "AHFUoEUi91wXGOb3oQ6JJemmEarS49idOU0mI8Cv08DsfIx2cJkzgQ=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99998/movie_credits?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=28414"
+          ],
+          "X-Memc": [
+            "MISS, STORE"
+          ],
+          "X-Memc-Key": [
+            "36aa2fd4043cf0e0983cdaa8b56c29f433b810365b2e71578d0c94c354523615"
+          ],
+          "X-Memc-Age": [
+            "0"
+          ],
+          "X-Memc-Expires": [
+            "28414"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "696179b388c24d05a0843234c55c9100"
+          ],
+          "Etag": [
+            "W/\"a493cd963d41fc12b97c02951bc03800\""
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Miss from cloudfront"
+          ],
+          "Via": [
+            "1.1 f59f3000d5bbed733e1102d0cab025be.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "kuvwt610eB1qBgvMsHq4-ab_EvtKVsDFAnkQMcEFxrWq6jN_pPBY8w=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJjYXN0IjpbeyJhZHVsdCI6ZmFsc2UsImJhY2tkcm9wX3BhdGgiOm51bGws\nImdlbnJlX2lkcyI6WzI3XSwiaWQiOjI4MTg0LCJvcmlnaW5hbF9sYW5ndWFn\nZSI6ImVuIiwib3JpZ2luYWxfdGl0bGUiOiJTaG9ja2hlYWRlZCIsIm92ZXJ2\naWV3IjoiTm9ibGUgaXMgYSBtYW4gd2hvIGxpdmVzIGFsb25lIGluIGEgcnVu\nZG93biBob3RlbCByb29tLiBMYXRlbHksIHNvbWVvbmUgaGFzIGJlZW4gc2xp\nZGluZyBub3RlcyB1bmRlciBoaXMgZG9vciwgdGVsbGluZyBoaW0gdG8gZG8g\ndGhpbmdzLiBIZSBoYXMgZHJlYW1zIG9mIGEgd2hpdGUgbWFzayBseWluZyBv\nbiB0aGUgZ3JvdW5kLiBBbmQgdHdvIGRldGVjdGl2ZXMgaGF2ZSBiZWVuIGhh\ncmFzc2luZyBoaW0sIHRyeWluZyB0byBmaW5kIGEgbWlzc2luZyB3b21hbi4g\nIE9uZSBkYXksIGEgbXlzdGVyaW91cyB2aXNpdG9yIGFycml2ZXMgYW5kIHRl\nbGxzIE5vYmxlIHRoYXQgaGUgY2FuIGZpbmQgdGhlIHRydXRoIGlmIGhlIHdh\nbnRzLiBIZSBzZXRzIE5vYmxlIG9uIGEgbWlzc2lvbi4uLmZpbmQgdGhlIHdv\nbWFuIGFuZCBoZSB3aWxsIGhhdmUgaGlzIGFuc3dlcnMuIE5vYmxlIGFncmVl\ncywgYW5kIHNldHMgb2ZmIHRvIHVuY292ZXIgdGhlIG15c3RlcnkgdGhhdCBs\nZWFkcyBoaW0gdG8gcGxhY2VzIGhlIG5ldmVyIHdhbnRlZCB0byBnby4iLCJw\nb3B1bGFyaXR5IjowLjA2MDIsInBvc3Rlcl9wYXRoIjoiL3dNOGs3NGptQnNv\nRHNxNTNyNTVoQmtZekJTSi5qcGciLCJyZWxlYXNlX2RhdGUiOiIyMDAyLTEw\nLTA4IiwidGl0bGUiOiJTaG9ja2hlYWRlZCIsInZpZGVvIjpmYWxzZSwidm90\nZV9hdmVyYWdlIjoyLjAsInZvdGVfY291bnQiOjEsImNoYXJhY3RlciI6Ik5v\nYmxlIiwiY3JlZGl0X2lkIjoiNTJmZTQ1ODBjM2EzNjg0ODRlMDVlZjNmIiwi\nb3JkZXIiOjB9LHsiYWR1bHQiOmZhbHNlLCJiYWNrZHJvcF9wYXRoIjpudWxs\nLCJnZW5yZV9pZHMiOlsyOF0sImlkIjo4Njg3ODQsIm9yaWdpbmFsX2xhbmd1\nYWdlIjoiZW4iLCJvcmlnaW5hbF90aXRsZSI6IjIzIEhvdXJzIiwib3ZlcnZp\nZXciOiJOaWNrIE1pbGVzIHJlYWxpemVzIHRoYXQgaGUgaXMgbWlzc2luZyBh\nbiBob3VyIG9mIHRpbWUgZXZlcnkgbmlnaHQuIE9uZSBuaWdodCBoZSB3YWtl\ncyB1cCB0byB0aGUgc2lnaHQgb2YgYSBkZWFkIG1hbiwgYW5kIGhlIGlzIGhv\nbGRpbmcgdGhlIG11cmRlciB3ZWFwb24uIE5vdyBOaWNrIGhhcyB0byBkaXNj\nb3ZlciB0aGUgdHJ1dGggYW5kIGF2b2lkIHRoZSBteXN0ZXJpb3VzIG1lbiB3\naG8gYXJlIHRyeWluZyB0byBjYXRjaCBoaW0uIiwicG9wdWxhcml0eSI6MC4w\nMjM5LCJwb3N0ZXJfcGF0aCI6Ii84djZlVm80SXdZRW1RUllOclpUQmNtZzNz\naFMuanBnIiwicmVsZWFzZV9kYXRlIjoiMjAwMC0wNy0xMyIsInRpdGxlIjoi\nMjMgSG91cnMiLCJ2aWRlbyI6ZmFsc2UsInZvdGVfYXZlcmFnZSI6MC4wLCJ2\nb3RlX2NvdW50IjowLCJjaGFyYWN0ZXIiOiJEci4gQWxicmVjaHQiLCJjcmVk\naXRfaWQiOiI2MTJjNGVkZTQyZjE5ZjAwMmFmMWFjNWIiLCJvcmRlciI6MX1d\nLCJjcmV3IjpbXSwiaWQiOjk5OTk4fQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "d0c9821e8a8745baa7ec47c7e84c9096"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 fa4c901415bf2d15a28f00ab0ba2e776.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "xt5EvA_D4spyLwf7FtwZ2w35Fx3-Q5mPEapnDO-dUmE6af_NxE02rQ=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99998?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "Cache-Control": [
+            "public, max-age=28189"
+          ],
+          "X-Memc": [
+            "MISS, STORE"
+          ],
+          "X-Memc-Key": [
+            "0de46982fde44060bdc22e5540e67144ad8cfbbf1f77371b8862fa1fdb4b1e4d"
+          ],
+          "X-Memc-Age": [
+            "0"
+          ],
+          "X-Memc-Expires": [
+            "28189"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "bb78d0ba1cf1465b9e83e7f09ac373a1"
+          ],
+          "Etag": [
+            "W/\"3c7a7ce76074a2f33a29f89faa1f807c\""
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Miss from cloudfront"
+          ],
+          "Via": [
+            "1.1 09f75f8c2e26a7fed84a39741428c6c0.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "ldHVwESjmIMzFBcYrbMf4bFha2fKX3ym1-pod4c3ChqqXftJOXp8dg=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJhZHVsdCI6ZmFsc2UsImFsc29fa25vd25fYXMiOltdLCJiaW9ncmFwaHki\nOiIiLCJiaXJ0aGRheSI6bnVsbCwiZGVhdGhkYXkiOm51bGwsImdlbmRlciI6\nMCwiaG9tZXBhZ2UiOm51bGwsImlkIjo5OTk5OCwiaW1kYl9pZCI6Im5tMTMx\nMjI2NyIsImtub3duX2Zvcl9kZXBhcnRtZW50IjoiQWN0aW5nIiwibmFtZSI6\nIkphc29uIFdhdWVyIiwicGxhY2Vfb2ZfYmlydGgiOm51bGwsInBvcHVsYXJp\ndHkiOjAuMDE0MywicHJvZmlsZV9wYXRoIjpudWxsfQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "d0c9821e8a8745baa7ec47c7e84c9096"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 015da43fe736d821483283d1edd6578c.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "omVIk1zGZ9IO-ilKxQAKerXWNHSgIs4sohleGRwXmbVfR7RqloiBdg=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "d0c9821e8a8745baa7ec47c7e84c9096"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 684924ebdafe5d7440f0d3505508c846.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "uHmCzEMGyFOmq0Mhz15lJm1T3-CdNDn40iKIrzUUoyP_QU3ULcROlA=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "d0c9821e8a8745baa7ec47c7e84c9096"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 40c02fa738be015864080761fca661f6.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "dPzHiC54VdDbzDSgn5__0Q_o_43OgjpJtbdl-eSffWVgpdYHdVAHBg=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "d0c9821e8a8745baa7ec47c7e84c9096"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 40c02fa738be015864080761fca661f6.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "A5OReLOtE4ARwQ2YeBzWFAFOcslS9j8Tt0Y5azG7YBiW4lA2wQrXIA=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    },
+    {
+      "request": {
+        "method": "get",
+        "uri": "https://api.themoviedb.org/3/person/99999?api_key=<TMDB_API_KEY>",
+        "body": {
+          "encoding": "US-ASCII",
+          "base64_string": ""
+        },
+        "headers": {
+          "Accept-Encoding": [
+            "gzip;q=1.0,deflate;q=0.6,identity;q=0.3"
+          ],
+          "Accept": [
+            "application/json"
+          ],
+          "User-Agent": [
+            "ActorSync/1.0"
+          ]
+        }
+      },
+      "response": {
+        "status": {
+          "code": 404,
+          "message": "Not Found"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json;charset=utf-8"
+          ],
+          "Transfer-Encoding": [
+            "chunked"
+          ],
+          "Connection": [
+            "keep-alive"
+          ],
+          "Date": [
+            "Tue, 15 Jul 2025 19:09:51 GMT"
+          ],
+          "Server": [
+            "openresty"
+          ],
+          "X-Az": [
+            "us-east-1b"
+          ],
+          "X-Task-Id": [
+            "d0c9821e8a8745baa7ec47c7e84c9096"
+          ],
+          "Vary": [
+            "Origin",
+            "accept-encoding"
+          ],
+          "X-Cache": [
+            "Error from cloudfront"
+          ],
+          "Via": [
+            "1.1 bfd49bf523c81f536763bdb558e5f014.cloudfront.net (CloudFront)"
+          ],
+          "X-Amz-Cf-Pop": [
+            "LHR50-P2"
+          ],
+          "Alt-Svc": [
+            "h3=\":443\"; ma=86400"
+          ],
+          "X-Amz-Cf-Id": [
+            "N8DVjryqS5daKqh3EmN8Ts2jjplpMCN-Nz_j1xrFp7TPBb_gMIyxpw=="
+          ]
+        },
+        "body": {
+          "encoding": "ASCII-8BIT",
+          "base64_string": "eyJzdWNjZXNzIjpmYWxzZSwic3RhdHVzX2NvZGUiOjM0LCJzdGF0dXNfbWVz\nc2FnZSI6IlRoZSByZXNvdXJjZSB5b3UgcmVxdWVzdGVkIGNvdWxkIG5vdCBi\nZSBmb3VuZC4ifQ==\n"
+        }
+      },
+      "recorded_at": "Tue, 15 Jul 2025 19:09:51 GMT"
+    }
+  ],
+  "recorded_with": "VCR 6.3.1"
+}

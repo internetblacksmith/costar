@@ -2,7 +2,7 @@
 
 require "spec_helper"
 require "capybara/rspec"
-require "axe/rspec"
+require "axe-rspec"
 
 RSpec.describe "Accessibility", type: :feature, js: true do
   before do

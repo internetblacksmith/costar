@@ -106,8 +106,8 @@ jobs:
     
     - name: Run Brakeman Security Scan
       run: |
-        bundle exec brakeman -f json -o tmp/brakeman.json
-        bundle exec brakeman -f text
+        bundle exec brakeman -f json -o tmp/brakeman.json --force
+        bundle exec brakeman -f text --force
     
     - name: Upload Brakeman Results
       uses: actions/upload-artifact@v4

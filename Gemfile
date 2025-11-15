@@ -19,16 +19,21 @@ gem "dotenv", "3.1.8" # Environment variable loading (fallback)
 gem "json", "2.12.2" # JSON parsing
 gem "logger", "1.7.0" # Logging (Ruby 3.5+ compatibility)
 gem "net-http", "0.6.0" # HTTP client
+gem "nokogiri", ">= 1.18.9" # XML parsing (security fix for libxml2 CVEs)
 gem "ostruct", "0.6.2" # OpenStruct (Ruby 3.5+ compatibility)
 gem "puma", "6.6.0" # Web server
+gem "rack", ">= 3.1.17" # Web server framework (security fixes for CVE-2025-61770, CVE-2025-61771, CVE-2025-61772, CVE-2025-61919)
 gem "rack-attack", "6.7.0" # Rate limiting and security
 gem "rack-ssl", "1.4.1" # HTTPS enforcement
 gem "rackup", "2.2.1" # Rack server command
 gem "redis", "5.4.0" # Redis client
 gem "retries", "0.0.5" # Exponential backoff retries
+gem "rexml", ">= 3.4.2" # XML parsing (security fix for CVE-2025-58767)
 gem "sentry-ruby", "5.26.0" # Error tracking and monitoring
-gem "sinatra", "4.1.1" # Web framework
-gem "sinatra-contrib", "4.1.1" # Sinatra extensions
+gem "sinatra", ">= 4.2.0" # Web framework (security fix for CVE-2025-61921)
+gem "sinatra-contrib", ">= 4.2.0" # Sinatra extensions
+gem "thor", ">= 1.4.0" # CLI framework (security fix for CVE-2025-54314)
+gem "uri", ">= 1.0.4" # URI parsing (security fix for CVE-2025-61594)
 
 group :development do
   gem "brakeman", "6.2.2" # Security scanner

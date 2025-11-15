@@ -135,11 +135,5 @@ end
 Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
 # Load accessibility testing if running accessibility specs
-# Suppress axe-matchers gem warnings (known issue: method redefinitions)
-# See: https://github.com/dequelabs/axe-core-gems/issues/
-if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }
-  old_verbose = $VERBOSE
-  $VERBOSE = nil
-  require "axe/rspec"
-  $VERBOSE = old_verbose
-end
+# Using axe-core-rspec (maintained by Deque Systems - actively developed)
+require "axe-core-rspec" if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }

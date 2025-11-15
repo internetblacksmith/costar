@@ -19,9 +19,15 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.3)
-    axe-matchers (2.6.1)
-      dumb_delegator (~> 0.8)
-      virtus (~> 1.0)
+    axe-core-api (4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
+    axe-core-rspec (4.11.0)
+      axe-core-api (= 4.11.0)
+      dumb_delegator
+      ostruct
+      virtus
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -295,7 +301,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (= 7.1.5.1)
-  axe-matchers (= 2.6.1)
+  axe-core-rspec (= 4.11.0)
   brakeman (= 6.2.2)
   bundle-audit (= 0.1.0)
   capybara (= 3.40.0)

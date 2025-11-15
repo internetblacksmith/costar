@@ -24,14 +24,14 @@ ENV["TMDB_API_KEY"] = "test_api_key_for_vcr" unless ENV["TMDB_API_KEY"]
 unless ENV["REDIS_URL"]
   begin
     require "redis"
-    redis = Redis.new(url: "redis://localhost:6379")
+    redis = Redis.new(url: "redis://localhost:6379", connect_timeout: 1)
     redis.ping
     ENV["REDIS_URL"] = "redis://localhost:6379"
     puts "✅ Auto-detected Redis at localhost:6379 for testing"
     redis.close
   rescue StandardError
-    # Redis not available, tests will use memory cache
-    puts "⚠️  Redis not available - using memory cache for tests"
+    # Redis not available, tests will use memory cache (suppress verbose output)
+    ENV["REDIS_URL"] ||= nil
   end
 end
 
@@ -135,4 +135,11 @@ end
 Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
 # Load accessibility testing if running accessibility specs
-require "axe/rspec" if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }
+# Suppress axe-matchers gem warnings (known issue: method redefinitions)
+# See: https://github.com/dequelabs/axe-core-gems/issues/
+if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }
+  old_verbose = $VERBOSE
+  $VERBOSE = nil
+  require "axe/rspec"
+  $VERBOSE = old_verbose
+end

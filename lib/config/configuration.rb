@@ -45,8 +45,12 @@ class Configuration
     # Only setup environment loading if not in production (where env vars are set by platform)
     return if production?
 
-    # Load from .env file in development
-    load_from_dotenv
+    # Load from .env file in development (suppress in test)
+    load_from_dotenv unless test?
+  end
+
+  def test?
+    ENV.fetch("RACK_ENV", "development") == "test"
   end
 
   def load_from_dotenv
@@ -126,6 +130,9 @@ class Configuration
   end
 
   def print_validation_results(errors, warnings)
+    # Suppress all output in test environment
+    return if test?
+
     print_errors(errors) unless errors.empty?
     print_warnings(warnings) unless warnings.empty?
     print_success_message if errors.empty? && warnings.empty?

@@ -8,6 +8,7 @@ require_relative "../dto/comparison_result_dto"
 # Service for comparing actors and building timeline data
 class ActorComparisonService
   include ErrorHandlerModule
+
   def initialize(tmdb_service: nil, timeline_builder: nil, cache: nil)
     @tmdb_service = tmdb_service || TMDBService.new
     @timeline_builder = timeline_builder # TimelineBuilder is created per comparison

@@ -15,7 +15,7 @@ on:
           - staging
 
 env:
-  RUBY_VERSION: 3.4.2
+  RUBY_VERSION: 3.4.6
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 

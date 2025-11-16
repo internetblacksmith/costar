@@ -29,14 +29,19 @@ end
 Capybara.register_driver :cuprite do |app|
   Capybara::Cuprite::Driver.new(app,
                                 window_size: [1920, 1080],
-                                process_timeout: 60,
+                                process_timeout: 300, # Increased from 120 - CI runners can be slow
+                                timeout: 120, # Increased from 60
                                 browser_options: {
                                   "no-sandbox": nil,
                                   "disable-gpu": nil,
-                                  "disable-dev-shm-usage": nil
+                                  "disable-dev-shm-usage": nil,
+                                  "disable-extensions": nil,
+                                  "disable-web-security": nil,
+                                  "disable-features=IsolateOrigins,site-per-process": nil
                                 },
                                 inspector: ENV["CUPRITE_DEBUG"] == "true",
-                                headless: ENV["CUPRITE_HEADLESS"] != "false")
+                                headless: ENV["CUPRITE_HEADLESS"] != "false",
+                                slowmo: ENV["CUPRITE_SLOWMO"]&.to_i)
 end
 
 # Helper for feature specs

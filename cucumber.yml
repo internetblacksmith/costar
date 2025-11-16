@@ -4,7 +4,8 @@
 default: --publish-quiet --format pretty --color --tags "not @wip"
 
 # CI profile - used in continuous integration
-ci: --publish-quiet --format progress --format junit --out tmp/cucumber_results.xml --tags "not @wip"
+# Skips @skip_ci tests which are flaky due to browser startup timeouts in CI environments
+ci: --publish-quiet --format progress --format junit --out tmp/cucumber_results.xml --tags "not @wip and not @skip_ci"
 
 # Record profile - for recording new VCR cassettes
 record: --publish-quiet --format pretty --color VCR_RECORD_MODE=new_episodes

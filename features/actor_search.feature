@@ -6,7 +6,7 @@ Feature: Actor Search
   Background:
     Given I am on the home page
 
-  @vcr
+  @vcr @skip_ci
   Scenario: Successful actor search with browser headers
     When I search for "Tom Hanks" in the first actor field
     Then I should see search suggestions

@@ -86,13 +86,70 @@ doppler token create github-actions
 # Or view at: https://dashboard.doppler.com/workplace/default/tokens
 ```
 
-#### `SLACK_WEBHOOK_URL` (Optional - for notifications)
-```bash
-# Go to https://api.slack.com/apps
-# Create or select an app
-# Enable Incoming Webhooks
-# Create webhook for your channel
+#### `SLACK_WEBHOOK_URL` (Optional - for CI/CD notifications)
+
+To receive Slack notifications for CI/CD events (tests, builds, deployments), set up a Slack app:
+
+**Step 1: Create Slack App from Manifest**
+
+1. Go to: https://api.slack.com/apps
+2. Click **"Create New App"**
+3. Select **"From an app manifest"**
+4. Choose your workspace
+5. Copy and paste this JSON manifest:
+
+```json
+{
+  "display_information": {
+    "name": "CI/CD Notifications",
+    "description": "Receives GitHub Actions notifications for CI/CD pipelines",
+    "background_color": "#000000"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "CI/CD Bot",
+      "always_online": true
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "chat:write",
+        "chat:write.public"
+      ]
+    }
+  },
+  "settings": {
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}
 ```
+
+6. Click **"Create"**
+
+**Step 2: Add Incoming Webhook**
+
+1. In your new app, go to **"Incoming Webhooks"** (left sidebar)
+2. Click **"Add New Webhook to Workspace"**
+3. Select the channel where you want notifications (e.g., `#deployments` or `#ci-cd`)
+4. Click **"Allow"**
+5. Copy the **Webhook URL** (looks like: `https://hooks.slack.com/services/...`)
+
+**Step 3: Add to GitHub Secrets**
+
+1. Go to: **GitHub Repo > Settings > Secrets and variables > Actions**
+2. Click **"New repository secret"**
+3. Name: `SLACK_WEBHOOK_URL`
+4. Value: Paste the webhook URL from Step 2
+5. Click **"Add secret"**
+
+**What you'll receive in Slack:**
+- ✅ Deployment success notifications
+- ❌ Deployment failure alerts
+- 🔗 Direct links to GitHub Actions runs
+- 📊 Commit, branch, and repository info
 
 ### Step 3: Create GitHub Environment
 

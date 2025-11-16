@@ -34,9 +34,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl gnupg bash ca-certificates && \
-    curl -Ls --tlsv1.2 --proto "=https" --retry 3 \
-      https://cli.doppler.com/install.sh | bash && \
+    apt-get install --no-install-recommends -y curl bash ca-certificates && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
@@ -54,5 +52,7 @@ USER ruby:ruby
 ENTRYPOINT ["/app/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
+# Note: Secrets are injected as environment variables during deployment via Kamal/Doppler
+# They are available in the container environment, not fetched at runtime
 EXPOSE 4567
-CMD ["doppler", "run", "--", "bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

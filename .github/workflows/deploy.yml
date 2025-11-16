@@ -125,11 +125,9 @@ jobs:
       - name: Install Kamal
         run: gem install kamal
 
-      - name: Fetch secrets from Doppler
-        uses: dopplerhq/secrets-fetch-action@v1.3.0
-        with:
-          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-          doppler-config: prd
+      - name: Install Doppler CLI
+        run: |
+          curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
 
       - name: Setup SSH
         run: |
@@ -140,13 +138,8 @@ jobs:
 
       - name: Deploy to production
         env:
-          KAMAL_REGISTRY_PASSWORD: ${{ env.KAMAL_REGISTRY_PASSWORD }}
-          TMDB_API_KEY: ${{ env.TMDB_API_KEY }}
-          REDIS_URL: ${{ env.REDIS_URL }}
-          SENTRY_DSN: ${{ env.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: ${{ env.SENTRY_ENVIRONMENT }}
-          SESSION_SECRET: ${{ env.SESSION_SECRET }}
-        run: kamal deploy
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: doppler run --config prd -- kamal deploy
 
       - name: Check deployment status
         if: success()

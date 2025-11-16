@@ -12,6 +12,7 @@ require_relative "../dto/search_results_dto"
 # High-level service for interacting with The Movie Database API
 class TMDBService
   include ErrorHandlerModule
+
   def initialize(client: nil, cache: nil, throttler: nil)
     @client = client || ResilientTMDBClient.new
     @cache_manager = cache || CacheManager.new

@@ -5,6 +5,7 @@ require_relative "cdn_optimizers"
 # CDN configuration and asset URL helpers
 class CDNConfig
   extend CDNOptimizers
+
   class << self
     def enabled?
       !cdn_base_url.nil? && !cdn_base_url.empty?

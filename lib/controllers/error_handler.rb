@@ -12,6 +12,7 @@ module ErrorHandler
 
   module ClassMethods
     include ErrorHandlerTMDB
+
     def setup_error_handlers
       setup_api_error_handler
       setup_validation_error_handler

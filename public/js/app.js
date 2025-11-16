@@ -16,28 +16,26 @@ class App {
     }
 
     initializeApp() {
-        try {
-            // Auto-initialize all MDC components
-            if (typeof mdc !== 'undefined') {
-                mdc.autoInit();
-            }
-            
-            // Initialize modules
-            this.actorSearch = new ActorSearch();
-            this.scrollToTop = new ScrollToTop();
-            
-            // Make actor search available globally for onclick handlers
-            window.actorSearch = this.actorSearch;
-            
-            console.log('MovieTogether app initialized successfully');
-        } catch (error) {
-            console.error('Error initializing app:', error);
-            // Report initialization errors
-            if (window.ErrorReporter) {
-                ErrorReporter.report(error, { phase: 'initialization' });
-            }
-        }
-    }
+         try {
+             // Auto-initialize all MDC components
+             if (typeof mdc !== 'undefined') {
+                 mdc.autoInit();
+             }
+             
+             // Initialize modules
+             this.actorSearch = new ActorSearch();
+             this.scrollToTop = new ScrollToTop();
+             
+             // Make actor search available globally for onclick handlers
+             window.actorSearch = this.actorSearch;
+         } catch (error) {
+             console.error('Error initializing app:', error);
+             // Report initialization errors
+             if (window.ErrorReporter) {
+                 ErrorReporter.report(error, { phase: 'initialization' });
+             }
+         }
+     }
 }
 
 // Global functions for backward compatibility with ERB templates

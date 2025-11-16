@@ -37,11 +37,8 @@ class SnackbarModule {
         }
         
         if (this.snackbar) {
-            this.snackbar.open();
-        } else {
-            // Fallback to console if snackbar is not available
-            console.log('Notification:', message);
-        }
+             this.snackbar.open();
+         }
     }
 }
 

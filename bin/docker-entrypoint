@@ -1,11 +1,7 @@
 #!/bin/bash -e
 
 # Docker entrypoint for MovieTogether
-# Handles initialization before starting the application
-
-# If running the app server
-if [ "${1}" == "doppler" ] && [ "${2}" == "run" ]; then
-  echo "Starting MovieTogether with Doppler secrets..."
-fi
+# Secrets are injected as environment variables by Kamal at container startup
+# No runtime secret fetching needed
 
 exec "${@}"

@@ -65,7 +65,7 @@ class InputSanitizer
 
     # Remove potentially dangerous characters but allow international names
     # Allow: letters (any language), numbers, spaces, apostrophes, hyphens, periods
-    cleaned = sanitized.gsub(/[^\p{L}\p{N}\s'-.]/, "").strip
+    cleaned = sanitized.gsub(/[^\p{L}\p{N}\s.'-]/, "").strip
     cleaned.empty? ? nil : cleaned
   end
 
@@ -87,7 +87,7 @@ class InputSanitizer
     return nil if sanitized.length > max_name_length
 
     # Allow: letters, numbers, spaces, apostrophes, hyphens, periods, parentheses
-    cleaned = sanitized.gsub(/[^\p{L}\p{N}\s'-.()]/, "").strip
+    cleaned = sanitized.gsub(/[^\p{L}\p{N}\s.()'-]/, "").strip
     cleaned.empty? ? nil : cleaned
   end
 

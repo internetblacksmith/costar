@@ -36,8 +36,7 @@ servers:
 registry:
   server: ghcr.io
   username: jabawack81
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  password: $KAMAL_REGISTRY_PASSWORD
 
 # Builder configuration
 builder:

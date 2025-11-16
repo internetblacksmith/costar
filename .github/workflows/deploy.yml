@@ -135,6 +135,12 @@ jobs:
       - name: Deploy to production
         env:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          # Secrets synced from Doppler via GitHub integration
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: ${{ secrets.SENTRY_ENVIRONMENT }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         run: kamal deploy
 
       - name: Check deployment status

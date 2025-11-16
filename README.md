@@ -60,6 +60,17 @@ A production-ready web application that visualizes actor filmographies in a time
 
 5. **Open in Browser**: `http://localhost:4567`
 
+6. **Install Git Hooks** (recommended for local development):
+   ```bash
+   bin/setup-git-hooks
+   ```
+   This installs pre-commit hooks that automatically run:
+   - RuboCop (code style linting)
+   - RSpec tests (487 unit tests)
+   - Cucumber tests (7 integration tests)
+   - Brakeman (security scanning)
+   - bundle-audit (dependency vulnerability scanning)
+
 ## Architecture
 
 ActorSync features a resilient, production-ready architecture:

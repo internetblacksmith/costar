@@ -1,0 +1,46 @@
+#!/bin/bash
+# Setup Git Hooks
+# This script installs local git hooks for pre-commit checks
+# Run this after cloning or checking out the repository
+
+set -e
+
+echo "🔧 Installing Git Hooks..."
+echo ""
+
+# Determine the git directory (handles both normal repos and worktrees)
+if [ -f .git ]; then
+  # Worktree - .git is a file pointing to the real git directory
+  git_dir=$(grep "^gitdir: " .git | cut -d' ' -f2)
+else
+  # Normal repository
+  git_dir=".git"
+fi
+
+hooks_dir="$git_dir/hooks"
+
+# Create hooks directory if it doesn't exist
+mkdir -p "$hooks_dir"
+
+# Install pre-commit hook
+if [ -f .git-hooks/pre-commit ]; then
+  cp .git-hooks/pre-commit "$hooks_dir/pre-commit"
+  chmod +x "$hooks_dir/pre-commit"
+  echo "✅ Pre-commit hook installed"
+else
+  echo "❌ .git-hooks/pre-commit not found"
+  exit 1
+fi
+
+echo ""
+echo "🎉 Git hooks installed successfully!"
+echo ""
+echo "Hooks will now run automatically before each commit."
+echo "Checks include:"
+echo "  - RuboCop (code style linting)"
+echo "  - RSpec tests (487 unit tests)"
+echo "  - Cucumber tests (7 integration tests)"
+echo "  - Brakeman (security scanning)"
+echo "  - bundle-audit (dependency vulnerability scanning)"
+echo ""
+echo "To bypass hooks (not recommended), use: git commit --no-verify"

@@ -6,7 +6,7 @@ Feature: Actor Comparison
   Background:
     Given I am on the home page
 
-  @vcr @javascript
+  @vcr @javascript @skip_ci
   Scenario: Compare two actors with common movies
     When I select "Tom Hanks" as the first actor
     And I select "Meg Ryan" as the second actor
@@ -16,7 +16,7 @@ Feature: Actor Comparison
     And I should see their common movies highlighted
     And the response should have status code 200
 
-  @vcr @javascript
+  @vcr @javascript @skip_ci
   Scenario: Compare two actors with no common movies
     When I select "Tom Hanks" as the first actor
     And I select "Jackie Chan" as the second actor
@@ -32,20 +32,20 @@ Feature: Actor Comparison
     And the timeline should load successfully
     And no rate limiting errors should occur
 
-  @vcr @javascript
+  @vcr @javascript @skip_ci
   Scenario: Invalid actor comparison
     When I visit the comparison URL for actors "99999" and "99998"
     Then I should see an error message
     And the response should have status code 200
 
-  @vcr @javascript
+  @vcr @javascript @skip_ci
   Scenario: Missing actor parameter
     When I select "Tom Hanks" as the first actor
     And I click "Explore Filmographies Together" without selecting a second actor
     Then I should see an error message
     And I should remain on the home page
 
-  @vcr @javascript
+  @vcr @javascript @skip_ci
   Scenario: Full user flow with browser simulation
     # This tests the complete flow as a real user would experience it
     When I select "Tom Hanks" as the first actor

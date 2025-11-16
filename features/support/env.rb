@@ -20,6 +20,7 @@ Capybara.app = MovieTogetherApp
 Capybara.server = :puma
 Capybara.server_port = 45_670
 Capybara.app_host = "http://localhost:45670"
+Capybara.default_max_wait_time = 10 # Increased from default 2 seconds for slow CI
 
 # Load Cuprite for JavaScript support
 require "capybara/cuprite"
@@ -30,6 +31,8 @@ Capybara.register_driver :cuprite do |app|
                                 headless: true,
                                 window_size: [1200, 800],
                                 browser_path: "/usr/bin/chromium",
+                                process_timeout: 300, # Increased timeout for slow CI runners
+                                timeout: 120, # Increased timeout for slow CI runners
                                 browser_options: {
                                   "no-sandbox": nil,
                                   "disable-dev-shm-usage": nil,
@@ -39,8 +42,7 @@ Capybara.register_driver :cuprite do |app|
                                 headers: {
                                   "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
                                   "Accept-Language" => "en-US,en;q=0.9"
-                                },
-                                timeout: 30)
+                                })
 end
 
 # Configure RackTest driver for non-JS tests (with browser headers)

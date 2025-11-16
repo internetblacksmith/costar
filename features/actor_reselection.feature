@@ -6,8 +6,8 @@ Feature: Actor Reselection
   Background:
     Given I am on the home page
 
-  @vcr @javascript @skip_ci
-  Scenario: Changing actor selection after initial choice
+   @vcr @javascript
+   Scenario: Changing actor selection after initial choice
     # First selection using existing steps
     When I select "Tom Hanks" as the first actor
     Then the "actor1" field should contain "Tom Hanks"

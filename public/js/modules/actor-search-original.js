@@ -41,8 +41,7 @@ class ActorSearch {
     }
 
     handleCompareStart(event) {
-        console.log('Starting request - showing loading in timeline');
-        const results = document.getElementById('results');
+         const results = document.getElementById('results');
         const timeline = document.getElementById('timeline');
         
         // Show results section and inject loading content immediately
@@ -74,8 +73,7 @@ class ActorSearch {
     }
 
     handleCompareComplete(event) {
-        console.log('Re-enabling button after request');
-        event.target.disabled = false;
+         event.target.disabled = false;
         
         // Track successful comparison only if request was successful
         if (event.detail.successful && typeof posthog !== 'undefined') {
@@ -89,8 +87,7 @@ class ActorSearch {
     }
 
     handleCompareError(event) {
-        console.log('Re-enabling button on error');
-        event.target.disabled = false;
+         event.target.disabled = false;
     }
 
     handleSearchInput(inputElement) {
@@ -242,11 +239,10 @@ class ActorSearch {
         const hasActor1Id = urlParams.has('actor1_id');
         const hasActor2Id = urlParams.has('actor2_id');
         
-        // Don't clear fields if we're loading from a share link
-        if (hasActor1Id && hasActor2Id) {
-            console.log('Preserving pre-populated fields from share link');
-            return;
-        }
+         // Don't clear fields if we're loading from a share link
+         if (hasActor1Id && hasActor2Id) {
+             return;
+         }
         
         // Clear all input fields on page load to ensure clean state
         ['actor1', 'actor2'].forEach(field => {

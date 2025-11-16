@@ -26,46 +26,40 @@ class ActorSearch {
     }
 
     initializeFields() {
-        // Don't clear fields if loading from share link
-        if (!FieldManager.isShareLink()) {
-            FieldManager.clearAllFields();
-        } else {
-            console.log('Preserving pre-populated fields from share link');
-        }
-    }
+         // Don't clear fields if loading from share link
+         if (!FieldManager.isShareLink()) {
+             FieldManager.clearAllFields();
+         }
+     }
 
     handleCompareStart(event) {
-        console.log('Starting request - showing loading in timeline');
-        
-        // Show results section
-        DOMManager.addClass('results', 'show');
-        
-        // Show loading indicator
-        DOMManager.setHTML('timeline', DOMManager.createLoadingHTML());
-        
-        // Initialize MDC components
-        DOMManager.initializeMDC(DOMManager.getElement('timeline'));
-        
-        // Disable button
-        event.target.disabled = true;
-    }
+         // Show results section
+         DOMManager.addClass('results', 'show');
+         
+         // Show loading indicator
+         DOMManager.setHTML('timeline', DOMManager.createLoadingHTML());
+         
+         // Initialize MDC components
+         DOMManager.initializeMDC(DOMManager.getElement('timeline'));
+         
+         // Disable button
+         event.target.disabled = true;
+     }
 
     handleCompareComplete(event) {
-        console.log('Re-enabling button after request');
-        event.target.disabled = false;
-        
-        // Track successful comparison
-        if (event.detail.successful) {
-            const actor1 = FieldManager.getActorValues('actor1');
-            const actor2 = FieldManager.getActorValues('actor2');
-            AnalyticsTracker.trackComparisonCompleted(actor1.name, actor2.name);
-        }
-    }
+         event.target.disabled = false;
+         
+         // Track successful comparison
+         if (event.detail.successful) {
+             const actor1 = FieldManager.getActorValues('actor1');
+             const actor2 = FieldManager.getActorValues('actor2');
+             AnalyticsTracker.trackComparisonCompleted(actor1.name, actor2.name);
+         }
+     }
 
     handleCompareError(event) {
-        console.log('Re-enabling button on error');
-        event.target.disabled = false;
-    }
+         event.target.disabled = false;
+     }
 
     handleSearchInput(inputElement) {
         const field = inputElement.id;

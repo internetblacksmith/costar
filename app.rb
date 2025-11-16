@@ -219,7 +219,7 @@ class MovieTogetherApp < Sinatra::Base
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com", # Allow CSS imports and external styles
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' https://image.tmdb.org data:", # TMDB images
-      "connect-src 'self' https://api.themoviedb.org https://*.posthog.com https://*.sentry.io", # API calls + analytics
+      "connect-src 'self' https://api.themoviedb.org https://*.posthog.com https://*.sentry.io https://browser.sentry-cdn.com https://unpkg.com", # API calls + analytics + source maps
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'"

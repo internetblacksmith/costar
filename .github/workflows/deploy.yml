@@ -105,48 +105,48 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-   deploy:
-     name: Deploy with Kamal
-     needs: build
-     runs-on: ubuntu-latest
-     environment: production
-     permissions:
-       contents: read
- 
-     steps:
-       - uses: actions/checkout@v4
- 
-       - name: Set up Ruby
-         uses: ruby/setup-ruby@v1
-         with:
-           ruby-version: ${{ env.RUBY_VERSION }}
-           bundler-cache: true
- 
-       - name: Install Kamal
-         run: gem install kamal
- 
-       - name: Fetch secrets from Doppler
-         uses: dopplerhq/secrets-fetch-action@v1.3.0
-         with:
-           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-           doppler-config: prd
- 
-       - name: Setup SSH
-         run: |
-           mkdir -p ~/.ssh
-           echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-           chmod 600 ~/.ssh/id_ed25519
-           ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
- 
-       - name: Deploy to production
-         env:
-           KAMAL_REGISTRY_PASSWORD: ${{ env.KAMAL_REGISTRY_PASSWORD }}
-           TMDB_API_KEY: ${{ env.TMDB_API_KEY }}
-           REDIS_URL: ${{ env.REDIS_URL }}
-           SENTRY_DSN: ${{ env.SENTRY_DSN }}
-           SENTRY_ENVIRONMENT: ${{ env.SENTRY_ENVIRONMENT }}
-           SESSION_SECRET: ${{ env.SESSION_SECRET }}
-         run: kamal deploy
+  deploy:
+    name: Deploy with Kamal
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Install Kamal
+        run: gem install kamal
+
+      - name: Fetch secrets from Doppler
+        uses: dopplerhq/secrets-fetch-action@v1.3.0
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          doppler-config: prd
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
+
+      - name: Deploy to production
+        env:
+          KAMAL_REGISTRY_PASSWORD: ${{ env.KAMAL_REGISTRY_PASSWORD }}
+          TMDB_API_KEY: ${{ env.TMDB_API_KEY }}
+          REDIS_URL: ${{ env.REDIS_URL }}
+          SENTRY_DSN: ${{ env.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: ${{ env.SENTRY_ENVIRONMENT }}
+          SESSION_SECRET: ${{ env.SESSION_SECRET }}
+        run: kamal deploy
 
       - name: Check deployment status
         if: success()

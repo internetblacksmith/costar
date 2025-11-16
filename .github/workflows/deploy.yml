@@ -133,7 +133,7 @@ jobs:
           ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
 
       - name: Fetch Doppler Secrets
-        uses: dopplerhq/secrets-fetch-action@v2
+        uses: dopplerhq/secrets-fetch-action@v1.3.0
         with:
           doppler-token: ${{ secrets.DOPPLER_TOKEN }}
           doppler-project: movie_together

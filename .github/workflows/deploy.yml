@@ -125,10 +125,6 @@ jobs:
       - name: Install Kamal
         run: gem install kamal
 
-      - name: Install Doppler CLI
-        run: |
-          curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
-
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -138,8 +134,13 @@ jobs:
 
       - name: Deploy to production
         env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-        run: doppler run --config prd -- kamal deploy
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT: ${{ secrets.SENTRY_ENVIRONMENT }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        run: kamal deploy
 
       - name: Check deployment status
         if: success()

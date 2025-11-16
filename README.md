@@ -1,6 +1,7 @@
 # 🎬 MovieTogether
 
-[![CI](https://github.com/YOUR_USERNAME/movie_together/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/movie_together/actions/workflows/ci.yml)
+[![CI](https://github.com/jabawack81/movie_together/actions/workflows/ci.yml/badge.svg)](https://github.com/jabawack81/movie_together/actions/workflows/ci.yml)
+[![Deploy](https://github.com/jabawack81/movie_together/actions/workflows/deploy.yml/badge.svg)](https://github.com/jabawack81/movie_together/actions/workflows/deploy.yml)
 [![Ruby](https://img.shields.io/badge/ruby-3.4.2-red.svg)](https://www.ruby-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -248,13 +249,32 @@ bundle exec ruby app.rb
 
 ## Production Deployment
 
-ActorSync is production-ready with:
+MovieTogether is production-ready with automated CI/CD pipeline:
+
+### Automated Deployment Pipeline (GitHub Actions + Kamal)
+
+The application features a complete CI/CD workflow that:
+
+1. **Continuous Integration** - Every push/PR
+   - Runs 487+ RSpec unit & integration tests
+   - Runs 7 Cucumber end-to-end tests
+   - Security scans (Brakeman, Bundle Audit)
+   - RuboCop code quality checks
+
+2. **Continuous Deployment** - On merge to main
+   - Builds Docker image and pushes to GitHub Container Registry
+   - Deploys via Kamal to DigitalOcean VPS
+   - Requires manual approval (GitHub Environment)
+   - Auto-rollback on deployment failure
+   - Slack notifications
+
+See `CI_CD_SETUP.md` for complete setup and `DEPLOYMENT.md` for detailed instructions.
 
 ### Infrastructure Requirements
 - **Ruby 3.0+** runtime
 - **Redis** for caching and rate limiting
-- **Reverse proxy** (nginx recommended) for HTTPS termination
-- **Process manager** (systemd/Docker recommended)
+- **Reverse proxy** (Traefik) for HTTPS termination and routing
+- **Docker** for containerization
 
 ### Environment Variables
 ```bash
@@ -267,17 +287,11 @@ SENTRY_DSN=your_sentry_dsn
 REDIS_URL=redis://localhost:6379
 REDIS_POOL_SIZE=15
 ALLOWED_ORIGINS=https://yourdomain.com
+SESSION_SECRET=your_session_secret
 
 # Optional
 CDN_BASE_URL=https://cdn.yourdomain.com
 CDN_PROVIDER=cloudflare
-```
-
-### Quick Deploy to Render.com
-```bash
-# Render.com deployment is pre-configured
-git push origin main
-# Update environment variables in Render dashboard
 ```
 
 See `DEPLOYMENT.md` for detailed production setup instructions.

@@ -54,6 +54,7 @@ env:
     - REDIS_URL
     - SENTRY_DSN
     - SENTRY_ENVIRONMENT
+    - SESSION_SECRET
 
 # Redis accessory for caching
 accessories:

@@ -125,11 +125,6 @@ jobs:
       - name: Install Kamal
         run: gem install kamal
 
-      - name: Install Doppler CLI
-        run: |
-          curl -Ls https://cli.doppler.com/install.sh | sh
-          doppler --version
-
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -137,12 +132,18 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
 
+      - name: Fetch Doppler Secrets
+        uses: dopplerhq/secrets-fetch-action@v2
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          doppler-project: movie_together
+          doppler-config: prd
+          inject-env-vars: true
+
       - name: Deploy to production
         env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-        run: |
-          export KAMAL_REGISTRY_PASSWORD="${{ secrets.GITHUB_TOKEN }}"
-          doppler run --project movie_together --config prd --command='bash -c "export KAMAL_REGISTRY_PASSWORD && kamal deploy"'
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: kamal deploy
 
       - name: Check deployment status
         if: success()

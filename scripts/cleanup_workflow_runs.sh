@@ -2,7 +2,7 @@
 # GitHub Actions Workflow Runs Cleanup Script
 # Deletes failed and cancelled workflow runs from the repository
 
-set -e  # Exit on error
+set -e  # Exit on error (disabled during deletion loop)
 
 # Colors for output
 RED='\033[0;31m'
@@ -118,6 +118,9 @@ echo ""
 echo -e "${BLUE}Deleting workflow runs...${NC}"
 echo ""
 
+# Temporarily disable exit-on-error for deletion loop
+set +e
+
 # Delete failed runs
 if [ "$failed_runs" -gt 0 ]; then
     echo -e "${BLUE}Deleting $failed_runs failed runs...${NC}"
@@ -126,9 +129,9 @@ if [ "$failed_runs" -gt 0 ]; then
     for run_id in $(gh run list --status failure --limit 1000 --json databaseId --jq '.[].databaseId'); do
         # gh run delete requires confirmation, so we use printf to send 'y\n'
         if printf 'y\n' | gh run delete "$run_id" >/dev/null 2>&1; then
-            ((deleted_count++))
+            deleted_count=$((deleted_count + 1))
         else
-            ((failed_count++))
+            failed_count=$((failed_count + 1))
         fi
         echo -ne "\r  Progress: $((deleted_count + failed_count))/$failed_runs (deleted: $deleted_count, failed: $failed_count)"
     done
@@ -149,9 +152,9 @@ if [ "$cancelled_runs" -gt 0 ]; then
     for run_id in $(gh run list --status cancelled --limit 1000 --json databaseId --jq '.[].databaseId'); do
         # gh run delete requires confirmation, so we use printf to send 'y\n'
         if printf 'y\n' | gh run delete "$run_id" >/dev/null 2>&1; then
-            ((deleted_count++))
+            deleted_count=$((deleted_count + 1))
         else
-            ((failed_count++))
+            failed_count=$((failed_count + 1))
         fi
         echo -ne "\r  Progress: $((deleted_count + failed_count))/$cancelled_runs (deleted: $deleted_count, failed: $failed_count)"
     done
@@ -163,6 +166,9 @@ if [ "$cancelled_runs" -gt 0 ]; then
     fi
     echo ""
 fi
+
+# Re-enable exit-on-error
+set -e
 
 # Show final summary
 echo ""

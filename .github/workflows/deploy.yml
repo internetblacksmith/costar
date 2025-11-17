@@ -131,17 +131,33 @@ jobs:
           echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
+          
+          # Create SSH config for Kamal
+          cat > ~/.ssh/config <<EOF
+          Host digitalocean
+            HostName 161.35.165.206
+            User deploy
+            Port 1447
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking accept-new
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Create Kamal secrets file
+        run: |
+          mkdir -p .kamal
+          cat > .kamal/secrets <<EOF
+          export KAMAL_REGISTRY_PASSWORD="${{ secrets.KAMAL_REGISTRY_PASSWORD }}"
+          export TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}"
+          export REDIS_URL="${{ vars.REDIS_URL }}"
+          export SENTRY_DSN="${{ secrets.SENTRY_DSN }}"
+          export SENTRY_ENVIRONMENT="${{ vars.SENTRY_ENVIRONMENT }}"
+          export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
+          export POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}"
+          EOF
+          chmod 600 .kamal/secrets
 
       - name: Deploy to production
-        env:
-          KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          REDIS_URL: ${{ vars.REDIS_URL }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: kamal deploy
 
       - name: Check deployment status

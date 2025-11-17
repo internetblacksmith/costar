@@ -125,10 +125,15 @@ jobs:
       - name: Install Kamal
         run: gem install kamal
 
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
       - name: Setup SSH
+        env:
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "$DEPLOY_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
           
@@ -143,22 +148,25 @@ jobs:
           EOF
           chmod 600 ~/.ssh/config
 
-      - name: Create Kamal secrets file
+      - name: Create Kamal secrets file from Doppler
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
         run: |
           mkdir -p .kamal
-          cat > .kamal/secrets <<EOF
-          export KAMAL_REGISTRY_PASSWORD="${{ secrets.KAMAL_REGISTRY_PASSWORD }}"
-          export TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}"
-          export REDIS_URL="${{ vars.REDIS_URL }}"
-          export SENTRY_DSN="${{ secrets.SENTRY_DSN }}"
-          export SENTRY_ENVIRONMENT="${{ vars.SENTRY_ENVIRONMENT }}"
-          export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
-          export POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}"
-          EOF
+          
+          # Fetch secrets from Doppler and create .kamal/secrets file
+          doppler secrets download --no-file --format env-no-quotes > .kamal/secrets
+          
+          # Make it executable
           chmod 600 .kamal/secrets
+          
+          # Prepend 'export ' to each line
+          sed -i 's/^/export /' .kamal/secrets
 
       - name: Deploy to production
-        run: kamal deploy
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: doppler run -- kamal deploy
 
       - name: Check deployment status
         if: success()

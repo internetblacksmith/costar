@@ -54,6 +54,7 @@ env:
     - SENTRY_DSN
     - SENTRY_ENVIRONMENT
     - SESSION_SECRET
+    - POSTHOG_API_KEY
 
 # Redis accessory for caching
 accessories:

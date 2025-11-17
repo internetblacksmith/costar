@@ -122,15 +122,22 @@ echo ""
 if [ "$failed_runs" -gt 0 ]; then
     echo -e "${BLUE}Deleting $failed_runs failed runs...${NC}"
     deleted_count=0
+    failed_count=0
     for run_id in $(gh run list --status failure --limit 1000 --json databaseId --jq '.[].databaseId'); do
-        if gh run delete "$run_id" --yes >/dev/null 2>&1; then
+        # gh run delete requires confirmation, so we use printf to send 'y\n'
+        if printf 'y\n' | gh run delete "$run_id" >/dev/null 2>&1; then
             ((deleted_count++))
-            echo -ne "\r  Deleted: $deleted_count/$failed_runs"
         else
-            echo -e "\n  ${YELLOW}⚠️  Failed to delete run $run_id${NC}"
+            ((failed_count++))
         fi
+        echo -ne "\r  Progress: $((deleted_count + failed_count))/$failed_runs (deleted: $deleted_count, failed: $failed_count)"
     done
-    echo -e "\n${GREEN}✅ Deleted $deleted_count failed runs${NC}"
+    echo ""
+    if [ "$failed_count" -gt 0 ]; then
+        echo -e "${YELLOW}⚠️  Successfully deleted $deleted_count failed runs, $failed_count failed to delete${NC}"
+    else
+        echo -e "${GREEN}✅ Deleted $deleted_count failed runs${NC}"
+    fi
     echo ""
 fi
 
@@ -138,15 +145,22 @@ fi
 if [ "$cancelled_runs" -gt 0 ]; then
     echo -e "${BLUE}Deleting $cancelled_runs cancelled runs...${NC}"
     deleted_count=0
+    failed_count=0
     for run_id in $(gh run list --status cancelled --limit 1000 --json databaseId --jq '.[].databaseId'); do
-        if gh run delete "$run_id" --yes >/dev/null 2>&1; then
+        # gh run delete requires confirmation, so we use printf to send 'y\n'
+        if printf 'y\n' | gh run delete "$run_id" >/dev/null 2>&1; then
             ((deleted_count++))
-            echo -ne "\r  Deleted: $deleted_count/$cancelled_runs"
         else
-            echo -e "\n  ${YELLOW}⚠️  Failed to delete run $run_id${NC}"
+            ((failed_count++))
         fi
+        echo -ne "\r  Progress: $((deleted_count + failed_count))/$cancelled_runs (deleted: $deleted_count, failed: $failed_count)"
     done
-    echo -e "\n${GREEN}✅ Deleted $deleted_count cancelled runs${NC}"
+    echo ""
+    if [ "$failed_count" -gt 0 ]; then
+        echo -e "${YELLOW}⚠️  Successfully deleted $deleted_count cancelled runs, $failed_count failed to delete${NC}"
+    else
+        echo -e "${GREEN}✅ Deleted $deleted_count cancelled runs${NC}"
+    fi
     echo ""
 fi
 

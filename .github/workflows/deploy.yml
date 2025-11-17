@@ -136,10 +136,12 @@ jobs:
         env:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_URL: ${{ vars.REDIS_URL }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: ${{ secrets.SENTRY_ENVIRONMENT }}
+          SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: kamal deploy
 
       - name: Check deployment status

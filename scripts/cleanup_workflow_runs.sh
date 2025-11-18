@@ -96,13 +96,14 @@ echo -e "  Cancelled:      ${YELLOW}$cancelled_runs${NC}"
 echo ""
 
 # Check if there are runs to delete
-if [ "$failed_runs" -eq 0 ] && [ "$cancelled_runs" -eq 0 ]; then
-    echo -e "${GREEN}✅ No failed or cancelled runs to delete!${NC}"
+if [ "$total_runs" -eq 0 ]; then
+    echo -e "${GREEN}✅ No workflow runs to delete!${NC}"
     exit 0
 fi
 
 # Ask for confirmation
-echo -e "${YELLOW}This will delete:${NC}"
+echo -e "${YELLOW}This will delete ALL workflow runs:${NC}"
+echo -e "  - ${GREEN}$success_runs successful runs${NC}"
 echo -e "  - ${RED}$failed_runs failed runs${NC}"
 echo -e "  - ${YELLOW}$cancelled_runs cancelled runs${NC}"
 echo ""
@@ -163,6 +164,29 @@ if [ "$cancelled_runs" -gt 0 ]; then
         echo -e "${YELLOW}⚠️  Successfully deleted $deleted_count cancelled runs, $failed_count failed to delete${NC}"
     else
         echo -e "${GREEN}✅ Deleted $deleted_count cancelled runs${NC}"
+    fi
+    echo ""
+fi
+
+# Delete successful runs
+if [ "$success_runs" -gt 0 ]; then
+    echo -e "${BLUE}Deleting $success_runs successful runs...${NC}"
+    deleted_count=0
+    failed_count=0
+    for run_id in $(gh run list --status success --limit 1000 --json databaseId --jq '.[].databaseId'); do
+        # gh run delete requires confirmation, so we use printf to send 'y\n'
+        if printf 'y\n' | gh run delete "$run_id" >/dev/null 2>&1; then
+            deleted_count=$((deleted_count + 1))
+        else
+            failed_count=$((failed_count + 1))
+        fi
+        echo -ne "\r  Progress: $((deleted_count + failed_count))/$success_runs (deleted: $deleted_count, failed: $failed_count)"
+    done
+    echo ""
+    if [ "$failed_count" -gt 0 ]; then
+        echo -e "${YELLOW}⚠️  Successfully deleted $deleted_count successful runs, $failed_count failed to delete${NC}"
+    else
+        echo -e "${GREEN}✅ Deleted $deleted_count successful runs${NC}"
     fi
     echo ""
 fi

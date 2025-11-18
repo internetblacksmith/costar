@@ -148,17 +148,24 @@ jobs:
       - name: Create Kamal secrets file
         run: |
           mkdir -p .kamal
-          cat > .kamal/secrets <<EOF
-          export KAMAL_REGISTRY_PASSWORD="${{ secrets.KAMAL_REGISTRY_PASSWORD }}"
-          export TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}"
-          export REDIS_URL="${{ vars.REDIS_URL }}"
-          export SENTRY_DSN="${{ secrets.SENTRY_DSN }}"
-          export SENTRY_ENVIRONMENT="${{ vars.SENTRY_ENVIRONMENT }}"
-          export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
-          export POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}"
-          export SLACK_WEBHOOK_URL="${{ secrets.SLACK_WEBHOOK_URL }}"
-          EOF
+          cat > .kamal/secrets <<'KAMAL_EOF'
+          KAMAL_REGISTRY_PASSWORD=${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+          TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
+          REDIS_URL=${{ vars.REDIS_URL }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT=${{ vars.SENTRY_ENVIRONMENT }}
+          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
+          SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
+          KAMAL_EOF
           chmod 600 .kamal/secrets
+          
+          # Debug: Verify secrets file was created with values (show first 10 chars of each)
+          echo "✅ Created .kamal/secrets file"
+          echo "📊 Verifying secret values are populated:"
+          echo "   KAMAL_REGISTRY_PASSWORD: $(grep KAMAL_REGISTRY_PASSWORD .kamal/secrets | cut -d'=' -f2 | cut -c1-15)..."
+          echo "   REDIS_URL: $(grep REDIS_URL .kamal/secrets | cut -d'=' -f2 | cut -c1-30)..."
+          echo "   SENTRY_ENVIRONMENT: $(grep SENTRY_ENVIRONMENT .kamal/secrets | cut -d'=' -f2)"
 
       - name: Deploy to production
         run: kamal deploy

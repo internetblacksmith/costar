@@ -146,24 +146,16 @@ jobs:
           chmod 600 ~/.ssh/config
 
       - name: Create Kamal secrets file
-        env:
-          KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: ${{ secrets.SENTRY_ENVIRONMENT }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
         run: |
           mkdir -p .kamal
           cat > .kamal/secrets <<EOF
-          export KAMAL_REGISTRY_PASSWORD="$KAMAL_REGISTRY_PASSWORD"
-          export TMDB_API_KEY="$TMDB_API_KEY"
-          export REDIS_URL="$REDIS_URL"
-          export SENTRY_DSN="$SENTRY_DSN"
-          export SENTRY_ENVIRONMENT="$SENTRY_ENVIRONMENT"
-          export SESSION_SECRET="$SESSION_SECRET"
-          export POSTHOG_API_KEY="$POSTHOG_API_KEY"
+          export KAMAL_REGISTRY_PASSWORD="${{ secrets.KAMAL_REGISTRY_PASSWORD }}"
+          export TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}"
+          export REDIS_URL="${{ secrets.REDIS_URL }}"
+          export SENTRY_DSN="${{ secrets.SENTRY_DSN }}"
+          export SENTRY_ENVIRONMENT="${{ secrets.SENTRY_ENVIRONMENT }}"
+          export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
+          export POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}"
           EOF
           chmod 600 .kamal/secrets
 

@@ -2,42 +2,48 @@
 
 ## ✅ Overview
 
-This project uses **Doppler** for centralized secrets management with automatic injection into GitHub Actions workflows. This eliminates the need to manually sync secrets between Doppler and GitHub.
+This project uses **Doppler** with automatic GitHub sync to inject secrets into the GitHub Actions `production` environment. Secrets are automatically synced from Doppler to GitHub, eliminating manual setup.
 
-## 🔑 GitHub Secret Required
+## 🔑 GitHub Secrets Configuration
 
-You only need **ONE** secret in GitHub Actions:
+### Automatic Sync via Doppler
 
-### DOPPLER_TOKEN
+Since Doppler is configured to sync with GitHub Actions, all secrets from the `movie_together/prd` config are automatically available in the `production` environment.
 
-**Purpose**: Service token that allows GitHub Actions to fetch all secrets from Doppler
+### Required Secrets (Auto-synced from Doppler):
 
-**Value**: `dp.st.prd.TyLOTQGn6V9MPDbUACVsndcPa32XutHnAC2mZSav0xO`
+1. **KAMAL_REGISTRY_PASSWORD** - GitHub PAT for ghcr.io
+2. **TMDB_API_KEY** - The Movie Database API key
+3. **REDIS_URL** - Redis connection string
+4. **SENTRY_DSN** - Sentry error tracking DSN
+5. **SENTRY_ENVIRONMENT** - Environment name (production)
+6. **SESSION_SECRET** - Session encryption key
+7. **POSTHOG_API_KEY** - PostHog analytics key
+8. **DEPLOY_SSH_PRIVATE_KEY** - SSH key for VPS access
 
-**How to Add**:
+### Manual Setup (Only if Doppler sync is not working):
+
+If you need to manually add secrets to GitHub Actions:
+
 1. Go to: https://github.com/jabawack81/movie_together/settings/secrets/actions
-2. Click "New repository secret"
-3. Name: `DOPPLER_TOKEN`
-4. Value: Paste the token above
-5. Click "Add secret"
-
-**Important**: Also add `DEPLOY_SSH_PRIVATE_KEY` from Doppler:
-```bash
-doppler secrets get DEPLOY_SSH_PRIVATE_KEY --project movie_together --config prd --plain
-```
+2. For each secret, click "New repository secret"
+3. Get the value from Doppler:
+   ```bash
+   doppler secrets get SECRET_NAME --project movie_together --config prd --plain
+   ```
+4. Add to GitHub with the same name
 
 ## 📋 How It Works
 
 ### Workflow Steps:
 
-1. **Install Doppler CLI** (via `dopplerhq/cli-action@v3`)
-2. **Fetch all secrets from Doppler** using `DOPPLER_TOKEN`
-3. **Create `.kamal/secrets` file** with all application secrets
-4. **Deploy with Kamal** using `doppler run -- kamal deploy`
+1. **Setup SSH** for VPS connection
+2. **Create `.kamal/secrets` file** from environment variables (auto-synced from Doppler)
+3. **Deploy with Kamal** directly (no Doppler CLI needed)
 
-### Secrets Automatically Loaded:
+### Secrets Automatically Available:
 
-All these secrets are fetched from Doppler's `movie_together/prd` config:
+All these secrets are synced from Doppler to GitHub Actions `production` environment:
 
 - `KAMAL_REGISTRY_PASSWORD` - GitHub Container Registry auth
 - `TMDB_API_KEY` - The Movie Database API key

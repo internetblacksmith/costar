@@ -10,16 +10,22 @@ This project uses **Doppler** with automatic GitHub sync to inject secrets into 
 
 Since Doppler is configured to sync with GitHub Actions, all secrets from the `movie_together/prd` config are automatically available in the `production` environment.
 
-### Required Secrets (Auto-synced from Doppler):
+### Required Secrets (Sensitive - Auto-synced from Doppler):
 
 1. **KAMAL_REGISTRY_PASSWORD** - GitHub PAT for ghcr.io
 2. **TMDB_API_KEY** - The Movie Database API key
-3. **REDIS_URL** - Redis connection string
-4. **SENTRY_DSN** - Sentry error tracking DSN
-5. **SENTRY_ENVIRONMENT** - Environment name (production)
-6. **SESSION_SECRET** - Session encryption key
-7. **POSTHOG_API_KEY** - PostHog analytics key
-8. **DEPLOY_SSH_PRIVATE_KEY** - SSH key for VPS access
+3. **SENTRY_DSN** - Sentry error tracking DSN
+4. **SESSION_SECRET** - Session encryption key
+5. **POSTHOG_API_KEY** - PostHog analytics key
+6. **SLACK_WEBHOOK_URL** - Slack webhook for notifications
+7. **DEPLOY_SSH_PRIVATE_KEY** - SSH key for VPS access
+
+### Required Variables (Non-sensitive - Auto-synced from Doppler):
+
+1. **REDIS_URL** - Redis connection string (`redis://movie-together-redis:6380/0`)
+2. **SENTRY_ENVIRONMENT** - Environment name (`production`)
+
+**Note**: Variables are used for non-sensitive configuration that doesn't need encryption.
 
 ### Manual Setup (Only if Doppler sync is not working):
 

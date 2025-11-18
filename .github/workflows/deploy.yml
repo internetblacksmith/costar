@@ -151,11 +151,12 @@ jobs:
           cat > .kamal/secrets <<EOF
           export KAMAL_REGISTRY_PASSWORD="${{ secrets.KAMAL_REGISTRY_PASSWORD }}"
           export TMDB_API_KEY="${{ secrets.TMDB_API_KEY }}"
-          export REDIS_URL="${{ secrets.REDIS_URL }}"
+          export REDIS_URL="${{ vars.REDIS_URL }}"
           export SENTRY_DSN="${{ secrets.SENTRY_DSN }}"
-          export SENTRY_ENVIRONMENT="${{ secrets.SENTRY_ENVIRONMENT }}"
+          export SENTRY_ENVIRONMENT="${{ vars.SENTRY_ENVIRONMENT }}"
           export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
           export POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}"
+          export SLACK_WEBHOOK_URL="${{ secrets.SLACK_WEBHOOK_URL }}"
           EOF
           chmod 600 .kamal/secrets
 

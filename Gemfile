@@ -29,7 +29,7 @@ gem "rackup", "2.2.1" # Rack server command
 gem "redis", "5.4.1" # Redis client
 gem "retries", "0.0.5" # Exponential backoff retries
 gem "rexml", ">= 3.4.2" # XML parsing (security fix for CVE-2025-58767)
-gem "sentry-ruby", "6.1.0" # Error tracking and monitoring
+gem "sentry-ruby", "6.1.1" # Error tracking and monitoring
 gem "sinatra", ">= 4.2.0" # Web framework (security fix for CVE-2025-61921)
 gem "sinatra-contrib", ">= 4.2.0" # Sinatra extensions
 gem "thor", ">= 1.4.0" # CLI framework (security fix for CVE-2025-54314)

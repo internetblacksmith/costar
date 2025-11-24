@@ -240,7 +240,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    sentry-ruby (6.1.0)
+    sentry-ruby (6.1.1)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     simplecov (0.22.0)
@@ -340,7 +340,7 @@ DEPENDENCIES
   rspec_junit_formatter (= 0.6.0)
   rubocop (= 1.81.7)
   selenium-webdriver (= 4.38.0)
-  sentry-ruby (= 6.1.0)
+  sentry-ruby (= 6.1.1)
   simplecov (= 0.22.0)
   sinatra (>= 4.2.0)
   sinatra-contrib (>= 4.2.0)

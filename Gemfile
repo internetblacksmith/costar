@@ -37,7 +37,7 @@ gem "uri", ">= 1.0.4" # URI parsing (security fix for CVE-2025-61594)
 
 group :development do
   gem "brakeman", "7.1.1" # Security scanner
-  gem "bundle-audit", "0.1.0" # Dependency security scanner
+  gem "bundle-audit", "0.2.0" # Dependency security scanner
   gem "filewatcher", "2.1.0" # File watching for auto-restart (replaces rerun)
   gem "pry", "0.15.2" # Interactive debugger
   gem "rubocop", "1.81.7" # Code style and linting
@@ -49,7 +49,7 @@ group :test do
   gem "cucumber", "10.1.1" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara (used by visual/compatibility tests)
   gem "factory_bot", "6.5.6" # Test data factories
-  gem "faker", "3.5.2" # Fake data generation
+  gem "faker", "3.5.3" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI

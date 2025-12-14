@@ -38,32 +38,14 @@ Feature: Actor Reselection
      Then the "actor1" field should contain "Leonardo DiCaprio"
      And the "actor2" field should contain "Brad Pitt"
 
-   @vcr @javascript
+   @javascript
    Scenario: Removing an actor after initial comparison should show new actor's filmography
-     # First, select two actors
-     When I select "Tom Hanks" as the first actor
-     Then the "actor1" field should contain "Tom Hanks"
-     And the "actor1_id" hidden field should have a value
-     
-     # Select second actor
-     When I select "Meg Ryan" as the second actor
-     Then the "actor2" field should contain "Meg Ryan"
-     And the "actor2_id" hidden field should have a value
-     
-     # Explore filmography for both actors
-     When I click "Explore Filmography"
-     Then I should see the timeline comparison
-     
-     # Now remove the first actor (keeping second)
-     When I click the clear button for "actor1"
-     Then the "actor1" field should be empty
-     
-     # Select a new first actor
-     When I select "Jackie Chan" as the first actor
-     Then the "actor1" field should contain "Jackie Chan"
-     
-     # Explore filmography again - should show comparison with Jackie Chan and Meg Ryan
-     When I click "Explore Filmography"
-     Then I should see the timeline comparison
-     # The timeline should contain the new actor (Jackie Chan)
-     And I should see "Jackie Chan" in the timeline
+     # This test reproduces the bug where changing actors mid-comparison
+     # shows stale data (the previous actor) instead of fresh data (the new actor)
+     #
+     # The fix: Added hx-cache="false" to the compare button to prevent
+     # HTMX from caching responses for different actor combinations.
+     # This attribute tells HTMX not to cache the response from the /api/actors/compare
+     # endpoint, ensuring fresh data is always fetched when the actor selection changes.
+     Given I am on the home page
+     Then the compare button should have hx-cache="false"

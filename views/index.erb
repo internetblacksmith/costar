@@ -27,6 +27,7 @@
                         data-mdc-auto-init="MDCRipple"
                         hx-get="/api/actors/compare"
                         hx-target="#timeline"
+                        hx-cache="false"
                         hx-vals='js:{
                             "actor1_id": document.getElementById("actor1_id_backup").value, 
                             "actor2_id": document.getElementById("actor2_id_backup").value, 

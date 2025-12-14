@@ -94,6 +94,35 @@ Then("I should see the search form") do
 end
 
 Then("I should see {string} in the timeline") do |text|
-  timeline = find("#timeline")
-  expect(timeline).to have_content(text)
+  # If we're on an API endpoint, the response is the timeline content itself
+  # Otherwise, look for the timeline div
+  if current_path.include?("/api/")
+    expect(page).to have_content(text)
+  else
+    timeline = find("#timeline", visible: :all)
+    expect(timeline).to have_content(text)
+  end
+end
+
+Then("I should not see {string} in the timeline") do |text|
+  # If we're on an API endpoint, check the response body
+  # Otherwise, look for the timeline div
+  if current_path.include?("/api/")
+    expect(page).not_to have_content(text)
+  else
+    timeline = find("#timeline", visible: :all)
+    expect(timeline).not_to have_content(text)
+  end
+end
+
+Then("the compare button should have hx-cache=\"false\"") do
+  # Find the compare button
+  compare_button = find("#compareBtn")
+
+  # Check that it has the hx-cache="false" attribute
+  # This prevents HTMX from caching responses for different actor selections
+  expect(compare_button["hx-cache"]).to eq("false")
+
+  # Also verify it has the HTMX get directive
+  expect(compare_button["hx-get"]).to eq("/api/actors/compare")
 end

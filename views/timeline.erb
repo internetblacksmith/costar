@@ -135,8 +135,10 @@
 </div>
 
 <script>
-// View toggle state
-let showingFullFilmographies = false;
+// View toggle state - use window scope to persist across HTMX replacements
+if (typeof window.showingFullFilmographies === 'undefined') {
+    window.showingFullFilmographies = false;
+}
 
 function toggleView() {
     const individualMovies = document.querySelectorAll('.individual-movie');
@@ -145,9 +147,9 @@ function toggleView() {
     const toggleIcon = document.getElementById('toggle-icon');
     const toggleLabel = document.getElementById('toggle-label');
     
-    showingFullFilmographies = !showingFullFilmographies;
+    window.showingFullFilmographies = !window.showingFullFilmographies;
     
-    if (showingFullFilmographies) {
+    if (window.showingFullFilmographies) {
         // Show full filmographies
         individualMovies.forEach(movie => {
             movie.style.display = 'flex';
@@ -219,42 +221,47 @@ function shareTimeline() {
 }
 
 // Detect when header becomes sticky and add shrink effect
-window.addEventListener('load', function() {
-    const header = document.querySelector('.actor-portrait-header');
-    if (!header) return;
+// Only initialize once to avoid duplicate event listeners when HTMX replaces content
+if (typeof window._timelineScrollHandlerInitialized === 'undefined') {
+    window._timelineScrollHandlerInitialized = true;
     
-    let isStuck = false;
-    
-    // Simple scroll handler - shrink after scrolling 50px
-    function handleScroll() {
-        const scrolled = window.pageYOffset || document.documentElement.scrollTop;
-        const shouldBeStuck = scrolled > 50;
+    window.addEventListener('load', function() {
+        const header = document.querySelector('.actor-portrait-header');
+        if (!header) return;
         
-        // Only modify classes if state actually changes
-        if (shouldBeStuck && !isStuck) {
-            header.classList.add('stuck');
-            isStuck = true;
-        } else if (!shouldBeStuck && isStuck) {
-            header.classList.remove('stuck');
-            isStuck = false;
+        let isStuck = false;
+        
+        // Simple scroll handler - shrink after scrolling 50px
+        function handleScroll() {
+            const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+            const shouldBeStuck = scrolled > 50;
+            
+            // Only modify classes if state actually changes
+            if (shouldBeStuck && !isStuck) {
+                header.classList.add('stuck');
+                isStuck = true;
+            } else if (!shouldBeStuck && isStuck) {
+                header.classList.remove('stuck');
+                isStuck = false;
+            }
         }
-    }
-    
-    // Throttle scroll events for better performance
-    let scrollTimeout;
-    function throttledScroll() {
-        if (!scrollTimeout) {
-            scrollTimeout = setTimeout(function() {
-                handleScroll();
-                scrollTimeout = null;
-            }, 10); // Run at most every 10ms
+        
+        // Throttle scroll events for better performance
+        let scrollTimeout;
+        function throttledScroll() {
+            if (!scrollTimeout) {
+                scrollTimeout = setTimeout(function() {
+                    handleScroll();
+                    scrollTimeout = null;
+                }, 10); // Run at most every 10ms
+            }
         }
-    }
-    
-    // Listen for scroll events
-    window.addEventListener('scroll', throttledScroll);
-    
-    // Check initial state
-    handleScroll();
-});
+        
+        // Listen for scroll events
+        window.addEventListener('scroll', throttledScroll);
+        
+        // Check initial state
+        handleScroll();
+    });
+}
 </script>

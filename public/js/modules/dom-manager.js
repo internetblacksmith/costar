@@ -34,6 +34,14 @@ class DOMManager {
         }
     }
 
+    // Remove class from element if it exists
+    static removeClass(id, className) {
+        const element = this.getElement(id);
+        if (element) {
+            element.classList.remove(className);
+        }
+    }
+
     // Create Material Design chip HTML
     static createChipHTML(field, actorName) {
         return `

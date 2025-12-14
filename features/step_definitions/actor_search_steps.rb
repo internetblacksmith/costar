@@ -2,11 +2,6 @@
 
 Given("I am on the home page") do
   visit "/"
-  if page.status_code != 200
-    puts "Status: #{page.status_code}"
-    puts "Body: #{page.body[0..500]}"
-    puts "Headers: #{page.response_headers}"
-  end
   expect_successful_response
 end
 
@@ -27,7 +22,6 @@ When("I search for {string} in the first actor field") do |search_term|
   else
     # For non-JS tests, visit the API directly
     url = "/api/actors/search?q=#{CGI.escape(search_term)}&field=actor1"
-    puts "Visiting URL: #{url}"
     visit url
   end
 end

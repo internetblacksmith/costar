@@ -87,3 +87,13 @@ When("I select {string} from the suggestions for {string}") do |actor_name, _fie
   # Wait for the selection to be processed
   sleep 0.5
 end
+
+Then("I should see the search form") do
+  expect(page).to have_css("#actor1", visible: true)
+  expect(page).to have_css("#actor2", visible: true)
+end
+
+Then("I should see {string} in the timeline") do |text|
+  timeline = find("#timeline")
+  expect(timeline).to have_content(text)
+end

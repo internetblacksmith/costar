@@ -112,6 +112,12 @@ class ActorSearch {
             // Restore input field
             this.displayInputField(field);
             
+            // Clear the timeline/filmographies when an actor is deselected
+            DOMManager.setHTML('timeline', '');
+            
+            // Hide the results section
+            DOMManager.removeClass('results', 'show');
+            
             // Show notification
             if (window.snackbarModule) {
                 window.snackbarModule.show('Actor removed');

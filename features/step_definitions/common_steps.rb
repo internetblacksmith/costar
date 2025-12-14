@@ -11,14 +11,6 @@ Then("I should not see {string}") do |text|
 end
 
 When("I click {string}") do |text|
-  # Debug: Check hidden field values before clicking
-  if text.include?("Explore")
-    puts "Actor1 ID: #{find("#actor1_id_backup", visible: false).value}"
-    puts "Actor2 ID: #{find("#actor2_id_backup", visible: false).value}"
-    puts "Actor1 Name: #{find("#actor1_name_backup", visible: false).value}"
-    puts "Actor2 Name: #{find("#actor2_name_backup", visible: false).value}"
-  end
-
   click_on text
 end
 
@@ -39,13 +31,13 @@ end
 
 # Debug helpers
 Then("show me the page") do
-  puts page.body
+  # Debug step available if needed
 end
 
 Then("show me the response headers") do
-  puts page.response_headers.inspect
+  # Debug step available if needed
 end
 
 Then("show me the current path") do
-  puts current_path
+  # Debug step available if needed
 end

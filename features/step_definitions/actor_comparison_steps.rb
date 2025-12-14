@@ -97,14 +97,7 @@ Then("I should see the timeline comparison") do
 
     # Find timeline div
     timeline = find("#timeline")
-    timeline_content = timeline.text
-    puts "Timeline content: #{timeline_content[0..200]}"
-
-    # If we see an error, let's get more info
-    if timeline_content.include?("Failed to compare") && page.driver.respond_to?(:console_messages)
-      # Try to check network tab or console errors if available
-      puts "Console messages: #{page.driver.console_messages}"
-    end
+    timeline.text
 
     # Check for any content in timeline
     within("#timeline") do

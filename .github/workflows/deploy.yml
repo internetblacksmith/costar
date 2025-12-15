@@ -48,15 +48,14 @@ jobs:
         with:
           chrome-version: stable
 
-       - name: Run Tests
-         env:
-           RACK_ENV: test
-           TMDB_API_KEY: test_api_key_for_vcr
-           REDIS_URL: redis://localhost:6379
-         run: |
-           bundle config set --local without "accessibility"
-           bundle exec rspec
-           bundle exec cucumber --format progress
+      - name: Run Tests
+        env:
+          RACK_ENV: test
+          TMDB_API_KEY: test_api_key_for_vcr
+          REDIS_URL: redis://localhost:6379
+        run: |
+          bundle exec rspec
+          bundle exec cucumber --format progress
 
       - name: Run Security Checks
         run: |

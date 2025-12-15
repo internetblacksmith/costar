@@ -44,6 +44,7 @@ group :development do
 end
 
 group :test do
+  gem "axe-core-rspec", "4.11.0" # Accessibility testing with axe-core
   gem "benchmark", "0.2.0" # Performance measurement (Ruby 3.5+ compatibility)
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
   gem "cucumber", "10.2.0" # BDD testing framework (Ruby 3.4+ compatible)
@@ -57,14 +58,6 @@ group :test do
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.3.1" # Record and replay HTTP interactions
   gem "webmock", "3.26.1" # HTTP request stubbing
-end
-
-group :test, :accessibility do
-  # Accessibility testing with axe-core
-  # Note: axe-core-rspec has circular require warnings in its dependencies (axe-core-api)
-  # that occur during gem loading. These are benign and don't affect test functionality.
-  # To run accessibility tests: bundle install --with accessibility && ACCESSIBILITY_TESTS=true bundle exec rspec
-  gem "axe-core-rspec", "4.11.0" # Only loaded when ACCESSIBILITY_TESTS env var is set
 end
 
 group :development, :test do

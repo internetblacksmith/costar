@@ -178,27 +178,19 @@ test: test-rspec test-cucumber
 test-rspec:
 	@echo "🧪 Running RSpec test suite..."
 	@echo "✅ Tests use mock environment - no secrets needed"
-	@echo "📦 Excluding optional accessibility tests to prevent gem warnings..."
-	bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/stress
+	bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/accessibility spec/stress
 
 # Run Cucumber tests only
 test-cucumber:
 	@echo "🥒 Running Cucumber BDD tests..."
 	@echo "✅ Testing with mocked API responses"
-	BUNDLE_WITHOUT="accessibility" bundle exec cucumber
+	bundle exec cucumber
 
 # Run tests with coverage
 test-coverage:
 	@echo "🧪 Running tests with coverage..."
-	bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/stress
+	bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/accessibility spec/stress
 	@echo "Coverage report generated"
-
-# Run accessibility tests (includes optional accessibility gems)
-test-accessibility:
-	@echo "🔍 Running accessibility tests..."
-	@echo "⚠️  Note: axe-core-rspec has benign circular require warnings (expected)"
-	ACCESSIBILITY_TESTS=true bundle exec rspec spec/accessibility --format documentation
-	@echo "✅ Accessibility tests completed"
 
 # Run development server
 dev:

@@ -22,6 +22,8 @@ RSpec.describe "Browser Compatibility", type: :feature, js: true do
 
     it "progressive enhancement with JavaScript" do
       # Test with JavaScript enabled
+      # Note: This test can be flaky due to external CSS loading from unpkg.com
+      # If you see timeouts, it's likely a network issue, not a code issue
       Capybara.current_driver = :cuprite
 
       visit "/"

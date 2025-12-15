@@ -136,8 +136,8 @@ Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
 # Load accessibility testing if running accessibility specs
 # Using axe-core-rspec (actively maintained by Deque Systems)
-# Note: axe-core-rspec produces benign warnings about circular requires and method
+# Note: axe-core-rspec 4.11.0 produces benign warnings about circular requires and method
 # redefinitions in its chain_mail dependency. These are harmless and don't affect
-# functionality. The warnings are from the gem's internal design and can't be suppressed
-# without monkeypatching Ruby's warning system.
+# functionality. The warnings are from the gem's internal design and are expected.
+# See: https://github.com/dequelabs/axe-core-gems/issues for details.
 require "axe-rspec" if ENV["ACCESSIBILITY_TESTS"] || ARGV.any? { |arg| arg.include?("accessibility") }

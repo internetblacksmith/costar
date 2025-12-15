@@ -15,10 +15,11 @@ help:
 	@echo "📦 Development Commands:"
 	@echo "  make setup-dev           - Setup dev environment (Ruby dependencies)"
 	@echo "  make setup-deploy        - Setup deployment environment (Kamal/Doppler)"
-	@echo "  make test                - Run all tests (RSpec + Cucumber)"
-	@echo "  make test-rspec          - Run RSpec tests only"
-	@echo "  make test-cucumber       - Run Cucumber tests only"
-	@echo "  make test-coverage       - Run tests with coverage report"
+	@echo "  make test                - Run all tests (RSpec + Cucumber, no warnings)"
+	@echo "  make test-rspec          - Run RSpec tests only (no warnings)"
+	@echo "  make test-cucumber       - Run Cucumber tests only (no warnings)"
+	@echo "  make test-coverage       - Run tests with coverage report (no warnings)"
+	@echo "  make test-accessibility  - Run accessibility tests (optional, with expected warnings)"
 	@echo "  make dev                 - Run development server (auto-reload)"
 	@echo "  make lint                - Check code style (RuboCop)"
 	@echo "  make fix                 - Auto-fix code style issues"
@@ -177,19 +178,27 @@ test: test-rspec test-cucumber
 test-rspec:
 	@echo "🧪 Running RSpec test suite..."
 	@echo "✅ Tests use mock environment - no secrets needed"
-	bundle exec rspec --format progress
+	@echo "📦 Excluding optional accessibility tests to prevent gem warnings..."
+	bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/stress
 
 # Run Cucumber tests only
 test-cucumber:
 	@echo "🥒 Running Cucumber BDD tests..."
 	@echo "✅ Testing with mocked API responses"
-	bundle exec cucumber
+	BUNDLE_WITHOUT="accessibility" bundle exec cucumber
 
 # Run tests with coverage
 test-coverage:
 	@echo "🧪 Running tests with coverage..."
-	bundle exec rspec --format progress
+	bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/stress
 	@echo "Coverage report generated"
+
+# Run accessibility tests (includes optional accessibility gems)
+test-accessibility:
+	@echo "🔍 Running accessibility tests..."
+	@echo "⚠️  Note: axe-core-rspec has benign circular require warnings (expected)"
+	ACCESSIBILITY_TESTS=true bundle exec rspec spec/accessibility --format documentation
+	@echo "✅ Accessibility tests completed"
 
 # Run development server
 dev:

@@ -11,7 +11,7 @@ WORKDIR /app
 ENV RACK_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development:test" \
+    BUNDLE_WITHOUT="development:test:accessibility" \
     PORT="4567"
 
 # Throw-away build stage to reduce size of final image

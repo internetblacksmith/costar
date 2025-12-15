@@ -42,17 +42,11 @@ jobs:
       with:
         chrome-version: stable
     
-    - name: Configure Bundle (exclude accessibility tests by default)
-      run: bundle config set --local without "accessibility"
-    
     - name: Run Unit Tests
       run: bundle exec rspec spec/lib --format documentation
     
     - name: Run Integration Tests
       run: bundle exec rspec spec/requests --format documentation
-    
-    - name: Install Accessibility Testing Dependencies
-      run: bundle config set --local without ""  # Reset to include all groups
     
     - name: Run Accessibility Tests
       run: ACCESSIBILITY_TESTS=true bundle exec rspec spec/accessibility --format documentation

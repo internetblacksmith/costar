@@ -1,0 +1,16 @@
+--- a/lib/loader.rb
++++ b/lib/loader.rb
+@@ -1,5 +1,4 @@
+ require_relative "./axe/configuration"
+-require_relative "./axe/core"
+ require_relative "./hooks"
+ 
+ module Common
+@@ -27,6 +26,7 @@
+ 
+     def set_allowed_origins
+       allowed_origins = "<same_origin>"
++      require_relative "./axe/core" unless defined?(Axe::Core)
+       allowed_origins = "<unsafe_all_origins>" if !Axe::Configuration.instance.legacy_mode && !Axe::Core::has_run_partial?(@page)
+       @page.execute_script "axe.configure({ allowedOrigins: ['#{allowed_origins}'] });"
+     end

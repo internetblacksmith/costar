@@ -139,9 +139,9 @@ echo -e "${BLUE}🔐 Generating secrets from Doppler...${NC}"
 mkdir -p .kamal
 doppler secrets download --no-file --format env --config "$DOPPLER_CONFIG" > .kamal/secrets
 
-# Deploy the application with Kamal
+# Deploy the application with Kamal using Doppler to inject secrets
 echo -e "${BLUE}🚀 Deploying with Kamal...${NC}"
-kamal deploy
+doppler run --config "$DOPPLER_CONFIG" -- kamal deploy
 
 # Note: cleanup happens automatically via trap on EXIT
 

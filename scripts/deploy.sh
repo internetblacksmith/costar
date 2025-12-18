@@ -139,6 +139,32 @@ echo -e "${BLUE}🔐 Generating secrets from Doppler...${NC}"
 mkdir -p .kamal
 doppler secrets download --no-file --format env --config "$DOPPLER_CONFIG" > .kamal/secrets
 
+# Pre-configure Docker credentials to avoid CLI password issues
+# This is necessary because Kamal uses `docker login -p` which is insecure
+# and fails with some Docker daemons. Using config.json instead.
+echo -e "${BLUE}🔐 Configuring Docker credentials...${NC}"
+REGISTRY_USERNAME="jabawack81"
+REGISTRY_PASSWORD=$(doppler secrets get KAMAL_REGISTRY_PASSWORD --config "$DOPPLER_CONFIG" --plain)
+REGISTRY_SERVER="ghcr.io"
+AUTH=$(echo -n "$REGISTRY_USERNAME:$REGISTRY_PASSWORD" | base64 -w 0)
+
+# Create Docker config directory if it doesn't exist
+mkdir -p ~/.docker
+
+# Write docker config.json with credentials
+cat > ~/.docker/config.json << EOF
+{
+  "auths": {
+    "$REGISTRY_SERVER": {
+      "auth": "$AUTH"
+    }
+  }
+}
+EOF
+
+# Set proper permissions
+chmod 600 ~/.docker/config.json
+
 # Deploy the application with Kamal using Doppler to inject secrets
 echo -e "${BLUE}🚀 Deploying with Kamal...${NC}"
 doppler run --config "$DOPPLER_CONFIG" -- kamal deploy

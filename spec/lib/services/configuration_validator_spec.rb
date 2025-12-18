@@ -16,6 +16,8 @@ RSpec.describe ConfigurationValidator do
       # Restore original environment
       ENV.clear
       @original_env.each { |k, v| ENV[k] = v }
+      # Reset ConfigurationPolicy to defaults
+      ConfigurationPolicy.reset!
     end
 
     context "with required variables" do

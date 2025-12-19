@@ -134,6 +134,29 @@ fi
 
 echo -e "${GREEN}✅ All required secrets present!${NC}"
 
+# Validate GitHub token (KAMAL_REGISTRY_PASSWORD)
+echo -e "${BLUE}🔐 Validating GitHub Container Registry token...${NC}"
+REGISTRY_PASSWORD=$(doppler secrets get KAMAL_REGISTRY_PASSWORD --config "$DOPPLER_CONFIG" --plain)
+
+# Test docker login with the token
+if ! echo "$REGISTRY_PASSWORD" | docker login ghcr.io -u jabawack81 --password-stdin &> /dev/null; then
+    echo -e "${RED}❌ GitHub Container Registry token validation failed!${NC}"
+    echo "   The token in Doppler (KAMAL_REGISTRY_PASSWORD) is invalid or expired."
+    echo "   Please verify the token at: https://github.com/settings/tokens"
+    echo ""
+    echo "   Token requirements:"
+    echo "   - Scope: write:packages (for pushing to container registry)"
+    echo "   - Scope: read:packages (for pulling from container registry)"
+    echo "   - Not expired"
+    echo ""
+    echo "   To update the token:"
+    echo "   1. Create/regenerate at: https://github.com/settings/tokens"
+    echo "   2. Update Doppler: doppler secrets set KAMAL_REGISTRY_PASSWORD --config $DOPPLER_CONFIG"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ GitHub Container Registry token is valid!${NC}"
+
 # Generate .kamal/secrets file from Doppler (never commit this file!)
 echo -e "${BLUE}🔐 Generating secrets from Doppler...${NC}"
 mkdir -p .kamal

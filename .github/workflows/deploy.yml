@@ -1,0 +1,217 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  RUBY_VERSION: 3.4.6
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    name: Run Tests Before Deploy
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Install Chrome for Cuprite
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Run Tests
+        env:
+          RACK_ENV: test
+          TMDB_API_KEY: test_api_key_for_vcr
+          REDIS_URL: redis://localhost:6379
+        run: |
+          bundle exec rspec
+          bundle exec cucumber --format progress
+
+      - name: Run Security Checks
+        run: |
+          bundle exec brakeman -f text --force
+          bundle exec bundle-audit check --update
+
+  build:
+    name: Build and Push Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy with Kamal
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: Install Kamal
+        run: gem install kamal
+
+      - name: Setup SSH
+        env:
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p 1447 161.35.165.206 >> ~/.ssh/known_hosts
+          
+          # Create SSH config for Kamal
+          cat > ~/.ssh/config <<EOF
+          Host digitalocean
+            HostName 161.35.165.206
+            User deploy
+            Port 1447
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking accept-new
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Create Kamal secrets file
+        run: |
+          mkdir -p .kamal
+          cat > .kamal/secrets <<'KAMAL_EOF'
+          KAMAL_REGISTRY_PASSWORD=${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+          TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
+          REDIS_URL=${{ vars.REDIS_URL }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          SENTRY_ENVIRONMENT=${{ vars.SENTRY_ENVIRONMENT }}
+          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
+          SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
+          KAMAL_EOF
+          chmod 600 .kamal/secrets
+          
+          # Debug: Verify secrets file was created with values (show first 10 chars of each)
+          echo "✅ Created .kamal/secrets file"
+          echo "📊 Verifying secret values are populated:"
+          echo "   KAMAL_REGISTRY_PASSWORD: $(grep KAMAL_REGISTRY_PASSWORD .kamal/secrets | cut -d'=' -f2 | cut -c1-15)..."
+          echo "   REDIS_URL: $(grep REDIS_URL .kamal/secrets | cut -d'=' -f2 | cut -c1-30)..."
+          echo "   SENTRY_ENVIRONMENT: $(grep SENTRY_ENVIRONMENT .kamal/secrets | cut -d'=' -f2)"
+
+      - name: Deploy to production
+        run: kamal deploy
+
+      - name: Check deployment status
+        if: success()
+        run: kamal app details
+
+      - name: Notify Slack on success
+        if: success()
+        uses: slackapi/slack-github-action@v2
+        with:
+          payload: |
+            {
+              "text": "✅ Production deployment successful",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Production Deployment Successful*\n*Repository:* ${{ github.repository }}\n*Commit:* ${{ github.sha }}\n*Branch:* ${{ github.ref_name }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2
+        with:
+          payload: |
+            {
+              "text": "❌ Production deployment failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Production Deployment Failed*\n*Repository:* ${{ github.repository }}\n*Commit:* ${{ github.sha }}\n*Branch:* ${{ github.ref_name }}\n*Action:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

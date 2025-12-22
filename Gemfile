@@ -40,7 +40,7 @@ group :development do
   gem "bundle-audit", "0.2.0" # Dependency security scanner
   gem "filewatcher", "2.1.0" # File watching for auto-restart (replaces rerun)
   gem "pry", "0.15.2" # Interactive debugger
-  gem "rubocop", "1.81.7" # Code style and linting
+  gem "rubocop", "1.82.0" # Code style and linting
 end
 
 group :test do

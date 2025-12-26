@@ -7,6 +7,12 @@ RSpec.describe "Browser Compatibility", type: :feature, js: true do
   # These tests would run with different Capybara drivers
   # You could set up Selenium with different browsers
 
+  before do
+    Capybara.current_driver = :cuprite
+    # Increase timeout for external resources (CDN loads)
+    page.driver.browser.timeout = 60 if page.driver.respond_to?(:browser)
+  end
+
   describe "Core Functionality" do
     it "works without JavaScript" do
       # Test with Rack::Test (no JS)

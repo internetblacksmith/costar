@@ -6,8 +6,8 @@ require "capybara/rspec"
 RSpec.describe "Visual Regression", type: :feature, js: true do
   before do
     Capybara.current_driver = :cuprite
-    # Increase timeout for external resources
-    page.driver.browser.timeout = 10
+    # Increase timeout for external resources (CDN: material-components-web, etc.)
+    page.driver.browser.timeout = 30
   end
 
   # NOTE: These tests would require a visual regression tool like Percy or Applitools

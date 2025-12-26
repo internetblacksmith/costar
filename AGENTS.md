@@ -1,5 +1,15 @@
 # Agent Development Guide
 
+## ⚠️ Important: Keep Makefile Updated
+
+**The Makefile must be kept in sync with the project's actual tooling.** When updating Gemfile dependencies, dev workflows, or tooling:
+1. Always update the corresponding Makefile targets
+2. Test Makefile commands before committing (`make dev`, `make test`, `make lint`, `make deploy`)
+3. Check if gems are actually in the Gemfile before referencing them in Makefile
+4. Document changes in this AGENTS.md file
+
+**Last Updated**: December 26, 2025 - Fixed `make dev` to use `puma` instead of deprecated `rerun` gem
+
 ## Build/Test Commands
 - **Run all tests**: `make test` or `bundle exec rspec && bundle exec cucumber`
 - **Run single test file**: `bundle exec rspec spec/path/to/test_spec.rb`

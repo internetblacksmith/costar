@@ -19,3 +19,12 @@ footer a:hover {
     color: var(--primary-dark);
     text-decoration: underline;
 }
+
+/* Dark mode footer link colors for WCAG AA compliance */
+[data-theme="dark"] footer a {
+    color: #60a5fa;
+}
+
+[data-theme="dark"] footer a:hover {
+    color: #93c5fd;
+}

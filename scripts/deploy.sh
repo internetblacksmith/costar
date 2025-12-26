@@ -188,9 +188,16 @@ EOF
 # Set proper permissions
 chmod 600 ~/.docker/config.json
 
+# Build and push Docker image locally (avoids Docker CLI auth issues with Kamal)
+echo -e "${BLUE}🔨 Building Docker image...${NC}"
+doppler run --config "$DOPPLER_CONFIG" -- docker build -t ghcr.io/jabawack81/movie_together:latest .
+
+echo -e "${BLUE}📤 Pushing Docker image to registry...${NC}"
+docker image push ghcr.io/jabawack81/movie_together:latest
+
 # Deploy the application with Kamal using Doppler to inject secrets
 echo -e "${BLUE}🚀 Deploying with Kamal...${NC}"
-doppler run --config "$DOPPLER_CONFIG" -- kamal deploy
+doppler run --config "$DOPPLER_CONFIG" -- kamal app boot
 
 # Note: cleanup happens automatically via trap on EXIT
 

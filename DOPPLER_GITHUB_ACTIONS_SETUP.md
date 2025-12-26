@@ -117,7 +117,7 @@ Run: doppler run -- kamal deploy
   ↓
 Deploy to VPS (161.35.165.206:1447)
   ↓
-App running at: https://as.internetblacksmith.dev
+App running at: https://as.frenimies-lab.dev
 ```
 
 ## 🔐 Security Benefits
@@ -169,7 +169,7 @@ doppler configs tokens revoke github-actions-production \
 2. ✅ Add `DEPLOY_SSH_PRIVATE_KEY` to GitHub Secrets  
 3. ✅ Push to main or manually trigger workflow
 4. ✅ Monitor deployment at: https://github.com/jabawack81/movie_together/actions
-5. ✅ Verify app at: https://as.internetblacksmith.dev
+5. ✅ Verify app at: https://as.frenimies-lab.dev
 
 ## 📚 References
 

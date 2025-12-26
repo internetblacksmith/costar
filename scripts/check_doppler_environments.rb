@@ -50,7 +50,7 @@ class DopplerEnvironmentChecker
       validation: lambda { |value, env|
         case env
         when "dev" then value.include?("localhost")
-        when "stg", "prd" then value.include?("internetblacksmith.dev")
+        when "stg", "prd" then value.include?("frenimies-lab.dev")
         else false
         end
       },
@@ -406,7 +406,7 @@ class DopplerEnvironmentChecker
                        end
             puts "   doppler secrets set RACK_ENV=#{rack_env} --config #{env}"
           when "ALLOWED_ORIGINS"
-            origins = env == "dev" ? "localhost:4567,127.0.0.1:4567" : "as.internetblacksmith.dev"
+            origins = env == "dev" ? "localhost:4567,127.0.0.1:4567" : "as.frenimies-lab.dev"
             puts "   doppler secrets set ALLOWED_ORIGINS=#{origins} --config #{env}"
           when "PORT"
             port = env == "dev" ? "4567" : "10000"

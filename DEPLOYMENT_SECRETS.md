@@ -97,7 +97,7 @@ GitHub Actions Workflow Triggers
   - Uses KAMAL_REGISTRY_PASSWORD to authenticate with GHCR
   - Pulls built image
   - Deploys to VPS with all secret env vars
-  - Configures Traefik for HTTP/HTTPS at as.internetblacksmith.dev
+  - Configures Traefik for HTTP/HTTPS at as.frenimies-lab.dev
     ↓
 Container Running with:
 - RACK_ENV=production

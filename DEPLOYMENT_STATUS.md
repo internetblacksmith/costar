@@ -16,7 +16,7 @@
 
 - [x] Kamal Configuration (`config/deploy.yml`)
   - Proper registry authentication with GHCR
-  - Traefik routing to `as.internetblacksmith.dev`
+  - Traefik routing to `as.frenimies-lab.dev`
   - Redis accessory configuration
   - Volume and persistence setup
   - Environment variable declarations
@@ -109,7 +109,7 @@ Deploy Job (requires production environment secrets)
 ├─ Checks deployment status
 └─ Sends Slack notification
     ↓
-Application running at https://as.internetblacksmith.dev
+Application running at https://as.frenimies-lab.dev
 ```
 
 ## What Gets Deployed
@@ -135,7 +135,7 @@ SESSION_SECRET=<from secrets>
 - **Logging**: Driver: json-file, Max size: 10m
 
 ### Traefik Routing
-- **Domain**: as.internetblacksmith.dev
+- **Domain**: as.frenimies-lab.dev
 - **Protocol**: HTTPS (Let's Encrypt)
 - **HTTP Redirect**: Automatic redirect to HTTPS
 - **Upstream Port**: 4567
@@ -164,8 +164,8 @@ Push a test commit to main and monitor:
 ### 5. Verify Application
 - Check container is running: `docker ps | grep movie`
 - Check logs: `docker logs movie-together-web`
-- Test health endpoint: `curl -I https://as.internetblacksmith.dev/health`
-- Test application: Browse to `https://as.internetblacksmith.dev`
+- Test health endpoint: `curl -I https://as.frenimies-lab.dev/health`
+- Test application: Browse to `https://as.frenimies-lab.dev`
 
 ## Troubleshooting Common Issues
 

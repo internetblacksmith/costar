@@ -1,3 +1,40 @@
+/* Intro Section Styles */
+.intro-section {
+    margin-bottom: calc(var(--spacing-lg) * 2);
+    padding: var(--spacing-lg);
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-lg);
+    border-left: 4px solid var(--primary-color);
+}
+
+.intro-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.intro-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    margin-top: 0;
+}
+
+.intro-text:last-child {
+    margin-bottom: 0;
+}
+
+.intro-text strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .intro-section {
+    background: rgba(var(--primary-color-rgb), 0.1);
+    border-left-color: var(--primary-light);
+}
+
 /* Search Component Styles */
 .search-section {
     margin-bottom: calc(var(--spacing-lg) * 2);

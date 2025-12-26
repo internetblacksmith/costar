@@ -130,7 +130,9 @@
                 <p><small>This site uses analytics to improve user experience. No personal data is collected without consent.</small></p>
                 <% end %>
             </div>
+            <!-- START FRENIMIES LAB LINK -->
             <p><a href="https://frenimies-lab.dev" target="_blank">Created by Frenimies Lab</a></p>
+            <!-- END FRENIMIES LAB LINK -->
         </footer>
     </div>
     
@@ -144,6 +146,36 @@
     <script src="/js/modules/field-manager.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/modules/actor-search.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/app.js?v=<%= Time.now.to_i %>"></script>
-    <!-- Frenimies Lab Footer Link v2 REBUILD -->
+    
+    <!-- Frenimies Lab Footer Link - JavaScript fallback for ERB rendering issue -->
+    <script>
+        (function() {
+            // Wait for DOM to be ready
+            function ensureFooterLink() {
+                const footer = document.querySelector('footer');
+                if (!footer) return;
+                
+                // Check if link already exists (from ERB)
+                if (footer.querySelector('a[href="https://frenimies-lab.dev"]')) {
+                    return;
+                }
+                
+                // If link doesn't exist, add it via JavaScript
+                const p = document.createElement('p');
+                const a = document.createElement('a');
+                a.href = 'https://frenimies-lab.dev';
+                a.target = '_blank';
+                a.textContent = 'Created by Frenimies Lab';
+                p.appendChild(a);
+                footer.appendChild(p);
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', ensureFooterLink);
+            } else {
+                ensureFooterLink();
+            }
+        })();
+    </script>
 </body>
 </html>

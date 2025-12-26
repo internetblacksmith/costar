@@ -194,17 +194,16 @@ test-coverage:
 
 # Run development server
 dev:
-	@echo "💻 Starting development server with auto-reload..."
+	@echo "💻 Starting development server..."
 	@echo "🌐 Server will be available at: http://localhost:4567"
-	@echo "🔄 Auto-reloads on file changes (*.rb, *.erb)"
 	@echo "Press Ctrl+C to stop the server"
 	@echo ""
 	@if command -v doppler > /dev/null; then \
 		echo "🔐 Using Doppler dev config for secrets..."; \
-		doppler run --config dev -- bundle exec rerun --pattern="**/*.{rb,erb}" -- ruby app.rb; \
+		doppler run --project movie_together --config dev -- bundle exec puma -C config/puma.rb; \
 	else \
 		echo "⚠️  Doppler not found. Running without Doppler..."; \
-		bundle exec rerun --pattern="**/*.{rb,erb}" -- ruby app.rb; \
+		bundle exec puma -C config/puma.rb; \
 	fi
 
 # Lint code

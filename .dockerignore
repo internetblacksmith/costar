@@ -1,0 +1,62 @@
+# Docker build context optimization
+# These files are not needed in the Docker image
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Testing & Development
+.rspec
+.rspec_with_coverage
+.rubocop.yml
+.rubocop_todo.yml
+spec/
+features/
+test/
+coverage/
+.env.example
+.env.test
+Guardfile
+
+# Development tools
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+*~
+.tmp
+.kamal/secrets
+.kamal/deploy_lock
+
+# Documentation
+*.md
+docs/
+doc/
+README*
+CHANGELOG*
+LICENSE*
+
+# Build artifacts
+tmp/
+log/
+node_modules/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (not needed in image)
+Dockerfile
+.dockerignore
+
+# Gemfile.lock is needed for reproducible builds, but can be optimized
+# Don't exclude Gemfile.lock - we need it for production builds

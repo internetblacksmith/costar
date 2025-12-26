@@ -17,12 +17,12 @@ servers:
     labels:
       # Traefik routing for HTTP/HTTPS
       traefik.enable: true
-      traefik.http.routers.movie-web.rule: Host(`as.internetblacksmith.dev`)
+      traefik.http.routers.movie-web.rule: Host(`as.frenimies-lab.dev`)
       traefik.http.routers.movie-web.entrypoints: websecure
       traefik.http.routers.movie-web.tls.certresolver: letsencrypt
       traefik.http.services.movie-web.loadbalancer.server.port: 4567
       # HTTP to HTTPS redirect
-      traefik.http.routers.movie-web-http.rule: Host(`as.internetblacksmith.dev`)
+      traefik.http.routers.movie-web-http.rule: Host(`as.frenimies-lab.dev`)
       traefik.http.routers.movie-web-http.entrypoints: web
       traefik.http.routers.movie-web-http.middlewares: movie-redirect-https
       traefik.http.middlewares.movie-redirect-https.redirectscheme.scheme: https

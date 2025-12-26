@@ -23,7 +23,7 @@ services:
       - key: CDN_PROVIDER
         value: "none"
       - key: ALLOWED_ORIGINS
-        value: "https://as.internetblacksmith.dev"
+        value: "https://as.frenimies-lab.dev"
       # Note: TMDB_API_KEY and SENTRY_DSN are managed via Doppler sync
       # Do not define them here to avoid conflicts
     healthCheckPath: /health/simple

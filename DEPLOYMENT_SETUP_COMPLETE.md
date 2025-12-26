@@ -80,7 +80,7 @@ Then add to GitHub secrets with name `DEPLOY_SSH_PRIVATE_KEY`
    - Watch progress: https://github.com/jabawack81/movie_together/actions
 
 4. **Verify Deployment**
-   - Check app: https://as.internetblacksmith.dev
+   - Check app: https://as.frenimies-lab.dev
 
 ## How It Works
 
@@ -101,7 +101,7 @@ Run: doppler run -- kamal deploy
   ↓
 Deploy to VPS (161.35.165.206:1447)
   ↓
-App running at: https://as.internetblacksmith.dev
+App running at: https://as.frenimies-lab.dev
 ```
 
 ## Benefits

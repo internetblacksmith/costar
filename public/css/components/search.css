@@ -1,21 +1,35 @@
-/* Intro Section Styles */
+/* Intro Section - Clean, Modern Design */
 .intro-section {
-    margin-bottom: calc(var(--spacing-lg) * 2);
-    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl);
     background: var(--bg-secondary);
     border-radius: var(--border-radius-lg);
-    border-left: 4px solid var(--primary-color);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle accent line */
+.intro-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-gradient);
 }
 
 .intro-content {
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
+    text-align: center;
 }
 
 .intro-text {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--text-primary);
+    font-size: var(--text-base);
+    line-height: 1.7;
+    color: var(--text-secondary);
     margin-bottom: var(--spacing-md);
     margin-top: 0;
 }
@@ -29,75 +43,112 @@
     font-weight: 600;
 }
 
-/* Dark mode adjustments */
+/* Dark mode intro - WCAG AA compliant */
 [data-theme="dark"] .intro-section {
-    background: rgba(var(--primary-color-rgb), 0.1);
-    border-left-color: var(--primary-light);
+    background: var(--bg-secondary);
+    border-color: rgba(79, 70, 229, 0.3);
 }
 
-/* Search Component Styles */
+[data-theme="dark"] .intro-text {
+    color: var(--text-primary);
+}
+
+/* Search Section - Modern Card Design */
 .search-section {
-    margin-bottom: calc(var(--spacing-lg) * 2);
+    margin-bottom: var(--spacing-2xl);
 }
 
 .search-card {
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 4px var(--shadow-color);
+    box-shadow: var(--shadow-lg);
     transition: all var(--transition-normal);
+    position: relative;
 }
 
+.search-card:hover {
+    box-shadow: var(--shadow-xl);
+}
+
+/* Search Form Grid */
 .search-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
 }
 
+/* Search Field Container */
 .search-field-container {
     position: relative;
 }
 
-/* Additional input field styling for better readability */
+/* Modern Input Field Styling */
 .search-field-container .mdc-text-field {
+    border-radius: var(--border-radius);
     transition: all var(--transition-fast);
+    background: var(--input-bg) !important;
+    border: 2px solid var(--input-border) !important;
 }
 
 .search-field-container .mdc-text-field:hover {
-    border-color: var(--primary-color);
+    border-color: var(--primary-light) !important;
 }
 
-/* Ensure good contrast for placeholder text */
+.search-field-container .mdc-text-field--focused {
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--input-focus-shadow);
+}
+
+/* Input placeholder styling */
 .search-field-container .mdc-text-field__input::placeholder {
-    color: var(--text-tertiary);
-    opacity: 0.7;
-}
-
-[data-theme="dark"] .search-field-container .mdc-text-field__input::placeholder {
     color: var(--text-tertiary);
     opacity: 0.8;
 }
 
-/* Selected actor chips in place of input fields */
+[data-theme="dark"] .search-field-container .mdc-text-field__input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 0.7;
+}
+
+/* Selected Actor Chips - Modern Style */
 .selected-actor-chip {
     width: 100%;
     justify-content: space-between;
     height: 56px;
-    padding: 0 var(--spacing-sm);
+    padding: 0 var(--spacing-md);
     box-sizing: border-box;
+    background: var(--primary-gradient) !important;
+    border-radius: var(--border-radius) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+}
+
+.selected-actor-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .selected-actor-chip .mdc-chip__text {
-    font-size: 1rem;
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: white !important;
 }
 
 .selected-actor-chip .mdc-chip__trailing-icon {
     margin-left: auto;
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Loading indicator for suggestions */
+.selected-actor-chip .mdc-chip__trailing-icon:hover {
+    color: white !important;
+}
+
+/* Loading Indicator for Suggestions */
 .suggestions-loading {
     position: absolute;
     top: 100%;
@@ -105,14 +156,13 @@
     right: 0;
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 8px var(--shadow-color);
+    box-shadow: var(--shadow-lg);
     padding: var(--spacing-md);
     z-index: 1000;
-    margin-top: 4px;
+    margin-top: var(--spacing-xs);
     border: 1px solid var(--border-color);
 }
 
-/* HTMX indicator handling */
 .suggestions-loading.htmx-indicator {
     display: none;
 }
@@ -127,16 +177,16 @@
     justify-content: center;
     gap: var(--spacing-sm);
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
 }
 
 .loading-spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--primary-color-light);
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
     border-top: 2px solid var(--primary-color);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -148,7 +198,7 @@
     font-weight: 500;
 }
 
-/* Suggestions dropdown */
+/* Suggestions Dropdown - Modern Style */
 .suggestions {
     position: absolute;
     top: 100%;
@@ -156,11 +206,11 @@
     right: 0;
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 12px var(--shadow-hover);
-    max-height: 200px;
+    box-shadow: var(--shadow-xl);
+    max-height: 280px;
     overflow-y: auto;
     z-index: 1000;
-    margin-top: 4px;
+    margin-top: var(--spacing-xs);
     border: 1px solid var(--border-color);
     transition: all var(--transition-fast);
 }
@@ -168,31 +218,99 @@
 /* Hide suggestions when loading */
 .search-field-container:has(.htmx-request) .suggestions {
     opacity: 0.5;
+    pointer-events: none;
 }
 
 .suggestions:empty {
     display: none;
 }
 
+/* Suggestion Items */
 .suggestion-item {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
     cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     transition: all var(--transition-fast);
     color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
 }
 
 .suggestion-item:hover {
-    background-color: var(--suggestion-hover);
+    background: var(--suggestion-hover);
+    padding-left: calc(var(--spacing-md) + 4px);
 }
 
 .suggestion-item:last-child {
     border-bottom: none;
 }
 
-/* Compare button */
+.suggestion-item:first-child {
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.suggestion-item:last-child {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.suggestion-item:only-child {
+    border-radius: var(--border-radius);
+}
+
+/* Compare Button Container */
 .compare-button-container {
     display: flex;
     justify-content: center;
-    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+}
+
+/* Modern Compare Button */
+.compare-button-container .mdc-button {
+    background: var(--primary-gradient) !important;
+    border-radius: var(--border-radius-full) !important;
+    padding: var(--spacing-md) var(--spacing-2xl) !important;
+    height: 56px !important;
+    font-size: var(--text-base) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    text-transform: none !important;
+    box-shadow: var(--shadow-lg), var(--shadow-glow) !important;
+    transition: all var(--transition-normal) !important;
+    border: none !important;
+}
+
+.compare-button-container .mdc-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl), 0 0 30px rgba(79, 70, 229, 0.4) !important;
+}
+
+.compare-button-container .mdc-button:active {
+    transform: translateY(0);
+}
+
+.compare-button-container .mdc-button .mdc-button__label {
+    color: white !important;
+}
+
+/* Responsive Search */
+@media (max-width: 768px) {
+    .search-form {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .search-card {
+        padding: var(--spacing-lg);
+        border-radius: var(--border-radius-lg);
+    }
+    
+    .intro-section {
+        padding: var(--spacing-md);
+    }
+    
+    .compare-button-container .mdc-button {
+        width: 100%;
+        padding: var(--spacing-md) var(--spacing-lg) !important;
+    }
 }

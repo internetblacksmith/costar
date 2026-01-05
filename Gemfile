@@ -18,7 +18,7 @@ gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)
 gem "json", "2.18.0" # JSON parsing
 gem "logger", "1.7.0" # Logging (Ruby 3.5+ compatibility)
-gem "net-http", "0.8.0" # HTTP client
+gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", ">= 1.18.9" # XML parsing (security fix for libxml2 CVEs)
 gem "ostruct", "0.6.3" # OpenStruct (Ruby 3.5+ compatibility)
 gem "puma", "7.1.0" # Web server
@@ -45,7 +45,7 @@ end
 
 group :test do
   gem "axe-core-rspec", "4.11.0" # Accessibility testing with axe-core
-  gem "benchmark", "0.2.0" # Performance measurement (Ruby 3.5+ compatibility)
+  gem "benchmark", "0.5.0" # Performance measurement (Ruby 3.5+ compatibility)
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
   gem "cucumber", "10.2.0" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara (used by visual/compatibility tests)

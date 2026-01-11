@@ -129,8 +129,12 @@ RSpec.describe "Accessibility", type: :feature, js: true do
     it "meets minimum contrast ratios in dark mode" do
       visit "/"
 
-      # Dark mode
+      # Dark mode - set theme and wait for CSS to apply
       page.execute_script("localStorage.setItem('theme', 'dark'); document.documentElement.setAttribute('data-theme', 'dark');")
+
+      # Force a reflow to ensure CSS is applied
+      page.execute_script("document.body.offsetHeight;")
+      sleep 0.5
 
       # Specific contrast checks
       expect(page).to be_axe_clean

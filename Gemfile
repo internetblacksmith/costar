@@ -36,11 +36,11 @@ gem "thor", ">= 1.4.0" # CLI framework (security fix for CVE-2025-54314)
 gem "uri", ">= 1.0.4" # URI parsing (security fix for CVE-2025-61594)
 
 group :development do
-  gem "brakeman", "7.1.1" # Security scanner
+  gem "brakeman", "7.1.2" # Security scanner
   gem "bundle-audit", "0.2.0" # Dependency security scanner
   gem "filewatcher", "2.1.0" # File watching for auto-restart (replaces rerun)
   gem "pry", "0.15.2" # Interactive debugger
-  gem "rubocop", "1.81.7" # Code style and linting
+  gem "rubocop", "1.82.1" # Code style and linting
 end
 
 group :test do
@@ -56,7 +56,7 @@ group :test do
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
   gem "selenium-webdriver", "4.39.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
-  gem "vcr", "6.3.1" # Record and replay HTTP interactions
+  gem "vcr", "6.4.0" # Record and replay HTTP interactions
   gem "webmock", "3.26.1" # HTTP request stubbing
 end
 

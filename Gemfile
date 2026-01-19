@@ -12,13 +12,13 @@ source "https://rubygems.org"
 # Last updated: 2025-11-16
 
 # Core application dependencies
-gem "activesupport", "8.1.1" # For cache and notifications
+gem "activesupport", "8.1.2" # For cache and notifications
 gem "circuit_breaker", "1.1.2" # Circuit breaker pattern for API resilience
 gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)
 gem "json", "2.18.0" # JSON parsing
 gem "logger", "1.7.0" # Logging (Ruby 3.5+ compatibility)
-gem "net-http", "0.8.0" # HTTP client
+gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", ">= 1.18.9" # XML parsing (security fix for libxml2 CVEs)
 gem "ostruct", "0.6.3" # OpenStruct (Ruby 3.5+ compatibility)
 gem "puma", "7.1.0" # Web server
@@ -29,7 +29,7 @@ gem "rackup", "2.3.1" # Rack server command
 gem "redis", "5.4.1" # Redis client
 gem "retries", "0.0.5" # Exponential backoff retries
 gem "rexml", ">= 3.4.2" # XML parsing (security fix for CVE-2025-58767)
-gem "sentry-ruby", "6.2.0" # Error tracking and monitoring
+gem "sentry-ruby", "6.3.0" # Error tracking and monitoring
 gem "sinatra", ">= 4.2.0" # Web framework (security fix for CVE-2025-61921)
 gem "sinatra-contrib", ">= 4.2.0" # Sinatra extensions
 gem "thor", ">= 1.4.0" # CLI framework (security fix for CVE-2025-54314)
@@ -39,13 +39,13 @@ group :development do
   gem "brakeman", "7.1.2" # Security scanner
   gem "bundle-audit", "0.2.0" # Dependency security scanner
   gem "filewatcher", "2.1.0" # File watching for auto-restart (replaces rerun)
-  gem "pry", "0.15.2" # Interactive debugger
+  gem "pry", "0.16.0" # Interactive debugger
   gem "rubocop", "1.82.1" # Code style and linting
 end
 
 group :test do
   gem "axe-core-rspec", "4.11.0" # Accessibility testing with axe-core
-  gem "benchmark", "0.2.0" # Performance measurement (Ruby 3.5+ compatibility)
+  gem "benchmark", "0.5.0" # Performance measurement (Ruby 3.5+ compatibility)
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
   gem "cucumber", "10.2.0" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara (used by visual/compatibility tests)
@@ -54,12 +54,12 @@ group :test do
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
-  gem "selenium-webdriver", "4.39.0" # Selenium WebDriver for browser testing
+  gem "selenium-webdriver", "4.40.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.4.0" # Record and replay HTTP interactions
   gem "webmock", "3.26.1" # HTTP request stubbing
 end
 
 group :development, :test do
-  gem "pry-byebug", "3.11.0" # Debugging with breakpoints
+  gem "pry-byebug", "3.12.0" # Debugging with breakpoints
 end

@@ -50,7 +50,7 @@ group :test do
   gem "cucumber", "10.2.0" # BDD testing framework (Ruby 3.4+ compatible)
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara (used by visual/compatibility tests)
   gem "factory_bot", "6.5.6" # Test data factories
-  gem "faker", "3.5.3" # Fake data generation
+  gem "faker", "3.6.0" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI

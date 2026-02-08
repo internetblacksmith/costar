@@ -2,13 +2,13 @@
 
 require "spec_helper"
 
-RSpec.describe "MovieTogether Application", type: :request do
+RSpec.describe "ScreenThread Application", type: :request do
   describe "GET /" do
     it "renders the main page" do
       get "/"
 
       expect(last_response.status).to eq(200)
-      expect(last_response.body).to include("MovieTogether")
+      expect(last_response.body).to include("ScreenThread")
     end
   end
 

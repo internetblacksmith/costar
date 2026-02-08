@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 MovieTogether</title>
+    <title>🎬 ScreenThread</title>
     
     <!-- Material Design Components Web -->
     <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
@@ -85,7 +85,7 @@
         })();
     </script>
     
-    <% if ENV['POSTHOG_API_KEY'] %>
+    <% if ENV['POSTHOG_API_KEY'] && ENV['RACK_ENV'] != 'development' %>
     <script>
         !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
         posthog.init('<%= ENV['POSTHOG_API_KEY'] %>', {
@@ -111,8 +111,8 @@
         <header>
             <div class="header-content">
                 <div class="header-text">
-                    <h1>MovieTogether</h1>
-                    <p>Find movies by the actors you remember</p>
+                    <h1>ScreenThread</h1>
+                    <p>Discover the connections between actors and movies</p>
                 </div>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                     <span class="material-icons" id="themeIcon">dark_mode</span>
@@ -126,7 +126,7 @@
             <div class="tmdb-attribution">
                 <p><strong>This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</strong></p>
                 <p>Data provided by <a href="https://www.themoviedb.org/" target="_blank">The Movie Database (TMDB)</a></p>
-                <% if ENV['POSTHOG_API_KEY'] %>
+                <% if ENV['POSTHOG_API_KEY'] && ENV['RACK_ENV'] != 'development' %>
                 <p><small>This site uses analytics to improve user experience. No personal data is collected without consent.</small></p>
                 <% end %>
             </div>
@@ -144,6 +144,7 @@
     <script src="/js/modules/event-manager.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/modules/analytics-tracker.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/modules/field-manager.js?v=<%= Time.now.to_i %>"></script>
+    <script src="/js/modules/mobile-keyboard.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/modules/actor-search.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/app.js?v=<%= Time.now.to_i %>"></script>
     

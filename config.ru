@@ -2,4 +2,4 @@
 
 require_relative "app"
 
-run MovieTogetherApp
+run ScreenThreadApp

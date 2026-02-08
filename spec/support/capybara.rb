@@ -6,7 +6,7 @@ require "selenium-webdriver"
 require "capybara/cuprite"
 
 # Configure Capybara
-Capybara.app = MovieTogetherApp
+Capybara.app = ScreenThreadApp
 Capybara.default_driver = :rack_test
 Capybara.javascript_driver = :cuprite # Default for most feature tests
 Capybara.default_max_wait_time = 5

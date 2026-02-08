@@ -1,3 +1,5 @@
+<% tmdb_url = "https://www.themoviedb.org/movie/#{movie[:id]}" %>
+<% justwatch_url = "https://www.justwatch.com/us/search?q=#{ERB::Util.url_encode(movie[:title])}" %>
 <div class="movie-item<%= ' shared' if shared %>">
     <div class="mdc-card movie-card">
         <div class="movie-poster-container">
@@ -11,16 +13,29 @@
                          <%= PosterService.poster_url(movie[:poster_path], :medium) %> 342w,
                          <%= PosterService.poster_url(movie[:poster_path], :large) %> 500w"
                  sizes="(max-width: 768px) 154px, 342px">
+            <a href="<%= tmdb_url %>" target="_blank" rel="noopener noreferrer" class="poster-info-link" aria-label="View <%= movie[:title] %> details on TMDB">
+                <span class="material-icons">info</span>
+            </a>
         </div>
         <div class="movie-content">
             <div class="movie-title">
-                <%= movie[:title] %>
+                <a href="<%= tmdb_url %>" target="_blank" rel="noopener noreferrer" class="movie-title-link"><%= movie[:title] %></a>
                 <% if shared %>
                     <span class="material-icons shared-star">star</span>
                 <% end %>
             </div>
             <div class="movie-actor"><%= actor_name %></div>
             <div class="movie-character">as <%= movie[:character] || 'Unknown' %></div>
+            <div class="movie-actions">
+                <a href="<%= justwatch_url %>" target="_blank" rel="noopener noreferrer" class="action-link watch-link" aria-label="Find where to watch <%= movie[:title] %>" title="Find streaming options">
+                    <span class="material-icons">play_circle</span>
+                    <span class="action-link-text">Stream</span>
+                </a>
+                <a href="<%= tmdb_url %>" target="_blank" rel="noopener noreferrer" class="action-link tmdb-link" aria-label="View <%= movie[:title] %> on TMDB" title="View on TMDB">
+                    <img src="/images/tmdb-logo.svg" alt="TMDB" class="tmdb-icon">
+                    <span class="action-link-text">TMDB</span>
+                </a>
+            </div>
             <% if shared && mobile_actors_info %>
                 <div class="mobile-shared-actors">
                     <% mobile_actors_info.each_with_index do |actor_info, index| %>

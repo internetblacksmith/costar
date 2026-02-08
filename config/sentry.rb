@@ -2,21 +2,20 @@
 
 require "sentry-ruby"
 
-# Only initialize Sentry if DSN is present
-if ENV["SENTRY_DSN"] && !ENV["SENTRY_DSN"].empty?
+# Only initialize Sentry in production-like environments
+# Skip in development to avoid SSL issues with bleeding-edge OpenSSL versions
+rack_env = ENV.fetch("RACK_ENV", "development")
+sentry_enabled = ENV.fetch("SENTRY_DSN", nil) && !ENV["SENTRY_DSN"].empty? && rack_env != "development"
+
+if sentry_enabled
 
   # Sentry configuration for error tracking
   Sentry.init do |config|
     # DSN (Data Source Name) - get this from your Sentry project
-    config.dsn = ENV["SENTRY_DSN"]
+    config.dsn = ENV.fetch("SENTRY_DSN", nil)
 
-    # Enable Sentry when DSN is provided
-    # Include Render's 'deployment' environment
-    config.enabled_environments = if ENV["SENTRY_DSN"]
-                                    [ENV.fetch("RACK_ENV", "development")]
-                                  else
-                                    %w[production staging deployment]
-                                  end
+    # Only enable in production-like environments
+    config.enabled_environments = %w[production staging deployment]
 
     # Environment
     config.environment = ENV.fetch("RACK_ENV", "development")
@@ -25,7 +24,7 @@ if ENV["SENTRY_DSN"] && !ENV["SENTRY_DSN"].empty?
     config.release = ENV.fetch("APP_VERSION", "unknown")
 
     # Server name
-    config.server_name = ENV.fetch("RENDER_SERVICE_NAME", "actorsync")
+    config.server_name = ENV.fetch("RENDER_SERVICE_NAME", "screenthread")
 
     # Sample rate for performance monitoring (0.0 to 1.0)
     config.traces_sample_rate = ENV.fetch("SENTRY_TRACES_SAMPLE_RATE", "0.1").to_f
@@ -55,7 +54,7 @@ if ENV["SENTRY_DSN"] && !ENV["SENTRY_DSN"].empty?
 
   # Tags to add to all events (set after initialization)
   Sentry.set_tags(
-    app: "actorsync",
+    app: "screenthread",
     component: "backend"
   )
 end

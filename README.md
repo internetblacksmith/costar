@@ -1,11 +1,11 @@
-# 🎬 MovieTogether
+# 🎬 ScreenThread
 
-[![CI](https://github.com/jabawack81/movie_together/actions/workflows/ci.yml/badge.svg)](https://github.com/jabawack81/movie_together/actions/workflows/ci.yml)
-[![Deploy](https://github.com/jabawack81/movie_together/actions/workflows/deploy.yml/badge.svg)](https://github.com/jabawack81/movie_together/actions/workflows/deploy.yml)
-[![Ruby](https://img.shields.io/badge/ruby-3.4.2-red.svg)](https://www.ruby-lang.org)
+[![CI](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml)
+[![Deploy](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml)
+[![Ruby](https://img.shields.io/badge/ruby-4.0.0-red.svg)](https://www.ruby-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A production-ready web application that visualizes actor filmographies in a timeline format, highlighting movies that two actors have appeared in together. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.
+A production-ready web application that discovers the connections between actors and movies. Find movies that two actors have appeared in together, or find actors who have appeared in two movies. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.
 
 ## Features
 
@@ -260,7 +260,7 @@ bundle exec ruby app.rb
 
 ## Production Deployment
 
-MovieTogether is production-ready with automated CI/CD pipeline:
+ScreenThread is production-ready with automated CI/CD pipeline:
 
 ### Automated Deployment Pipeline (GitHub Actions + Kamal)
 

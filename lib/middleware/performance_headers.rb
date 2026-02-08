@@ -121,14 +121,12 @@ class PerformanceHeaders
     # Build resource preload hints for critical resources
     hints = []
 
-    # Don't preload main.css since it uses @import statements which delay usage
-    # The browser warning occurs because @import creates additional network requests
-    # after the preloaded CSS file is downloaded but before it's "used"
+    # Don't preload CSS/JS files that use cache-busting query strings (e.g., ?v=timestamp)
+    # The preload URL must exactly match the script/link URL, including query strings.
+    # Since we use dynamic timestamps, preloading would cause browser warnings about
+    # "resource preloaded but not used".
 
-    # Preload critical JavaScript
-    hints << "</js/app.js>; rel=preload; as=script"
-
-    # Preload important fonts
+    # Preload important fonts (these don't use cache-busting)
     hints << "</fonts/roboto.woff2>; rel=preload; as=font; type=font/woff2; crossorigin" if font_available?
 
     hints.join(", ")

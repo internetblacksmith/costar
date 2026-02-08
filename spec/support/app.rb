@@ -2,7 +2,7 @@
 
 # App definition for Rack::Test
 def app
-  MovieTogetherApp
+  ScreenThreadApp
 end
 
 # Helper methods for testing

@@ -3,6 +3,7 @@ class App {
     constructor() {
         this.actorSearch = null;
         this.scrollToTop = null;
+        this.mobileKeyboard = null;
         this.init();
     }
 
@@ -25,6 +26,7 @@ class App {
              // Initialize modules
              this.actorSearch = new ActorSearch();
              this.scrollToTop = new ScrollToTop();
+             this.mobileKeyboard = new MobileKeyboard();
              
              // Make actor search available globally for onclick handlers
              window.actorSearch = this.actorSearch;

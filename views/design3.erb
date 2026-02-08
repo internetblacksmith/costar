@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreenThread // NEON NOIR</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-panel: #0d0d18;
+            --bg-purple: #1a0a2e;
+            --cyan: #00f0ff;
+            --magenta: #ff00aa;
+            --acid: #39ff14;
+            --cyan-dim: #00f0ff66;
+            --magenta-dim: #ff00aa44;
+            --acid-dim: #39ff1444;
+            --text-primary: #e0e0f0;
+            --text-secondary: #8888aa;
+            --border-color: #1a1a30;
+            --glow-cyan: 0 0 7px #00f0ff, 0 0 10px #00f0ff44, 0 0 21px #00f0ff22;
+            --glow-magenta: 0 0 7px #ff00aa, 0 0 10px #ff00aa44, 0 0 21px #ff00aa22;
+            --glow-acid: 0 0 7px #39ff14, 0 0 10px #39ff1444, 0 0 21px #39ff1422;
+            --nav-width: 72px;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Fira Code", monospace;
+            background-color: var(--bg-void);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           BACKGROUND: Circuit / Grid Pattern
+           ============================================ */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                /* Grid lines */
+                linear-gradient(90deg, #1a1a3010 1px, transparent 1px),
+                linear-gradient(0deg, #1a1a3010 1px, transparent 1px),
+                /* Larger grid */
+                linear-gradient(90deg, #1a1a3018 1px, transparent 1px),
+                linear-gradient(0deg, #1a1a3018 1px, transparent 1px),
+                /* Radial glow spots */
+                radial-gradient(ellipse 600px 400px at 20% 30%, #1a0a2e33 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 80% 70%, #0a102e33 0%, transparent 70%);
+            background-size:
+                30px 30px,
+                30px 30px,
+                150px 150px,
+                150px 150px,
+                100% 100%,
+                100% 100%;
+        }
+
+        /* Scanline overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+        }
+
+        /* ============================================
+           SIDE NAVIGATION — Neon Signs
+           ============================================ */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--nav-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #0a0a1299 0%, #0d0d1acc 50%, #0a0a1299 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            gap: 6px;
+            z-index: 1000;
+        }
+
+        .side-nav::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                var(--cyan-dim) 20%,
+                var(--magenta-dim) 50%,
+                var(--cyan-dim) 80%,
+                transparent 100%
+            );
+        }
+
+        .nav-brand {
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.5rem;
+            font-weight: 800;
+            color: var(--cyan);
+            text-shadow: var(--glow-cyan);
+            letter-spacing: 2px;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            margin-bottom: 16px;
+            padding: 10px 0;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--cyan);
+            text-shadow: var(--glow-cyan);
+            border-color: var(--cyan-dim);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: var(--magenta);
+            text-shadow: var(--glow-magenta);
+            border-color: var(--magenta-dim);
+            background: rgba(255, 0, 170, 0.08);
+        }
+
+        .nav-link.home-link .material-icons {
+            font-size: 22px;
+        }
+
+        .nav-divider {
+            width: 32px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 8px 0;
+        }
+
+        /* ============================================
+           MAIN CONTENT AREA — CRT Effect
+           ============================================ */
+        .main-content {
+            margin-left: var(--nav-width);
+            padding: 40px 40px 80px;
+            position: relative;
+            z-index: 1;
+            max-width: 960px;
+            margin-right: auto;
+        }
+
+        /* ============================================
+           SYSTEM STATUS INDICATOR
+           ============================================ */
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-family: "Fira Code", monospace;
+            font-size: 0.7rem;
+            color: var(--acid);
+            text-shadow: var(--glow-acid);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--acid);
+            box-shadow: var(--glow-acid);
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; box-shadow: var(--glow-acid); }
+            50% { opacity: 0.5; box-shadow: 0 0 3px #39ff14; }
+        }
+
+        .status-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--acid-dim), transparent);
+        }
+
+        /* ============================================
+           TITLE — Flickering Neon
+           ============================================ */
+        .page-title {
+            font-family: "Orbitron", sans-serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            color: var(--cyan);
+            text-shadow:
+                0 0 7px #00f0ff,
+                0 0 10px #00f0ff,
+                0 0 21px #00f0ff,
+                0 0 42px #00f0ff88,
+                0 0 82px #00f0ff44,
+                0 0 92px #00f0ff22;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            animation: neonFlicker 4s ease-in-out infinite;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        @keyframes neonFlicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+                text-shadow:
+                    0 0 7px #00f0ff,
+                    0 0 10px #00f0ff,
+                    0 0 21px #00f0ff,
+                    0 0 42px #00f0ff88,
+                    0 0 82px #00f0ff44;
+            }
+            20%, 24%, 55% {
+                opacity: 0.7;
+                text-shadow:
+                    0 0 4px #00f0ff88,
+                    0 0 7px #00f0ff44;
+            }
+        }
+
+        .page-subtitle {
+            font-family: "Fira Code", monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            padding-left: 4px;
+        }
+
+        .page-subtitle span {
+            color: var(--magenta);
+            text-shadow: 0 0 5px #ff00aa88;
+        }
+
+        /* ============================================
+           SEARCH PANEL — Dark Glass / CRT
+           ============================================ */
+        .search-panel {
+            background: linear-gradient(135deg, rgba(13, 13, 24, 0.85) 0%, rgba(26, 10, 46, 0.6) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 36px 32px 32px;
+            position: relative;
+            overflow: hidden;
+            /* CRT curvature */
+            box-shadow:
+                inset 0 0 80px rgba(0, 0, 0, 0.4),
+                0 0 1px var(--cyan-dim),
+                0 0 30px rgba(0, 240, 255, 0.04);
+        }
+
+        /* Corner accents */
+        .search-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border-top: 2px solid var(--cyan);
+            border-left: 2px solid var(--cyan);
+            border-radius: 12px 0 0 0;
+            box-shadow:
+                -2px -2px 8px rgba(0, 240, 255, 0.15);
+        }
+
+        .search-panel::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-bottom: 2px solid var(--magenta);
+            border-right: 2px solid var(--magenta);
+            border-radius: 0 0 12px 0;
+            box-shadow:
+                2px 2px 8px rgba(255, 0, 170, 0.15);
+        }
+
+        .panel-header {
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-header::before {
+            content: "//";
+            color: var(--cyan);
+            text-shadow: 0 0 5px #00f0ff88;
+        }
+
+        .panel-header .header-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border-color), transparent);
+        }
+
+        /* ============================================
+           SEARCH FIELDS — Terminal Style
+           ============================================ */
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .field-container {
+            position: relative;
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: "Fira Code", monospace;
+            font-size: 0.7rem;
+            color: var(--cyan);
+            text-shadow: 0 0 4px #00f0ff44;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .field-label .prompt {
+            color: var(--acid);
+            text-shadow: 0 0 4px #39ff1444;
+        }
+
+        .terminal-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-prefix {
+            position: absolute;
+            left: 12px;
+            font-family: "Fira Code", monospace;
+            font-size: 0.8rem;
+            color: var(--acid);
+            text-shadow: 0 0 4px #39ff1444;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .terminal-input {
+            width: 100%;
+            padding: 12px 14px 12px 32px;
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: "Fira Code", monospace;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.3s ease;
+            caret-color: var(--acid);
+        }
+
+        .terminal-input::placeholder {
+            color: #444466;
+            font-style: italic;
+        }
+
+        .terminal-input:focus {
+            border-color: var(--cyan);
+            box-shadow:
+                0 0 0 1px var(--cyan-dim),
+                0 0 15px rgba(0, 240, 255, 0.08),
+                inset 0 0 15px rgba(0, 240, 255, 0.03);
+        }
+
+        .terminal-input:disabled {
+            border-color: var(--magenta-dim);
+            background: rgba(255, 0, 170, 0.05);
+        }
+
+        /* Blinking cursor effect on focus */
+        .terminal-input:focus::placeholder {
+            animation: cursorBlink 1s step-end infinite;
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Clear button */
+        .clear-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            z-index: 2;
+        }
+
+        .clear-btn:hover {
+            color: var(--magenta);
+            border-color: var(--magenta-dim);
+            text-shadow: var(--glow-magenta);
+        }
+
+        .clear-btn .material-icons {
+            font-size: 16px;
+        }
+
+        /* ============================================
+           SUGGESTIONS DROPDOWN
+           ============================================ */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            margin-top: 4px;
+            background: rgba(13, 13, 24, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                0 0 1px var(--cyan-dim);
+        }
+
+        .suggestions:empty {
+            display: none;
+        }
+
+        /* ============================================
+           COMPARE BUTTON — Pulsing Neon
+           ============================================ */
+        .compare-section {
+            display: flex;
+            justify-content: center;
+            padding-top: 4px;
+        }
+
+        .compare-btn {
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--bg-void);
+            background: linear-gradient(135deg, var(--cyan), #00c8ff);
+            border: none;
+            border-radius: 4px;
+            padding: 14px 40px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: btnPulse 3s ease-in-out infinite;
+            box-shadow:
+                0 0 10px #00f0ff66,
+                0 0 20px #00f0ff33,
+                0 0 40px #00f0ff1a;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% {
+                box-shadow:
+                    0 0 10px #00f0ff66,
+                    0 0 20px #00f0ff33,
+                    0 0 40px #00f0ff1a;
+            }
+            50% {
+                box-shadow:
+                    0 0 15px #00f0ff88,
+                    0 0 30px #00f0ff55,
+                    0 0 60px #00f0ff33,
+                    0 0 80px #00f0ff1a;
+            }
+        }
+
+        .compare-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #00f0ff, var(--magenta));
+            box-shadow:
+                0 0 15px #ff00aa88,
+                0 0 30px #ff00aa44,
+                0 0 60px #ff00aa22;
+            animation: none;
+        }
+
+        /* Glitch effect on hover */
+        .compare-btn:hover::before {
+            content: "EXECUTE SEARCH";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: inherit;
+            animation: glitch 0.3s steps(2, end) infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                clip-path: inset(40% 0 61% 0);
+                transform: translate(-2px, 2px);
+            }
+            20% {
+                clip-path: inset(92% 0 1% 0);
+                transform: translate(1px, -1px);
+            }
+            40% {
+                clip-path: inset(43% 0 1% 0);
+                transform: translate(-1px, 3px);
+            }
+            60% {
+                clip-path: inset(25% 0 58% 0);
+                transform: translate(3px, 1px);
+            }
+            80% {
+                clip-path: inset(54% 0 7% 0);
+                transform: translate(-3px, -2px);
+            }
+            100% {
+                clip-path: inset(58% 0 43% 0);
+                transform: translate(2px, -3px);
+            }
+        }
+
+        .compare-btn:active {
+            transform: translateY(0);
+        }
+
+        .compare-btn .material-icons {
+            font-size: 18px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        /* ============================================
+           RESULTS / TIMELINE — CRT Panel
+           ============================================ */
+        .results-section {
+            margin-top: 40px;
+        }
+
+        .results-panel {
+            background: linear-gradient(135deg, rgba(13, 13, 24, 0.8) 0%, rgba(26, 10, 46, 0.5) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+            /* CRT curvature */
+            box-shadow:
+                inset 0 0 60px rgba(0, 0, 0, 0.3),
+                0 0 1px var(--magenta-dim),
+                0 0 20px rgba(255, 0, 170, 0.03);
+        }
+
+        .results-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-top: 2px solid var(--magenta);
+            border-right: 2px solid var(--magenta);
+            border-radius: 0 12px 0 0;
+            box-shadow: 2px -2px 8px rgba(255, 0, 170, 0.15);
+        }
+
+        .results-panel::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border-bottom: 2px solid var(--cyan);
+            border-left: 2px solid var(--cyan);
+            border-radius: 0 0 0 12px;
+            box-shadow: -2px 2px 8px rgba(0, 240, 255, 0.15);
+        }
+
+        .results-label {
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-label::before {
+            content: ">>";
+            color: var(--magenta);
+            text-shadow: 0 0 5px #ff00aa88;
+        }
+
+        .results-label .header-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border-color), transparent);
+        }
+
+        #timeline {
+            font-family: "Fira Code", monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            min-height: 60px;
+        }
+
+        #timeline:empty::before {
+            content: "_ awaiting query input...";
+            color: #333355;
+            font-style: italic;
+            animation: cursorBlink 1s step-end infinite;
+        }
+
+        /* HTMX loading indicator */
+        #timeline.htmx-request::before {
+            content: "";
+        }
+
+        #timeline.htmx-request::after {
+            content: ">> SCANNING DATABASE...";
+            color: var(--cyan);
+            text-shadow: var(--glow-cyan);
+            animation: loadingFlicker 0.5s steps(3, end) infinite;
+            font-family: "Orbitron", sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+        }
+
+        @keyframes loadingFlicker {
+            0%, 100% { opacity: 1; }
+            33% { opacity: 0.4; }
+            66% { opacity: 0.8; }
+        }
+
+        /* ============================================
+           FOOTER / SYSTEM INFO
+           ============================================ */
+        .system-footer {
+            margin-top: 48px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: "Fira Code", monospace;
+            font-size: 0.6rem;
+            color: #333355;
+            letter-spacing: 1px;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-left .blink-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--magenta);
+            box-shadow: 0 0 4px #ff00aa88;
+            animation: statusPulse 3s ease-in-out infinite;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            :root {
+                --nav-width: 0px;
+            }
+
+            .side-nav {
+                display: none;
+            }
+
+            .main-content {
+                padding: 24px 16px 60px;
+            }
+
+            .fields-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .search-panel {
+                padding: 24px 16px 20px;
+            }
+
+            .compare-btn {
+                width: 100%;
+            }
+        }
+
+        /* ============================================
+           SCROLLBAR
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-void);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan-dim);
+        }
+
+        /* ============================================
+           SELECTION
+           ============================================ */
+        ::selection {
+            background: var(--magenta);
+            color: var(--bg-void);
+        }
+
+        /* ============================================
+           UTILITY
+           ============================================ */
+        .hidden-field {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         SIDE NAVIGATION
+         ============================================ -->
+    <nav class="side-nav">
+        <div class="nav-brand">ST</div>
+        <a href="/" class="nav-link home-link" title="Home">
+            <span class="material-icons">home</span>
+        </a>
+        <div class="nav-divider"></div>
+        <a href="/1" class="nav-link" title="Design 1">01</a>
+        <a href="/2" class="nav-link" title="Design 2">02</a>
+        <a href="/3" class="nav-link active" title="Design 3">03</a>
+        <a href="/4" class="nav-link" title="Design 4">04</a>
+        <a href="/5" class="nav-link" title="Design 5">05</a>
+    </nav>
+
+    <!-- ============================================
+         MAIN CONTENT
+         ============================================ -->
+    <div class="main-content">
+
+        <!-- System status -->
+        <div class="system-status">
+            <div class="status-dot"></div>
+            <span>System Online</span>
+            <div class="status-line"></div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="page-title">ScreenThread</h1>
+        <p class="page-subtitle"><span>&gt;</span> actor_link_scanner <span>//</span> find shared filmographies</p>
+
+        <!-- Search Panel -->
+        <div class="search-panel">
+            <div class="panel-header">
+                Query Interface
+                <span class="header-line"></span>
+            </div>
+
+            <div class="fields-grid">
+                <!-- Actor 1 -->
+                <div class="field-container">
+                    <label class="field-label" for="actor1">
+                        <span class="prompt">$</span> actor_01
+                    </label>
+                    <div class="terminal-input-wrap">
+                        <span class="terminal-prefix">&gt;</span>
+                        <input
+                            type="text"
+                            id="actor1"
+                            name="q"
+                            class="terminal-input"
+                            placeholder="enter name..."
+                            autocomplete="off"
+                            hx-get="/api/actors/search"
+                            hx-trigger="keyup changed delay:300ms"
+                            hx-target="#suggestions1"
+                            hx-include="this"
+                            hx-vals='{"field": "actor1"}'
+                        >
+                        <button type="button" class="clear-btn" onclick="clearActor('actor1')" title="Clear">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <div class="suggestions" id="suggestions1"></div>
+                    <input type="hidden" id="actor1_id" name="actor1_id" class="hidden-field">
+                    <input type="hidden" id="actor1_name" name="actor1_name" class="hidden-field">
+                </div>
+
+                <!-- Actor 2 -->
+                <div class="field-container">
+                    <label class="field-label" for="actor2">
+                        <span class="prompt">$</span> actor_02
+                    </label>
+                    <div class="terminal-input-wrap">
+                        <span class="terminal-prefix">&gt;</span>
+                        <input
+                            type="text"
+                            id="actor2"
+                            name="q"
+                            class="terminal-input"
+                            placeholder="enter name..."
+                            autocomplete="off"
+                            hx-get="/api/actors/search"
+                            hx-trigger="keyup changed delay:300ms"
+                            hx-target="#suggestions2"
+                            hx-include="this"
+                            hx-vals='{"field": "actor2"}'
+                        >
+                        <button type="button" class="clear-btn" onclick="clearActor('actor2')" title="Clear">
+                            <span class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <div class="suggestions" id="suggestions2"></div>
+                    <input type="hidden" id="actor2_id" name="actor2_id" class="hidden-field">
+                    <input type="hidden" id="actor2_name" name="actor2_name" class="hidden-field">
+                </div>
+            </div>
+
+            <!-- Backup hidden fields -->
+            <input type="hidden" id="actor1_id_backup" name="actor1_id_backup">
+            <input type="hidden" id="actor2_id_backup" name="actor2_id_backup">
+            <input type="hidden" id="actor1_name_backup" name="actor1_name_backup">
+            <input type="hidden" id="actor2_name_backup" name="actor2_name_backup">
+
+            <!-- Compare Button -->
+            <div class="compare-section">
+                <button
+                    class="compare-btn"
+                    id="compareBtn"
+                    hx-get="/api/actors/compare"
+                    hx-target="#timeline"
+                    hx-vals='js:{
+                        "actor1_id": document.getElementById("actor1_id_backup").value,
+                        "actor2_id": document.getElementById("actor2_id_backup").value,
+                        "actor1_name": document.getElementById("actor1_name_backup").value,
+                        "actor2_name": document.getElementById("actor2_name_backup").value
+                    }'
+                    hx-indicator="#timeline"
+                >
+                    <span class="material-icons">electric_bolt</span>
+                    Execute Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-section">
+            <div class="results-panel">
+                <div class="results-label">
+                    Output Stream
+                    <span class="header-line"></span>
+                </div>
+                <div id="timeline"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="system-footer">
+            <div class="footer-left">
+                <div class="blink-dot"></div>
+                <span>screenthread v3.0 // neon_noir_protocol</span>
+            </div>
+            <span>tmdb_api::connected</span>
+        </div>
+    </div>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+
+    <!-- Inline JS -->
+    <script>
+        function selectActor(id, name, field) {
+            document.getElementById(field + '_id').value = id;
+            document.getElementById(field + '_name').value = name;
+            document.getElementById(field + '_id_backup').value = id;
+            document.getElementById(field + '_name_backup').value = name;
+            document.getElementById(field).closest('.field-container').querySelector('.suggestions').innerHTML = '';
+            const input = document.getElementById(field);
+            input.value = name;
+            input.disabled = true;
+            input.style.opacity = '0.7';
+        }
+        function clearActor(field) {
+            document.getElementById(field + '_id').value = '';
+            document.getElementById(field + '_name').value = '';
+            document.getElementById(field + '_id_backup').value = '';
+            document.getElementById(field + '_name_backup').value = '';
+            const input = document.getElementById(field);
+            input.value = '';
+            input.disabled = false;
+            input.style.opacity = '1';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreenThread — The Actor Folio</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RESET & CUSTOM PROPERTIES
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --white: #ffffff;
+            --black: #111111;
+            --black-light: #333333;
+            --grey-warm: #888888;
+            --grey-light: #cccccc;
+            --grey-hairline: #e0e0e0;
+            --rose: #c2185b;
+            --rose-light: #c2185b18;
+            --rose-mid: #c2185b44;
+            --bg: #ffffff;
+            --nav-width: 56px;
+            --page-left: 80px;
+            --page-right: 60px;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Source Serif 4", Georgia, serif;
+            background-color: var(--bg);
+            color: var(--black);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.65;
+            font-weight: 300;
+            font-optical-sizing: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::selection {
+            background: var(--rose);
+            color: var(--white);
+        }
+
+        /* ============================================
+           FIXED SIDE NAVIGATION
+           ============================================ */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--nav-width);
+            height: 100vh;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 0.5px solid var(--grey-hairline);
+            background: var(--white);
+            gap: 0;
+        }
+
+        .side-nav a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            text-decoration: none;
+            color: var(--grey-warm);
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease, background 0.3s ease;
+            border-top: 0.5px solid var(--grey-hairline);
+            position: relative;
+        }
+
+        .side-nav a:last-child {
+            border-bottom: 0.5px solid var(--grey-hairline);
+        }
+
+        .side-nav a:hover {
+            color: var(--black);
+        }
+
+        .side-nav a.active {
+            color: var(--rose);
+        }
+
+        .side-nav a.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 25%;
+            bottom: 25%;
+            width: 2px;
+            background: var(--rose);
+        }
+
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .page {
+            margin-left: var(--nav-width);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ============================================
+           MASTHEAD / HEADER
+           ============================================ */
+        .masthead {
+            padding: 48px var(--page-right) 0 var(--page-left);
+            position: relative;
+        }
+
+        .masthead-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-bottom: 16px;
+            border-bottom: 0.5px solid var(--grey-hairline);
+            margin-bottom: 48px;
+        }
+
+        .masthead-meta span {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--grey-warm);
+        }
+
+        .masthead-meta .issue-label {
+            color: var(--rose);
+        }
+
+        /* ============================================
+           HERO TITLE — enormous, asymmetric
+           ============================================ */
+        .hero {
+            display: grid;
+            grid-template-columns: 62% 1fr;
+            gap: 40px;
+            padding: 0 var(--page-right) 0 var(--page-left);
+            margin-bottom: 0;
+            align-items: end;
+            min-height: 280px;
+        }
+
+        .hero-title {
+            font-family: "Bodoni Moda", serif;
+            font-size: clamp(4.5rem, 9vw, 10rem);
+            font-weight: 400;
+            line-height: 0.88;
+            letter-spacing: -0.06em;
+            color: var(--black);
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.2s forwards;
+        }
+
+        .hero-title .thread {
+            font-style: italic;
+            color: var(--rose);
+        }
+
+        .hero-subtitle-col {
+            padding-bottom: 12px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.6s forwards;
+        }
+
+        .hero-subtitle-col .kicker {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--grey-warm);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .hero-subtitle-col p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--black-light);
+            text-align: justify;
+            hyphens: auto;
+            max-width: 300px;
+        }
+
+        /* Full-width hairline below hero */
+        .hero-rule {
+            width: 100%;
+            height: 0;
+            border: none;
+            border-top: 0.5px solid var(--grey-hairline);
+            margin: 40px 0 0 0;
+        }
+
+        /* ============================================
+           DROP CAP / PULL QUOTE
+           ============================================ */
+        .pull-quote-section {
+            padding: 56px var(--page-right) 40px var(--page-left);
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 24px;
+            align-items: start;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.9s forwards;
+        }
+
+        .drop-cap {
+            font-family: "Bodoni Moda", serif;
+            font-size: 7rem;
+            font-style: italic;
+            line-height: 0.75;
+            color: var(--rose);
+            padding-top: 8px;
+            user-select: none;
+        }
+
+        .pull-quote-text {
+            max-width: 520px;
+            padding-top: 6px;
+        }
+
+        .pull-quote-text p {
+            font-family: "Source Serif 4", serif;
+            font-size: 1.05rem;
+            font-style: italic;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--black-light);
+        }
+
+        .pull-quote-rule {
+            border: none;
+            border-top: 0.5px solid var(--grey-hairline);
+            margin: 0 var(--page-right) 0 var(--page-left);
+        }
+
+        /* ============================================
+           SEARCH SECTION — asymmetric grid
+           ============================================ */
+        .search-section {
+            padding: 56px var(--page-right) 48px var(--page-left);
+            display: grid;
+            grid-template-columns: 1fr 420px 420px 1fr;
+            gap: 32px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 1.1s forwards;
+        }
+
+        .section-label-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 4px;
+        }
+
+        .section-label {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--grey-warm);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+
+        .search-spacer {
+            /* intentional empty space for asymmetry */
+        }
+
+        .field-container {
+            position: relative;
+        }
+
+        .field-label {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.35em;
+            color: var(--grey-warm);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .field-label::after {
+            content: "";
+            flex: 1;
+            height: 0.5px;
+            background: var(--grey-hairline);
+        }
+
+        .field-label .num {
+            font-size: 0.55rem;
+            color: var(--rose);
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input[type="text"] {
+            width: 100%;
+            font-family: "Bodoni Moda", serif;
+            font-size: 1.35rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            color: var(--black);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--black);
+            padding: 12px 40px 12px 0;
+            outline: none;
+            transition: border-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .input-wrapper input[type="text"]::placeholder {
+            color: var(--grey-light);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .input-wrapper input[type="text"]:focus {
+            border-bottom-color: var(--rose);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--grey-warm);
+            font-size: 1.1rem;
+            padding: 8px;
+            line-height: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease, color 0.3s ease;
+        }
+
+        .field-container:hover .clear-btn,
+        .input-wrapper input:focus ~ .clear-btn {
+            opacity: 0.6;
+        }
+
+        .clear-btn:hover {
+            opacity: 1 !important;
+            color: var(--rose);
+        }
+
+        /* Suggestions dropdown */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--white);
+            border: 0.5px solid var(--grey-hairline);
+            border-top: none;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .suggestions:empty {
+            display: none;
+        }
+
+        .suggestions .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border-bottom: 0.5px solid var(--grey-hairline);
+        }
+
+        .suggestions .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions .suggestion-item:hover {
+            background: var(--rose-light);
+        }
+
+        .suggestions .suggestion-item img {
+            width: 36px;
+            height: 48px;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+
+        .suggestions .suggestion-item:hover img {
+            filter: grayscale(0%);
+        }
+
+        .suggestions .suggestion-item .actor-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .suggestions .suggestion-item .actor-name {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.95rem;
+            color: var(--black);
+        }
+
+        .suggestions .suggestion-item .actor-known-for {
+            font-size: 0.7rem;
+            color: var(--grey-warm);
+            font-style: italic;
+        }
+
+        /* ============================================
+           COMPARE BUTTON
+           ============================================ */
+        .compare-section {
+            padding: 0 var(--page-right) 56px var(--page-left);
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 1.3s forwards;
+        }
+
+        .compare-btn {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: var(--black);
+            background: transparent;
+            border: 1px solid var(--black);
+            padding: 18px 56px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .compare-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--black);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .compare-btn:hover::before {
+            transform: translateY(0);
+        }
+
+        .compare-btn span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s ease;
+        }
+
+        .compare-btn:hover span {
+            color: var(--white);
+        }
+
+        .compare-btn .htmx-indicator {
+            display: none;
+        }
+
+        .compare-btn.htmx-request .htmx-indicator {
+            display: inline;
+        }
+
+        /* ============================================
+           TIMELINE / RESULTS
+           ============================================ */
+        .results-section {
+            padding: 0 var(--page-right) 80px var(--page-left);
+        }
+
+        .results-rule {
+            border: none;
+            border-top: 0.5px solid var(--grey-hairline);
+            margin: 0 0 48px 0;
+        }
+
+        #timeline {
+            min-height: 40px;
+        }
+
+        #timeline:empty {
+            display: none;
+        }
+
+        #timeline:empty + .results-empty {
+            display: block;
+        }
+
+        .results-empty {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .results-empty span {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--grey-light);
+        }
+
+        /* Timeline result items styling */
+        #timeline .movie-card,
+        #timeline .timeline-item {
+            font-family: "Source Serif 4", serif;
+            border-bottom: 0.5px solid var(--grey-hairline);
+            padding: 20px 0;
+        }
+
+        #timeline h2, #timeline h3 {
+            font-family: "Bodoni Moda", serif;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        /* ============================================
+           COLOPHON / FOOTER
+           ============================================ */
+        .colophon {
+            padding: 40px var(--page-right) 48px var(--page-left);
+            border-top: 0.5px solid var(--grey-hairline);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .colophon span {
+            font-family: "Bodoni Moda", serif;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--grey-light);
+        }
+
+        .colophon .rose-dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background: var(--rose);
+            border-radius: 50%;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+
+        /* ============================================
+           HIDDEN FIELDS
+           ============================================ */
+        .hidden-fields {
+            display: none;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ============================================
+           SCROLLBAR
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--grey-light);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--grey-warm);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1100px) {
+            .search-section {
+                grid-template-columns: 1fr;
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+            .section-label-area {
+                display: none;
+            }
+            .section-label {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
+            .hero {
+                grid-template-columns: 1fr;
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+            .hero-title {
+                font-size: clamp(3rem, 10vw, 6rem);
+            }
+            .hero-subtitle-col {
+                max-width: 400px;
+            }
+            .pull-quote-section,
+            .compare-section,
+            .results-section,
+            .colophon,
+            .masthead {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --nav-width: 44px;
+            }
+            .side-nav a {
+                height: 40px;
+                font-size: 0.7rem;
+            }
+            .hero-title {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+            .drop-cap {
+                font-size: 4.5rem;
+            }
+            .search-section {
+                gap: 24px;
+            }
+            .compare-btn {
+                padding: 16px 40px;
+            }
+        }
+
+        /* ============================================
+           HTMX LOADING STATES
+           ============================================ */
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .htmx-request .htmx-indicator,
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         FIXED SIDE NAVIGATION
+         ========================================== -->
+    <nav class="side-nav">
+        <a href="/" title="Home">&middot;</a>
+        <a href="/1" title="Design 1">1</a>
+        <a href="/2" title="Design 2">2</a>
+        <a href="/3" title="Design 3">3</a>
+        <a href="/4" title="Design 4" class="active">4</a>
+        <a href="/5" title="Design 5">5</a>
+    </nav>
+
+    <!-- ==========================================
+         PAGE WRAPPER
+         ========================================== -->
+    <main class="page">
+
+        <!-- MASTHEAD META -->
+        <header class="masthead">
+            <div class="masthead-meta">
+                <span class="issue-label">Issue No. 04</span>
+                <span>The Actor Folio</span>
+                <span>ScreenThread</span>
+                <span>Est. MMXXV</span>
+            </div>
+        </header>
+
+        <!-- HERO TITLE — asymmetric -->
+        <section class="hero">
+            <h1 class="hero-title">Screen<span class="thread">Thread</span></h1>
+            <div class="hero-subtitle-col">
+                <span class="kicker">About This Issue</span>
+                <p>A refined instrument for the discerning cinephile. Enter two performers, trace the invisible threads of their shared filmographies, and discover the constellations of collaboration that define modern cinema.</p>
+            </div>
+        </section>
+
+        <hr class="hero-rule">
+
+        <!-- PULL QUOTE with Drop Cap -->
+        <section class="pull-quote-section">
+            <div class="drop-cap">C</div>
+            <div class="pull-quote-text">
+                <p>Cinema is the art of shared space and shared time. Every collaboration between actors is an unrepeatable convergence&thinsp;&mdash;&thinsp;a moment where two trajectories intersect, leaving an indelible mark on the screen.</p>
+            </div>
+        </section>
+
+        <hr class="pull-quote-rule">
+
+        <!-- HIDDEN FIELDS -->
+        <div class="hidden-fields">
+            <input type="hidden" id="actor1_id" name="actor1_id" value="">
+            <input type="hidden" id="actor1_name" name="actor1_name" value="">
+            <input type="hidden" id="actor1_id_backup" name="actor1_id_backup" value="">
+            <input type="hidden" id="actor1_name_backup" name="actor1_name_backup" value="">
+            <input type="hidden" id="actor2_id" name="actor2_id" value="">
+            <input type="hidden" id="actor2_name" name="actor2_name" value="">
+            <input type="hidden" id="actor2_id_backup" name="actor2_id_backup" value="">
+            <input type="hidden" id="actor2_name_backup" name="actor2_name_backup" value="">
+        </div>
+
+        <!-- SEARCH FIELDS — asymmetric grid -->
+        <section class="search-section">
+            <div class="section-label-area">
+                <span class="section-label">Search &amp; Compare</span>
+            </div>
+
+            <!-- Actor 1 -->
+            <div class="field-container">
+                <div class="field-label"><span class="num">01</span> First Performer</div>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="actor1"
+                        name="q"
+                        placeholder="Enter a name&hellip;"
+                        autocomplete="off"
+                        hx-get="/api/actors/search"
+                        hx-trigger="keyup changed delay:300ms"
+                        hx-target="#suggestions1"
+                        hx-include="this"
+                        hx-vals='{"field": "actor1"}'
+                    >
+                    <button class="clear-btn" type="button" onclick="clearActor('actor1')" title="Clear">
+                        <span class="material-icons" style="font-size: 16px;">close</span>
+                    </button>
+                </div>
+                <div class="suggestions" id="suggestions1"></div>
+            </div>
+
+            <!-- Actor 2 -->
+            <div class="field-container">
+                <div class="field-label"><span class="num">02</span> Second Performer</div>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="actor2"
+                        name="q"
+                        placeholder="Enter a name&hellip;"
+                        autocomplete="off"
+                        hx-get="/api/actors/search"
+                        hx-trigger="keyup changed delay:300ms"
+                        hx-target="#suggestions2"
+                        hx-include="this"
+                        hx-vals='{"field": "actor2"}'
+                    >
+                    <button class="clear-btn" type="button" onclick="clearActor('actor2')" title="Clear">
+                        <span class="material-icons" style="font-size: 16px;">close</span>
+                    </button>
+                </div>
+                <div class="suggestions" id="suggestions2"></div>
+            </div>
+
+            <div class="search-spacer"></div>
+        </section>
+
+        <!-- COMPARE BUTTON -->
+        <div class="compare-section">
+            <button
+                class="compare-btn"
+                type="button"
+                hx-get="/api/actors/compare"
+                hx-target="#timeline"
+                hx-vals="js:{actor1_id: document.getElementById('actor1_id_backup').value, actor1_name: document.getElementById('actor1_name_backup').value, actor2_id: document.getElementById('actor2_id_backup').value, actor2_name: document.getElementById('actor2_name_backup').value}"
+            >
+                <span>Reveal Shared Filmography</span>
+                <span class="htmx-indicator">&ensp;&middot;&middot;&middot;</span>
+            </button>
+        </div>
+
+        <!-- RESULTS -->
+        <section class="results-section">
+            <hr class="results-rule">
+            <div id="timeline"></div>
+            <div class="results-empty">
+                <span>Select two performers above to begin</span>
+            </div>
+        </section>
+
+        <!-- COLOPHON -->
+        <footer class="colophon">
+            <span>ScreenThread <span class="rose-dot"></span> Editorial Design</span>
+            <span>Design IV of V</span>
+            <span>Set in Bodoni Moda &amp; Source Serif</span>
+        </footer>
+
+    </main>
+
+    <!-- ==========================================
+         SCRIPTS
+         ========================================== -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script>
+        function selectActor(id, name, field) {
+            document.getElementById(field + '_id').value = id;
+            document.getElementById(field + '_name').value = name;
+            document.getElementById(field + '_id_backup').value = id;
+            document.getElementById(field + '_name_backup').value = name;
+            document.getElementById(field).closest('.field-container').querySelector('.suggestions').innerHTML = '';
+            const input = document.getElementById(field);
+            input.value = name;
+            input.disabled = true;
+            input.style.opacity = '0.7';
+        }
+        function clearActor(field) {
+            document.getElementById(field + '_id').value = '';
+            document.getElementById(field + '_name').value = '';
+            document.getElementById(field + '_id_backup').value = '';
+            document.getElementById(field + '_name_backup').value = '';
+            const input = document.getElementById(field);
+            input.value = '';
+            input.disabled = false;
+            input.style.opacity = '1';
+        }
+    </script>
+
+</body>
+</html>

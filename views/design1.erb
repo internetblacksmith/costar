@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCREENTHREAD — Actor Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <style>
+        /* ========== RESET ========== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-radius: 0 !important;
+        }
+
+        /* ========== NOISE OVERLAY ========== */
+        html::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0.06;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+
+        /* ========== BASE ========== */
+        html {
+            font-size: 16px;
+            scroll-behavior: auto;
+        }
+
+        body {
+            font-family: "JetBrains Mono", monospace;
+            background: #fff;
+            color: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.4;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: auto;
+        }
+
+        /* ========== GRID LINES BACKGROUND ========== */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ========== FIXED NAV SIDEBAR ========== */
+        .nav-strip {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 56px;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 4px solid #ff0000;
+        }
+
+        .nav-strip__home {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 56px;
+            background: #ff0000;
+            color: #fff;
+            text-decoration: none;
+            font-family: "JetBrains Mono", monospace;
+            font-weight: 800;
+            font-size: 1.2rem;
+            border-bottom: 4px solid #fff;
+            transition: none;
+        }
+
+        .nav-strip__home:hover {
+            background: #fff;
+            color: #ff0000;
+        }
+
+        .nav-strip__links {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            flex: 1;
+        }
+
+        .nav-strip__link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 52px;
+            color: #fff;
+            text-decoration: none;
+            font-family: "JetBrains Mono", monospace;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-bottom: 2px solid #333;
+            position: relative;
+            transition: none;
+        }
+
+        .nav-strip__link:hover {
+            background: #ff0000;
+            color: #000;
+        }
+
+        .nav-strip__link--active {
+            background: #fff;
+            color: #000;
+        }
+
+        .nav-strip__link--active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #ff0000;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .page {
+            margin-left: 56px;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            position: relative;
+            padding: 4rem 3rem 2rem;
+            border-bottom: 4px solid #000;
+            overflow: visible;
+        }
+
+        .header__eyebrow {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #ff0000;
+            margin-bottom: 0.5rem;
+            transform: rotate(-1deg);
+            display: inline-block;
+        }
+
+        .header__title {
+            font-family: "Instrument Serif", serif;
+            font-style: italic;
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.85;
+            font-weight: 400;
+            color: #000;
+            position: relative;
+            margin-bottom: -0.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .header__title span {
+            color: #ff0000;
+        }
+
+        .header__subtitle {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.75rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #666;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid #000;
+            max-width: 500px;
+        }
+
+        .header__rule {
+            position: absolute;
+            bottom: -20px;
+            right: 3rem;
+            width: 200px;
+            height: 40px;
+            background: #ff0000;
+            transform: rotate(-2deg);
+            z-index: 2;
+            border: 3px solid #000;
+        }
+
+        /* ========== SEARCH SECTION ========== */
+        .search {
+            padding: 4rem 3rem 3rem;
+            border-bottom: 4px solid #000;
+            position: relative;
+        }
+
+        .search__label {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #ff0000;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .search__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        /* ========== FIELD CONTAINER ========== */
+        .field-container {
+            padding: 2rem;
+            border: 3px solid #000;
+            position: relative;
+            background: #fff;
+        }
+
+        .field-container:first-child {
+            border-right: none;
+        }
+
+        .field-container__number {
+            position: absolute;
+            top: -1.2rem;
+            left: 1.5rem;
+            font-family: "Instrument Serif", serif;
+            font-style: italic;
+            font-size: 3rem;
+            color: #000;
+            line-height: 1;
+            z-index: 3;
+            background: #fff;
+            padding: 0 0.5rem;
+        }
+
+        .field-container__label {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: #999;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .field-container__input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .field-container__input {
+            width: 100%;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0.8rem 1rem;
+            border: 3px solid #000;
+            background: #fff;
+            color: #000;
+            outline: none;
+            transition: none;
+        }
+
+        .field-container__input::placeholder {
+            color: #bbb;
+            font-style: normal;
+        }
+
+        .field-container__input:focus {
+            border-color: #ff0000;
+            box-shadow: 6px 6px 0 #000;
+        }
+
+        .field-container__input:disabled {
+            background: #f0f0f0;
+            color: #666;
+            border-color: #999;
+        }
+
+        .field-container__clear {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 48px;
+            background: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: none;
+        }
+
+        .field-container__clear:hover {
+            background: #ff0000;
+            color: #fff;
+        }
+
+        /* ========== SUGGESTIONS ========== */
+        .suggestions {
+            border: 3px solid #000;
+            border-top: none;
+            background: #fff;
+            max-height: 280px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 100;
+        }
+
+        .suggestions:empty {
+            display: none;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid #eee;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.8rem;
+            transition: none;
+        }
+
+        .suggestion-item:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item img {
+            width: 40px;
+            height: 56px;
+            object-fit: cover;
+            border: 2px solid #000;
+            flex-shrink: 0;
+        }
+
+        .suggestions-loading {
+            display: none;
+            padding: 1rem;
+            border: 3px solid #000;
+            border-top: none;
+            background: #fff;
+        }
+
+        .suggestions-loading.htmx-request {
+            display: block;
+        }
+
+        .loading-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 3px solid #000;
+            border-top-color: #ff0000;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #999;
+        }
+
+        /* ========== COMPARE SECTION ========== */
+        .compare {
+            padding: 3rem;
+            border-bottom: 4px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .compare__text {
+            font-family: "Instrument Serif", serif;
+            font-style: italic;
+            font-size: 1.8rem;
+            color: #000;
+            max-width: 400px;
+            line-height: 1.1;
+        }
+
+        .compare__text em {
+            color: #ff0000;
+            font-style: italic;
+        }
+
+        .compare__btn {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            padding: 1.2rem 3rem;
+            background: #000;
+            color: #fff;
+            border: 4px solid #000;
+            cursor: pointer;
+            position: relative;
+            transition: none;
+            transform: rotate(-1deg);
+        }
+
+        .compare__btn:hover {
+            background: #ff0000;
+            color: #000;
+            border-color: #ff0000;
+            transform: rotate(0deg);
+            box-shadow: 8px 8px 0 #000;
+        }
+
+        .compare__btn:active {
+            transform: translate(4px, 4px) rotate(0deg);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .compare__btn .material-icons {
+            font-size: 1.2rem;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        /* ========== TIMELINE / RESULTS ========== */
+        .results {
+            padding: 3rem;
+            position: relative;
+        }
+
+        .results__header {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: #999;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #000;
+        }
+
+        #timeline {
+            min-height: 120px;
+            position: relative;
+        }
+
+        #timeline:empty::after {
+            content: "// AWAITING COMPARISON INPUT";
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.75rem;
+            color: #ccc;
+            letter-spacing: 0.15em;
+            display: block;
+            padding: 3rem 0;
+            text-align: center;
+            border: 3px dashed #eee;
+        }
+
+        /* HTMX loading indicator on timeline */
+        #timeline.htmx-request {
+            opacity: 0.5;
+        }
+
+        #timeline.htmx-request::before {
+            content: "LOADING...";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #ff0000;
+            letter-spacing: 0.3em;
+            z-index: 10;
+            animation: blink 0.8s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            padding: 2rem 3rem;
+            border-top: 4px solid #000;
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer__left {
+            font-family: "Instrument Serif", serif;
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+
+        .footer__left span {
+            color: #ff0000;
+        }
+
+        .footer__right {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #666;
+        }
+
+        /* ========== DECORATIVE ELEMENTS ========== */
+        .deco-stripe {
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                #000 0px,
+                #000 8px,
+                #fff 8px,
+                #fff 16px
+            );
+            left: 0;
+            z-index: 5;
+        }
+
+        .deco-tag {
+            display: inline-block;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            background: #ff0000;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            transform: rotate(2deg);
+            position: absolute;
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #fff;
+            border-left: 3px solid #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff0000;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            .nav-strip {
+                width: 44px;
+            }
+
+            .page {
+                margin-left: 44px;
+            }
+
+            .header {
+                padding: 3rem 1.5rem 1.5rem;
+            }
+
+            .header__title {
+                font-size: clamp(2.5rem, 8vw, 5rem);
+            }
+
+            .header__rule {
+                display: none;
+            }
+
+            .search {
+                padding: 3rem 1.5rem 2rem;
+            }
+
+            .search__grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field-container:first-child {
+                border-right: 3px solid #000;
+                border-bottom: none;
+            }
+
+            .compare {
+                padding: 2rem 1.5rem;
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .compare__btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .results {
+                padding: 2rem 1.5rem;
+            }
+
+            .footer {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .nav-strip {
+                width: 36px;
+                border-right-width: 3px;
+            }
+
+            .page {
+                margin-left: 36px;
+            }
+
+            .nav-strip__home {
+                font-size: 0.9rem;
+                height: 44px;
+            }
+
+            .nav-strip__link {
+                height: 40px;
+                font-size: 0.7rem;
+            }
+
+            .field-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .field-container__number {
+                font-size: 2rem;
+                top: -0.9rem;
+            }
+        }
+
+        /* ========== SELECTION ========== */
+        ::selection {
+            background: #ff0000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== FIXED NAV SIDEBAR ===== -->
+    <nav class="nav-strip" aria-label="Design navigation">
+        <a href="/" class="nav-strip__home" title="Home">/</a>
+        <div class="nav-strip__links">
+            <a href="/1" class="nav-strip__link nav-strip__link--active" title="Design 1">01</a>
+            <a href="/2" class="nav-strip__link" title="Design 2">02</a>
+            <a href="/3" class="nav-strip__link" title="Design 3">03</a>
+            <a href="/4" class="nav-strip__link" title="Design 4">04</a>
+            <a href="/5" class="nav-strip__link" title="Design 5">05</a>
+        </div>
+    </nav>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <div class="page">
+
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <span class="header__eyebrow">Actor Comparison Tool</span>
+            <h1 class="header__title">Screen<span>Thread</span></h1>
+            <p class="header__subtitle">Search for two actors. Discover every film they share. No fluff, no algorithms — just raw data.</p>
+            <div class="header__rule"></div>
+        </header>
+
+        <div class="deco-stripe" style="top: auto;"></div>
+
+        <!-- ===== SEARCH ===== -->
+        <section class="search">
+            <span class="search__label">// Input Actors</span>
+            <span class="deco-tag" style="top: 1.5rem; right: 3rem;">TMDB Powered</span>
+
+            <div class="search__grid">
+                <!-- ACTOR 1 -->
+                <div class="field-container" id="actor1Container">
+                    <span class="field-container__number">01</span>
+                    <label class="field-container__label" for="actor1">First Actor</label>
+                    <div class="field-container__input-wrap">
+                        <input
+                            type="text"
+                            class="field-container__input"
+                            id="actor1"
+                            name="q"
+                            placeholder="Type a name..."
+                            autocomplete="off"
+                            hx-get="/api/actors/search"
+                            hx-trigger="keyup changed delay:300ms"
+                            hx-target="#suggestions1"
+                            hx-include="this"
+                            hx-vals='{"field": "actor1"}'
+                        >
+                        <button type="button" class="field-container__clear" onclick="clearActor('actor1')" title="Clear">&times;</button>
+                    </div>
+                    <div class="suggestions" id="suggestions1" role="region" aria-label="Actor 1 suggestions" tabindex="0"></div>
+                    <div class="suggestions-loading htmx-indicator" id="loadingIndicator1">
+                        <div class="loading-content">
+                            <div class="loading-spinner"></div>
+                            <span class="loading-text">Searching...</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="actor1_id" name="actor1_id">
+                    <input type="hidden" id="actor1_name" name="actor1_name">
+                </div>
+
+                <!-- ACTOR 2 -->
+                <div class="field-container" id="actor2Container">
+                    <span class="field-container__number">02</span>
+                    <label class="field-container__label" for="actor2">Second Actor</label>
+                    <div class="field-container__input-wrap">
+                        <input
+                            type="text"
+                            class="field-container__input"
+                            id="actor2"
+                            name="q"
+                            placeholder="Type a name..."
+                            autocomplete="off"
+                            hx-get="/api/actors/search"
+                            hx-trigger="keyup changed delay:300ms"
+                            hx-target="#suggestions2"
+                            hx-include="this"
+                            hx-vals='{"field": "actor2"}'
+                        >
+                        <button type="button" class="field-container__clear" onclick="clearActor('actor2')" title="Clear">&times;</button>
+                    </div>
+                    <div class="suggestions" id="suggestions2" role="region" aria-label="Actor 2 suggestions" tabindex="0"></div>
+                    <div class="suggestions-loading htmx-indicator" id="loadingIndicator2">
+                        <div class="loading-content">
+                            <div class="loading-spinner"></div>
+                            <span class="loading-text">Searching...</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="actor2_id" name="actor2_id">
+                    <input type="hidden" id="actor2_name" name="actor2_name">
+                </div>
+            </div>
+
+            <!-- Backup hidden fields -->
+            <input type="hidden" id="actor1_id_backup" name="actor1_id_backup">
+            <input type="hidden" id="actor2_id_backup" name="actor2_id_backup">
+            <input type="hidden" id="actor1_name_backup" name="actor1_name_backup">
+            <input type="hidden" id="actor2_name_backup" name="actor2_name_backup">
+        </section>
+
+        <!-- ===== COMPARE ===== -->
+        <section class="compare">
+            <p class="compare__text">Find every film <em>they shared</em> — the raw intersection.</p>
+            <button
+                type="button"
+                class="compare__btn"
+                id="compareBtn"
+                hx-get="/api/actors/compare"
+                hx-target="#timeline"
+                hx-indicator="#timeline"
+                hx-vals='js:{
+                    "actor1_id": document.getElementById("actor1_id_backup").value,
+                    "actor2_id": document.getElementById("actor2_id_backup").value,
+                    "actor1_name": document.getElementById("actor1_name_backup").value,
+                    "actor2_name": document.getElementById("actor2_name_backup").value
+                }'
+            >Compare<span class="material-icons">east</span></button>
+        </section>
+
+        <!-- ===== RESULTS ===== -->
+        <section class="results">
+            <div class="results__header">// Output — Shared Filmography</div>
+            <div id="timeline"></div>
+        </section>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div class="footer__left">Screen<span>Thread</span></div>
+            <div class="footer__right">Design 01 / Brutalist &mdash; Raw</div>
+        </footer>
+
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        function selectActor(id, name, field) {
+            document.getElementById(field + '_id').value = id;
+            document.getElementById(field + '_name').value = name;
+            document.getElementById(field + '_id_backup').value = id;
+            document.getElementById(field + '_name_backup').value = name;
+            document.getElementById(field).closest('.field-container').querySelector('.suggestions').innerHTML = '';
+            // Show selected state
+            var input = document.getElementById(field);
+            input.value = name;
+            input.disabled = true;
+            input.style.opacity = '0.7';
+        }
+
+        function clearActor(field) {
+            document.getElementById(field + '_id').value = '';
+            document.getElementById(field + '_name').value = '';
+            document.getElementById(field + '_id_backup').value = '';
+            document.getElementById(field + '_name_backup').value = '';
+            var input = document.getElementById(field);
+            input.value = '';
+            input.disabled = false;
+            input.style.opacity = '1';
+        }
+    </script>
+
+</body>
+</html>

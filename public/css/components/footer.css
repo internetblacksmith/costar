@@ -1,4 +1,4 @@
-/* Footer Component - Playful & Vibrant */
+/* Footer Component - Clean & Professional */
 footer {
     margin-top: var(--spacing-3xl);
     padding: var(--spacing-2xl) var(--spacing-md);
@@ -6,21 +6,6 @@ footer {
     color: var(--text-tertiary);
     border-top: 1px solid var(--border-color);
     background: var(--bg-secondary);
-    position: relative;
-    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
-}
-
-/* Rainbow gradient line at top */
-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 3px;
-    background: var(--bg-gradient);
-    border-radius: var(--border-radius-full);
 }
 
 footer p {
@@ -44,28 +29,13 @@ footer a {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
-    transition: all var(--transition-normal);
-    position: relative;
-}
-
-footer a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--primary-gradient);
-    border-radius: var(--border-radius-full);
-    transition: width var(--transition-playful);
+    transition: color var(--transition-fast);
 }
 
 footer a:hover {
     color: var(--primary-dark);
-}
-
-footer a:hover::after {
-    width: 100%;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 /* TMDB Attribution */
@@ -86,34 +56,16 @@ footer a:hover::after {
     color: var(--text-secondary);
 }
 
-/* Creator Link - Playful pill */
+/* Creator Link */
 footer > p:last-of-type {
     margin-top: var(--spacing-md);
 }
 
 footer > p:last-of-type a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background: rgba(190, 24, 93, 0.06);
-    border: 1px solid rgba(190, 24, 93, 0.1);
-    border-radius: var(--border-radius-full);
     font-family: var(--font-family-display);
     font-size: var(--text-sm);
     font-weight: 600;
-    transition: all var(--transition-playful);
-    color: var(--primary-dark);
-}
-
-footer > p:last-of-type a:hover {
-    background: rgba(231, 76, 139, 0.15);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 4px 12px rgba(231, 76, 139, 0.12);
-}
-
-footer > p:last-of-type a::after {
-    display: none;
+    color: var(--primary-color);
 }
 
 /* Dark Mode Footer */
@@ -122,29 +74,17 @@ html[data-theme="dark"] footer {
 }
 
 html[data-theme="dark"] footer a {
-    color: var(--primary-color) !important;
+    color: var(--primary-color);
 }
 
 html[data-theme="dark"] footer a:hover {
-    color: var(--primary-light) !important;
-}
-
-html[data-theme="dark"] footer > p:last-of-type a {
-    background: rgba(244, 114, 182, 0.1) !important;
-    border-color: rgba(244, 114, 182, 0.15) !important;
-    color: var(--primary-color) !important;
-}
-
-html[data-theme="dark"] footer > p:last-of-type a:hover {
-    background: rgba(244, 114, 182, 0.18) !important;
-    color: var(--primary-light) !important;
+    color: var(--primary-light);
 }
 
 /* Analytics Notice */
 footer small {
     font-size: var(--text-xs);
     color: var(--text-tertiary);
-    opacity: 0.8;
 }
 
 /* Responsive Footer */

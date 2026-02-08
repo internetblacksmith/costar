@@ -1,4 +1,4 @@
-/* Material Design Components Customization - Playful & Vibrant */
+/* Material Design Components Customization - Clean & Professional */
 
 /* MDC Text Field customization */
 .mdc-text-field {
@@ -65,13 +65,13 @@
     color: var(--text-primary) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: var(--border-radius-lg) !important;
-    transition: background-color var(--transition-normal), 
+    transition: background-color var(--transition-normal),
                 box-shadow var(--transition-normal);
 }
 
 /* MDC Chip */
 .mdc-chip {
-    background: var(--primary-gradient) !important;
+    background: var(--primary-color) !important;
     color: var(--text-on-primary) !important;
     border-radius: var(--border-radius-full) !important;
     font-family: var(--font-family-display) !important;
@@ -84,12 +84,12 @@
 
 /* MDC Button */
 .mdc-button--raised {
-    background: var(--primary-gradient) !important;
+    background: var(--primary-color) !important;
     color: var(--text-on-primary) !important;
     font-family: var(--font-family-display) !important;
     font-weight: 700 !important;
     text-transform: none !important;
-    border-radius: var(--border-radius-full) !important;
+    border-radius: var(--border-radius) !important;
 }
 
 .mdc-button--raised:disabled {
@@ -142,15 +142,15 @@
     right: var(--spacing-xl);
     z-index: 100;
     display: none;
-    background: var(--primary-gradient) !important;
+    background: var(--primary-color) !important;
     border-radius: var(--border-radius-lg) !important;
-    box-shadow: 0 4px 16px rgba(231, 76, 139, 0.3) !important;
-    transition: all var(--transition-playful) !important;
+    box-shadow: var(--shadow-lg) !important;
+    transition: all var(--transition-normal) !important;
 }
 
 .mdc-fab:hover {
-    transform: scale(1.1) rotate(5deg) !important;
-    box-shadow: 0 8px 24px rgba(231, 76, 139, 0.4) !important;
+    transform: scale(1.05) !important;
+    box-shadow: var(--shadow-xl) !important;
 }
 
 .mdc-fab .material-icons {

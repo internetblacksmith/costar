@@ -1,4 +1,4 @@
-/* Typography and Base Styles - Playful & Vibrant Design */
+/* Typography and Base Styles - Clean & Professional */
 
 /* Global Reset */
 *, *::before, *::after {
@@ -10,12 +10,10 @@ body {
     font-family: var(--font-family-primary);
     font-weight: 400;
     font-size: var(--text-base);
-    line-height: 1.7;
-    letter-spacing: 0.01em;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
     color: var(--text-primary);
     background-color: var(--bg-primary);
-    background-image: var(--gradient-mesh);
-    background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-slow), color var(--transition-slow);
@@ -28,7 +26,7 @@ body {
     padding: var(--spacing-lg);
 }
 
-/* Headings - Outfit display font */
+/* Headings - Bricolage Grotesque display font */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-display);
     font-weight: 700;
@@ -37,8 +35,8 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
-h1 { font-size: var(--text-4xl); font-weight: 900; }
-h2 { font-size: var(--text-3xl); font-weight: 800; }
+h1 { font-size: var(--text-4xl); font-weight: 800; }
+h2 { font-size: var(--text-3xl); font-weight: 700; }
 h3 { font-size: var(--text-2xl); }
 h4 { font-size: var(--text-xl); }
 h5 { font-size: var(--text-lg); }
@@ -50,38 +48,24 @@ p {
     color: var(--text-secondary);
 }
 
-/* Links - Playful animated underline */
+/* Links - Clean underline on hover */
 a {
     color: var(--primary-color);
     text-decoration: none;
-    position: relative;
-    transition: color var(--transition-normal);
+    transition: color var(--transition-fast);
     font-weight: 500;
-}
-
-a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--primary-gradient);
-    border-radius: var(--border-radius-full);
-    transition: width var(--transition-playful);
 }
 
 a:hover {
     color: var(--primary-dark);
-}
-
-a:hover::after {
-    width: 100%;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
 }
 
 a:focus-visible {
     outline: 2px solid var(--primary-color);
-    outline-offset: 4px;
+    outline-offset: 3px;
     border-radius: var(--border-radius-xs);
 }
 
@@ -106,13 +90,13 @@ small {
     color: var(--text-tertiary);
 }
 
-/* Selection - Playful highlight */
+/* Selection */
 ::selection {
-    background-color: rgba(231, 76, 139, 0.2);
+    background-color: rgba(79, 70, 229, 0.15);
     color: var(--text-primary);
 }
 
-/* Scrollbar - Subtle and themed */
+/* Scrollbar - Minimal */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

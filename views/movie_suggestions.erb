@@ -1,0 +1,16 @@
+<% if movies && movies.any? %>
+    <% movies.each do |movie| %>
+        <div class="suggestion-item" 
+             onclick="selectMovie('<%= movie[:id] %>', '<%= movie[:title].gsub("'", "\\'") %>', '<%= field %>')">
+            <strong><%= movie[:title] %></strong>
+            <% if movie[:year] %>
+                <span class="year">(<%= movie[:year] %>)</span>
+            <% elsif movie[:release_date] && movie[:release_date] != "" %>
+                <span class="year">(<%= movie[:release_date].to_s[0..3] %>)</span>
+            <% end %>
+            <% if movie[:overview] && movie[:overview] != "" %>
+                <br><small class="overview"><%= movie[:overview].length > 100 ? movie[:overview][0..100] + "..." : movie[:overview] %></small>
+            <% end %>
+        </div>
+    <% end %>
+<% end %>

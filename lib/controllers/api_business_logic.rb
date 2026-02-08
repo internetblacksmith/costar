@@ -14,9 +14,10 @@ require_relative "../config/logger"
 #   result = business_logic.search_actors("Leonardo DiCaprio")
 #
 class ApiBusinessLogic
-  def initialize(tmdb_service, comparison_service)
+  def initialize(tmdb_service, comparison_service, movie_comparison_service = nil)
     @tmdb_service = tmdb_service
     @comparison_service = comparison_service
+    @movie_comparison_service = movie_comparison_service
   end
 
   ##
@@ -109,6 +110,95 @@ class ApiBusinessLogic
   end
 
   ##
+  # Searches for movies using the TMDB service
+  #
+  # @param query [String] Search query
+  # @return [Array<Hash>] Array of movie data
+  #
+  def search_movies(query)
+    @tmdb_service.search_movies(query)
+  rescue TMDBError => e
+    StructuredLogger.error("Business Logic: Movie search failed",
+                           type: "business_logic_error",
+                           operation: "search_movies",
+                           query: query,
+                           error: e.message)
+    raise e
+  rescue StandardError => e
+    StructuredLogger.error("Business Logic: Unexpected error in movie search",
+                           type: "business_logic_error",
+                           operation: "search_movies",
+                           query: query,
+                           error: e.message,
+                           error_class: e.class.name)
+    raise e
+  end
+
+  ##
+  # Fetches cast for a specific movie
+  #
+  # @param movie_id [Integer] Movie ID
+  # @return [Array<Hash>] Array of actor data
+  #
+  def fetch_movie_cast(movie_id)
+    @tmdb_service.get_movie_cast(movie_id)
+  rescue TMDBError => e
+    StructuredLogger.error("Business Logic: Movie cast fetch failed",
+                           type: "business_logic_error",
+                           operation: "fetch_movie_cast",
+                           movie_id: movie_id,
+                           error: e.message)
+    raise e
+  rescue StandardError => e
+    StructuredLogger.error("Business Logic: Unexpected error fetching movie cast",
+                           type: "business_logic_error",
+                           operation: "fetch_movie_cast",
+                           movie_id: movie_id,
+                           error: e.message,
+                           error_class: e.class.name)
+    raise e
+  end
+
+  ##
+  # Compares two movies and finds shared actors
+  #
+  # @param movie1_id [Integer] First movie ID
+  # @param movie2_id [Integer] Second movie ID
+  # @param movie1_title [String, nil] Optional first movie title
+  # @param movie2_title [String, nil] Optional second movie title
+  # @return [Hash] Comparison data with shared actors
+  #
+  def compare_movies(movie1_id, movie2_id, movie1_title = nil, movie2_title = nil)
+    @movie_comparison_service.compare(movie1_id, movie2_id, movie1_title, movie2_title)
+  rescue ValidationError => e
+    StructuredLogger.error("Business Logic: Movie comparison validation failed",
+                           type: "business_logic_error",
+                           operation: "compare_movies",
+                           movie1_id: movie1_id,
+                           movie2_id: movie2_id,
+                           error: e.message)
+    raise e
+  rescue TMDBError => e
+    StructuredLogger.error("Business Logic: Movie comparison API failed",
+                           type: "business_logic_error",
+                           operation: "compare_movies",
+                           movie1_id: movie1_id,
+                           movie2_id: movie2_id,
+                           error: e.message)
+    raise e
+  rescue StandardError => e
+    StructuredLogger.error("Business Logic: Unexpected error in movie comparison",
+                           type: "business_logic_error",
+                           operation: "compare_movies",
+                           movie1_id: movie1_id,
+                           movie2_id: movie2_id,
+                           error: e.message,
+                           error_class: e.class.name,
+                           backtrace: e.backtrace.first(3))
+    raise e
+  end
+
+  ##
   # Health check for business logic dependencies
   #
   # @return [Hash] Health status of dependent services
@@ -116,7 +206,8 @@ class ApiBusinessLogic
   def health_check
     {
       tmdb_service: @tmdb_service.healthy?,
-      comparison_service: true # ActorComparisonService doesn't have health check
+      comparison_service: true, # ActorComparisonService doesn't have health check
+      movie_comparison_service: true # MovieComparisonService doesn't have health check
     }
   rescue StandardError => e
     StructuredLogger.error("Business Logic: Health check failed",
@@ -126,6 +217,7 @@ class ApiBusinessLogic
     {
       tmdb_service: false,
       comparison_service: false,
+      movie_comparison_service: false,
       error: e.message
     }
   end

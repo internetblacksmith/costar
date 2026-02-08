@@ -22,13 +22,16 @@ require_relative "../config/cache"
 class CacheManager
   # Default TTL values for different data types (in seconds)
   TTL_POLICIES = {
-    actor_profile: 1800,    # 30 minutes
-    actor_movies: 600,      # 10 minutes
-    search_results: 300,    # 5 minutes
-    actor_comparison: 900,  # 15 minutes
-    actor_name: 1800,       # 30 minutes
-    health_check: 60,       # 1 minute
-    movie_details: 3600     # 1 hour
+    actor_profile: 1800,       # 30 minutes
+    actor_movies: 600,         # 10 minutes
+    search_results: 300,       # 5 minutes
+    actor_comparison: 900,     # 15 minutes
+    actor_name: 1800,          # 30 minutes
+    health_check: 60,          # 1 minute
+    movie_details: 3600,       # 1 hour
+    movie_search_results: 300, # 5 minutes
+    movie_cast: 600,           # 10 minutes
+    movie_comparison: 900      # 15 minutes
   }.freeze
 
   attr_reader :key_builder
@@ -282,6 +285,26 @@ class CacheManager
   def cache_health_check(&block)
     key = key_builder.health_check
     fetch(key, policy: :health_check, &block)
+  end
+
+  def cache_movie_search_results(query, &block)
+    key = key_builder.movie_search_results(query)
+    fetch(key, policy: :movie_search_results, &block)
+  end
+
+  def cache_movie_cast(movie_id, &block)
+    key = key_builder.movie_cast(movie_id)
+    fetch(key, policy: :movie_cast, &block)
+  end
+
+  def cache_movie_comparison(movie1_id, movie2_id, &block)
+    key = key_builder.movie_comparison(movie1_id, movie2_id)
+    fetch(key, policy: :movie_comparison, &block)
+  end
+
+  def cache_movie_details(movie_id, &block)
+    key = key_builder.movie_details(movie_id)
+    fetch(key, policy: :movie_details, &block)
   end
 
   ##

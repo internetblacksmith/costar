@@ -27,6 +27,12 @@ RSpec.describe "Modular JavaScript", type: :request do
       expect(last_response.status).to eq(200)
       expect(last_response.content_type).to include("text/javascript")
     end
+
+    it "serves mobile-keyboard.js successfully" do
+      get "/js/modules/mobile-keyboard.js"
+      expect(last_response.status).to eq(200)
+      expect(last_response.content_type).to include("text/javascript")
+    end
   end
 
   describe "module content" do
@@ -73,6 +79,16 @@ RSpec.describe "Modular JavaScript", type: :request do
       expect(last_response.body).to include("clearActorValues")
       expect(last_response.body).to include("isShareLink")
     end
+
+    it "mobile-keyboard.js contains mobile keyboard handling utilities" do
+      get "/js/modules/mobile-keyboard.js"
+
+      expect(last_response.body).to include("class MobileKeyboard")
+      expect(last_response.body).to include("isMobile")
+      expect(last_response.body).to include("handleInputFocus")
+      expect(last_response.body).to include("scrollInputToTop")
+      expect(last_response.body).to include("MOBILE_BREAKPOINT")
+    end
   end
 
   describe "refactored actor-search.js" do
@@ -105,6 +121,7 @@ RSpec.describe "Modular JavaScript", type: :request do
       event_manager_pos = last_response.body.index("/js/modules/event-manager.js")
       analytics_pos = last_response.body.index("/js/modules/analytics-tracker.js")
       field_manager_pos = last_response.body.index("/js/modules/field-manager.js")
+      mobile_keyboard_pos = last_response.body.index("/js/modules/mobile-keyboard.js")
       actor_search_pos = last_response.body.index("/js/modules/actor-search.js")
 
       # Verify dependencies are loaded before actor-search.js
@@ -112,6 +129,8 @@ RSpec.describe "Modular JavaScript", type: :request do
       expect(event_manager_pos).to be < actor_search_pos
       expect(analytics_pos).to be < actor_search_pos
       expect(field_manager_pos).to be < actor_search_pos
+      # mobile-keyboard depends on EventManager
+      expect(event_manager_pos).to be < mobile_keyboard_pos
     end
   end
 

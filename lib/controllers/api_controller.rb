@@ -11,11 +11,8 @@ module APIController
   module ClassMethods
     def api_routes
       namespace "/api" do
-        before do
-          configure_cors_headers
-        end
+        before { configure_cors_headers }
 
-        # Handle preflight requests for CORS
         options "*" do
           response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
           response.headers["Access-Control-Allow-Headers"] = "Content-Type, Accept, User-Agent"
@@ -23,17 +20,15 @@ module APIController
           200
         end
 
-        get "/actors/search" do
-          ApiHandlers.new(self).handle_actor_search(params)
-        end
+        # Actor endpoints
+        get("/actors/search") { ApiHandlers.new(self).handle_actor_search(params) }
+        get("/actors/:id/movies") { ApiHandlers.new(self).handle_actor_movies(params) }
+        get("/actors/compare") { ApiHandlers.new(self).handle_actor_comparison(params) }
 
-        get "/actors/:id/movies" do
-          ApiHandlers.new(self).handle_actor_movies(params)
-        end
-
-        get "/actors/compare" do
-          ApiHandlers.new(self).handle_actor_comparison(params)
-        end
+        # Movie endpoints
+        get("/movies/search") { ApiHandlers.new(self).handle_movie_search(params) }
+        get("/movies/:id/cast") { ApiHandlers.new(self).handle_movie_cast(params) }
+        get("/movies/compare") { ApiHandlers.new(self).handle_movie_comparison(params) }
       end
     end
   end

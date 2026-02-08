@@ -126,6 +126,79 @@ module ApiRenderer
   end
 
   ##
+  # Renders missing movies error
+  #
+  # @return [String] Rendered error HTML
+  #
+  def render_missing_movies_error
+    '<div class="error">Please select both movies</div>'
+  end
+
+  ##
+  # Renders movie suggestions view
+  #
+  # @param app [Sinatra::Base] Sinatra application instance
+  # @param movies [Array<Hash>] Array of movie data
+  # @param field [String] Field name for form targeting
+  # @return [String] Rendered HTML
+  #
+  def render_movie_suggestions(app, movies, field)
+    # Convert DTOs to hashes if needed
+    movie_hashes = if movies.respond_to?(:movies)
+                     # It's a MovieSearchResultsDTO
+                     movies.movies.map(&:to_h)
+                   elsif movies.is_a?(Array)
+                     movies.map { |movie| movie.respond_to?(:to_h) ? movie.to_h : movie }
+                   else
+                     []
+                   end
+
+    app.erb :movie_suggestions, locals: { movies: movie_hashes, field: field }, layout: false
+  end
+
+  ##
+  # Renders empty movie suggestions (no results)
+  #
+  # @param app [Sinatra::Base] Sinatra application instance
+  # @param field [String] Field name for form targeting
+  # @return [String] Rendered HTML
+  #
+  def render_empty_movie_suggestions(app, field)
+    render_movie_suggestions(app, [], field)
+  end
+
+  ##
+  # Renders movie comparison results (shared actors)
+  #
+  # @param app [Sinatra::Base] Sinatra application instance
+  # @param comparison_data [Hash] Movie comparison data
+  # @return [String] Rendered HTML
+  #
+  def render_movie_comparison(app, comparison_data)
+    assign_movie_comparison_variables(app, comparison_data)
+    app.erb :movie_comparison, layout: false
+  end
+
+  ##
+  # Renders JSON response for movie cast
+  #
+  # @param app [Sinatra::Base] Sinatra application instance
+  # @param cast [Array<Hash>] Array of actor data
+  # @return [String] JSON response
+  #
+  def render_movie_cast_json(app, cast)
+    # Convert DTOs to hashes if needed
+    cast_hashes = if cast.is_a?(Array)
+                    cast.map { |actor| actor.respond_to?(:to_h) ? actor.to_h : actor }
+                  else
+                    []
+                  end
+
+    response_builder = ApiResponseBuilder.new(app)
+    response_builder.success({ cast: cast_hashes })
+  end
+
+  ##
   # Renders comparison error message
   #
   # @param message [String] Error message
@@ -247,5 +320,54 @@ module ApiRenderer
     app.instance_variable_set(:@shared_movies_by_year, data[:shared_movies_by_year])
     app.instance_variable_set(:@actor1_id, data[:actor1_id])
     app.instance_variable_set(:@actor2_id, data[:actor2_id])
+  end
+
+  ##
+  # Assigns movie comparison data to template variables
+  #
+  # @param app [Sinatra::Base] Sinatra application instance
+  # @param data [Hash] Movie comparison data
+  #
+  def assign_movie_comparison_variables(app, data)
+    # Handle both DTO and hash formats
+    if data.respond_to?(:movie1)
+      assign_dto_movie_comparison_variables(app, data)
+    else
+      assign_hash_movie_comparison_variables(app, data)
+    end
+  end
+
+  def assign_dto_movie_comparison_variables(app, data)
+    # It's a MovieComparisonResultDTO
+    app.instance_variable_set(:@movie1, data.movie1.to_h)
+    app.instance_variable_set(:@movie2, data.movie2.to_h)
+    app.instance_variable_set(:@movie1_cast, data.movie1_cast.map(&:to_h))
+    app.instance_variable_set(:@movie2_cast, data.movie2_cast.map(&:to_h))
+    app.instance_variable_set(:@shared_actors, data.shared_actors.map(&:to_h))
+  end
+
+  def assign_hash_movie_comparison_variables(app, data)
+    # Hash format
+    app.instance_variable_set(:@movie1, {
+                                id: data[:movie1_id],
+                                title: data[:movie1_title],
+                                poster_path: data[:movie1_poster_path],
+                                year: data[:movie1_year]
+                              })
+    app.instance_variable_set(:@movie2, {
+                                id: data[:movie2_id],
+                                title: data[:movie2_title],
+                                poster_path: data[:movie2_poster_path],
+                                year: data[:movie2_year]
+                              })
+    app.instance_variable_set(:@movie1_cast, convert_cast_to_hashes(data[:movie1_cast]))
+    app.instance_variable_set(:@movie2_cast, convert_cast_to_hashes(data[:movie2_cast]))
+    app.instance_variable_set(:@shared_actors, convert_cast_to_hashes(data[:shared_actors]))
+  end
+
+  def convert_cast_to_hashes(cast)
+    return [] unless cast
+
+    cast.map { |actor| actor.respond_to?(:to_h) ? actor.to_h : actor }
   end
 end

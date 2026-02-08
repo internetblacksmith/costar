@@ -21,7 +21,8 @@ class ApiHandlers
     @validator = InputValidator.new
     @business_logic = ApiBusinessLogic.new(
       app.settings.tmdb_service,
-      app.settings.comparison_service
+      app.settings.comparison_service,
+      app.settings.movie_comparison_service
     )
   end
 
@@ -133,6 +134,117 @@ class ApiHandlers
     rescue StandardError => e
       handle_unexpected_error_with_context(e, "compare_actors", validation: validation)
       render_comparison_error("Failed to compare actors. Please try again.")
+    end
+  end
+
+  ##
+  # Handles movie search requests
+  #
+  # @return [String] Rendered HTML response
+  #
+  def handle_movie_search(params = nil)
+    # Use provided params or fall back to app params
+    request_params = params || @app.params
+
+    # Validate input
+    validation = @validator.validate_movie_search(request_params)
+
+    # Handle validation errors
+    unless validation.valid?
+      # Use 400 status for security violations (oversized input)
+      return render_validation_errors_with_400(validation.errors) if validation.security_violation?
+
+      # Use 200 status for other validation errors
+      return render_validation_errors(validation.errors)
+    end
+
+    # Handle empty query (valid case)
+    return render_empty_movie_suggestions(@app, validation.field) if validation.query.nil?
+
+    begin
+      # Execute business logic
+      movies = @business_logic.search_movies(validation.query)
+
+      # Render response
+      render_movie_suggestions(@app, movies, validation.field)
+    rescue TMDBError => e
+      handle_api_error(e, "search_movies")
+      # Return the error HTML directly
+      render_search_error(e.message)
+    rescue StandardError => e
+      handle_unexpected_error(e, "search_movies")
+      # Return the error HTML directly
+      render_unexpected_error
+    end
+  end
+
+  ##
+  # Handles movie cast requests
+  #
+  # @return [String] JSON response
+  #
+  def handle_movie_cast(params = nil)
+    # Use provided params or fall back to app params
+    request_params = params || @app.params
+
+    # Validate input
+    validation = @validator.validate_movie_id(request_params)
+
+    return render_json_error(@app, 400, validation.errors.first) unless validation.valid?
+
+    begin
+      # Execute business logic
+      cast = @business_logic.fetch_movie_cast(validation.movie_id)
+
+      # Render response
+      render_movie_cast_json(@app, cast)
+    rescue TMDBError => e
+      handle_api_error_with_context(e, "fetch_movie_cast", movie_id: validation.movie_id)
+      render_json_error(@app, e.code, e.message)
+    rescue StandardError => e
+      handle_unexpected_error_with_context(e, "fetch_movie_cast", movie_id: validation.movie_id)
+      render_json_error(@app, 500, "Failed to get movie cast")
+    end
+  end
+
+  ##
+  # Handles movie comparison requests
+  #
+  # @return [String] Rendered HTML response
+  #
+  def handle_movie_comparison(params = nil)
+    # Use provided params or fall back to app params
+    request_params = params || @app.params
+
+    # Validate input
+    validation = @validator.validate_movie_comparison(request_params)
+
+    unless validation.valid?
+      # Check if this is a missing movie ID error - use generic message for UX consistency
+      return render_missing_movies_error if validation.errors.any? { |error| error.include?("Movie") && error.include?("ID is required") }
+
+      return render_validation_errors(validation.errors)
+
+    end
+
+    begin
+      # Execute business logic
+      comparison_data = @business_logic.compare_movies(
+        validation.movie1_id, validation.movie2_id,
+        validation.movie1_title, validation.movie2_title
+      )
+
+      # Render response
+      render_movie_comparison(@app, comparison_data)
+    rescue ValidationError => e
+      handle_validation_error_with_context(e, "compare_movies", validation: validation)
+      render_comparison_error(e.message)
+    rescue TMDBError => e
+      handle_api_error_with_context(e, "compare_movies", validation: validation)
+      render_comparison_error("API Error: #{e.message}")
+    rescue StandardError => e
+      handle_unexpected_error_with_context(e, "compare_movies", validation: validation)
+      render_comparison_error("Failed to compare movies. Please try again.")
     end
   end
 end

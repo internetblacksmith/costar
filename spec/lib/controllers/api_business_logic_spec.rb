@@ -270,7 +270,8 @@ RSpec.describe ApiBusinessLogic do
 
         expect(result).to eq({
                                tmdb_service: true,
-                               comparison_service: true
+                               comparison_service: true,
+                               movie_comparison_service: true
                              })
       end
     end
@@ -285,7 +286,8 @@ RSpec.describe ApiBusinessLogic do
 
         expect(result).to eq({
                                tmdb_service: false,
-                               comparison_service: true
+                               comparison_service: true,
+                               movie_comparison_service: true
                              })
       end
     end
@@ -304,6 +306,7 @@ RSpec.describe ApiBusinessLogic do
         expect(result).to eq({
                                tmdb_service: false,
                                comparison_service: false,
+                               movie_comparison_service: false,
                                error: "Health check failed"
                              })
 

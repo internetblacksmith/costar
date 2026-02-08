@@ -1,0 +1,114 @@
+<div class="movie-comparison-results">
+  <% if @shared_actors && @shared_actors.any? %>
+    <div class="comparison-header">
+      <div class="movie-info movie1-info">
+        <% if @movie1[:poster_path] %>
+          <img src="https://image.tmdb.org/t/p/w185<%= @movie1[:poster_path] %>" 
+               alt="<%= @movie1[:title] %> poster"
+               class="movie-poster-small"
+               loading="lazy">
+        <% end %>
+        <div class="movie-title"><%= @movie1[:title] %></div>
+        <% if @movie1[:year] %>
+          <div class="movie-year">(<%= @movie1[:year] %>)</div>
+        <% end %>
+      </div>
+      
+      <div class="comparison-summary">
+        <div class="shared-count"><%= @shared_actors.size %></div>
+        <div class="shared-label">Shared Actor<%= @shared_actors.size == 1 ? '' : 's' %></div>
+      </div>
+      
+      <div class="movie-info movie2-info">
+        <% if @movie2[:poster_path] %>
+          <img src="https://image.tmdb.org/t/p/w185<%= @movie2[:poster_path] %>" 
+               alt="<%= @movie2[:title] %> poster"
+               class="movie-poster-small"
+               loading="lazy">
+        <% end %>
+        <div class="movie-title"><%= @movie2[:title] %></div>
+        <% if @movie2[:year] %>
+          <div class="movie-year">(<%= @movie2[:year] %>)</div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="shared-actors-list">
+      <h3>Actors in Both Movies</h3>
+      <div class="actors-grid">
+        <% @shared_actors.each do |actor| %>
+          <div class="shared-actor-card">
+            <% if actor[:profile_path] %>
+              <img src="https://image.tmdb.org/t/p/w185<%= actor[:profile_path] %>" 
+                   alt="<%= actor[:name] %> profile"
+                   class="actor-profile-image"
+                   loading="lazy"
+                   onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 185 278%22><rect fill=%22%23374151%22 width=%22185%22 height=%22278%22/><text fill=%22%239CA3AF%22 font-family=%22system-ui%22 font-size=%2240%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>?</text></svg>'">
+            <% else %>
+              <div class="actor-profile-placeholder">
+                <span>?</span>
+              </div>
+            <% end %>
+            <div class="actor-details">
+              <div class="actor-name"><%= actor[:name] %></div>
+              <div class="character-roles">
+                <% if actor[:character_in_movie1] %>
+                  <div class="character-role">
+                    <span class="role-label">In <%= @movie1[:title] %>:</span>
+                    <span class="role-name"><%= actor[:character_in_movie1] %></span>
+                  </div>
+                <% end %>
+                <% if actor[:character_in_movie2] %>
+                  <div class="character-role">
+                    <span class="role-label">In <%= @movie2[:title] %>:</span>
+                    <span class="role-name"><%= actor[:character_in_movie2] %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="no-shared-actors">
+      <div class="comparison-header">
+        <div class="movie-info movie1-info">
+          <% if @movie1[:poster_path] %>
+            <img src="https://image.tmdb.org/t/p/w185<%= @movie1[:poster_path] %>" 
+                 alt="<%= @movie1[:title] %> poster"
+                 class="movie-poster-small"
+                 loading="lazy">
+          <% end %>
+          <div class="movie-title"><%= @movie1[:title] %></div>
+          <% if @movie1[:year] %>
+            <div class="movie-year">(<%= @movie1[:year] %>)</div>
+          <% end %>
+        </div>
+        
+        <div class="comparison-summary empty">
+          <div class="shared-count">0</div>
+          <div class="shared-label">Shared Actors</div>
+        </div>
+        
+        <div class="movie-info movie2-info">
+          <% if @movie2[:poster_path] %>
+            <img src="https://image.tmdb.org/t/p/w185<%= @movie2[:poster_path] %>" 
+                 alt="<%= @movie2[:title] %> poster"
+                 class="movie-poster-small"
+                 loading="lazy">
+          <% end %>
+          <div class="movie-title"><%= @movie2[:title] %></div>
+          <% if @movie2[:year] %>
+            <div class="movie-year">(<%= @movie2[:year] %>)</div>
+          <% end %>
+        </div>
+      </div>
+      
+      <div class="no-results-message">
+        <p>These movies don't share any actors in their main cast.</p>
+        <p class="suggestion">Try comparing movies from the same franchise or director!</p>
+      </div>
+    </div>
+  <% end %>
+</div>

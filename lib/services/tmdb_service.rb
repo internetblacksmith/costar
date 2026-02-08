@@ -8,6 +8,7 @@ require_relative "../config/logger"
 require_relative "../middleware/error_handler_module"
 require_relative "../dto/dto_factory"
 require_relative "../dto/search_results_dto"
+require_relative "../dto/movie_search_results_dto"
 
 # High-level service for interacting with The Movie Database API
 class TMDBService
@@ -69,6 +70,43 @@ class TMDBService
   def get_actor_details(actor_id)
     # Actor details is the same as profile, so reuse the profile cache
     get_actor_profile(actor_id)
+  end
+
+  # Movie search and comparison methods
+
+  def search_movies(query)
+    return MovieSearchResultsDTO.new(movies: []) if query.nil? || query.empty?
+
+    cached_data = @cache_manager.cache_movie_search_results(query) do
+      fetch_movies_search_from_api(query)
+    end
+
+    # Convert to DTO if not already
+    return cached_data if cached_data.is_a?(MovieSearchResultsDTO)
+
+    DTOFactory.movie_search_results_from_api(cached_data)
+  end
+
+  def get_movie_cast(movie_id)
+    cached_data = @cache_manager.cache_movie_cast(movie_id) do
+      fetch_movie_cast_from_api(movie_id)
+    end
+
+    # Convert array of actor hashes to ActorDTOs
+    return cached_data if cached_data.is_a?(Array) && cached_data.first.is_a?(ActorDTO)
+
+    (cached_data || []).map { |actor_data| DTOFactory.actor_from_api(actor_data) }.compact
+  end
+
+  def get_movie_details(movie_id)
+    cached_data = @cache_manager.cache_movie_details(movie_id) do
+      fetch_movie_details_from_api(movie_id)
+    end
+
+    # Convert to MovieDTO
+    return cached_data if cached_data.is_a?(MovieDTO)
+
+    DTOFactory.movie_from_api(cached_data)
   end
 
   private
@@ -158,5 +196,86 @@ class TMDBService
 
   def log_api_call(endpoint, duration)
     StructuredLogger.log_api_call("tmdb", endpoint, duration, success: true)
+  end
+
+  def fetch_movies_search_from_api(query)
+    with_tmdb_error_handling("search_movies", context: { query: query }) do
+      api_start_time = Time.now
+
+      # High priority for user-initiated searches
+      data = @throttler.throttle_high_priority do
+        @client.request("search/movie", query: query)
+      end
+      api_duration = (Time.now - api_start_time) * 1000
+
+      log_api_call("search/movie", api_duration)
+
+      # Return raw API response for DTO conversion
+      data
+    end
+  rescue TMDBError => e
+    handle_service_error(e, "search_movies")
+    { "results" => [] }
+  end
+
+  def fetch_movie_cast_from_api(movie_id)
+    with_tmdb_error_handling("get_movie_cast", context: { movie_id: movie_id }) do
+      api_start_time = Time.now
+
+      endpoint = "movie/#{movie_id}/credits"
+      # Low priority for movie credits
+      data = @throttler.throttle_low_priority do
+        @client.request(endpoint)
+      end
+      api_duration = (Time.now - api_start_time) * 1000
+
+      log_api_call(endpoint, api_duration)
+
+      # Process and return cast data (actors only)
+      process_movie_cast(data)
+    end
+  rescue TMDBError => e
+    handle_service_error(e, "get_movie_cast")
+    []
+  end
+
+  def fetch_movie_details_from_api(movie_id)
+    with_tmdb_error_handling("get_movie_details", context: { movie_id: movie_id }) do
+      api_start_time = Time.now
+
+      endpoint = "movie/#{movie_id}"
+      # Medium priority for movie details
+      data = @throttler.throttle_medium_priority do
+        @client.request(endpoint)
+      end
+      api_duration = (Time.now - api_start_time) * 1000
+
+      log_api_call(endpoint, api_duration)
+
+      # Return raw API response for DTO conversion
+      data
+    end
+  rescue TMDBError => e
+    handle_service_error(e, "get_movie_details")
+    nil
+  end
+
+  def process_movie_cast(data)
+    return [] unless data && data["cast"]
+
+    # Return cast members sorted by order (most prominent first)
+    data["cast"]
+      .select { |member| member["known_for_department"] == "Acting" }
+      .sort_by { |member| member["order"] || 999 }
+      .map do |member|
+        {
+          "id" => member["id"],
+          "name" => member["name"],
+          "character" => member["character"],
+          "profile_path" => member["profile_path"],
+          "popularity" => member["popularity"] || 0.0,
+          "order" => member["order"]
+        }
+      end
   end
 end

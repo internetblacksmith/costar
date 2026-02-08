@@ -1,4 +1,4 @@
-/* Loading State Component */
+/* Loading State Component - Playful */
 .loading {
     text-align: center;
     padding: var(--spacing-xl);
@@ -10,32 +10,43 @@
 }
 
 .loading p {
-    margin-bottom: var(--spacing-sm);
     color: var(--text-secondary);
+    font-family: var(--font-family-primary);
+    margin-bottom: var(--spacing-sm);
 }
 
-/* Results section */
+/* Results Section */
 .results-section {
-    margin-top: calc(var(--spacing-lg) * 2);
+    margin-top: var(--spacing-2xl);
 }
 
 .results-card {
-    padding: var(--spacing-md);
-    border-radius: calc(var(--border-radius) + 4px);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl) !important;
     min-height: 200px;
 }
 
 .results-section:not(.show) {
-    display: none;
+    /* Allow results to show when populated by HTMX */
 }
 
-/* Error state */
+/* Error State */
 .error {
-    background-color: var(--movie-shared-bg);
+    background: var(--movie-shared-bg);
     color: var(--movie-shared-text);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
     text-align: center;
-    font-weight: 500;
-    border-left: 4px solid var(--movie-shared-border);
+    font-family: var(--font-family-display);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    animation: errorShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes errorShake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-3px); }
+    40%, 60% { transform: translateX(3px); }
 }

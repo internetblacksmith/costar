@@ -8,7 +8,27 @@
 3. Check if gems are actually in the Gemfile before referencing them in Makefile
 4. Document changes in this AGENTS.md file
 
-**Last Updated**: December 26, 2025 - Fixed `make dev` to use `puma` instead of deprecated `rerun` gem
+**Last Updated**: December 29, 2025 - Ruby 4.0.0 upgrade, gem version pinning
+
+## ⚠️ Important: Gem Version Pinning Policy
+
+**All gems MUST be pinned to exact versions for production stability and reproducible builds.**
+
+### Rules:
+1. **Always pin to exact versions**: Use `gem "name", "x.y.z"` format (not `>=`, `~>`, or unpinned)
+2. **Pin to latest patch version**: When adding or updating gems, use the latest available version
+3. **Update process**:
+   - Run `bundle outdated` to see available updates
+   - Update version in Gemfile
+   - Run `bundle update <gem-name>`
+   - Run full test suite before committing
+4. **Document updates**: Update the "Last updated" comment in Gemfile header
+
+### Why exact pinning?
+- Reproducible builds across environments
+- Prevents unexpected breakages from transitive dependency updates
+- Makes security audits easier
+- Ensures CI/CD and production use identical versions
 
 ## Build/Test Commands
 - **Run all tests**: `make test` or `bundle exec rspec && bundle exec cucumber`
@@ -33,7 +53,7 @@
 - **Auto-detection**: Tests automatically detect Redis on localhost:6379
 
 ## Code Style
-- **Ruby version**: 3.0+, use `# frozen_string_literal: true` header
+- **Ruby version**: 4.0+, use `# frozen_string_literal: true` header
 - **Strings**: Double quotes `"text"` (enforced by RuboCop)
 - **Imports**: Use `require_relative` for local files, group by type
 - **Naming**: snake_case for methods/variables, PascalCase for classes

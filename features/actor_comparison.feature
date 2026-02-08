@@ -10,7 +10,7 @@ Feature: Actor Comparison
    Scenario: Compare two actors with common movies
     When I select "Tom Hanks" as the first actor
     And I select "Meg Ryan" as the second actor
-    And I click "Explore Filmographies Together"
+    And I click "Find Common Movies"
     Then I should see the timeline comparison
     And I should see movies for both actors
     And I should see their common movies highlighted
@@ -20,7 +20,7 @@ Feature: Actor Comparison
    Scenario: Compare two actors with no common movies
     When I select "Tom Hanks" as the first actor
     And I select "Jackie Chan" as the second actor
-    And I click "Explore Filmographies Together"
+    And I click "Find Common Movies"
     Then I should see the timeline comparison
     And I should see movies for both actors
     But I should not see any common movies highlighted
@@ -41,7 +41,7 @@ Feature: Actor Comparison
    @vcr @javascript
    Scenario: Missing actor parameter
     When I select "Tom Hanks" as the first actor
-    And I click "Explore Filmographies Together" without selecting a second actor
+    And I click "Find Common Movies" without selecting a second actor
     Then I should see an error message
     And I should remain on the home page
 
@@ -50,7 +50,7 @@ Feature: Actor Comparison
     # This tests the complete flow as a real user would experience it
     When I select "Tom Hanks" as the first actor
     And I select "Meg Ryan" as the second actor
-    And I click "Explore Filmographies Together"
+    And I click "Find Common Movies"
     Then I should see the timeline comparison
     And I should see "Tom Hanks"
     And I should see "Meg Ryan"

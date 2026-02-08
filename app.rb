@@ -1,43 +1,44 @@
 # frozen_string_literal: true
 
-require 'sinatra'
-require 'sinatra/namespace'
-require 'dotenv'
-require 'rack/attack'
-require 'active_support/cache'
-require 'active_support/notifications'
+require "sinatra"
+require "sinatra/namespace"
+require "dotenv"
+require "rack/attack"
+require "active_support/cache"
+require "active_support/notifications"
 
 # Initialize Sentry for error tracking (always load, but enable conditionally)
-require_relative 'config/sentry'
+require_relative "config/sentry"
 
 # Load application dependencies
 
 # Load configuration and services
-require_relative 'lib/config/configuration'
-require_relative 'lib/config/configuration_policy'
-require_relative 'lib/services/configuration_validator'
-require_relative 'lib/config/cache'
-require_relative 'lib/config/errors'
-require_relative 'lib/config/logger'
-require_relative 'lib/config/service_container'
-require_relative 'lib/config/service_initializer'
-require_relative 'lib/middleware/request_logger'
-require_relative 'lib/middleware/request_context_middleware'
-require_relative 'lib/middleware/performance_headers'
-require_relative 'lib/services/cache_key_builder'
-require_relative 'lib/services/cache_manager'
-require_relative 'lib/services/tmdb_client'
-require_relative 'lib/services/tmdb_data_processor'
-require_relative 'lib/services/tmdb_service'
-require_relative 'lib/services/timeline_builder'
-require_relative 'lib/services/actor_comparison_service'
-require_relative 'lib/services/poster_service'
-require_relative 'lib/services/actor_profile_service'
+require_relative "lib/config/configuration"
+require_relative "lib/config/configuration_policy"
+require_relative "lib/services/configuration_validator"
+require_relative "lib/config/cache"
+require_relative "lib/config/errors"
+require_relative "lib/config/logger"
+require_relative "lib/config/service_container"
+require_relative "lib/config/service_initializer"
+require_relative "lib/middleware/request_logger"
+require_relative "lib/middleware/request_context_middleware"
+require_relative "lib/middleware/performance_headers"
+require_relative "lib/services/cache_key_builder"
+require_relative "lib/services/cache_manager"
+require_relative "lib/services/tmdb_client"
+require_relative "lib/services/tmdb_data_processor"
+require_relative "lib/services/tmdb_service"
+require_relative "lib/services/timeline_builder"
+require_relative "lib/services/actor_comparison_service"
+require_relative "lib/services/movie_comparison_service"
+require_relative "lib/services/poster_service"
+require_relative "lib/services/actor_profile_service"
 
 # Load controllers
-require_relative 'lib/controllers/health_controller'
-require_relative 'lib/controllers/api_controller'
-require_relative 'lib/controllers/error_handler'
+require_relative "lib/controllers/health_controller"
+require_relative "lib/controllers/api_controller"
+require_relative "lib/controllers/error_handler"
 
 class ScreenThreadApp < Sinatra::Base
   register Sinatra::Namespace
@@ -55,20 +56,18 @@ class ScreenThreadApp < Sinatra::Base
     # Validate configuration
     ConfigurationValidator.validate!
 
-    set :public_folder, 'public'
-    set :views, 'views'
+    set :public_folder, "public"
+    set :views, "views"
 
     # Configure sessions with proper secret
     enable :sessions
     set :session_store, Rack::Session::Cookie
-    set :session_secret, ENV.fetch('SESSION_SECRET') {
+    set :session_secret, ENV.fetch("SESSION_SECRET") {
       # Generate a consistent secret in development, require it in production
-      if ENV.fetch('RACK_ENV', 'development') == 'production'
-        raise 'SESSION_SECRET environment variable is required in production'
-      end
+      raise "SESSION_SECRET environment variable is required in production" if ENV.fetch("RACK_ENV", "development") == "production"
 
       # Development secret - must be >=64 characters
-      'development_secret_abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890'
+      "development_secret_abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
     }
 
     # Setup structured logging
@@ -78,34 +77,31 @@ class ScreenThreadApp < Sinatra::Base
     # Only set port/bind for direct Ruby execution (development)
     # Let Puma handle this in production
     unless defined?(::Puma)
-      set :port, ENV.fetch('PORT', 4567)
-      set :bind, '0.0.0.0'
+      set :port, ENV.fetch("PORT", 4567)
+      set :bind, "0.0.0.0"
     end
 
     # Initialize services using dependency injection
     ServiceInitializer.initialize_services
     set :tmdb_service, ServiceContainer.get(:tmdb_service)
     set :comparison_service, ServiceContainer.get(:comparison_service)
+    set :movie_comparison_service, ServiceContainer.get(:movie_comparison_service)
   end
 
   # Production security and performance configuration
   configure :production do
-    require 'rack/ssl'
+    require "rack/ssl"
 
     # Enable gzip compression for all responses
     use Rack::Deflater
 
     # Force HTTPS (exclude health checks for internal monitoring) - skip in test
-    unless ENV.fetch('RACK_ENV', 'development') == 'test'
-      use Rack::SSL, exclude: lambda { |env|
-        env['PATH_INFO'].start_with?('/health')
-      }
-    end
+    use Rack::SSL, exclude: ->(env) { env["PATH_INFO"].start_with?("/health") } unless ENV.fetch("RACK_ENV", "development") == "test"
   end
 
   # Security configuration for all environments (including test for security tests)
   # Additional security headers - adjust for test environment
-  unless ENV.fetch('RACK_ENV', 'development') == 'test'
+  unless ENV.fetch("RACK_ENV", "development") == "test"
     # Full protection in non-test environments
     use Rack::Protection,
         except: %i[json_csrf frame_options xss_header], # Handle these ourselves
@@ -116,26 +112,22 @@ class ScreenThreadApp < Sinatra::Base
   # Custom security headers for all environments
   before do
     # Set all security headers directly
-    headers 'Content-Security-Policy' => build_csp_header
-    headers 'Referrer-Policy' => 'strict-origin-when-cross-origin'
-    headers 'Permissions-Policy' => 'geolocation=(), microphone=(), camera=()'
-    headers 'X-Frame-Options' => 'DENY'
-    headers 'X-Content-Type-Options' => 'nosniff'
-    headers 'X-XSS-Protection' => '1; mode=block'
+    headers "Content-Security-Policy" => build_csp_header
+    headers "Referrer-Policy" => "strict-origin-when-cross-origin"
+    headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
+    headers "X-Frame-Options" => "DENY"
+    headers "X-Content-Type-Options" => "nosniff"
+    headers "X-XSS-Protection" => "1; mode=block"
 
     # Only add HSTS in production
-    headers 'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains; preload' if ENV.fetch('RACK_ENV',
-                                                                                                       'development') == 'production'
+    headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload" if ENV.fetch("RACK_ENV", "development") == "production"
 
     # Add cache control for static assets to prevent stale content
-    if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
-      cache_control :public, :must_revalidate,
-                    max_age: 3600
-    end
+    cache_control :public, :must_revalidate, max_age: 3600 if request.path.match?(/\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|svg)$/)
   end
 
   # Rate limiting configuration
-  require_relative 'config/rack_attack'
+  require_relative "config/rack_attack"
   use Rack::Attack
 
   # Request context middleware (must be early in the stack)
@@ -157,16 +149,16 @@ class ScreenThreadApp < Sinatra::Base
   health_check_endpoint
 
   # Simple health check for Render's internal monitoring (always returns 200)
-  get '/health/simple' do
+  get "/health/simple" do
     content_type :json
     {
-      status: 'ok',
-      git_sha: ENV.fetch('RENDER_GIT_COMMIT', `git rev-parse --short HEAD 2>/dev/null`.strip) || 'unknown'
+      status: "ok",
+      git_sha: ENV.fetch("RENDER_GIT_COMMIT", `git rev-parse --short HEAD 2>/dev/null`.strip) || "unknown"
     }.to_json
   end
 
   # Main page
-  get '/' do
+  get "/" do
     # Check if actor IDs are provided in URL parameters
     @actor1_id = params[:actor1_id]
     @actor2_id = params[:actor2_id]
@@ -182,19 +174,50 @@ class ScreenThreadApp < Sinatra::Base
         @actor2_name = actor2_profile[:name] if actor2_profile
 
         # Log what we got
-        settings.logger.info 'Share link loaded',
+        settings.logger.info "Share link loaded",
                              actor1_id: @actor1_id,
                              actor1_name: @actor1_name,
                              actor2_id: @actor2_id,
                              actor2_name: @actor2_name
       rescue StandardError => e
-        settings.logger.error 'Error fetching actor names', error: e.message
+        settings.logger.error "Error fetching actor names", error: e.message
         # Continue without names, let client-side fetch them
       end
     end
 
     # Pass the IDs and names to the view to pre-populate and auto-trigger comparison
     erb :index
+  end
+
+  # Movies comparison page
+  get "/movies" do
+    # Check if movie IDs are provided in URL parameters
+    @movie1_id = params[:movie1_id]
+    @movie2_id = params[:movie2_id]
+
+    # Fetch movie titles if IDs are provided
+    if @movie1_id && @movie2_id
+      begin
+        # Fetch movie details to get titles
+        movie1_details = settings.tmdb_service.get_movie_details(@movie1_id.to_i)
+        movie2_details = settings.tmdb_service.get_movie_details(@movie2_id.to_i)
+
+        @movie1_title = movie1_details.title if movie1_details
+        @movie2_title = movie2_details.title if movie2_details
+
+        # Log what we got
+        settings.logger.info "Movies share link loaded",
+                             movie1_id: @movie1_id,
+                             movie1_title: @movie1_title,
+                             movie2_id: @movie2_id,
+                             movie2_title: @movie2_title
+      rescue StandardError => e
+        settings.logger.error "Error fetching movie titles", error: e.message
+        # Continue without titles, let client-side fetch them
+      end
+    end
+
+    erb :movies_index
   end
 
   # API endpoints
@@ -204,21 +227,21 @@ class ScreenThreadApp < Sinatra::Base
 
   # Add comprehensive security headers for production
   def add_security_headers
-    headers 'Content-Security-Policy' => build_csp_header
-    headers 'Referrer-Policy' => 'strict-origin-when-cross-origin'
-    headers 'Permissions-Policy' => 'geolocation=(), microphone=(), camera=()'
+    headers "Content-Security-Policy" => build_csp_header
+    headers "Referrer-Policy" => "strict-origin-when-cross-origin"
+    headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
 
     # Only add HSTS in production/test with HTTPS
-    return unless ENV.fetch('RACK_ENV', 'development') == 'production'
+    return unless ENV.fetch("RACK_ENV", "development") == "production"
 
-    headers 'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains; preload'
+    headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
   end
 
   def override_rack_protection_headers
     # Override Rack::Protection defaults with our more secure settings
-    headers 'X-Frame-Options' => 'DENY'
-    headers 'X-Content-Type-Options' => 'nosniff'
-    headers 'X-XSS-Protection' => '1; mode=block'
+    headers "X-Frame-Options" => "DENY"
+    headers "X-Content-Type-Options" => "nosniff"
+    headers "X-XSS-Protection" => "1; mode=block"
   end
 
   def build_csp_header
@@ -234,27 +257,25 @@ class ScreenThreadApp < Sinatra::Base
       "base-uri 'self'",
       "form-action 'self'"
     ]
-    policies.join('; ')
+    policies.join("; ")
   end
 
   def configure_cors_headers
     # Configure CORS based on environment
-    if ENV.fetch('RACK_ENV', 'development') == 'production'
+    if ENV.fetch("RACK_ENV", "development") == "production"
       # In production, be more restrictive with CORS
-      allowed_origins = ENV.fetch('ALLOWED_ORIGINS', '').split(',').map(&:strip)
-      origin = request.env['HTTP_ORIGIN']
+      allowed_origins = ENV.fetch("ALLOWED_ORIGINS", "").split(",").map(&:strip)
+      origin = request.env["HTTP_ORIGIN"]
 
-      if allowed_origins.empty? || allowed_origins.include?(origin)
-        headers 'Access-Control-Allow-Origin' => origin || '*'
-      end
+      headers "Access-Control-Allow-Origin" => origin || "*" if allowed_origins.empty? || allowed_origins.include?(origin)
     else
       # In development, allow all origins
-      headers 'Access-Control-Allow-Origin' => '*'
+      headers "Access-Control-Allow-Origin" => "*"
     end
 
     # Common CORS headers for all environments
-    headers 'Access-Control-Allow-Credentials' => 'false'
-    headers 'Access-Control-Expose-Headers' => 'X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset'
+    headers "Access-Control-Allow-Credentials" => "false"
+    headers "Access-Control-Expose-Headers" => "X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset"
   end
 end
 

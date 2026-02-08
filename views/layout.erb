@@ -111,13 +111,29 @@
         <header>
             <div class="header-content">
                 <div class="header-text">
-                    <h1>ScreenThread</h1>
+                    <h1><a href="/" class="header-link">ScreenThread</a></h1>
                     <p>Discover the connections between actors and movies</p>
                 </div>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                     <span class="material-icons" id="themeIcon">dark_mode</span>
                 </button>
             </div>
+            <nav class="mode-nav" role="tablist" aria-label="Comparison mode">
+                <a href="/" 
+                   class="mode-tab <%= request.path_info == '/' ? 'active' : '' %>" 
+                   role="tab"
+                   aria-selected="<%= request.path_info == '/' ? 'true' : 'false' %>">
+                    <span class="material-icons">people</span>
+                    <span class="mode-label">Actors</span>
+                </a>
+                <a href="/movies" 
+                   class="mode-tab <%= request.path_info == '/movies' ? 'active' : '' %>" 
+                   role="tab"
+                   aria-selected="<%= request.path_info == '/movies' ? 'true' : 'false' %>">
+                    <span class="material-icons">movie</span>
+                    <span class="mode-label">Movies</span>
+                </a>
+            </nav>
         </header>
         
         <%= yield %>

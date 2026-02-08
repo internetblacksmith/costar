@@ -3,7 +3,9 @@
 require_relative "actor_dto"
 require_relative "movie_dto"
 require_relative "search_results_dto"
+require_relative "movie_search_results_dto"
 require_relative "comparison_result_dto"
+require_relative "movie_comparison_result_dto"
 
 # Factory for creating DTOs from API responses
 class DTOFactory
@@ -65,6 +67,45 @@ class DTOFactory
         total_results: api_response["total_results"] || api_response[:total_results] || actors.size,
         total_pages: api_response["total_pages"] || api_response[:total_pages] || 1,
         page: api_response["page"] || api_response[:page] || query_params[:page] || 1
+      )
+    end
+
+    # Create MovieSearchResultsDTO from movie search response
+    def movie_search_results_from_api(api_response, query_params = {})
+      return MovieSearchResultsDTO.new(movies: []) unless api_response
+
+      movies = (api_response["results"] || api_response[:results] || []).map do |movie_data|
+        movie_from_api(movie_data)
+      end.compact
+
+      MovieSearchResultsDTO.new(
+        movies: movies,
+        total_results: api_response["total_results"] || api_response[:total_results] || movies.size,
+        total_pages: api_response["total_pages"] || api_response[:total_pages] || 1,
+        page: api_response["page"] || api_response[:page] || query_params[:page] || 1
+      )
+    end
+
+    # Create MovieComparisonResultDTO from service response
+    def movie_comparison_result_from_service(service_data)
+      return nil unless service_data
+
+      # Extract movie data
+      movie1_data = extract_movie_data(service_data, 1)
+      movie2_data = extract_movie_data(service_data, 2)
+
+      # Create actor DTOs (handle both raw data and existing DTOs)
+      movie1_cast = convert_actors_array(service_data[:movie1_cast])
+      movie2_cast = convert_actors_array(service_data[:movie2_cast])
+      shared_actors = convert_actors_array(service_data[:shared_actors])
+
+      MovieComparisonResultDTO.new(
+        movie1: movie_from_api(movie1_data),
+        movie2: movie_from_api(movie2_data),
+        movie1_cast: movie1_cast,
+        movie2_cast: movie2_cast,
+        shared_actors: shared_actors,
+        metadata: extract_movie_comparison_metadata(service_data)
       )
     end
 
@@ -151,6 +192,39 @@ class DTOFactory
           actor1: service_data[:actor1_movies]&.size || 0,
           actor2: service_data[:actor2_movies]&.size || 0,
           shared: service_data[:shared_movies]&.size || 0
+        }
+      }
+    end
+
+    def extract_movie_data(service_data, movie_num)
+      {
+        id: service_data[:"movie#{movie_num}_id"],
+        title: service_data[:"movie#{movie_num}_title"],
+        poster_path: service_data[:"movie#{movie_num}_poster_path"],
+        release_date: service_data[:"movie#{movie_num}_release_date"],
+        year: service_data[:"movie#{movie_num}_year"]
+      }
+    end
+
+    def convert_actors_array(actors)
+      return [] unless actors
+
+      actors.map do |actor|
+        if actor.is_a?(ActorDTO)
+          actor
+        else
+          actor_from_api(actor)
+        end
+      end.compact
+    end
+
+    def extract_movie_comparison_metadata(service_data)
+      {
+        comparison_date: Time.now.iso8601,
+        total_cast: {
+          movie1: service_data[:movie1_cast]&.size || 0,
+          movie2: service_data[:movie2_cast]&.size || 0,
+          shared: service_data[:shared_actors]&.size || 0
         }
       }
     end

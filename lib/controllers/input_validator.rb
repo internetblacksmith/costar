@@ -57,6 +57,26 @@ class InputValidator
       data[:actor2_name]
     end
 
+    def movie_id
+      data[:movie_id]
+    end
+
+    def movie1_id
+      data[:movie1_id]
+    end
+
+    def movie2_id
+      data[:movie2_id]
+    end
+
+    def movie1_title
+      data[:movie1_title]
+    end
+
+    def movie2_title
+      data[:movie2_title]
+    end
+
     def security_violation?
       data[:security_violation] == true
     end
@@ -147,5 +167,107 @@ class InputValidator
 
     valid = errors.empty?
     ValidationResult.new(valid, data, errors)
+  end
+
+  ##
+  # Validates movie search parameters
+  #
+  # @param params [Hash] Request parameters
+  # @return [ValidationResult] Validation result with sanitized data
+  #
+  def validate_movie_search(params)
+    errors = []
+    data = {}
+
+    # Check if input is too large before sanitizing
+    raw_query = params[:q]
+    if raw_query && raw_query.to_s.length > @sanitizer.max_query_length
+      # For overly long queries in search (security concern), return invalid with error
+      errors << "Query too long. Maximum length is #{@sanitizer.max_query_length} characters."
+      data[:security_violation] = true # Flag for 400 status
+      return ValidationResult.new(false, data, errors)
+    end
+
+    # Validate and sanitize query
+    query = @sanitizer.sanitize_query(raw_query)
+    if query.nil? || query.empty?
+      data[:query] = nil
+      data[:field] = sanitize_movie_field_name(params[:field])
+      return ValidationResult.new(true, data, []) # Empty query is valid (returns empty results)
+    end
+
+    data[:query] = query
+    data[:field] = sanitize_movie_field_name(params[:field])
+
+    ValidationResult.new(true, data, errors)
+  end
+
+  ##
+  # Validates movie ID parameter
+  #
+  # @param params [Hash] Request parameters
+  # @return [ValidationResult] Validation result with sanitized movie ID
+  #
+  def validate_movie_id(params)
+    errors = []
+    data = {}
+
+    movie_id = @sanitizer.sanitize_id(params[:id])
+    if movie_id.nil?
+      errors << "Movie ID is required and must be a valid integer"
+      return ValidationResult.new(false, data, errors)
+    end
+
+    data[:movie_id] = movie_id
+    ValidationResult.new(true, data, errors)
+  end
+
+  ##
+  # Validates movie comparison parameters
+  #
+  # @param params [Hash] Request parameters
+  # @return [ValidationResult] Validation result with sanitized movie data
+  #
+  def validate_movie_comparison(params)
+    errors = []
+    data = {}
+
+    # Validate required movie IDs
+    movie1_id = @sanitizer.sanitize_id(params[:movie1_id])
+    movie2_id = @sanitizer.sanitize_id(params[:movie2_id])
+
+    if movie1_id.nil?
+      errors << "Movie 1 ID is required"
+    else
+      data[:movie1_id] = movie1_id
+    end
+
+    if movie2_id.nil?
+      errors << "Movie 2 ID is required"
+    else
+      data[:movie2_id] = movie2_id
+    end
+
+    # Validate optional movie titles
+    data[:movie1_title] = @sanitizer.sanitize_name(params[:movie1_title])
+    data[:movie2_title] = @sanitizer.sanitize_name(params[:movie2_title])
+
+    valid = errors.empty?
+    ValidationResult.new(valid, data, errors)
+  end
+
+  private
+
+  ##
+  # Sanitize movie field name for suggestion targeting
+  #
+  # @param field [String, nil] The raw field name
+  # @return [String] Sanitized field name (defaults to "movie1")
+  #
+  def sanitize_movie_field_name(field)
+    return "movie1" if field.nil?
+
+    sanitized = field.to_s.strip.downcase
+    %w[movie1 movie2].include?(sanitized) ? sanitized : "movie1"
   end
 end

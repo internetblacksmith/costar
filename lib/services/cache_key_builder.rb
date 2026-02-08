@@ -92,6 +92,40 @@ class CacheKeyBuilder
   end
 
   ##
+  # Generate cache key for movie search results
+  #
+  # @param query [String] The search query
+  # @return [String] Formatted cache key with hashed query
+  #
+  def movie_search_results(query)
+    query_hash = Digest::MD5.hexdigest(query.to_s.downcase.strip)
+    "#{VERSION}:movie:search:#{query_hash}"
+  end
+
+  ##
+  # Generate cache key for movie cast (actors in a movie)
+  #
+  # @param movie_id [Integer, String] The TMDB movie ID
+  # @return [String] Formatted cache key
+  #
+  def movie_cast(movie_id)
+    "#{VERSION}:movie:cast:#{movie_id}"
+  end
+
+  ##
+  # Generate cache key for movie comparison data
+  #
+  # @param movie1_id [Integer, String] First movie ID
+  # @param movie2_id [Integer, String] Second movie ID
+  # @return [String] Formatted cache key with normalized order
+  #
+  def movie_comparison(movie1_id, movie2_id)
+    # Normalize order to ensure same comparison gets same key regardless of order
+    ids = [movie1_id.to_i, movie2_id.to_i].sort
+    "#{VERSION}:movie:comparison:#{ids[0]}:#{ids[1]}"
+  end
+
+  ##
   # Generate pattern for cache invalidation
   #
   # @param pattern [String] The pattern type (actor, search, comparison, etc.)

@@ -4,6 +4,7 @@ require_relative "service_container"
 require_relative "../services/resilient_tmdb_client"
 require_relative "../services/tmdb_service"
 require_relative "../services/actor_comparison_service"
+require_relative "../services/movie_comparison_service"
 require_relative "../services/timeline_builder"
 require_relative "../services/api_response_builder"
 require_relative "../services/cache_manager"
@@ -42,6 +43,11 @@ module ServiceInitializer
   end
 
   def self.register_api_services
+    register_tmdb_services
+    register_comparison_services
+  end
+
+  def self.register_tmdb_services
     # Register request throttler (using simple version to avoid threading issues)
     ServiceContainer.register(:request_throttler) do
       SimpleRequestThrottler.new
@@ -64,21 +70,31 @@ module ServiceInitializer
 
     # Register TMDB service
     ServiceContainer.register(:tmdb_service) do |container|
-      # Get dependencies first to avoid recursive locking
       client = container.get(:tmdb_client)
       cache = container.get(:cache_manager)
       throttler = container.get(:request_throttler)
       TMDBService.new(client: client, cache: cache, throttler: throttler)
     end
+  end
 
+  def self.register_comparison_services
     # Register actor comparison service
     ServiceContainer.register(:comparison_service) do |container|
-      # Get dependencies first to avoid recursive locking
       tmdb_service = container.get(:tmdb_service)
       cache = container.get(:cache_manager)
       ActorComparisonService.new(
         tmdb_service: tmdb_service,
         timeline_builder: nil, # TimelineBuilder is created per comparison
+        cache: cache
+      )
+    end
+
+    # Register movie comparison service
+    ServiceContainer.register(:movie_comparison_service) do |container|
+      tmdb_service = container.get(:tmdb_service)
+      cache = container.get(:cache_manager)
+      MovieComparisonService.new(
+        tmdb_service: tmdb_service,
         cache: cache
       )
     end

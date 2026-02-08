@@ -1,4 +1,4 @@
-/* Footer Component - Minimal Modern Design */
+/* Footer Component - Playful & Vibrant */
 footer {
     margin-top: var(--spacing-3xl);
     padding: var(--spacing-2xl) var(--spacing-md);
@@ -7,23 +7,25 @@ footer {
     border-top: 1px solid var(--border-color);
     background: var(--bg-secondary);
     position: relative;
+    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
 }
 
-/* Subtle gradient line at top */
+/* Rainbow gradient line at top */
 footer::before {
     content: '';
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 2px;
-    background: var(--primary-gradient);
+    width: 120px;
+    height: 3px;
+    background: var(--bg-gradient);
     border-radius: var(--border-radius-full);
 }
 
 footer p {
     margin: 0 0 var(--spacing-sm) 0;
+    font-family: var(--font-family-primary);
     font-size: var(--text-sm);
     line-height: 1.6;
 }
@@ -33,16 +35,16 @@ footer p:last-child {
 }
 
 footer strong {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-secondary);
 }
 
-/* Footer Links - Light mode default */
+/* Footer Links */
 footer a {
-    color: #4f46e5; /* primary-color for light mode */
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-normal);
     position: relative;
 }
 
@@ -54,11 +56,12 @@ footer a::after {
     width: 0;
     height: 2px;
     background: var(--primary-gradient);
-    transition: width var(--transition-normal);
+    border-radius: var(--border-radius-full);
+    transition: width var(--transition-playful);
 }
 
 footer a:hover {
-    color: #4338ca; /* primary-dark for light mode */
+    color: var(--primary-dark);
 }
 
 footer a:hover::after {
@@ -83,7 +86,7 @@ footer a:hover::after {
     color: var(--text-secondary);
 }
 
-/* Creator Link - Styled with WCAG AA Compliant Colors */
+/* Creator Link - Playful pill */
 footer > p:last-of-type {
     margin-top: var(--spacing-md);
 }
@@ -92,65 +95,49 @@ footer > p:last-of-type a {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: rgba(79, 70, 229, 0.1);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: rgba(190, 24, 93, 0.06);
+    border: 1px solid rgba(190, 24, 93, 0.1);
     border-radius: var(--border-radius-full);
+    font-family: var(--font-family-display);
     font-size: var(--text-sm);
-    transition: all var(--transition-normal);
-    color: #4338ca; /* primary-dark for light mode */
+    font-weight: 600;
+    transition: all var(--transition-playful);
+    color: var(--primary-dark);
 }
 
 footer > p:last-of-type a:hover {
-    background: rgba(79, 70, 229, 0.18);
-    transform: translateY(-1px);
+    background: rgba(231, 76, 139, 0.15);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 12px rgba(231, 76, 139, 0.12);
 }
 
 footer > p:last-of-type a::after {
     display: none;
 }
 
-/* Dark Mode Footer - WCAG AA Compliant */
+/* Dark Mode Footer */
 html[data-theme="dark"] footer {
     background: var(--bg-secondary);
 }
 
-html[data-theme="dark"] footer::before {
-    opacity: 0.8;
-}
-
-/* Very high specificity for dark mode links */
 html[data-theme="dark"] footer a {
-    color: #c7d2fe !important; /* Light indigo - 7.3:1 contrast on dark bg */
+    color: var(--primary-color) !important;
 }
 
 html[data-theme="dark"] footer a:hover {
-    color: #e0e7ff !important;
-}
-
-html[data-theme="dark"] footer .tmdb-attribution a {
-    color: #c7d2fe !important;
-}
-
-html[data-theme="dark"] footer .tmdb-attribution a:hover {
-    color: #e0e7ff !important;
-}
-
-html[data-theme="dark"] footer p a {
-    color: #c7d2fe !important;
-}
-
-html[data-theme="dark"] footer p a:hover {
-    color: #e0e7ff !important;
+    color: var(--primary-light) !important;
 }
 
 html[data-theme="dark"] footer > p:last-of-type a {
-    background: rgba(199, 210, 254, 0.15) !important;
-    color: #c7d2fe !important;
+    background: rgba(244, 114, 182, 0.1) !important;
+    border-color: rgba(244, 114, 182, 0.15) !important;
+    color: var(--primary-color) !important;
 }
 
 html[data-theme="dark"] footer > p:last-of-type a:hover {
-    background: rgba(199, 210, 254, 0.25) !important;
-    color: #e0e7ff !important;
+    background: rgba(244, 114, 182, 0.18) !important;
+    color: var(--primary-light) !important;
 }
 
 /* Analytics Notice */
@@ -165,7 +152,7 @@ footer small {
     footer {
         padding: var(--spacing-xl) var(--spacing-md);
     }
-    
+
     .tmdb-attribution {
         padding-bottom: var(--spacing-md);
     }

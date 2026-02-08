@@ -1,20 +1,21 @@
-/* Typography and Base Styles - Modern Clean Design */
+/* Typography and Base Styles - Playful & Vibrant Design */
 
 /* Global Reset */
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
+/* Base Body Styling */
 body {
     font-family: var(--font-family-primary);
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
     font-weight: 400;
     font-size: var(--text-base);
-    line-height: 1.6;
-    letter-spacing: -0.01em;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    background-image: var(--gradient-mesh);
+    background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-slow), color var(--transition-slow);
@@ -27,18 +28,17 @@ body {
     padding: var(--spacing-lg);
 }
 
-/* Headings */
+/* Headings - Outfit display font */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-display);
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--text-primary);
-    margin: 0;
 }
 
-h1 { font-size: var(--text-4xl); }
-h2 { font-size: var(--text-3xl); }
+h1 { font-size: var(--text-4xl); font-weight: 900; }
+h2 { font-size: var(--text-3xl); font-weight: 800; }
 h3 { font-size: var(--text-2xl); }
 h4 { font-size: var(--text-xl); }
 h5 { font-size: var(--text-lg); }
@@ -46,85 +46,80 @@ h6 { font-size: var(--text-base); }
 
 /* Paragraphs */
 p {
-    margin: 0 0 var(--spacing-md) 0;
+    margin-bottom: var(--spacing-md);
     color: var(--text-secondary);
 }
 
-p:last-child {
-    margin-bottom: 0;
-}
-
-/* Links - Modern Style */
+/* Links - Playful animated underline */
 a {
     color: var(--primary-color);
     text-decoration: none;
-    font-weight: 500;
-    transition: all var(--transition-fast);
     position: relative;
+    transition: color var(--transition-normal);
+    font-weight: 500;
+}
+
+a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-gradient);
+    border-radius: var(--border-radius-full);
+    transition: width var(--transition-playful);
 }
 
 a:hover {
     color: var(--primary-dark);
 }
 
-/* Underline animation for links */
-a:not(.mdc-button):not(.mdc-chip)::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: currentColor;
-    transition: width var(--transition-fast);
-}
-
-a:not(.mdc-button):not(.mdc-chip):hover::after {
+a:hover::after {
     width: 100%;
 }
 
-/* Focus styles for accessibility */
 a:focus-visible {
     outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline-offset: 4px;
+    border-radius: var(--border-radius-xs);
 }
 
-/* Dark mode link colors for WCAG AA compliance */
+/* Dark mode links */
 [data-theme="dark"] a {
-    color: #c7d2fe; /* Light indigo - 7.3:1 contrast ratio on #1a1a2e */
+    color: var(--primary-color);
 }
 
 [data-theme="dark"] a:hover {
-    color: #e0e7ff;
+    color: var(--primary-light);
 }
 
-/* Strong/Bold */
-strong, b {
-    font-weight: 600;
+/* Strong */
+strong {
+    font-weight: 700;
     color: var(--text-primary);
 }
 
-/* Small text */
+/* Small */
 small {
     font-size: var(--text-sm);
     color: var(--text-tertiary);
 }
 
-/* Selection */
+/* Selection - Playful highlight */
 ::selection {
-    background: var(--primary-color);
-    color: white;
+    background-color: rgba(231, 76, 139, 0.2);
+    color: var(--text-primary);
 }
 
-/* Scrollbar styling */
+/* Scrollbar - Subtle and themed */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -139,21 +134,18 @@ small {
 /* Firefox scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--border-color) var(--bg-secondary);
+    scrollbar-color: var(--border-color) transparent;
 }
 
-/* Focus visible for keyboard navigation */
+/* Focus Visible */
 :focus-visible {
     outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+    outline-offset: 3px;
+    border-radius: var(--border-radius-xs);
 }
 
-/* Responsive typography */
+/* Responsive Typography */
 @media (max-width: 768px) {
-    .container {
-        padding: var(--spacing-md);
-    }
-    
     h1 { font-size: var(--text-3xl); }
     h2 { font-size: var(--text-2xl); }
     h3 { font-size: var(--text-xl); }

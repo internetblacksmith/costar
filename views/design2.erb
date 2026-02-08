@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreenThread — Art Deco Cinema</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --gold: #d4a843;
+            --gold-light: #e8c96a;
+            --gold-dark: #b8922e;
+            --cream: #f5f0e1;
+            --cream-dark: #e8dfc8;
+            --burgundy: #7a1b2d;
+            --burgundy-light: #9e2d42;
+            --burgundy-dark: #5c1120;
+            --charcoal: #1a1a1a;
+            --warm-gray: #2a2422;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Cormorant Garamond", Georgia, serif;
+            background-color: var(--black);
+            color: var(--cream);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           FILM GRAIN OVERLAY
+           ======================================== */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        /* ========================================
+           FILM STRIP SIDE BORDERS
+           ======================================== */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 38px;
+            height: 100%;
+            z-index: 100;
+            pointer-events: none;
+            background:
+                linear-gradient(to right, var(--charcoal) 0px, var(--charcoal) 38px, transparent 38px),
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 6px,
+                    var(--black) 6px,
+                    var(--black) 10px,
+                    transparent 10px,
+                    transparent 28px
+                );
+            border-right: 2px solid var(--gold-dark);
+        }
+
+        .film-strip-right {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 38px;
+            height: 100%;
+            z-index: 100;
+            pointer-events: none;
+            background:
+                linear-gradient(to left, var(--charcoal) 0px, var(--charcoal) 38px, transparent 38px),
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 6px,
+                    var(--black) 6px,
+                    var(--black) 10px,
+                    transparent 10px,
+                    transparent 28px
+                );
+            border-left: 2px solid var(--gold-dark);
+        }
+
+        .film-strip-sprocket {
+            position: fixed;
+            z-index: 101;
+            pointer-events: none;
+        }
+
+        .film-strip-sprocket.left {
+            left: 6px;
+            top: 0;
+            width: 26px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 8px,
+                var(--black) 8px,
+                var(--black) 20px,
+                transparent 20px,
+                transparent 28px
+            );
+        }
+
+        .film-strip-sprocket.right {
+            right: 6px;
+            top: 0;
+            width: 26px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 8px,
+                var(--black) 8px,
+                var(--black) 20px,
+                transparent 20px,
+                transparent 28px
+            );
+        }
+
+        /* ========================================
+           FIXED NAVIGATION STRIP (LEFT SIDE)
+           ======================================== */
+        .nav-strip {
+            position: fixed;
+            left: 44px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-strip a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--charcoal);
+            border: 1px solid var(--gold-dark);
+            color: var(--gold);
+            text-decoration: none;
+            font-family: "Playfair Display", serif;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .nav-strip a:hover {
+            background: var(--gold);
+            color: var(--black);
+            transform: scale(1.15);
+        }
+
+        .nav-strip a.nav-home {
+            clip-path: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            font-size: 16px;
+        }
+
+        .nav-strip .nav-divider {
+            width: 1px;
+            height: 14px;
+            background: var(--gold-dark);
+            opacity: 0.5;
+        }
+
+        /* ========================================
+           MAIN CONTENT WRAPPER
+           ======================================== */
+        .main-wrapper {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 40px 60px 80px 100px;
+            position: relative;
+        }
+
+        /* ========================================
+           ART DECO HEADER
+           ======================================== */
+        .deco-header {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+
+        /* Top sunburst decoration */
+        .deco-header::before {
+            content: "";
+            display: block;
+            width: 200px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background:
+                conic-gradient(
+                    from 180deg at 50% 100%,
+                    transparent 0deg,
+                    var(--gold) 0deg,
+                    transparent 12deg,
+                    transparent 24deg,
+                    var(--gold) 24deg,
+                    transparent 36deg,
+                    transparent 48deg,
+                    var(--gold) 48deg,
+                    transparent 60deg,
+                    transparent 72deg,
+                    var(--gold) 72deg,
+                    transparent 84deg,
+                    transparent 96deg,
+                    var(--gold) 96deg,
+                    transparent 108deg,
+                    transparent 120deg,
+                    var(--gold) 120deg,
+                    transparent 132deg,
+                    transparent 144deg,
+                    var(--gold) 144deg,
+                    transparent 156deg,
+                    transparent 168deg,
+                    var(--gold) 168deg,
+                    transparent 180deg
+                );
+            opacity: 0.3;
+            clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+        }
+
+        .deco-stars {
+            font-size: 14px;
+            letter-spacing: 12px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            text-shadow: 0 0 8px rgba(212, 168, 67, 0.4);
+        }
+
+        .deco-title {
+            font-family: "Playfair Display", serif;
+            font-weight: 900;
+            font-size: 4rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-shadow:
+                0 0 20px rgba(212, 168, 67, 0.3),
+                0 0 40px rgba(212, 168, 67, 0.15),
+                2px 2px 0 var(--gold-dark),
+                4px 4px 0 rgba(0, 0, 0, 0.5);
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .deco-subtitle {
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 300;
+            font-size: 1.25rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--cream-dark);
+            opacity: 0.8;
+        }
+
+        /* ========================================
+           ART DECO ORNAMENTAL DIVIDERS
+           ======================================== */
+        .deco-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 36px 0;
+            position: relative;
+        }
+
+        .deco-divider::before,
+        .deco-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to var(--dir, right), transparent, var(--gold), transparent);
+        }
+
+        .deco-divider::before { --dir: right; }
+        .deco-divider::after { --dir: left; }
+
+        .deco-divider-diamond {
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .deco-divider-small {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+            opacity: 0.6;
+        }
+
+        /* Chevron border pattern */
+        .deco-chevron-border {
+            width: 100%;
+            height: 16px;
+            margin: 24px 0;
+            background:
+                linear-gradient(135deg, var(--gold) 25%, transparent 25%) -10px 0,
+                linear-gradient(225deg, var(--gold) 25%, transparent 25%) -10px 0,
+                linear-gradient(315deg, var(--gold) 25%, transparent 25%),
+                linear-gradient(45deg, var(--gold) 25%, transparent 25%);
+            background-size: 20px 16px;
+            background-color: transparent;
+            opacity: 0.15;
+        }
+
+        /* ========================================
+           INTRO SECTION
+           ======================================== */
+        .intro-text {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--cream);
+            line-height: 1.8;
+            max-width: 560px;
+            margin: 0 auto;
+            font-style: italic;
+            opacity: 0.85;
+        }
+
+        /* ========================================
+           SEARCH CARD — VINTAGE CINEMA FORM
+           ======================================== */
+        .search-card {
+            background: var(--warm-gray);
+            border: 2px solid var(--gold-dark);
+            padding: 44px 40px 36px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        /* Corner accents */
+        .search-card::before,
+        .search-card::after {
+            content: "";
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border-color: var(--gold);
+            border-style: solid;
+        }
+
+        .search-card::before {
+            top: -2px;
+            left: -2px;
+            border-width: 3px 0 0 3px;
+        }
+
+        .search-card::after {
+            top: -2px;
+            right: -2px;
+            border-width: 3px 3px 0 0;
+        }
+
+        .search-card-bottom-corners {
+            position: absolute;
+            bottom: -2px;
+            left: -2px;
+            right: -2px;
+            height: 28px;
+            pointer-events: none;
+        }
+
+        .search-card-bottom-corners::before,
+        .search-card-bottom-corners::after {
+            content: "";
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border-color: var(--gold);
+            border-style: solid;
+        }
+
+        .search-card-bottom-corners::before {
+            bottom: 0;
+            left: 0;
+            border-width: 0 0 3px 3px;
+        }
+
+        .search-card-bottom-corners::after {
+            bottom: 0;
+            right: 0;
+            border-width: 0 3px 3px 0;
+        }
+
+        .search-card-title {
+            font-family: "Playfair Display", serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: var(--gold);
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .search-card-title::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 1px;
+            background: var(--gold);
+            margin: 12px auto 0;
+        }
+
+        /* ========================================
+           FIELD CONTAINER — TICKET STUB STYLE
+           ======================================== */
+        .field-container {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .field-label {
+            font-family: "Playfair Display", serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gold);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .field-label .label-star {
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        .field-input-wrap {
+            position: relative;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--black);
+            background: var(--cream);
+            border: 2px solid var(--gold-dark);
+            outline: none;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            /* Perforated ticket edge using box-shadow */
+            box-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .field-input::placeholder {
+            color: #a09880;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .field-input:focus {
+            border-color: var(--gold);
+            box-shadow:
+                0 0 0 3px rgba(212, 168, 67, 0.15),
+                inset 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .field-input:disabled {
+            background: var(--cream-dark);
+            color: #5a5040;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--burgundy);
+            font-size: 20px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .clear-btn:hover {
+            opacity: 1;
+        }
+
+        /* ========================================
+           SUGGESTIONS DROPDOWN
+           ======================================== */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 300;
+            background: var(--cream);
+            border: 2px solid var(--gold-dark);
+            border-top: none;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .suggestions:empty {
+            display: none;
+        }
+
+        .suggestions .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1rem;
+            color: var(--black);
+            border-bottom: 1px solid var(--cream-dark);
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .suggestions .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions .suggestion-item:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        /* ========================================
+           COMPARE BUTTON — MARQUEE SIGN STYLE
+           ======================================== */
+        .compare-section {
+            text-align: center;
+            margin-top: 36px;
+        }
+
+        .marquee-btn {
+            position: relative;
+            display: inline-block;
+            padding: 18px 52px;
+            font-family: "Playfair Display", serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: var(--cream);
+            background: var(--burgundy);
+            border: 3px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            box-shadow:
+                0 0 15px rgba(212, 168, 67, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .marquee-btn::before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid var(--gold);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Marquee light dots */
+        .marquee-btn::after {
+            content: "· · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·";
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border: 2px solid transparent;
+            font-size: 8px;
+            letter-spacing: 3px;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .marquee-btn:hover {
+            background: var(--burgundy-light);
+            box-shadow:
+                0 0 30px rgba(212, 168, 67, 0.35),
+                0 0 60px rgba(212, 168, 67, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .marquee-btn:active {
+            transform: scale(0.98);
+        }
+
+        .marquee-lights {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            pointer-events: none;
+        }
+
+        .marquee-light {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(212, 168, 67, 0.6);
+            animation: marquee-blink 1.5s ease-in-out infinite alternate;
+        }
+
+        .marquee-light:nth-child(even) {
+            animation-delay: 0.75s;
+        }
+
+        /* Top lights */
+        .marquee-light.t1 { top: 0; left: 10%; }
+        .marquee-light.t2 { top: 0; left: 30%; }
+        .marquee-light.t3 { top: 0; left: 50%; }
+        .marquee-light.t4 { top: 0; left: 70%; }
+        .marquee-light.t5 { top: 0; left: 90%; }
+        /* Bottom lights */
+        .marquee-light.b1 { bottom: 0; left: 10%; }
+        .marquee-light.b2 { bottom: 0; left: 30%; }
+        .marquee-light.b3 { bottom: 0; left: 50%; }
+        .marquee-light.b4 { bottom: 0; left: 70%; }
+        .marquee-light.b5 { bottom: 0; left: 90%; }
+        /* Left lights */
+        .marquee-light.l1 { left: 0; top: 20%; }
+        .marquee-light.l2 { left: 0; top: 50%; }
+        .marquee-light.l3 { left: 0; top: 80%; }
+        /* Right lights */
+        .marquee-light.r1 { right: 0; top: 20%; }
+        .marquee-light.r2 { right: 0; top: 50%; }
+        .marquee-light.r3 { right: 0; top: 80%; }
+
+        @keyframes marquee-blink {
+            0% { opacity: 0.3; box-shadow: 0 0 3px rgba(212, 168, 67, 0.3); }
+            100% { opacity: 1; box-shadow: 0 0 8px rgba(212, 168, 67, 0.8); }
+        }
+
+        /* ========================================
+           RESULTS / TIMELINE SECTION
+           ======================================== */
+        .results-section {
+            margin-top: 20px;
+        }
+
+        .results-header {
+            font-family: "Playfair Display", serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: var(--gold);
+            margin-bottom: 24px;
+        }
+
+        #timeline {
+            min-height: 60px;
+            position: relative;
+        }
+
+        #timeline:empty::before {
+            content: "Your screening results shall appear here";
+            display: block;
+            text-align: center;
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--cream-dark);
+            opacity: 0.4;
+            padding: 40px 20px;
+        }
+
+        /* HTMX loading indicator */
+        #timeline.htmx-request::before {
+            content: "Searching the archives...";
+            display: block;
+            text-align: center;
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--gold);
+            padding: 40px 20px;
+            animation: fade-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes fade-pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ========================================
+           FOOTER DECORATION
+           ======================================== */
+        .deco-footer {
+            text-align: center;
+            padding: 50px 0 20px;
+        }
+
+        .deco-footer-text {
+            font-family: "Playfair Display", serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gold);
+            opacity: 0.4;
+        }
+
+        /* Fan shape decoration */
+        .deco-fan {
+            width: 80px;
+            height: 40px;
+            margin: 0 auto 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deco-fan::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            border: 1px solid var(--gold);
+            opacity: 0.3;
+        }
+
+        .deco-fan::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            border: 1px solid var(--gold);
+            opacity: 0.2;
+        }
+
+        /* ========================================
+           ART DECO CORNER PATTERN ON PAGE
+           ======================================== */
+        .deco-corner-tl,
+        .deco-corner-tr {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            opacity: 0.25;
+        }
+
+        .deco-corner-tl {
+            top: 0;
+            left: 0;
+            border-top: 2px solid var(--gold);
+            border-left: 2px solid var(--gold);
+        }
+
+        .deco-corner-tl::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 30px;
+            height: 30px;
+            border-top: 1px solid var(--gold);
+            border-left: 1px solid var(--gold);
+        }
+
+        .deco-corner-tr {
+            top: 0;
+            right: 0;
+            border-top: 2px solid var(--gold);
+            border-right: 2px solid var(--gold);
+        }
+
+        .deco-corner-tr::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 30px;
+            height: 30px;
+            border-top: 1px solid var(--gold);
+            border-right: 1px solid var(--gold);
+        }
+
+        /* ========================================
+           HIDDEN FIELDS
+           ======================================== */
+        .hidden-fields {
+            display: none;
+        }
+
+        /* ========================================
+           SCROLLBAR STYLING
+           ======================================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--charcoal);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 0;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            body::after,
+            .film-strip-right,
+            .film-strip-sprocket {
+                display: none;
+            }
+
+            .nav-strip {
+                position: fixed;
+                left: auto;
+                right: 8px;
+                top: auto;
+                bottom: 12px;
+                transform: none;
+                flex-direction: row;
+                gap: 3px;
+            }
+
+            .nav-strip a {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+            }
+
+            .nav-strip .nav-divider {
+                width: 8px;
+                height: 1px;
+            }
+
+            .main-wrapper {
+                padding: 24px 20px 80px;
+            }
+
+            .deco-title {
+                font-size: 2.4rem;
+                letter-spacing: 4px;
+            }
+
+            .deco-subtitle {
+                font-size: 0.95rem;
+                letter-spacing: 3px;
+            }
+
+            .search-card {
+                padding: 28px 20px 24px;
+            }
+
+            .marquee-btn {
+                padding: 14px 32px;
+                font-size: 0.95rem;
+                letter-spacing: 3px;
+            }
+
+            .deco-header::before {
+                width: 140px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .deco-title {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+
+            .marquee-btn {
+                padding: 12px 24px;
+                font-size: 0.85rem;
+                letter-spacing: 2px;
+            }
+
+            .nav-strip a {
+                width: 26px;
+                height: 26px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Film strip right border -->
+    <div class="film-strip-right"></div>
+
+    <!-- Film strip sprocket holes -->
+    <div class="film-strip-sprocket left"></div>
+    <div class="film-strip-sprocket right"></div>
+
+    <!-- Fixed Navigation Strip -->
+    <nav class="nav-strip">
+        <a href="/" class="nav-home" title="Home">&#9733;</a>
+        <div class="nav-divider"></div>
+        <a href="/1" title="Design 1">1</a>
+        <a href="/2" title="Design 2">2</a>
+        <a href="/3" title="Design 3">3</a>
+        <a href="/4" title="Design 4">4</a>
+        <a href="/5" title="Design 5">5</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="deco-corner-tl"></div>
+        <div class="deco-corner-tr"></div>
+
+        <!-- Header -->
+        <header class="deco-header">
+            <div class="deco-stars">&#9733; &#9733; &#9733;</div>
+            <h1 class="deco-title">ScreenThread</h1>
+            <p class="deco-subtitle">The Actor Connection Archive</p>
+        </header>
+
+        <!-- Ornamental divider -->
+        <div class="deco-divider">
+            <span class="deco-divider-small"></span>
+            <span class="deco-divider-diamond"></span>
+            <span class="deco-divider-small"></span>
+        </div>
+
+        <!-- Intro -->
+        <p class="intro-text">
+            Search for two actors you remember from a scene, and discover all the pictures they have graced together.
+        </p>
+
+        <!-- Chevron border -->
+        <div class="deco-chevron-border"></div>
+
+        <!-- Search Card -->
+        <div class="search-card">
+            <div class="search-card-bottom-corners"></div>
+            <h2 class="search-card-title">&#9733; Cast Inquiry &#9733;</h2>
+
+            <!-- Actor 1 -->
+            <div class="field-container">
+                <label class="field-label" for="actor1">
+                    <span class="label-star">&#9733;</span>
+                    First Actor
+                    <span class="label-star">&#9733;</span>
+                </label>
+                <div class="field-input-wrap">
+                    <input
+                        type="text"
+                        id="actor1"
+                        name="q"
+                        class="field-input"
+                        placeholder="Enter an actor's name..."
+                        autocomplete="off"
+                        hx-get="/api/actors/search"
+                        hx-trigger="keyup changed delay:300ms"
+                        hx-target="#suggestions1"
+                        hx-include="this"
+                        hx-vals='{"field": "actor1"}'
+                    >
+                    <button type="button" class="clear-btn" onclick="clearActor('actor1')" title="Clear">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="suggestions" id="suggestions1"></div>
+                <input type="hidden" id="actor1_id" name="actor1_id">
+                <input type="hidden" id="actor1_name" name="actor1_name">
+            </div>
+
+            <!-- Actor 2 -->
+            <div class="field-container">
+                <label class="field-label" for="actor2">
+                    <span class="label-star">&#9733;</span>
+                    Second Actor
+                    <span class="label-star">&#9733;</span>
+                </label>
+                <div class="field-input-wrap">
+                    <input
+                        type="text"
+                        id="actor2"
+                        name="q"
+                        class="field-input"
+                        placeholder="Enter another actor's name..."
+                        autocomplete="off"
+                        hx-get="/api/actors/search"
+                        hx-trigger="keyup changed delay:300ms"
+                        hx-target="#suggestions2"
+                        hx-include="this"
+                        hx-vals='{"field": "actor2"}'
+                    >
+                    <button type="button" class="clear-btn" onclick="clearActor('actor2')" title="Clear">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="suggestions" id="suggestions2"></div>
+                <input type="hidden" id="actor2_id" name="actor2_id">
+                <input type="hidden" id="actor2_name" name="actor2_name">
+            </div>
+
+            <!-- Hidden backup fields -->
+            <div class="hidden-fields">
+                <input type="hidden" id="actor1_id_backup" name="actor1_id_backup">
+                <input type="hidden" id="actor2_id_backup" name="actor2_id_backup">
+                <input type="hidden" id="actor1_name_backup" name="actor1_name_backup">
+                <input type="hidden" id="actor2_name_backup" name="actor2_name_backup">
+            </div>
+
+            <!-- Compare Button — Marquee Style -->
+            <div class="compare-section">
+                <button
+                    type="button"
+                    class="marquee-btn"
+                    id="compareBtn"
+                    hx-get="/api/actors/compare"
+                    hx-target="#timeline"
+                    hx-vals='js:{
+                        "actor1_id": document.getElementById("actor1_id_backup").value,
+                        "actor2_id": document.getElementById("actor2_id_backup").value,
+                        "actor1_name": document.getElementById("actor1_name_backup").value,
+                        "actor2_name": document.getElementById("actor2_name_backup").value
+                    }'
+                >
+                    <div class="marquee-lights">
+                        <span class="marquee-light t1"></span>
+                        <span class="marquee-light t2"></span>
+                        <span class="marquee-light t3"></span>
+                        <span class="marquee-light t4"></span>
+                        <span class="marquee-light t5"></span>
+                        <span class="marquee-light b1"></span>
+                        <span class="marquee-light b2"></span>
+                        <span class="marquee-light b3"></span>
+                        <span class="marquee-light b4"></span>
+                        <span class="marquee-light b5"></span>
+                        <span class="marquee-light l1"></span>
+                        <span class="marquee-light l2"></span>
+                        <span class="marquee-light l3"></span>
+                        <span class="marquee-light r1"></span>
+                        <span class="marquee-light r2"></span>
+                        <span class="marquee-light r3"></span>
+                    </div>
+                    Find Common Pictures
+                </button>
+            </div>
+        </div>
+
+        <!-- Ornamental divider -->
+        <div class="deco-divider">
+            <span class="deco-divider-small"></span>
+            <span class="deco-divider-diamond"></span>
+            <span class="deco-divider-small"></span>
+        </div>
+
+        <!-- Results Section -->
+        <section class="results-section">
+            <div id="timeline"></div>
+        </section>
+
+        <!-- Footer -->
+        <div class="deco-footer">
+            <div class="deco-fan"></div>
+            <div class="deco-divider" style="margin: 20px 0;">
+                <span class="deco-divider-small"></span>
+                <span class="deco-divider-diamond"></span>
+                <span class="deco-divider-small"></span>
+            </div>
+            <p class="deco-footer-text">&#9733; ScreenThread &#9733; A Motion Picture Inquiry &#9733;</p>
+        </div>
+    </div>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+
+    <!-- Inline JavaScript -->
+    <script>
+        function selectActor(id, name, field) {
+            document.getElementById(field + '_id').value = id;
+            document.getElementById(field + '_name').value = name;
+            document.getElementById(field + '_id_backup').value = id;
+            document.getElementById(field + '_name_backup').value = name;
+            document.getElementById(field).closest('.field-container').querySelector('.suggestions').innerHTML = '';
+            const input = document.getElementById(field);
+            input.value = name;
+            input.disabled = true;
+            input.style.opacity = '0.7';
+        }
+
+        function clearActor(field) {
+            document.getElementById(field + '_id').value = '';
+            document.getElementById(field + '_name').value = '';
+            document.getElementById(field + '_id_backup').value = '';
+            document.getElementById(field + '_name_backup').value = '';
+            const input = document.getElementById(field);
+            input.value = '';
+            input.disabled = false;
+            input.style.opacity = '1';
+        }
+    </script>
+</body>
+</html>

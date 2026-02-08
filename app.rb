@@ -189,6 +189,13 @@ class ScreenThreadApp < Sinatra::Base
     erb :index
   end
 
+  # Design prototype pages (static actor comparison variants)
+  (1..5).each do |n|
+    get "/#{n}" do
+      erb :"design#{n}", layout: false
+    end
+  end
+
   # Movies comparison page
   get "/movies" do
     # Check if movie IDs are provided in URL parameters

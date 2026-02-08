@@ -1,4 +1,4 @@
-/* Loading State Component - Playful */
+/* Loading State Component - Clean & Professional */
 .loading {
     text-align: center;
     padding: var(--spacing-xl);
@@ -32,21 +32,18 @@
 
 /* Error State */
 .error {
-    background: var(--movie-shared-bg);
-    color: var(--movie-shared-text);
+    background: #fef2f2;
+    color: #991b1b;
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--border-radius);
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--error-color);
     text-align: center;
-    font-family: var(--font-family-display);
-    font-weight: 600;
+    font-family: var(--font-family-primary);
+    font-weight: 500;
     font-size: var(--text-sm);
-    animation: errorShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-@keyframes errorShake {
-    10%, 90% { transform: translateX(-1px); }
-    20%, 80% { transform: translateX(2px); }
-    30%, 50%, 70% { transform: translateX(-3px); }
-    40%, 60% { transform: translateX(3px); }
+[data-theme="dark"] .error {
+    background: rgba(220, 38, 38, 0.1);
+    color: #fca5a5;
 }

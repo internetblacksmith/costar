@@ -1,16 +1,16 @@
-/* Header Component - Playful & Vibrant Design */
+/* Header Component - Clean & Professional */
 header {
     margin-bottom: var(--spacing-2xl);
-    padding: var(--spacing-3xl) var(--spacing-xl) var(--spacing-xl);
+    padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-xl);
     background: var(--header-bg);
     color: var(--header-text);
     border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;
 }
 
-/* Animated gradient mesh background */
+/* Subtle gradient overlay for depth */
 header::before {
     content: '';
     position: absolute;
@@ -18,37 +18,8 @@ header::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(ellipse at 10% 90%, rgba(254, 202, 87, 0.2) 0%, transparent 40%),
-                radial-gradient(ellipse at 90% 10%, rgba(72, 219, 251, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 30% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
     pointer-events: none;
-    animation: meshShift 15s ease-in-out infinite alternate;
-}
-
-/* Floating decorative blob */
-header::after {
-    content: '';
-    position: absolute;
-    top: -40%;
-    right: -5%;
-    width: 350px;
-    height: 350px;
-    background: radial-gradient(circle, rgba(254, 202, 87, 0.12) 0%, rgba(72, 219, 251, 0.06) 40%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: blobFloat 12s ease-in-out infinite;
-    filter: blur(10px);
-}
-
-@keyframes meshShift {
-    0% { opacity: 1; }
-    100% { opacity: 0.7; transform: scale(1.05); }
-}
-
-@keyframes blobFloat {
-    0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-    33% { transform: translate(-30px, 20px) scale(1.15) rotate(5deg); }
-    66% { transform: translate(10px, -10px) scale(0.95) rotate(-3deg); }
 }
 
 .header-content {
@@ -70,11 +41,10 @@ header::after {
 .header-text h1 {
     font-family: var(--font-family-display);
     font-size: var(--text-5xl);
-    font-weight: 900;
-    margin: 0 0 var(--spacing-sm) 0;
+    font-weight: 800;
+    margin: 0 0 var(--spacing-xs) 0;
     color: var(--header-text);
     letter-spacing: -0.03em;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     line-height: 1.1;
 }
 
@@ -83,11 +53,11 @@ header::after {
     font-size: var(--text-lg);
     font-weight: 400;
     margin: 0;
-    opacity: 0.85;
-    max-width: 500px;
+    opacity: 0.8;
+    max-width: 480px;
     margin: 0 auto;
     line-height: 1.5;
-    letter-spacing: 0.01em;
+    color: var(--text-on-dark);
 }
 
 /* Header Link */
@@ -99,49 +69,41 @@ header::after {
 
 .header-link:hover {
     opacity: 0.9;
+    text-decoration: none;
 }
 
 /* Theme Toggle Button */
 .theme-toggle {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 2px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-full);
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--transition-playful);
+    transition: all var(--transition-normal);
     color: var(--header-text);
     flex-shrink: 0;
 }
 
 .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.22);
-    transform: scale(1.12) rotate(15deg);
-    box-shadow: 0 0 24px rgba(254, 202, 87, 0.3);
-    border-color: rgba(254, 202, 87, 0.4);
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
 }
 
 .theme-toggle:active {
-    transform: scale(0.92) rotate(-5deg);
+    transform: scale(0.95);
 }
 
 .theme-toggle:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(254, 202, 87, 0.4);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 .theme-toggle .material-icons {
-    font-size: 22px;
-    transition: transform var(--transition-playful);
-}
-
-.theme-toggle:hover .material-icons {
-    transform: rotate(-15deg) scale(1.1);
+    font-size: 20px;
 }
 
 /* Mode Navigation Tabs */
@@ -157,45 +119,35 @@ header::after {
 .mode-tab {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    padding: 10px 24px;
+    gap: 6px;
+    padding: 8px 20px;
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--border-radius-full);
     color: var(--header-text);
     text-decoration: none;
     font-family: var(--font-family-display);
     font-size: var(--text-sm);
     font-weight: 600;
-    transition: all var(--transition-playful);
-    opacity: 0.7;
-    letter-spacing: 0.02em;
+    transition: all var(--transition-normal);
+    opacity: 0.65;
 }
 
 .mode-tab:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.15);
     opacity: 1;
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    color: var(--header-text);
 }
 
 .mode-tab.active {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.2);
     opacity: 1;
-    border-color: rgba(254, 202, 87, 0.5);
-    box-shadow: 0 4px 16px rgba(254, 202, 87, 0.2),
-                0 0 0 1px rgba(254, 202, 87, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .mode-tab .material-icons {
-    font-size: 20px;
-    transition: transform var(--transition-playful);
-}
-
-.mode-tab:hover .material-icons {
-    transform: scale(1.15);
+    font-size: 18px;
 }
 
 .mode-tab.active .material-icons {
@@ -203,7 +155,7 @@ header::after {
 }
 
 .mode-label {
-    font-weight: 700;
+    font-weight: 600;
 }
 
 /* Responsive Header */
@@ -228,15 +180,14 @@ header::after {
 
     .mode-nav {
         margin-top: var(--spacing-md);
-        gap: var(--spacing-xs);
     }
 
     .mode-tab {
-        padding: 8px 18px;
+        padding: 6px 16px;
         font-size: var(--text-xs);
     }
 
     .mode-tab .material-icons {
-        font-size: 18px;
+        font-size: 16px;
     }
 }

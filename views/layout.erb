@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ScreenThread // NEON NOIR</title>
     
-    <!-- Material Design Components Web -->
-    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <!-- Material Icons (icon font only, no MDC framework) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     
     <!-- Custom styles -->
@@ -14,7 +13,6 @@
     
     <!-- Scripts -->
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     
     <% if ENV['SENTRY_DSN'] %>
     <!-- Sentry Error Tracking for Frontend -->
@@ -52,26 +50,6 @@
             // Force dark theme for cyberpunk design
             document.documentElement.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
-            
-            function initThemeToggle() {
-                const themeToggle = document.getElementById('themeToggle');
-                const themeIcon = document.getElementById('themeIcon');
-                
-                if (!themeToggle || !themeIcon) return;
-                
-                // Set icon to system indicator
-                themeIcon.textContent = 'terminal';
-                
-                themeToggle.addEventListener('click', function() {
-                    // No-op in cyberpunk mode - dark only
-                });
-            }
-            
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initThemeToggle);
-            } else {
-                initThemeToggle();
-            }
         })();
     </script>
     
@@ -110,9 +88,6 @@
                     <h1><a href="/" class="header-link">ScreenThread</a></h1>
                     <p><span>&gt;</span> link_scanner <span>//</span> find shared filmographies</p>
                 </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="System status">
-                    <span class="material-icons" id="themeIcon">terminal</span>
-                </button>
             </div>
             <nav class="mode-nav" role="tablist" aria-label="Comparison mode">
                 <a href="/" 

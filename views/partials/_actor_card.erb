@@ -1,0 +1,44 @@
+<% tmdb_url = "https://www.themoviedb.org/person/#{actor[:id]}" %>
+<div class="actor-item<%= ' shared' if shared %>">
+    <div class="actor-card">
+        <div class="actor-poster-container">
+            <img src="<%= ActorProfileService.profile_url(actor[:profile_path], :medium) %>" 
+                 alt="<%= actor[:name] %> profile"
+                 class="actor-poster"
+                 loading="lazy"
+                 onerror="this.src='<%= ActorProfileService.placeholder_url %>'"
+                 onload="this.classList.add('loaded')"
+                 srcset="<%= ActorProfileService.profile_url(actor[:profile_path], :small) %> 92w,
+                         <%= ActorProfileService.profile_url(actor[:profile_path], :medium) %> 185w,
+                         <%= ActorProfileService.profile_url(actor[:profile_path], :large) %> 500w"
+                 sizes="(max-width: 768px) 92px, 185px">
+            <a href="<%= tmdb_url %>" target="_blank" rel="noopener noreferrer" class="poster-info-link" aria-label="View <%= actor[:name] %> on TMDB">
+                <span class="material-icons">info</span>
+            </a>
+        </div>
+        <div class="actor-card-content">
+            <div class="actor-card-name">
+                <a href="<%= tmdb_url %>" target="_blank" rel="noopener noreferrer" class="actor-name-link"><%= actor[:name] %></a>
+                <% if shared %>
+                    <span class="material-icons shared-star">star</span>
+                <% end %>
+            </div>
+            <% if character %>
+                <div class="actor-card-character">as <%= character %></div>
+            <% end %>
+            <div class="actor-card-actions">
+                <a href="<%= tmdb_url %>" target="_blank" rel="noopener noreferrer" class="action-link tmdb-link" aria-label="View <%= actor[:name] %> on TMDB" title="View on TMDB">
+                    <img src="/images/tmdb-logo.svg" alt="TMDB" class="tmdb-icon">
+                    <span class="action-link-text">TMDB</span>
+                </a>
+            </div>
+            <% if shared && mobile_roles_info %>
+                <div class="mobile-shared-roles">
+                    <% mobile_roles_info.each do |role_info| %>
+                        <div class="mobile-role-detail"><%= role_info %></div>
+                    <% end %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>

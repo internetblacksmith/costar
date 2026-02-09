@@ -170,8 +170,8 @@ class ScreenThreadApp < Sinatra::Base
         actor1_profile = settings.tmdb_service.get_actor_profile(@actor1_id.to_i)
         actor2_profile = settings.tmdb_service.get_actor_profile(@actor2_id.to_i)
 
-        @actor1_name = actor1_profile[:name] if actor1_profile
-        @actor2_name = actor2_profile[:name] if actor2_profile
+        @actor1_name = actor1_profile.name if actor1_profile
+        @actor2_name = actor2_profile.name if actor2_profile
 
         # Log what we got
         settings.logger.info "Share link loaded",

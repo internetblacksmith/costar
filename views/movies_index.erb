@@ -2,13 +2,18 @@
     <section class="intro-section">
         <div class="intro-content">
             <p class="intro-text">
-                Search for two movies and discover all the actors who appeared in both.
+                <span style="color: var(--magenta); text-shadow: 0 0 3px #ff00aa44;">&gt;</span> Search for two movies and discover all the actors who appeared in both.
             </p>
         </div>
     </section>
 
     <section class="search-section">
         <div class="mdc-card search-card">
+            <div class="panel-header">
+                Query Interface
+                <span class="header-line"></span>
+            </div>
+
             <div class="search-form">
                 <div class="field-container" id="movie1-container">
                     <div class="mdc-text-field mdc-text-field--filled mdc-text-field--with-trailing-icon">
@@ -85,6 +90,10 @@
 
     <section class="results-section" id="results">
         <div class="mdc-card results-card">
+            <div class="results-label">
+                Output Stream
+                <span class="header-line"></span>
+            </div>
             <div class="movie-results-container" id="movie-results">
                 <!-- Movie comparison results will be inserted here -->
             </div>

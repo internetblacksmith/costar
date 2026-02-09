@@ -2,13 +2,18 @@
     <section class="intro-section">
         <div class="intro-content">
             <p class="intro-text">
-                Search for two actors you remember from a scene, and discover all the movies they've appeared in together.
+                <span style="color: var(--magenta); text-shadow: 0 0 3px #ff00aa44;">&gt;</span> Search for two actors you remember from a scene, and discover all the movies they've appeared in together.
             </p>
         </div>
     </section>
 
     <section class="search-section">
         <div class="mdc-card search-card">
+            <div class="panel-header">
+                Query Interface
+                <span class="header-line"></span>
+            </div>
+
             <div class="search-form">
                 <%= erb :'partials/_search_field', locals: { 
                     field: 'actor1', 
@@ -53,6 +58,10 @@
 
     <section class="results-section" id="results">
         <div class="mdc-card results-card">
+            <div class="results-label">
+                Output Stream
+                <span class="header-line"></span>
+            </div>
             <div class="timeline-container" id="timeline">
                 <!-- Timeline content or loading state will be inserted here -->
             </div>
@@ -123,4 +132,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <% end %>
-

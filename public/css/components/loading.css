@@ -1,4 +1,5 @@
-/* Loading State Component - Clean & Professional */
+/* Loading State Component - Neon Cyberpunk */
+
 .loading {
     text-align: center;
     padding: var(--spacing-xl);
@@ -10,40 +11,150 @@
 }
 
 .loading p {
-    color: var(--text-secondary);
-    font-family: var(--font-family-primary);
+    color: var(--cyan);
+    font-family: var(--font-family-display);
+    font-size: var(--text-xs);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: var(--glow-cyan);
     margin-bottom: var(--spacing-sm);
 }
 
 /* Results Section */
 .results-section {
-    margin-top: var(--spacing-2xl);
+    margin-top: var(--spacing-xl);
 }
 
 .results-card {
     padding: var(--spacing-lg);
     border-radius: var(--border-radius-xl) !important;
-    min-height: 200px;
+    min-height: 120px;
+    background: linear-gradient(135deg, rgba(13, 13, 24, 0.8) 0%, rgba(26, 10, 46, 0.5) 100%) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color) !important;
+    box-shadow:
+        inset 0 0 60px rgba(0, 0, 0, 0.3),
+        0 0 1px var(--magenta-dim),
+        0 0 20px rgba(255, 0, 170, 0.03) !important;
+    position: relative;
 }
 
-.results-section:not(.show) {
-    /* Allow results to show when populated by HTMX */
+/* CRT corner accents on results */
+.results-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    border-top: 2px solid var(--magenta);
+    border-right: 2px solid var(--magenta);
+    border-radius: 0 var(--border-radius-xl) 0 0;
+    box-shadow: 2px -2px 8px rgba(255, 0, 170, 0.15);
+    pointer-events: none;
+}
+
+.results-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    border-bottom: 2px solid var(--cyan);
+    border-left: 2px solid var(--cyan);
+    border-radius: 0 0 0 var(--border-radius-xl);
+    box-shadow: -2px 2px 8px rgba(0, 240, 255, 0.15);
+    pointer-events: none;
+}
+
+/* Results Label */
+.results-label {
+    font-family: var(--font-family-display);
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.results-label::before {
+    content: ">>";
+    color: var(--magenta);
+    text-shadow: 0 0 5px #ff00aa88;
+}
+
+.results-label .header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-color), transparent);
+}
+
+/* Timeline Area */
+#timeline,
+.timeline-container,
+.movie-results-container {
+    font-family: var(--font-family-primary);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    min-height: 60px;
+}
+
+#timeline:empty::before,
+.timeline-container:empty::before,
+.movie-results-container:empty::before {
+    content: "_ awaiting query input...";
+    color: #333355;
+    font-style: italic;
+    animation: cursorBlink 1s step-end infinite;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* HTMX loading indicator */
+#timeline.htmx-request::before,
+.timeline-container.htmx-request::before,
+.movie-results-container.htmx-request::before,
+#movie-results.htmx-request::before {
+    content: "";
+}
+
+#timeline.htmx-request::after,
+.timeline-container.htmx-request::after,
+.movie-results-container.htmx-request::after,
+#movie-results.htmx-request::after {
+    content: ">> SCANNING DATABASE...";
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    animation: loadingFlicker 0.5s steps(3, end) infinite;
+    font-family: var(--font-family-display);
+    font-size: var(--text-xs);
+    letter-spacing: 3px;
+}
+
+@keyframes loadingFlicker {
+    0%, 100% { opacity: 1; }
+    33% { opacity: 0.4; }
+    66% { opacity: 0.8; }
 }
 
 /* Error State */
 .error {
-    background: #fef2f2;
-    color: #991b1b;
+    background: rgba(255, 51, 51, 0.1);
+    color: #ff6666;
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--border-radius);
-    border-left: 4px solid var(--error-color);
+    border-left: 2px solid var(--error-color);
     text-align: center;
     font-family: var(--font-family-primary);
     font-weight: 500;
     font-size: var(--text-sm);
-}
-
-[data-theme="dark"] .error {
-    background: rgba(220, 38, 38, 0.1);
-    color: #fca5a5;
 }

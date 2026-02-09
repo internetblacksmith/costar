@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 ScreenThread</title>
+    <title>ScreenThread // NEON NOIR</title>
     
     <!-- Material Design Components Web -->
     <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
@@ -46,12 +46,12 @@
     </script>
     <% end %>
     
-    <!-- Theme switching script -->
+    <!-- Theme initialization (dark-only, but keep for compatibility) -->
     <script>
-        // Theme initialization
         (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // Force dark theme for cyberpunk design
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
             
             function initThemeToggle() {
                 const themeToggle = document.getElementById('themeToggle');
@@ -59,24 +59,14 @@
                 
                 if (!themeToggle || !themeIcon) return;
                 
-                function updateThemeIcon(theme) {
-                    themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-                }
-                
-                // Set initial icon
-                updateThemeIcon(savedTheme);
+                // Set icon to system indicator
+                themeIcon.textContent = 'terminal';
                 
                 themeToggle.addEventListener('click', function() {
-                    const currentTheme = document.documentElement.getAttribute('data-theme');
-                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                    
-                    document.documentElement.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    updateThemeIcon(newTheme);
+                    // No-op in cyberpunk mode - dark only
                 });
             }
             
-            // Initialize when DOM is ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initThemeToggle);
             } else {
@@ -95,7 +85,6 @@
             secure_cookie: true,
             cookie_domain: '<%= request.host %>',
             loaded: function(posthog) {
-                // Ensure domain is properly set for cookies
                 if (typeof document !== 'undefined') {
                     posthog.set_config({
                         cookie_domain: '<%= request.host %>'
@@ -108,14 +97,21 @@
 </head>
 <body>
     <div class="container">
+        <!-- System Status -->
+        <div class="system-status">
+            <div class="status-dot"></div>
+            <span>System Online</span>
+            <div class="status-line"></div>
+        </div>
+        
         <header>
             <div class="header-content">
                 <div class="header-text">
                     <h1><a href="/" class="header-link">ScreenThread</a></h1>
-                    <p>Discover the connections between actors and movies</p>
+                    <p><span>&gt;</span> link_scanner <span>//</span> find shared filmographies</p>
                 </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <span class="material-icons" id="themeIcon">dark_mode</span>
+                <button class="theme-toggle" id="themeToggle" aria-label="System status">
+                    <span class="material-icons" id="themeIcon">terminal</span>
                 </button>
             </div>
             <nav class="mode-nav" role="tablist" aria-label="Comparison mode">
@@ -167,17 +163,14 @@
     <!-- Frenimies Lab Footer Link - JavaScript fallback for ERB rendering issue -->
     <script>
         (function() {
-            // Wait for DOM to be ready
             function ensureFooterLink() {
                 const footer = document.querySelector('footer');
                 if (!footer) return;
                 
-                // Check if link already exists (from ERB)
                 if (footer.querySelector('a[href="https://frenimies-lab.dev"]')) {
                     return;
                 }
                 
-                // If link doesn't exist, add it via JavaScript
                 const p = document.createElement('p');
                 const a = document.createElement('a');
                 a.href = 'https://frenimies-lab.dev';

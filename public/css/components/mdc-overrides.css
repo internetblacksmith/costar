@@ -1,36 +1,39 @@
-/* Material Design Components Customization - Clean & Professional */
+/* Material Design Components Overrides - Neon Cyberpunk */
 
-/* MDC Text Field customization */
+/* MDC Text Field */
 .mdc-text-field {
     width: 100%;
-    border-radius: var(--border-radius) !important;
+    border-radius: var(--border-radius-sm) !important;
 }
 
 .mdc-text-field--filled {
-    background: var(--input-bg) !important;
-    border: 2px solid var(--input-border) !important;
-    border-radius: var(--border-radius) !important;
+    background: rgba(10, 10, 15, 0.8) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius-sm) !important;
 }
 
 .mdc-text-field--filled:focus-within {
-    border-color: var(--primary-color) !important;
-    box-shadow: var(--input-focus-shadow) !important;
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 0 1px var(--cyan-dim), 0 0 15px rgba(0, 240, 255, 0.08) !important;
 }
 
 .mdc-text-field__input {
     font-family: var(--font-family-primary) !important;
     color: var(--text-primary) !important;
-    caret-color: var(--primary-color) !important;
+    caret-color: var(--acid) !important;
 }
 
 .mdc-floating-label {
     font-family: var(--font-family-display) !important;
     font-weight: 600 !important;
-    color: var(--text-tertiary) !important;
+    font-size: var(--text-xs) !important;
+    color: var(--text-secondary) !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
 }
 
 .mdc-floating-label--float-above {
-    color: var(--primary-color) !important;
+    color: var(--cyan) !important;
 }
 
 .mdc-line-ripple {
@@ -41,27 +44,9 @@
     display: none !important;
 }
 
-/* Dark mode text field */
-[data-theme="dark"] .mdc-text-field--filled {
-    background: var(--input-bg) !important;
-    border-color: var(--input-border) !important;
-}
-
-[data-theme="dark"] .mdc-text-field__input {
-    color: var(--text-primary) !important;
-}
-
-[data-theme="dark"] .mdc-floating-label {
-    color: var(--text-tertiary) !important;
-}
-
-[data-theme="dark"] .mdc-floating-label--float-above {
-    color: var(--primary-color) !important;
-}
-
 /* MDC Card */
 .mdc-card {
-    background: var(--bg-card) !important;
+    background: rgba(13, 13, 24, 0.85) !important;
     color: var(--text-primary) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: var(--border-radius-lg) !important;
@@ -71,25 +56,36 @@
 
 /* MDC Chip */
 .mdc-chip {
-    background: var(--primary-color) !important;
-    color: var(--text-on-primary) !important;
-    border-radius: var(--border-radius-full) !important;
-    font-family: var(--font-family-display) !important;
-    font-weight: 600 !important;
+    background: rgba(0, 240, 255, 0.1) !important;
+    color: var(--cyan) !important;
+    border: 1px solid var(--cyan-dim) !important;
+    border-radius: var(--border-radius-sm) !important;
+    font-family: var(--font-family-primary) !important;
+    font-weight: 500 !important;
 }
 
-[data-theme="dark"] .mdc-chip:hover {
-    filter: brightness(1.1);
+.mdc-chip:hover {
+    background: rgba(0, 240, 255, 0.15) !important;
+    text-shadow: var(--glow-cyan);
 }
 
-/* MDC Button */
+/* MDC Button - Raised */
 .mdc-button--raised {
-    background: var(--primary-color) !important;
-    color: var(--text-on-primary) !important;
+    background: linear-gradient(135deg, var(--cyan), #00c8ff) !important;
+    color: var(--bg-void) !important;
     font-family: var(--font-family-display) !important;
     font-weight: 700 !important;
-    text-transform: none !important;
-    border-radius: var(--border-radius) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 3px !important;
+    border-radius: var(--border-radius-sm) !important;
+    box-shadow: 0 0 10px #00f0ff66, 0 0 20px #00f0ff33 !important;
+    transition: all var(--transition-normal) !important;
+}
+
+.mdc-button--raised:hover {
+    transform: translateY(-2px) !important;
+    background: linear-gradient(135deg, #00f0ff, var(--magenta)) !important;
+    box-shadow: 0 0 15px #ff00aa88, 0 0 30px #ff00aa44 !important;
 }
 
 .mdc-button--raised:disabled {
@@ -98,39 +94,32 @@
     box-shadow: none !important;
 }
 
-[data-theme="dark"] .mdc-button--raised:disabled {
-    background: var(--border-color) !important;
-    color: var(--text-tertiary) !important;
-}
-
 /* MDC Linear Progress */
 .mdc-linear-progress__bar-inner {
-    border-color: var(--primary-color) !important;
+    border-color: var(--cyan) !important;
 }
 
 .mdc-linear-progress__buffer-bar {
     background-color: var(--border-color) !important;
 }
 
-[data-theme="dark"] .mdc-linear-progress__buffer-bar {
-    background-color: var(--border-color) !important;
-}
-
 /* MDC Snackbar */
 .mdc-snackbar {
-    z-index: 1000;
+    z-index: 10000;
 }
 
 .mdc-snackbar__surface {
-    background: var(--bg-card) !important;
+    background: rgba(13, 13, 24, 0.95) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: var(--border-radius-lg) !important;
-    box-shadow: var(--shadow-xl) !important;
+    box-shadow: var(--shadow-xl), 0 0 1px var(--cyan-dim) !important;
     color: var(--text-primary) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .mdc-snackbar__action {
-    color: var(--primary-color) !important;
+    color: var(--cyan) !important;
     font-family: var(--font-family-display) !important;
     font-weight: 700 !important;
 }
@@ -142,17 +131,17 @@
     right: var(--spacing-xl);
     z-index: 100;
     display: none;
-    background: var(--primary-color) !important;
+    background: linear-gradient(135deg, var(--cyan), #00c8ff) !important;
     border-radius: var(--border-radius-lg) !important;
-    box-shadow: var(--shadow-lg) !important;
+    box-shadow: 0 0 10px #00f0ff66, 0 0 20px #00f0ff33 !important;
     transition: all var(--transition-normal) !important;
 }
 
 .mdc-fab:hover {
     transform: scale(1.05) !important;
-    box-shadow: var(--shadow-xl) !important;
+    box-shadow: 0 0 15px #00f0ff88, 0 0 30px #00f0ff55 !important;
 }
 
 .mdc-fab .material-icons {
-    color: var(--text-on-primary) !important;
+    color: var(--bg-void) !important;
 }

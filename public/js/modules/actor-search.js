@@ -39,7 +39,7 @@ class ActorSearch {
          // Show loading indicator
          DOMManager.setHTML('timeline', DOMManager.createLoadingHTML());
          
-         // Initialize MDC components
+         // Process HTMX on new elements
          DOMManager.initializeMDC(DOMManager.getElement('timeline'));
          
          // Disable button
@@ -139,7 +139,6 @@ class ActorSearch {
         const hiddenInputsHTML = DOMManager.createHiddenInputs(field, actorId, actorName);
         
         container.innerHTML = chipHTML + hiddenInputsHTML;
-        DOMManager.initializeMDC(container);
     }
 
     displayInputField(field) {
@@ -148,15 +147,14 @@ class ActorSearch {
         
         const { labelText, suggestionId } = FieldManager.getFieldConfig(field);
         const textFieldHTML = DOMManager.createTextFieldHTML(field, labelText, suggestionId);
-        const suggestionsHTML = `<div class="suggestions" id="suggestions${suggestionId}"></div>`;
         const hiddenInputsHTML = DOMManager.createHiddenInputs(field);
         
-        container.innerHTML = textFieldHTML + suggestionsHTML + hiddenInputsHTML;
+        container.innerHTML = textFieldHTML + hiddenInputsHTML;
         DOMManager.initializeMDC(container);
         
         // Give HTMX a moment to fully process the new elements
         if (typeof htmx !== 'undefined') {
-            // Force HTMX to process immediately
+            // Focus the input after HTMX processes
             setTimeout(() => {
                 const input = DOMManager.getElement(field);
                 if (input) {

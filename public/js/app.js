@@ -18,11 +18,6 @@ class App {
 
     initializeApp() {
          try {
-             // Auto-initialize all MDC components
-             if (typeof mdc !== 'undefined') {
-                 mdc.autoInit();
-             }
-             
              // Initialize modules
              this.actorSearch = new ActorSearch();
              this.scrollToTop = new ScrollToTop();

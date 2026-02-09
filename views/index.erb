@@ -8,7 +8,7 @@
     </section>
 
     <section class="search-section">
-        <div class="mdc-card search-card">
+        <div class="search-card">
             <div class="panel-header">
                 Query Interface
                 <span class="header-line"></span>
@@ -35,9 +35,8 @@
             </div>
             
             <div class="compare-button-container">
-                <button class="mdc-button mdc-button--raised" 
+                <button class="btn btn--primary" 
                         id="compareBtn"
-                        data-mdc-auto-init="MDCRipple"
                         hx-get="/api/actors/compare"
                         hx-target="#timeline"
                         hx-cache="false"
@@ -49,15 +48,14 @@
                         }'
                         hx-indicator="#timeline"
                         onclick="trackComparison();">
-                    <span class="mdc-button__ripple"></span>
-                    <span class="mdc-button__label">Find Common Movies</span>
+                    <span class="btn__label">Find Common Movies</span>
                 </button>
             </div>
         </div>
     </section>
 
     <section class="results-section" id="results">
-        <div class="mdc-card results-card">
+        <div class="results-card">
             <div class="results-label">
                 Output Stream
                 <span class="header-line"></span>
@@ -68,20 +66,18 @@
         </div>
     </section>
     
-    <!-- MDC FAB for scroll to top -->
-    <button class="mdc-fab mdc-fab--mini" id="scrollToTop" data-mdc-auto-init="MDCRipple">
-        <div class="mdc-fab__ripple"></div>
-        <span class="mdc-fab__icon material-icons">keyboard_arrow_up</span>
+    <!-- Scroll to top button -->
+    <button class="scroll-to-top-btn" id="scrollToTop">
+        <span class="material-icons">keyboard_arrow_up</span>
     </button>
     
-    <!-- MDC Snackbar for notifications -->
-    <div class="mdc-snackbar" id="snackbar" data-mdc-auto-init="MDCSnackbar">
-        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
-            <div class="mdc-snackbar__label" id="snackbarMessage" aria-atomic="false"></div>
-            <div class="mdc-snackbar__actions" aria-atomic="true">
-                <button type="button" class="mdc-button mdc-snackbar__action" id="snackbarAction" data-mdc-auto-init="MDCRipple">
-                    <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">UNDO</span>
+    <!-- Toast notification -->
+    <div class="toast" id="snackbar">
+        <div class="toast__surface" role="status" aria-relevant="additions">
+            <div class="toast__label" id="snackbarMessage" aria-atomic="false"></div>
+            <div class="toast__actions" aria-atomic="true">
+                <button type="button" class="btn btn--text toast__action" id="snackbarAction">
+                    <span class="btn__label">UNDO</span>
                 </button>
             </div>
         </div>

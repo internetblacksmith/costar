@@ -339,30 +339,99 @@ module ApiRenderer
 
   def assign_dto_movie_comparison_variables(app, data)
     # It's a MovieComparisonResultDTO
-    app.instance_variable_set(:@movie1, data.movie1.to_h)
-    app.instance_variable_set(:@movie2, data.movie2.to_h)
-    app.instance_variable_set(:@movie1_cast, data.movie1_cast.map(&:to_h))
-    app.instance_variable_set(:@movie2_cast, data.movie2_cast.map(&:to_h))
-    app.instance_variable_set(:@shared_actors, data.shared_actors.map(&:to_h))
+    movie1 = data.movie1.to_h
+    movie2 = data.movie2.to_h
+    movie1_cast = data.movie1_cast.map(&:to_h)
+    movie2_cast = data.movie2_cast.map(&:to_h)
+    shared_actors = data.shared_actors.map(&:to_h)
+
+    app.instance_variable_set(:@movie1, movie1)
+    app.instance_variable_set(:@movie2, movie2)
+    app.instance_variable_set(:@movie1_cast, movie1_cast)
+    app.instance_variable_set(:@movie2_cast, movie2_cast)
+    app.instance_variable_set(:@shared_actors, shared_actors)
+
+    # Build processed actors for 3-column layout
+    assign_processed_actors(app,
+                            { movie1_cast: movie1_cast, movie2_cast: movie2_cast,
+                              shared_actors: shared_actors, movie1: movie1, movie2: movie2 })
   end
 
   def assign_hash_movie_comparison_variables(app, data)
     # Hash format
-    app.instance_variable_set(:@movie1, {
-                                id: data[:movie1_id],
-                                title: data[:movie1_title],
-                                poster_path: data[:movie1_poster_path],
-                                year: data[:movie1_year]
-                              })
-    app.instance_variable_set(:@movie2, {
-                                id: data[:movie2_id],
-                                title: data[:movie2_title],
-                                poster_path: data[:movie2_poster_path],
-                                year: data[:movie2_year]
-                              })
-    app.instance_variable_set(:@movie1_cast, convert_cast_to_hashes(data[:movie1_cast]))
-    app.instance_variable_set(:@movie2_cast, convert_cast_to_hashes(data[:movie2_cast]))
-    app.instance_variable_set(:@shared_actors, convert_cast_to_hashes(data[:shared_actors]))
+    movie1 = {
+      id: data[:movie1_id],
+      title: data[:movie1_title],
+      poster_path: data[:movie1_poster_path],
+      year: data[:movie1_year]
+    }
+    movie2 = {
+      id: data[:movie2_id],
+      title: data[:movie2_title],
+      poster_path: data[:movie2_poster_path],
+      year: data[:movie2_year]
+    }
+    movie1_cast = convert_cast_to_hashes(data[:movie1_cast])
+    movie2_cast = convert_cast_to_hashes(data[:movie2_cast])
+    shared_actors = convert_cast_to_hashes(data[:shared_actors])
+
+    app.instance_variable_set(:@movie1, movie1)
+    app.instance_variable_set(:@movie2, movie2)
+    app.instance_variable_set(:@movie1_cast, movie1_cast)
+    app.instance_variable_set(:@movie2_cast, movie2_cast)
+    app.instance_variable_set(:@shared_actors, shared_actors)
+
+    # Build processed actors for 3-column layout
+    assign_processed_actors(app,
+                            { movie1_cast: movie1_cast, movie2_cast: movie2_cast,
+                              shared_actors: shared_actors, movie1: movie1, movie2: movie2 })
+  end
+
+  def assign_processed_actors(app, cast_data)
+    shared_actor_ids = cast_data[:shared_actors].to_set { |a| a[:id] }
+    movie1_only = cast_data[:movie1_cast].reject { |a| shared_actor_ids.include?(a[:id]) }
+    movie2_only = cast_data[:movie2_cast].reject { |a| shared_actor_ids.include?(a[:id]) }
+
+    processed = build_shared_actor_entries(cast_data[:shared_actors], cast_data[:movie1], cast_data[:movie2])
+    append_individual_actor_entries(processed, movie1_only, movie2_only, cast_data[:movie1], cast_data[:movie2])
+
+    app.instance_variable_set(:@processed_actors, processed)
+    app.instance_variable_set(:@movie1_only_count, movie1_only.size)
+    app.instance_variable_set(:@movie2_only_count, movie2_only.size)
+  end
+
+  def build_shared_actor_entries(shared_actors, movie1, movie2)
+    shared_actors.map do |actor|
+      {
+        type: :shared,
+        actors: [
+          { actor: actor, movie_title: movie1[:title], character: actor[:character_in_movie1], side: :left },
+          { actor: actor, movie_title: movie2[:title], character: actor[:character_in_movie2], side: :right }
+        ]
+      }
+    end
+  end
+
+  def append_individual_actor_entries(processed, movie1_only, movie2_only, movie1, movie2)
+    # Pair left and right actors on the same row
+    paired_count = [movie1_only.size, movie2_only.size].min
+    paired_count.times do |i|
+      processed << {
+        type: :paired,
+        left: { actor: movie1_only[i], movie_title: movie1[:title], character: movie1_only[i][:character] },
+        right: { actor: movie2_only[i], movie_title: movie2[:title], character: movie2_only[i][:character] }
+      }
+    end
+
+    # Remaining unpaired actors
+    movie1_only[paired_count..].each do |actor|
+      processed << { type: :single, actor_entry: { actor: actor, movie_title: movie1[:title],
+                                                   character: actor[:character], side: :left } }
+    end
+    movie2_only[paired_count..].each do |actor|
+      processed << { type: :single, actor_entry: { actor: actor, movie_title: movie2[:title],
+                                                   character: actor[:character], side: :right } }
+    end
   end
 
   def convert_cast_to_hashes(cast)

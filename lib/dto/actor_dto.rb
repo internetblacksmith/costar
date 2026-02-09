@@ -12,6 +12,9 @@ class ActorDTO < BaseDTO
 
   def optional_fields
     {
+      character: nil,
+      character_in_movie1: nil,
+      character_in_movie2: nil,
       profile_path: nil,
       popularity: 0.0,
       known_for_department: nil,

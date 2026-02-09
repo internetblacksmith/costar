@@ -49,25 +49,13 @@ class ActorSearch {
         timeline.innerHTML = `
             <div class="loading show">
                 <p>Loading filmographies...</p>
-                <div class="mdc-linear-progress mdc-linear-progress--indeterminate" data-mdc-auto-init="MDCLinearProgress">
-                    <div class="mdc-linear-progress__buffer">
-                        <div class="mdc-linear-progress__buffer-bar"></div>
-                        <div class="mdc-linear-progress__buffer-dots"></div>
-                    </div>
-                    <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-                        <span class="mdc-linear-progress__bar-inner"></span>
-                    </div>
-                    <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-                        <span class="mdc-linear-progress__bar-inner"></span>
+                <div class="progress-bar progress-bar--indeterminate">
+                    <div class="progress-bar__track">
+                        <div class="progress-bar__fill"></div>
                     </div>
                 </div>
             </div>
         `;
-        
-        // Initialize the progress bar
-        if (typeof mdc !== 'undefined') {
-            mdc.autoInit(timeline);
-        }
         
         event.target.disabled = true;
     }
@@ -126,24 +114,22 @@ class ActorSearch {
         
         // Replace the input field with a chip but keep hidden fields
         const container = document.getElementById(field + 'Container');
+        const labelText = field === 'actor1' ? 'First Actor' : 'Second Actor';
         container.innerHTML = `
-            <div class="mdc-chip selected-actor-chip" data-field="${field}" data-mdc-auto-init="MDCChip">
-                <div class="mdc-chip__ripple"></div>
-                <span class="mdc-chip__primary-action">
-                    <span class="mdc-chip__text">${actorName}</span>
-                </span>
-                <span class="mdc-chip__trailing-icon material-icons" onclick="window.actorSearch.removeActor('${field}')" tabindex="0" role="button">cancel</span>
+            <div class="search-input-field">
+                <label class="field-label">${labelText}</label>
+                <div class="selected-actor-chip" data-field="${field}">
+                    <span class="chip-text">${actorName}</span>
+                    <button type="button" class="chip-remove" onclick="window.actorSearch.removeActor('${field}')" aria-label="Remove ${actorName}">
+                        <span class="material-icons">cancel</span>
+                    </button>
+                </div>
             </div>
             <input type="hidden" id="${field}_id" name="${field}_id" value="${actorId}">
             <input type="hidden" id="${field}_name" name="${field}_name" value="${actorName}">
         `;
         
-        // Initialize the new chip
-        if (typeof mdc !== 'undefined') {
-            mdc.autoInit(container);
-        }
-        
-        // Show success snackbar
+        // Show success notification
         if (window.snackbarModule) {
             window.snackbarModule.show(`${actorName} selected!`);
         }
@@ -185,12 +171,12 @@ class ActorSearch {
         const suggestionId = field === 'actor1' ? '1' : '2';
         
         container.innerHTML = `
-            <label class="mdc-text-field mdc-text-field--filled" data-mdc-auto-init="MDCTextField">
-                <span class="mdc-text-field__ripple"></span>
-                <span class="mdc-floating-label" id="${field}-label">${labelText}</span>
+            <div class="search-input-field">
+                <label class="field-label" for="${field}">${labelText}</label>
                 <input type="text" 
-                       class="mdc-text-field__input" 
+                       class="search-input" 
                        id="${field}"
+                       placeholder="${labelText}"
                        aria-labelledby="${field}-label"
                        hx-get="/api/actors/search" 
                        hx-trigger="keyup changed delay:300ms" 
@@ -198,17 +184,15 @@ class ActorSearch {
                        hx-include="this"
                        hx-vals='{"field": "${field}"}'
                        name="q">
-                <span class="mdc-line-ripple"></span>
-            </label>
-            
-            <div class="suggestions" id="suggestions${suggestionId}"></div>
+                <div class="suggestions" id="suggestions${suggestionId}"></div>
+            </div>
             <input type="hidden" id="${field}_id" name="${field}_id">
             <input type="hidden" id="${field}_name" name="${field}_name">
         `;
         
-        // Initialize the new text field
-        if (typeof mdc !== 'undefined') {
-            mdc.autoInit(container);
+        // Process HTMX on new elements
+        if (typeof htmx !== 'undefined') {
+            htmx.process(container);
         }
         
         if (window.snackbarModule) {

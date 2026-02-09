@@ -27,17 +27,18 @@
 
 .results-card {
     padding: var(--spacing-lg);
-    border-radius: var(--border-radius-xl) !important;
+    border-radius: var(--border-radius-xl);
     min-height: 120px;
-    background: linear-gradient(135deg, rgba(13, 13, 24, 0.8) 0%, rgba(26, 10, 46, 0.5) 100%) !important;
+    background: linear-gradient(135deg, rgba(13, 13, 24, 0.8) 0%, rgba(26, 10, 46, 0.5) 100%);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-color);
     box-shadow:
         inset 0 0 60px rgba(0, 0, 0, 0.3),
         0 0 1px var(--magenta-dim),
-        0 0 20px rgba(255, 0, 170, 0.03) !important;
+        0 0 20px rgba(255, 0, 170, 0.03);
     position: relative;
+    overflow: visible;
 }
 
 /* CRT corner accents on results */
@@ -53,6 +54,7 @@
     border-radius: 0 var(--border-radius-xl) 0 0;
     box-shadow: 2px -2px 8px rgba(255, 0, 170, 0.15);
     pointer-events: none;
+    z-index: 2;
 }
 
 .results-card::after {
@@ -67,6 +69,7 @@
     border-radius: 0 0 0 var(--border-radius-xl);
     box-shadow: -2px 2px 8px rgba(0, 240, 255, 0.15);
     pointer-events: none;
+    z-index: 2;
 }
 
 /* Results Label */

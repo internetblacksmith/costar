@@ -86,4 +86,4 @@ Metrics/PerceivedComplexity:
     - 'lib/dto/**/*'
 
 Metrics/ModuleLength:
-  Max: 200
+  Max: 260

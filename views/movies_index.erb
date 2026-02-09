@@ -8,7 +8,7 @@
     </section>
 
     <section class="search-section">
-        <div class="mdc-card search-card">
+        <div class="search-card">
             <div class="panel-header">
                 Query Interface
                 <span class="header-line"></span>
@@ -16,13 +16,13 @@
 
             <div class="search-form">
                 <div class="field-container" id="movie1-container">
-                    <div class="mdc-text-field mdc-text-field--filled mdc-text-field--with-trailing-icon">
-                        <span class="mdc-text-field__ripple"></span>
-                        <span class="mdc-floating-label" id="movie1-label">First Movie</span>
+                    <div class="search-input-field">
+                        <label class="field-label" for="movie1">First Movie</label>
                         <input type="text" 
-                               class="mdc-text-field__input" 
+                               class="search-input" 
                                id="movie1"
                                name="q"
+                               placeholder="First Movie"
                                hx-get="/api/movies/search" 
                                hx-trigger="keyup changed delay:300ms"
                                hx-target="#movie-suggestions1"
@@ -30,21 +30,20 @@
                                hx-vals='{"field": "movie1"}'
                                autocomplete="off"
                                aria-label="Search for first movie">
-                        <span class="mdc-line-ripple"></span>
+                        <div class="suggestions" id="movie-suggestions1"></div>
                     </div>
                     <input type="hidden" id="movie1_id" name="movie1_id">
                     <input type="hidden" id="movie1_title" name="movie1_title">
-                    <div class="suggestions" id="movie-suggestions1"></div>
                 </div>
                 
                 <div class="field-container" id="movie2-container">
-                    <div class="mdc-text-field mdc-text-field--filled mdc-text-field--with-trailing-icon">
-                        <span class="mdc-text-field__ripple"></span>
-                        <span class="mdc-floating-label" id="movie2-label">Second Movie</span>
+                    <div class="search-input-field">
+                        <label class="field-label" for="movie2">Second Movie</label>
                         <input type="text" 
-                               class="mdc-text-field__input" 
+                               class="search-input" 
                                id="movie2"
                                name="q"
+                               placeholder="Second Movie"
                                hx-get="/api/movies/search" 
                                hx-trigger="keyup changed delay:300ms"
                                hx-target="#movie-suggestions2"
@@ -52,11 +51,10 @@
                                hx-vals='{"field": "movie2"}'
                                autocomplete="off"
                                aria-label="Search for second movie">
-                        <span class="mdc-line-ripple"></span>
+                        <div class="suggestions" id="movie-suggestions2"></div>
                     </div>
                     <input type="hidden" id="movie2_id" name="movie2_id">
                     <input type="hidden" id="movie2_title" name="movie2_title">
-                    <div class="suggestions" id="movie-suggestions2"></div>
                 </div>
                 
                 <!-- Keep hidden fields outside containers to ensure they persist -->
@@ -67,9 +65,8 @@
             </div>
             
             <div class="compare-button-container">
-                <button class="mdc-button mdc-button--raised" 
+                <button class="btn btn--primary" 
                         id="compareMoviesBtn"
-                        data-mdc-auto-init="MDCRipple"
                         hx-get="/api/movies/compare"
                         hx-target="#movie-results"
                         hx-cache="false"
@@ -81,15 +78,14 @@
                         }'
                         hx-indicator="#movie-results"
                         onclick="trackMovieComparison();">
-                    <span class="mdc-button__ripple"></span>
-                    <span class="mdc-button__label">Find Common Actors</span>
+                    <span class="btn__label">Find Common Actors</span>
                 </button>
             </div>
         </div>
     </section>
 
     <section class="results-section" id="results">
-        <div class="mdc-card results-card">
+        <div class="results-card">
             <div class="results-label">
                 Output Stream
                 <span class="header-line"></span>
@@ -100,20 +96,18 @@
         </div>
     </section>
     
-    <!-- MDC FAB for scroll to top -->
-    <button class="mdc-fab mdc-fab--mini" id="scrollToTop" data-mdc-auto-init="MDCRipple">
-        <div class="mdc-fab__ripple"></div>
-        <span class="mdc-fab__icon material-icons">keyboard_arrow_up</span>
+    <!-- Scroll to top button -->
+    <button class="scroll-to-top-btn" id="scrollToTop">
+        <span class="material-icons">keyboard_arrow_up</span>
     </button>
     
-    <!-- MDC Snackbar for notifications -->
-    <div class="mdc-snackbar" id="snackbar" data-mdc-auto-init="MDCSnackbar">
-        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
-            <div class="mdc-snackbar__label" id="snackbarMessage" aria-atomic="false"></div>
-            <div class="mdc-snackbar__actions" aria-atomic="true">
-                <button type="button" class="mdc-button mdc-snackbar__action" id="snackbarAction" data-mdc-auto-init="MDCRipple">
-                    <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">UNDO</span>
+    <!-- Toast notification -->
+    <div class="toast" id="snackbar">
+        <div class="toast__surface" role="status" aria-relevant="additions">
+            <div class="toast__label" id="snackbarMessage" aria-atomic="false"></div>
+            <div class="toast__actions" aria-atomic="true">
+                <button type="button" class="btn btn--text toast__action" id="snackbarAction">
+                    <span class="btn__label">UNDO</span>
                 </button>
             </div>
         </div>

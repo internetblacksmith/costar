@@ -9,6 +9,7 @@ header {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-xl);
     position: relative;
+    overflow: visible;
     box-shadow:
         inset 0 0 60px rgba(0, 0, 0, 0.3),
         0 0 1px var(--cyan-dim);
@@ -27,6 +28,7 @@ header::before {
     border-radius: var(--border-radius-xl) 0 0 0;
     box-shadow: -2px -2px 8px rgba(0, 240, 255, 0.15);
     pointer-events: none;
+    z-index: 2;
 }
 
 header::after {
@@ -41,6 +43,7 @@ header::after {
     border-radius: 0 0 var(--border-radius-xl) 0;
     box-shadow: 2px 2px 8px rgba(255, 0, 170, 0.15);
     pointer-events: none;
+    z-index: 2;
 }
 
 .header-content {

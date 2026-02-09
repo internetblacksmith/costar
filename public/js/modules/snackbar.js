@@ -1,24 +1,20 @@
-// Snackbar notification functionality
+// Toast notification functionality (replaces MDC Snackbar)
 class SnackbarModule {
     constructor() {
-        this.snackbar = null;
+        this.toastElement = null;
+        this.hideTimeout = null;
         this.init();
     }
 
     init() {
-        // Initialize snackbar when MDC is ready
-        if (typeof mdc !== 'undefined') {
-            const snackbarElement = document.getElementById('snackbar');
-            if (snackbarElement && snackbarElement.MDCSnackbar) {
-                this.snackbar = snackbarElement.MDCSnackbar;
-            }
-        }
+        this.toastElement = document.getElementById('snackbar');
     }
 
     show(message, action = null) {
-        if (!this.snackbar) {
-            this.init(); // Try to initialize again
+        if (!this.toastElement) {
+            this.init();
         }
+        if (!this.toastElement) return;
 
         const messageElement = document.getElementById('snackbarMessage');
         const actionButton = document.getElementById('snackbarAction');
@@ -36,9 +32,18 @@ class SnackbarModule {
             }
         }
         
-        if (this.snackbar) {
-             this.snackbar.open();
-         }
+        // Show toast
+        this.toastElement.classList.add('toast--open');
+        
+        // Clear any existing timeout
+        if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+        }
+        
+        // Auto-hide after 3 seconds
+        this.hideTimeout = setTimeout(() => {
+            this.toastElement.classList.remove('toast--open');
+        }, 3000);
     }
 }
 

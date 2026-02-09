@@ -54,6 +54,7 @@ class MovieDTO < BaseDTO
 
   def validate_release_date!
     return if release_date.nil?
+    return if release_date.is_a?(String) && release_date.strip.empty?
 
     raise ValidationError, "Release date must be a string or Date" unless release_date.is_a?(String) || release_date.is_a?(Date)
 

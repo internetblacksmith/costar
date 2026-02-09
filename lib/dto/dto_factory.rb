@@ -17,6 +17,9 @@ class DTOFactory
       ActorDTO.new(
         id: api_data["id"] || api_data[:id],
         name: api_data["name"] || api_data[:name],
+        character: api_data["character"] || api_data[:character],
+        character_in_movie1: api_data["character_in_movie1"] || api_data[:character_in_movie1],
+        character_in_movie2: api_data["character_in_movie2"] || api_data[:character_in_movie2],
         profile_path: api_data["profile_path"] || api_data[:profile_path],
         popularity: api_data["popularity"] || api_data[:popularity] || 0.0,
         known_for_department: api_data["known_for_department"] || api_data[:known_for_department],
@@ -32,12 +35,16 @@ class DTOFactory
       return nil unless api_data
 
       release_date = api_data["release_date"] || api_data[:release_date]
-      # Validate release date format before creating DTO
-      if release_date.is_a?(String) && release_date != ""
-        begin
-          Date.parse(release_date)
-        rescue Date::Error
-          release_date = nil # Set to nil if invalid
+      # Normalize empty strings to nil and validate format before creating DTO
+      if release_date.is_a?(String)
+        if release_date.strip.empty?
+          release_date = nil
+        else
+          begin
+            Date.parse(release_date)
+          rescue Date::Error
+            release_date = nil # Set to nil if invalid
+          end
         end
       end
 

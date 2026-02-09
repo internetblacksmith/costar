@@ -1,7 +1,7 @@
 <% tmdb_url = "https://www.themoviedb.org/movie/#{movie[:id]}" %>
 <% justwatch_url = "https://www.justwatch.com/us/search?q=#{ERB::Util.url_encode(movie[:title])}" %>
 <div class="movie-item<%= ' shared' if shared %>">
-    <div class="mdc-card movie-card">
+    <div class="movie-card">
         <div class="movie-poster-container">
             <img src="<%= PosterService.poster_url(movie[:poster_path], :medium) %>" 
                  alt="<%= movie[:title] %> poster"

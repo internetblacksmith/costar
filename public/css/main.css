@@ -14,7 +14,6 @@
 @import url('./components/loading.css');
 @import url('./components/footer.css');
 @import url('./components/actor-portrait.css');
-@import url('./components/mdc-overrides.css');
 
 /* Utilities - Helper Classes */
 @import url('./utilities/helpers.css');

@@ -15,7 +15,7 @@ When("I click the clear button for {string}") do |field|
   # When an actor is selected, it shows as a chip with a cancel icon
   # Find the container for the field and click the trailing icon
   container = find("##{field}Container")
-  clear_button = container.find(".mdc-chip__trailing-icon", visible: true)
+  clear_button = container.find(".chip-remove", visible: true)
   clear_button.click
 
   # Wait for the input field to be recreated and HTMX to process it
@@ -35,9 +35,9 @@ Then("the {string} field should contain {string}") do |field, value|
   # Check if we have a chip or an input field
   container = find("##{field}Container")
 
-  if container.has_css?(".mdc-chip")
+  if container.has_css?(".selected-actor-chip")
     # Actor is selected as a chip
-    chip_text = container.find(".mdc-chip__text").text
+    chip_text = container.find(".chip-text").text
     expect(chip_text).to eq(value)
   else
     # Regular input field

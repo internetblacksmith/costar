@@ -1,4 +1,4 @@
-/* Typography and Base Styles - Clean & Professional */
+/* Typography - Neon Cyberpunk */
 
 /* Global Reset */
 *, *::before, *::after {
@@ -10,13 +10,52 @@ body {
     font-family: var(--font-family-primary);
     font-weight: 400;
     font-size: var(--text-base);
-    line-height: 1.65;
-    letter-spacing: -0.01em;
+    line-height: 1.6;
     color: var(--text-primary);
-    background-color: var(--bg-primary);
+    background-color: var(--bg-void);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color var(--transition-slow), color var(--transition-slow);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Circuit Board Grid Background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, #1a1a3010 1px, transparent 1px),
+        linear-gradient(0deg, #1a1a3010 1px, transparent 1px),
+        linear-gradient(90deg, #1a1a3018 1px, transparent 1px),
+        linear-gradient(0deg, #1a1a3018 1px, transparent 1px),
+        radial-gradient(ellipse 600px 400px at 20% 30%, #1a0a2e33 0%, transparent 70%),
+        radial-gradient(ellipse 500px 500px at 80% 70%, #0a102e33 0%, transparent 70%);
+    background-size:
+        30px 30px,
+        30px 30px,
+        150px 150px,
+        150px 150px,
+        100% 100%,
+        100% 100%;
+}
+
+/* Scanline Overlay */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
 }
 
 /* Container */
@@ -24,18 +63,21 @@ body {
     max-width: var(--container-max-width);
     margin: 0 auto;
     padding: var(--spacing-lg);
+    position: relative;
+    z-index: 1;
 }
 
-/* Headings - Bricolage Grotesque display font */
+/* Headings - Orbitron display font */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-display);
     font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     color: var(--text-primary);
 }
 
-h1 { font-size: var(--text-4xl); font-weight: 800; }
+h1 { font-size: var(--text-5xl); font-weight: 900; }
 h2 { font-size: var(--text-3xl); font-weight: 700; }
 h3 { font-size: var(--text-2xl); }
 h4 { font-size: var(--text-xl); }
@@ -48,34 +90,24 @@ p {
     color: var(--text-secondary);
 }
 
-/* Links - Clean underline on hover */
+/* Links */
 a {
-    color: var(--primary-color);
+    color: var(--cyan);
     text-decoration: none;
-    transition: color var(--transition-fast);
+    transition: all var(--transition-fast);
     font-weight: 500;
 }
 
 a:hover {
-    color: var(--primary-dark);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 2px;
+    color: var(--magenta);
+    text-shadow: var(--glow-magenta);
+    text-decoration: none;
 }
 
 a:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 1px solid var(--cyan);
     outline-offset: 3px;
     border-radius: var(--border-radius-xs);
-}
-
-/* Dark mode links */
-[data-theme="dark"] a {
-    color: var(--primary-color);
-}
-
-[data-theme="dark"] a:hover {
-    color: var(--primary-light);
 }
 
 /* Strong */
@@ -92,38 +124,38 @@ small {
 
 /* Selection */
 ::selection {
-    background-color: rgba(79, 70, 229, 0.15);
-    color: var(--text-primary);
+    background: var(--magenta);
+    color: var(--bg-void);
 }
 
-/* Scrollbar - Minimal */
+/* Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--bg-void);
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--border-color);
-    border-radius: var(--border-radius-full);
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-tertiary);
+    background: var(--cyan-dim);
 }
 
 /* Firefox scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
+    scrollbar-color: var(--border-color) var(--bg-void);
 }
 
 /* Focus Visible */
 :focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 1px solid var(--cyan);
     outline-offset: 3px;
     border-radius: var(--border-radius-xs);
 }

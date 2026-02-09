@@ -1,264 +1,308 @@
-/* Movie Comparison Results - Clean & Professional */
+/* Movie Comparison Results - Neon Cyberpunk */
+
 .movie-comparison-results {
-  padding: var(--spacing-lg);
-  max-width: 1200px;
-  margin: 0 auto;
+    padding: var(--spacing-lg);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .comparison-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-xl);
-  background: var(--bg-secondary);
-  border-radius: var(--border-radius-xl);
-  margin-bottom: var(--spacing-2xl);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    background: rgba(13, 13, 24, 0.8);
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-2xl);
+    border: 1px solid var(--border-color);
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Corner accents */
+.comparison-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border-top: 2px solid var(--cyan);
+    border-left: 2px solid var(--cyan);
+    border-radius: var(--border-radius-xl) 0 0 0;
+    pointer-events: none;
+}
+
+.comparison-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    border-bottom: 2px solid var(--magenta);
+    border-right: 2px solid var(--magenta);
+    border-radius: 0 0 var(--border-radius-xl) 0;
+    pointer-events: none;
 }
 
 .movie-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  flex: 1;
-  max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    max-width: 200px;
 }
 
 .movie-poster-small {
-  width: 130px;
-  height: auto;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  margin-bottom: var(--spacing-md);
-  transition: transform var(--transition-normal);
+    width: 130px;
+    height: auto;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md), 0 0 10px rgba(0, 240, 255, 0.05);
+    margin-bottom: var(--spacing-md);
+    transition: transform var(--transition-normal);
+    border: 1px solid var(--border-color);
 }
 
 .movie-poster-small:hover {
-  transform: scale(1.03);
+    transform: scale(1.03);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(0, 240, 255, 0.1);
 }
 
 .movie-info .movie-title {
-  font-family: var(--font-family-display);
-  font-weight: 700;
-  font-size: var(--text-base);
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-xs);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .movie-info .movie-year {
-  font-family: var(--font-family-primary);
-  font-size: var(--text-sm);
-  color: var(--text-tertiary);
+    font-family: var(--font-family-primary);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
 }
 
 .comparison-summary {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-lg) var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-lg) var(--spacing-2xl);
 }
 
 .comparison-summary .shared-count {
-  font-family: var(--font-family-display);
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: var(--primary-color);
-  line-height: 1;
+    font-family: var(--font-family-display);
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    line-height: 1;
 }
 
 .comparison-summary.empty .shared-count {
-  color: var(--text-tertiary);
+    color: var(--text-tertiary);
+    text-shadow: none;
 }
 
 .comparison-summary .shared-label {
-  font-family: var(--font-family-display);
-  font-size: var(--text-xs);
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 700;
-  margin-top: var(--spacing-sm);
+    font-family: var(--font-family-display);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 600;
+    margin-top: var(--spacing-sm);
 }
 
 /* Shared Actors List */
 .shared-actors-list h3 {
-  font-family: var(--font-family-display);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-xl);
-  text-align: center;
+    font-family: var(--font-family-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--cyan);
+    text-shadow: 0 0 5px #00f0ff44;
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 .actors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
 }
 
 .shared-actor-card {
-  display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-lg);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(13, 13, 24, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    transition: all var(--transition-normal);
 }
 
 .shared-actor-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    border-color: var(--cyan-dim);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
 }
 
 .actor-profile-image {
-  width: 80px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: var(--border-radius);
-  flex-shrink: 0;
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
 }
 
 .actor-profile-placeholder {
-  width: 80px;
-  height: 120px;
-  background: var(--border-light);
-  border-radius: var(--border-radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    width: 80px;
+    height: 120px;
+    background: rgba(26, 10, 46, 0.5);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
 }
 
 .actor-profile-placeholder span {
-  font-family: var(--font-family-display);
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-tertiary);
+    font-family: var(--font-family-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
 }
 
 .actor-details {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    min-width: 0;
 }
 
 .actor-details .actor-name {
-  font-family: var(--font-family-display);
-  font-weight: 700;
-  font-size: var(--text-base);
-  color: var(--text-primary);
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .character-roles {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
 }
 
 .character-role {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .character-role .role-label {
-  font-size: var(--text-xs);
-  color: var(--text-tertiary);
-  font-weight: 500;
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    font-weight: 500;
 }
 
 .character-role .role-name {
-  font-family: var(--font-family-primary);
-  font-size: var(--text-sm);
-  color: var(--primary-color);
-  font-style: italic;
-  font-weight: 500;
+    font-family: var(--font-family-primary);
+    font-size: var(--text-sm);
+    color: var(--magenta);
+    font-style: italic;
+    font-weight: 500;
+    text-shadow: 0 0 3px #ff00aa33;
 }
 
 /* No Results State */
 .no-shared-actors {
-  text-align: center;
+    text-align: center;
 }
 
 .no-results-message {
-  padding: var(--spacing-2xl);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  margin-top: var(--spacing-lg);
+    padding: var(--spacing-2xl);
+    background: rgba(13, 13, 24, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-xl);
+    margin-top: var(--spacing-lg);
 }
 
 .no-results-message p {
-  font-family: var(--font-family-primary);
-  color: var(--text-secondary);
-  margin: 0;
-  font-size: var(--text-lg);
+    font-family: var(--font-family-primary);
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: var(--text-lg);
 }
 
 .no-results-message .suggestion {
-  margin-top: var(--spacing-sm);
-  font-size: var(--text-sm);
-  color: var(--text-tertiary);
-  font-style: italic;
+    margin-top: var(--spacing-sm);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+    font-style: italic;
 }
 
 /* Movie Search Suggestion Styling */
 .suggestion-item .year {
-  color: var(--text-tertiary);
-  font-family: var(--font-family-display);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  margin-left: var(--spacing-xs);
+    color: var(--cyan-dim);
+    font-family: var(--font-family-primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    margin-left: var(--spacing-xs);
 }
 
 .suggestion-item .overview {
-  color: var(--text-tertiary);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  display: block;
-  margin-top: var(--spacing-xs);
+    color: var(--text-tertiary);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    display: block;
+    margin-top: var(--spacing-xs);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .comparison-header {
-    flex-direction: column;
-    gap: var(--spacing-lg);
-  }
+    .comparison-header {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
 
-  .movie-info {
-    max-width: 100%;
-  }
+    .movie-info {
+        max-width: 100%;
+    }
 
-  .movie-poster-small {
-    width: 100px;
-  }
+    .movie-poster-small {
+        width: 100px;
+    }
 
-  .comparison-summary {
-    order: -1;
-    padding: var(--spacing-sm);
-  }
+    .comparison-summary {
+        order: -1;
+        padding: var(--spacing-sm);
+    }
 
-  .comparison-summary .shared-count {
-    font-size: 2.5rem;
-  }
+    .comparison-summary .shared-count {
+        font-size: 2.5rem;
+    }
 
-  .actors-grid {
-    grid-template-columns: 1fr;
-  }
+    .actors-grid {
+        grid-template-columns: 1fr;
+    }
 
-  .shared-actor-card {
-    flex-direction: row;
-  }
+    .shared-actor-card {
+        flex-direction: row;
+    }
 
-  .actor-profile-image,
-  .actor-profile-placeholder {
-    width: 60px;
-    height: 90px;
-  }
+    .actor-profile-image,
+    .actor-profile-placeholder {
+        width: 60px;
+        height: 90px;
+    }
 }

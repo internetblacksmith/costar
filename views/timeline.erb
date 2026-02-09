@@ -8,20 +8,22 @@
             } %>
         </div>
         <div class="actor-portrait-center" style="flex: 1 !important; display: flex !important; justify-content: center !important; align-items: center !important; gap: 12px !important;">
-            <!-- View Toggle -->
-            <div class="view-toggle-container">
-                <button class="mdc-button view-toggle-button" id="view-toggle" onclick="toggleView()">
-                    <span class="mdc-button__ripple"></span>
-                    <span class="material-icons mdc-button__icon" id="toggle-icon">visibility</span>
-                    <span class="mdc-button__label" id="toggle-label">Show Full Filmographies</span>
-                </button>
+            <!-- View Toggle Slider -->
+            <div class="toggle-slider-container">
+                <span class="toggle-slider-label toggle-slider-label--left">Shared</span>
+                <label class="toggle-slider">
+                    <input type="checkbox" id="movies-toggle" onchange="toggleView()">
+                    <span class="toggle-slider-track">
+                        <span class="toggle-slider-thumb"></span>
+                    </span>
+                </label>
+                <span class="toggle-slider-label toggle-slider-label--right">All</span>
             </div>
             
             <!-- Share Button -->
-            <button class="mdc-button mdc-button--raised share-button" onclick="shareTimeline()">
-                <span class="mdc-button__ripple"></span>
-                <span class="material-icons mdc-button__icon">share</span>
-                <span class="mdc-button__label">Share Timeline</span>
+            <button class="btn btn--primary share-button" onclick="shareTimeline()">
+                <span class="material-icons btn__icon">share</span>
+                <span class="btn__label">Share Timeline</span>
             </button>
         </div>
         <div class="actor-portrait-right" style="flex: 0 0 25% !important; display: flex !important; justify-content: center !important; align-items: flex-start !important;">
@@ -143,12 +145,10 @@ if (typeof window.showingFullFilmographies === 'undefined') {
 function toggleView() {
     const individualMovies = document.querySelectorAll('.individual-movie');
     const yearGroups = document.querySelectorAll('.year-group');
-    const toggleButton = document.getElementById('view-toggle');
-    const toggleIcon = document.getElementById('toggle-icon');
-    const toggleLabel = document.getElementById('toggle-label');
-    
-    window.showingFullFilmographies = !window.showingFullFilmographies;
-    
+    const toggle = document.getElementById('movies-toggle');
+
+    window.showingFullFilmographies = toggle.checked;
+
     if (window.showingFullFilmographies) {
         // Show full filmographies
         individualMovies.forEach(movie => {
@@ -157,15 +157,12 @@ function toggleView() {
         yearGroups.forEach(yearGroup => {
             yearGroup.style.display = 'block';
         });
-        toggleIcon.textContent = 'visibility_off';
-        toggleLabel.textContent = 'Show Only Shared Movies';
-        toggleButton.setAttribute('title', 'Hide individual movies and show only shared ones');
     } else {
         // Show only shared movies
         individualMovies.forEach(movie => {
             movie.style.display = 'none';
         });
-        
+
         // Hide year groups that have no shared movies
         yearGroups.forEach(yearGroup => {
             const hasSharedMovies = yearGroup.querySelector('.shared-movie-row');
@@ -175,10 +172,6 @@ function toggleView() {
                 yearGroup.style.display = 'block';
             }
         });
-        
-        toggleIcon.textContent = 'visibility';
-        toggleLabel.textContent = 'Show Full Filmographies';
-        toggleButton.setAttribute('title', 'Show complete filmographies for both actors');
     }
 }
 
@@ -192,12 +185,12 @@ function shareTimeline() {
     
     // Copy to clipboard
     navigator.clipboard.writeText(shareUrl).then(() => {
-        // Show success message using Material Design snackbar
+        // Show success message using custom toast
         const snackbar = document.createElement('div');
-        snackbar.className = 'mdc-snackbar mdc-snackbar--open';
+        snackbar.className = 'toast toast--open';
         snackbar.innerHTML = `
-            <div class="mdc-snackbar__surface">
-                <div class="mdc-snackbar__label">Timeline link copied to clipboard!</div>
+            <div class="toast__surface">
+                <div class="toast__label">Timeline link copied to clipboard!</div>
             </div>
         `;
         document.body.appendChild(snackbar);

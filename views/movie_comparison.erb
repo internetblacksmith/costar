@@ -1,114 +1,340 @@
 <div class="movie-comparison-results">
+  <!-- Movie Poster Header -->
+  <div class="movie-poster-header">
+      <div class="movie-poster-left">
+          <div class="movie-portrait">
+              <div class="movie-portrait-container">
+                  <% if @movie1[:poster_path] %>
+                      <img src="<%= PosterService.poster_url(@movie1[:poster_path], :medium) %>" 
+                           alt="<%= @movie1[:title] %> poster"
+                           class="movie-portrait-image"
+                           loading="lazy"
+                           onerror="this.src='<%= PosterService.placeholder_url %>'"
+                           onload="this.classList.add('loaded')">
+                  <% else %>
+                      <img src="<%= PosterService.placeholder_url %>" 
+                           alt="No poster available"
+                           class="movie-portrait-image loaded">
+                  <% end %>
+              </div>
+              <div class="movie-portrait-name"><%= @movie1[:title] %></div>
+              <% if @movie1[:year] %>
+                  <div class="movie-portrait-year">(<%= @movie1[:year] %>)</div>
+              <% end %>
+          </div>
+      </div>
+      <div class="movie-poster-center">
+          <!-- View Toggle Slider -->
+          <div class="toggle-slider-container">
+              <span class="toggle-slider-label toggle-slider-label--left">Shared</span>
+              <label class="toggle-slider">
+                  <input type="checkbox" id="mc-cast-toggle" onchange="toggleMovieCastView()">
+                  <span class="toggle-slider-track">
+                      <span class="toggle-slider-thumb"></span>
+                  </span>
+              </label>
+              <span class="toggle-slider-label toggle-slider-label--right">All</span>
+          </div>
+
+          <!-- Share Button -->
+          <button class="btn btn--primary share-button" onclick="shareMovieComparison()">
+              <span class="material-icons btn__icon">share</span>
+              <span class="btn__label">Share</span>
+          </button>
+      </div>
+      <div class="movie-poster-right">
+          <div class="movie-portrait">
+              <div class="movie-portrait-container">
+                  <% if @movie2[:poster_path] %>
+                      <img src="<%= PosterService.poster_url(@movie2[:poster_path], :medium) %>" 
+                           alt="<%= @movie2[:title] %> poster"
+                           class="movie-portrait-image"
+                           loading="lazy"
+                           onerror="this.src='<%= PosterService.placeholder_url %>'"
+                           onload="this.classList.add('loaded')">
+                  <% else %>
+                      <img src="<%= PosterService.placeholder_url %>" 
+                           alt="No poster available"
+                           class="movie-portrait-image loaded">
+                  <% end %>
+              </div>
+              <div class="movie-portrait-name"><%= @movie2[:title] %></div>
+              <% if @movie2[:year] %>
+                  <div class="movie-portrait-year">(<%= @movie2[:year] %>)</div>
+              <% end %>
+          </div>
+      </div>
+  </div>
+
   <% if @shared_actors && @shared_actors.any? %>
-    <div class="comparison-header">
-      <div class="movie-info movie1-info">
-        <% if @movie1[:poster_path] %>
-          <img src="https://image.tmdb.org/t/p/w185<%= @movie1[:poster_path] %>" 
-               alt="<%= @movie1[:title] %> poster"
-               class="movie-poster-small"
-               loading="lazy">
-        <% end %>
-        <div class="movie-title"><%= @movie1[:title] %></div>
-        <% if @movie1[:year] %>
-          <div class="movie-year">(<%= @movie1[:year] %>)</div>
-        <% end %>
-      </div>
-      
-      <div class="comparison-summary">
-        <div class="shared-count"><%= @shared_actors.size %></div>
-        <div class="shared-label">Shared Actor<%= @shared_actors.size == 1 ? '' : 's' %></div>
-      </div>
-      
-      <div class="movie-info movie2-info">
-        <% if @movie2[:poster_path] %>
-          <img src="https://image.tmdb.org/t/p/w185<%= @movie2[:poster_path] %>" 
-               alt="<%= @movie2[:title] %> poster"
-               class="movie-poster-small"
-               loading="lazy">
-        <% end %>
-        <div class="movie-title"><%= @movie2[:title] %></div>
-        <% if @movie2[:year] %>
-          <div class="movie-year">(<%= @movie2[:year] %>)</div>
-        <% end %>
-      </div>
+    <!-- Shared count summary -->
+    <div class="mc-summary">
+        <div class="mc-shared-count"><%= @shared_actors.size %></div>
+        <div class="mc-shared-label">Shared Actor<%= @shared_actors.size == 1 ? '' : 's' %></div>
     </div>
 
-    <div class="shared-actors-list">
-      <h3>Actors in Both Movies</h3>
-      <div class="actors-grid">
-        <% @shared_actors.each do |actor| %>
-          <div class="shared-actor-card">
-            <% if actor[:profile_path] %>
-              <img src="https://image.tmdb.org/t/p/w185<%= actor[:profile_path] %>" 
-                   alt="<%= actor[:name] %> profile"
-                   class="actor-profile-image"
-                   loading="lazy"
-                   onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 185 278%22><rect fill=%22%23374151%22 width=%22185%22 height=%22278%22/><text fill=%22%239CA3AF%22 font-family=%22system-ui%22 font-size=%2240%22 x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>?</text></svg>'">
-            <% else %>
-              <div class="actor-profile-placeholder">
-                <span>?</span>
-              </div>
+    <!-- Cast comparison content - 3 column layout: Movie 1 Role | Actor | Movie 2 Role -->
+    <div class="mc-timeline-content">
+        <div class="mc-actors-timeline">
+            <% @processed_actors.each do |entry| %>
+                <% if entry[:type] == :shared %>
+                    <% left = entry[:actors].find { |a| a[:side] == :left } %>
+                    <% right = entry[:actors].find { |a| a[:side] == :right } %>
+                    <!-- Shared actor row -->
+                    <div class="mc-actor-row mc-shared-actor-row">
+                        <!-- Column 1: Actor -->
+                        <div class="mc-col-actor">
+                            <% if left %>
+                                <div class="mc-actor-portrait">
+                                    <img src="<%= ActorProfileService.profile_url(left[:actor][:profile_path], :medium) %>"
+                                         alt="<%= left[:actor][:name] %>"
+                                         class="mc-actor-image"
+                                         loading="lazy"
+                                         onerror="this.src='<%= ActorProfileService.placeholder_url %>'"
+                                         onload="this.classList.add('loaded')">
+                                    <div class="mc-shared-badge">
+                                        <span class="material-icons">star</span>
+                                    </div>
+                                </div>
+                                <div class="mc-actor-info">
+                                    <a href="https://www.themoviedb.org/person/<%= left[:actor][:id] %>"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="mc-actor-name"><%= left[:actor][:name] %></a>
+                                </div>
+                            <% end %>
+                        </div>
+
+                        <!-- Column 2: Role in Movie 1 -->
+                        <div class="mc-col-movie1">
+                            <% if left && left[:character] %>
+                                <div class="mc-role-card">
+                                    <div class="mc-role-label">as</div>
+                                    <div class="mc-role-character"><%= left[:character] %></div>
+                                </div>
+                            <% else %>
+                                <div class="mc-role-card mc-role-empty">
+                                    <span class="mc-role-unknown">Unknown role</span>
+                                </div>
+                            <% end %>
+                        </div>
+
+                        <!-- Column 3: Role in Movie 2 -->
+                        <div class="mc-col-movie2">
+                            <% if right && right[:character] %>
+                                <div class="mc-role-card">
+                                    <div class="mc-role-label">as</div>
+                                    <div class="mc-role-character"><%= right[:character] %></div>
+                                </div>
+                            <% else %>
+                                <div class="mc-role-card mc-role-empty">
+                                    <span class="mc-role-unknown">Unknown role</span>
+                                </div>
+                            <% end %>
+                        </div>
+                    </div>
+                <% elsif entry[:type] == :paired %>
+                    <!-- Two individual actors from different movies on same row -->
+                    <div class="mc-actor-row mc-paired-actor-row mc-individual-actor" style="display: none;">
+                        <!-- Actor from Movie 1 -->
+                        <div class="mc-col-actor">
+                            <div class="mc-actor-portrait">
+                                <img src="<%= ActorProfileService.profile_url(entry[:left][:actor][:profile_path], :medium) %>"
+                                     alt="<%= entry[:left][:actor][:name] %>"
+                                     class="mc-actor-image"
+                                     loading="lazy"
+                                     onerror="this.src='<%= ActorProfileService.placeholder_url %>'"
+                                     onload="this.classList.add('loaded')">
+                            </div>
+                            <div class="mc-actor-info">
+                                <a href="https://www.themoviedb.org/person/<%= entry[:left][:actor][:id] %>"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="mc-actor-name"><%= entry[:left][:actor][:name] %></a>
+                            </div>
+                        </div>
+                        <div class="mc-col-movie1">
+                            <div class="mc-role-card">
+                                <div class="mc-role-label">as</div>
+                                <div class="mc-role-character"><%= entry[:left][:character] || 'Unknown' %></div>
+                            </div>
+                        </div>
+                        <div class="mc-col-movie2">
+                            <div class="mc-role-empty-cell"></div>
+                        </div>
+                    </div>
+                    <div class="mc-actor-row mc-paired-actor-row mc-individual-actor" style="display: none;">
+                        <!-- Actor from Movie 2 -->
+                        <div class="mc-col-actor">
+                            <div class="mc-actor-portrait">
+                                <img src="<%= ActorProfileService.profile_url(entry[:right][:actor][:profile_path], :medium) %>"
+                                     alt="<%= entry[:right][:actor][:name] %>"
+                                     class="mc-actor-image"
+                                     loading="lazy"
+                                     onerror="this.src='<%= ActorProfileService.placeholder_url %>'"
+                                     onload="this.classList.add('loaded')">
+                            </div>
+                            <div class="mc-actor-info">
+                                <a href="https://www.themoviedb.org/person/<%= entry[:right][:actor][:id] %>"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="mc-actor-name"><%= entry[:right][:actor][:name] %></a>
+                            </div>
+                        </div>
+                        <div class="mc-col-movie1">
+                            <div class="mc-role-empty-cell"></div>
+                        </div>
+                        <div class="mc-col-movie2">
+                            <div class="mc-role-card">
+                                <div class="mc-role-label">as</div>
+                                <div class="mc-role-character"><%= entry[:right][:character] || 'Unknown' %></div>
+                            </div>
+                        </div>
+                    </div>
+                <% else %>
+                    <!-- Single actor from one movie -->
+                    <div class="mc-actor-row mc-single-actor-row mc-individual-actor" style="display: none;">
+                        <div class="mc-col-actor">
+                            <div class="mc-actor-portrait">
+                                <img src="<%= ActorProfileService.profile_url(entry[:actor_entry][:actor][:profile_path], :medium) %>"
+                                     alt="<%= entry[:actor_entry][:actor][:name] %>"
+                                     class="mc-actor-image"
+                                     loading="lazy"
+                                     onerror="this.src='<%= ActorProfileService.placeholder_url %>'"
+                                     onload="this.classList.add('loaded')">
+                            </div>
+                            <div class="mc-actor-info">
+                                <a href="https://www.themoviedb.org/person/<%= entry[:actor_entry][:actor][:id] %>"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="mc-actor-name"><%= entry[:actor_entry][:actor][:name] %></a>
+                            </div>
+                        </div>
+                        <% if entry[:actor_entry][:side] == :left %>
+                            <div class="mc-col-movie1">
+                                <div class="mc-role-card">
+                                    <div class="mc-role-label">as</div>
+                                    <div class="mc-role-character"><%= entry[:actor_entry][:character] || 'Unknown' %></div>
+                                </div>
+                            </div>
+                            <div class="mc-col-movie2">
+                                <div class="mc-role-empty-cell"></div>
+                            </div>
+                        <% else %>
+                            <div class="mc-col-movie1">
+                                <div class="mc-role-empty-cell"></div>
+                            </div>
+                            <div class="mc-col-movie2">
+                                <div class="mc-role-card">
+                                    <div class="mc-role-label">as</div>
+                                    <div class="mc-role-character"><%= entry[:actor_entry][:character] || 'Unknown' %></div>
+                                </div>
+                            </div>
+                        <% end %>
+                    </div>
+                <% end %>
             <% end %>
-            <div class="actor-details">
-              <div class="actor-name"><%= actor[:name] %></div>
-              <div class="character-roles">
-                <% if actor[:character_in_movie1] %>
-                  <div class="character-role">
-                    <span class="role-label">In <%= @movie1[:title] %>:</span>
-                    <span class="role-name"><%= actor[:character_in_movie1] %></span>
-                  </div>
-                <% end %>
-                <% if actor[:character_in_movie2] %>
-                  <div class="character-role">
-                    <span class="role-label">In <%= @movie2[:title] %>:</span>
-                    <span class="role-name"><%= actor[:character_in_movie2] %></span>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </div>
+        </div>
     </div>
   <% else %>
-    <div class="no-shared-actors">
-      <div class="comparison-header">
-        <div class="movie-info movie1-info">
-          <% if @movie1[:poster_path] %>
-            <img src="https://image.tmdb.org/t/p/w185<%= @movie1[:poster_path] %>" 
-                 alt="<%= @movie1[:title] %> poster"
-                 class="movie-poster-small"
-                 loading="lazy">
-          <% end %>
-          <div class="movie-title"><%= @movie1[:title] %></div>
-          <% if @movie1[:year] %>
-            <div class="movie-year">(<%= @movie1[:year] %>)</div>
-          <% end %>
+    <div class="mc-no-shared">
+        <div class="mc-summary">
+            <div class="mc-shared-count empty">0</div>
+            <div class="mc-shared-label">Shared Actors</div>
         </div>
-        
-        <div class="comparison-summary empty">
-          <div class="shared-count">0</div>
-          <div class="shared-label">Shared Actors</div>
+        <div class="mc-no-results">
+            <p>These movies don't share any actors in their main cast.</p>
+            <p class="mc-suggestion">Try comparing movies from the same franchise or director!</p>
         </div>
-        
-        <div class="movie-info movie2-info">
-          <% if @movie2[:poster_path] %>
-            <img src="https://image.tmdb.org/t/p/w185<%= @movie2[:poster_path] %>" 
-                 alt="<%= @movie2[:title] %> poster"
-                 class="movie-poster-small"
-                 loading="lazy">
-          <% end %>
-          <div class="movie-title"><%= @movie2[:title] %></div>
-          <% if @movie2[:year] %>
-            <div class="movie-year">(<%= @movie2[:year] %>)</div>
-          <% end %>
-        </div>
-      </div>
-      
-      <div class="no-results-message">
-        <p>These movies don't share any actors in their main cast.</p>
-        <p class="suggestion">Try comparing movies from the same franchise or director!</p>
-      </div>
     </div>
   <% end %>
 </div>
+
+<script>
+// View toggle state
+if (typeof window.showingFullCast === 'undefined') {
+    window.showingFullCast = false;
+}
+
+function toggleMovieCastView() {
+    const individualActors = document.querySelectorAll('.mc-individual-actor');
+    const toggle = document.getElementById('mc-cast-toggle');
+
+    window.showingFullCast = toggle.checked;
+
+    if (window.showingFullCast) {
+        individualActors.forEach(actor => {
+            actor.style.display = 'grid';
+        });
+    } else {
+        individualActors.forEach(actor => {
+            actor.style.display = 'none';
+        });
+    }
+}
+
+function shareMovieComparison() {
+    const movie1Id = '<%= @movie1[:id] %>';
+    const movie2Id = '<%= @movie2[:id] %>';
+
+    const shareUrl = `${window.location.origin}/movies?movie1_id=${movie1Id}&movie2_id=${movie2Id}`;
+
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        const snackbar = document.createElement('div');
+        snackbar.className = 'toast toast--open';
+        snackbar.innerHTML = `
+            <div class="toast__surface">
+                <div class="toast__label">Comparison link copied to clipboard!</div>
+            </div>
+        `;
+        document.body.appendChild(snackbar);
+        setTimeout(() => { snackbar.remove(); }, 3000);
+    }).catch(() => {
+        const tempInput = document.createElement('input');
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('Comparison link copied to clipboard!');
+    });
+}
+
+// Sticky header shrink effect
+if (typeof window._mcScrollHandlerInitialized === 'undefined') {
+    window._mcScrollHandlerInitialized = true;
+
+    window.addEventListener('load', function() {
+        const header = document.querySelector('.movie-poster-header');
+        if (!header) return;
+
+        let isStuck = false;
+
+        function handleScroll() {
+            const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+            const shouldBeStuck = scrolled > 50;
+
+            if (shouldBeStuck && !isStuck) {
+                header.classList.add('stuck');
+                isStuck = true;
+            } else if (!shouldBeStuck && isStuck) {
+                header.classList.remove('stuck');
+                isStuck = false;
+            }
+        }
+
+        let scrollTimeout;
+        function throttledScroll() {
+            if (!scrollTimeout) {
+                scrollTimeout = setTimeout(function() {
+                    handleScroll();
+                    scrollTimeout = null;
+                }, 10);
+            }
+        }
+
+        window.addEventListener('scroll', throttledScroll);
+        handleScroll();
+    });
+}
+</script>

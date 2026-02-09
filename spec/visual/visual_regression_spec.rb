@@ -6,8 +6,7 @@ require "capybara/rspec"
 RSpec.describe "Visual Regression", type: :feature, js: true do
   before do
     Capybara.current_driver = :cuprite
-    # Increase timeout for external resources (CDN: material-components-web, etc.)
-    # Mobile responsive test needs extra time to load external resources
+    # Increase timeout for external resources (CDN: fonts, icons, etc.)
     page.driver.browser.timeout = 60
   end
 
@@ -33,10 +32,7 @@ RSpec.describe "Visual Regression", type: :feature, js: true do
     it "matches expected layout in dark mode" do
       visit "/"
 
-      # Switch to dark mode
-      find("#themeToggle").click
-      sleep 0.5 # Wait for transition
-
+      # App is always in dark mode (cyberpunk theme)
       page.save_screenshot("tmp/screenshots/homepage_dark.png")
 
       # Verify dark mode is active
@@ -53,8 +49,8 @@ RSpec.describe "Visual Regression", type: :feature, js: true do
 
       page.save_screenshot("tmp/screenshots/input_focused.png")
 
-      # Should show focus styles
-      expect(page).to have_css(".mdc-text-field--focused")
+      # Should show focus styles (input has focus)
+      expect(page).to have_css(".search-input:focus")
     end
 
     it "actor chip appearance", vcr: { cassette_name: "actor_search_leonardo" } do

@@ -25,7 +25,7 @@ gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", "1.19.0" # XML parsing
 gem "ostruct", "0.6.3" # OpenStruct
 gem "puma", "7.1.0" # Web server
-gem "rack", "3.2.4" # Web server framework
+gem "rack", "3.2.5" # Web server framework
 gem "rack-attack", "6.8.0" # Rate limiting and security
 gem "rack-ssl", "1.4.1" # HTTPS enforcement
 gem "rackup", "2.3.1" # Rack server command

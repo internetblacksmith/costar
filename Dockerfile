@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Use the official Ruby image
-ARG RUBY_VERSION=4.0.0
+ARG RUBY_VERSION=4.0.1
 FROM ruby:$RUBY_VERSION-slim as base
 
 # Sinatra app lives here

@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 env:
-  RUBY_VERSION: 3.4.6
+  RUBY_VERSION: 4.0.1
   REDIS_URL: redis://localhost:6379
   RACK_ENV: test
   TMDB_API_KEY: test_api_key_for_vcr # VCR cassettes don't need real API key

@@ -25,7 +25,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: 4.0.1
         bundler-cache: true
 
     - name: Run full test suite
@@ -86,7 +86,7 @@ jobs:
           
           ## 🛠️ Technical Details
           
-          - **Ruby Version**: 3.2+
+          - **Ruby Version**: 4.0+
           - **Deployment**: Render.com
           - **Database**: Redis
           - **Monitoring**: Sentry

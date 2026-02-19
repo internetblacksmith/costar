@@ -80,7 +80,7 @@ User pushes to main branch
 GitHub Actions workflow triggers
     ↓
 Test Job
-├─ Sets up Ruby 3.4.6
+├─ Sets up Ruby 4.0.1
 ├─ Runs bundle install (cached)
 ├─ Sets up Chrome for Cuprite
 ├─ Runs RSpec test suite

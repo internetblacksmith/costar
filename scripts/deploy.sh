@@ -48,12 +48,22 @@ done
 
 echo -e "${BLUE}🚀 Starting Kamal deployment for ${ENVIRONMENT} environment${NC}"
 
-# Check if kamal is installed
-if ! command -v kamal &> /dev/null; then
-    echo -e "${RED}❌ Kamal is not installed. Please install it first.${NC}"
-    echo "gem install kamal"
+# Kamal is installed under Ruby 3.4.x, not the project Ruby version
+# Find the Ruby version that has kamal installed
+KAMAL_RUBY=""
+for v in 3.4.8 3.4.4 3.4.2; do
+    if RBENV_VERSION="$v" rbenv which kamal &> /dev/null; then
+        KAMAL_RUBY="$v"
+        break
+    fi
+done
+
+if [ -z "$KAMAL_RUBY" ]; then
+    echo -e "${RED}❌ Kamal is not installed in any Ruby 3.4.x version.${NC}"
+    echo "Install with: RBENV_VERSION=3.4.8 gem install kamal"
     exit 1
 fi
+echo -e "${GREEN}✅ Kamal found in Ruby ${KAMAL_RUBY}${NC}"
 
 # Check if we're in the right directory
 if [[ ! -f "config/deploy.yml" ]]; then
@@ -78,19 +88,19 @@ if ! doppler configure get project &> /dev/null; then
     exit 1
 fi
 
-# Run tests before deployment (quiet mode — summaries only)
-echo -e "${BLUE}🧪 Running tests (quiet)...${NC}"
+# Run tests before deployment
+echo -e "${BLUE}🧪 Running tests...${NC}"
 # Exclude visual regression, browser compatibility, and accessibility tests as they are flaky due to external CDN resources
-if ! bundle exec rspec spec/ --exclude-pattern "spec/visual/**/*,spec/compatibility/**/*,spec/accessibility/**/*" --format progress 2>&1 | tail -5; then
+if ! bundle exec rspec spec/ --exclude-pattern "spec/visual/**/*,spec/compatibility/**/*,spec/accessibility/**/*"; then
     echo -e "${RED}❌ Tests failed. Aborting deployment.${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}✅ Tests passed!${NC}"
 
-# Run linting (quiet mode)
-echo -e "${BLUE}🔍 Running linting (quiet)...${NC}"
-if ! bundle exec rubocop --format simple 2>&1 | tail -1; then
+# Run linting
+echo -e "${BLUE}🔍 Running linting...${NC}"
+if ! bundle exec rubocop; then
     echo -e "${YELLOW}⚠️  Linting issues found. Continue? (y/N)${NC}"
     read -r response
     if [[ ! "$response" =~ ^[Yy]$ ]]; then
@@ -99,9 +109,9 @@ if ! bundle exec rubocop --format simple 2>&1 | tail -1; then
     fi
 fi
 
-# Run security checks (quiet mode)
-echo -e "${BLUE}🔒 Running security checks (quiet)...${NC}"
-if ! bundle exec brakeman --force --quiet --no-pager 2>&1 | tail -3; then
+# Run security checks
+echo -e "${BLUE}🔒 Running security checks...${NC}"
+if ! bundle exec brakeman --force; then
     echo -e "${YELLOW}⚠️  Security issues found. Continue? (y/N)${NC}"
     read -r response
     if [[ ! "$response" =~ ^[Yy]$ ]]; then
@@ -198,13 +208,13 @@ docker image push ghcr.io/jabawack81/movie_together:latest
 
 # Deploy the application with Kamal using Doppler to inject secrets
 echo -e "${BLUE}🚀 Deploying with Kamal...${NC}"
-doppler run --config "$DOPPLER_CONFIG" -- kamal app boot
+RBENV_VERSION="$KAMAL_RUBY" doppler run --config "$DOPPLER_CONFIG" -- kamal app boot
 
 # Note: cleanup happens automatically via trap on EXIT
 
 # Check deployment status
 echo -e "${BLUE}📊 Checking deployment status...${NC}"
-kamal app details
+RBENV_VERSION="$KAMAL_RUBY" kamal app details
 
 echo
 echo -e "${GREEN}🎉 Deployment complete!${NC}"

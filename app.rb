@@ -220,6 +220,17 @@ class ScreenThreadApp < Sinatra::Base
     erb :movies_index
   end
 
+  # Design prototype templates index
+  get "/templates" do
+    send_file File.join(settings.public_folder, "prototypes", "index.html")
+  end
+
+  (1..5).each do |n|
+    get "/#{n}" do
+      send_file File.join(settings.public_folder, "prototypes", "#{n}.html")
+    end
+  end
+
   # API endpoints
   api_routes
 

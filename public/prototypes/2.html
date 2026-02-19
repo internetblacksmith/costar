@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieTogether - Glassmorphism Aurora</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --teal: #00d4aa;
+      --purple: #7c3aed;
+      --blue: #3b82f6;
+      --pink: #ec4899;
+      --bg: #0a0a1a;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-hover: rgba(255, 255, 255, 0.08);
+      --glass-blur: 16px;
+      --radius-card: 20px;
+      --radius-input: 12px;
+      --radius-pill: 999px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: #e2e8f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ============ Aurora Background ============ */
+    .aurora-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      will-change: transform;
+    }
+
+    .aurora-blob--1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--teal), transparent 70%);
+      top: -10%;
+      left: -5%;
+      animation: auroraFloat1 20s ease-in-out infinite;
+    }
+
+    .aurora-blob--2 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, var(--purple), transparent 70%);
+      top: 30%;
+      right: -8%;
+      animation: auroraFloat2 25s ease-in-out infinite;
+    }
+
+    .aurora-blob--3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--blue), transparent 70%);
+      bottom: -5%;
+      left: 30%;
+      animation: auroraFloat3 18s ease-in-out infinite;
+    }
+
+    .aurora-blob--4 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, var(--pink), transparent 70%);
+      top: 60%;
+      left: 10%;
+      animation: auroraFloat4 22s ease-in-out infinite;
+    }
+
+    @keyframes auroraFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(80px, 60px) scale(1.1); }
+      50% { transform: translate(30px, 120px) scale(0.95); }
+      75% { transform: translate(100px, 40px) scale(1.05); }
+    }
+
+    @keyframes auroraFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-70px, 80px) scale(1.08); }
+      50% { transform: translate(-120px, 30px) scale(0.9); }
+      75% { transform: translate(-40px, -50px) scale(1.12); }
+    }
+
+    @keyframes auroraFloat3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(90px, -60px) scale(1.15); }
+      66% { transform: translate(-60px, -90px) scale(0.92); }
+    }
+
+    @keyframes auroraFloat4 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      20% { transform: translate(60px, -40px) scale(1.1); }
+      40% { transform: translate(120px, 20px) scale(0.95); }
+      60% { transform: translate(80px, 80px) scale(1.05); }
+      80% { transform: translate(-20px, 50px) scale(1.08); }
+    }
+
+    /* ============ Movie tab aurora palette override ============ */
+    .aurora-container.aurora--movies .aurora-blob--1 {
+      background: radial-gradient(circle, var(--purple), transparent 70%);
+    }
+    .aurora-container.aurora--movies .aurora-blob--2 {
+      background: radial-gradient(circle, var(--pink), transparent 70%);
+    }
+    .aurora-container.aurora--movies .aurora-blob--3 {
+      background: radial-gradient(circle, #a855f7, transparent 70%);
+    }
+    .aurora-container.aurora--movies .aurora-blob--4 {
+      background: radial-gradient(circle, var(--blue), transparent 70%);
+    }
+
+    /* ============ App Shell ============ */
+    .app {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============ Header ============ */
+    .header {
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header__brand {
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-pill);
+      padding: 10px 28px;
+      box-shadow: var(--shadow), 0 0 40px rgba(124, 58, 237, 0.08);
+    }
+
+    .header__title {
+      font-weight: 300;
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header__title span {
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ============ Tab Navigation ============ */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      padding: 0 32px 24px;
+    }
+
+    .tabs__track {
+      display: inline-flex;
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      box-shadow: var(--shadow);
+      gap: 2px;
+    }
+
+    .tabs__btn {
+      position: relative;
+      padding: 10px 22px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      border-radius: var(--radius-pill);
+      transition: color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .tabs__btn:hover {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .tabs__btn--active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(124, 58, 237, 0.15), inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    /* ============ Content ============ */
+    .content {
+      flex: 1;
+      padding: 0 32px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-panel--active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ Glass Card ============ */
+    .glass {
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    .glass:hover {
+      background: var(--glass-hover);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .glass--lift:hover {
+      transform: translateY(-4px);
+    }
+
+    /* ============ Search Inputs ============ */
+    .search-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .search-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 16px 20px 16px 48px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-input);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .search-input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .search-input:focus {
+      border-color: rgba(124, 58, 237, 0.5);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12), 0 4px 16px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.25);
+      pointer-events: none;
+    }
+
+    /* ============ Empty State ============ */
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+    }
+
+    .empty-card {
+      text-align: center;
+      padding: 56px 48px;
+      max-width: 480px;
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .empty-card__icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: block;
+      opacity: 0.7;
+    }
+
+    .empty-card__title {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 8px;
+    }
+
+    .empty-card__desc {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ============ Comparison Header ============ */
+    .compare-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .compare-entity {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .compare-entity__portrait {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .compare-entity__portrait:hover {
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .compare-entity__portrait::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(var(--teal), var(--purple), var(--blue), var(--teal));
+      z-index: -1;
+      animation: glowRingSpin 6s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes glowRingSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .compare-entity__portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .compare-entity__name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+    }
+
+    /* Connection orb */
+    .connection-orb {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .connection-orb__sphere {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(124, 58, 237, 0.3), rgba(0, 212, 170, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.2), 0 0 80px rgba(0, 212, 170, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: orbPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes orbPulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.2), 0 0 80px rgba(0, 212, 170, 0.1); }
+      50% { box-shadow: 0 0 50px rgba(124, 58, 237, 0.3), 0 0 100px rgba(0, 212, 170, 0.15); }
+    }
+
+    .connection-orb__label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 400;
+      text-align: center;
+    }
+
+    /* ============ Toggle Pill ============ */
+    .toggle-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-pill);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .toggle-pill__opt {
+      padding: 8px 20px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.45);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: var(--radius-pill);
+      transition: all 0.25s ease;
+    }
+
+    .toggle-pill__opt--active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ============ Movie / Actor Cards Grid ============ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .cards-grid--3col {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .movie-card {
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .movie-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      opacity: 0.6;
+    }
+
+    .movie-card--tint-purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
+    .movie-card--tint-blue::before { background: linear-gradient(90deg, var(--blue), transparent); }
+    .movie-card--tint-green::before { background: linear-gradient(90deg, var(--teal), transparent); }
+    .movie-card--tint-pink::before { background: linear-gradient(90deg, var(--pink), transparent); }
+
+    .movie-card__poster-wrap {
+      width: 100%;
+      aspect-ratio: 2/3;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .movie-card__poster-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.85;
+      transition: opacity 0.3s ease, transform 0.4s ease;
+    }
+
+    .movie-card:hover .movie-card__poster-wrap img {
+      opacity: 1;
+      transform: scale(1.03);
+    }
+
+    .movie-card__title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .movie-card__year {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 10px;
+    }
+
+    .movie-card__roles {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .movie-card__role {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 400;
+    }
+
+    .movie-card__role strong {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+
+    /* ============ Actor Cards (for Movies Filled) ============ */
+    .actor-card {
+      padding: 24px;
+      text-align: center;
+    }
+
+    .actor-card__portrait {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 14px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
+    }
+
+    .actor-card__portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .actor-card__name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .actor-card__roles {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .actor-card__role-item {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .actor-card__movie-name {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 2px;
+    }
+
+    .actor-card__character {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.38);
+      font-weight: 400;
+    }
+
+    /* ============ Movie Comparison Poster Frames ============ */
+    .compare-entity__poster {
+      width: 140px;
+      height: 200px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.12), 0 8px 24px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .compare-entity__poster:hover {
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.2), 0 12px 32px rgba(0, 0, 0, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .compare-entity__poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ============ Section Heading ============ */
+    .section-heading {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-heading__title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ============ Responsive ============ */
+    @media (max-width: 768px) {
+      .content {
+        padding: 0 16px 40px;
+      }
+
+      .header {
+        padding: 16px;
+      }
+
+      .tabs {
+        padding: 0 16px 20px;
+      }
+
+      .tabs__track {
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: 16px;
+      }
+
+      .tabs__btn {
+        padding: 8px 16px;
+        font-size: 0.78rem;
+      }
+
+      .search-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .compare-header {
+        gap: 20px;
+      }
+
+      .compare-entity__portrait {
+        width: 100px;
+        height: 100px;
+      }
+
+      .compare-entity__poster {
+        width: 110px;
+        height: 157px;
+      }
+
+      .connection-orb__sphere {
+        width: 56px;
+        height: 56px;
+        font-size: 1.2rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards-grid--3col {
+        grid-template-columns: 1fr;
+      }
+
+      .empty-card {
+        padding: 40px 28px;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body style="padding-top: 44px;">
+<!-- Template Switcher Navbar -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:99999;height:44px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;border-bottom:1px solid #333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+  <span style="color:#888;margin-right:8px;font-weight:500;">Templates:</span>
+  <a href="/1" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#f4e8c1;background:#2a1f14;border:1px solid #5c4033;font-weight:500;font-size:12px;">1 Noir</a>
+  <a href="/2" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#0a0a2e;border:1px solid #7c3aed;font-weight:600;font-size:12px;">2 Aurora</a>
+  <a href="/3" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#d4a846;background:#1a0a0a;border:1px solid #333;font-weight:500;font-size:12px;">3 Deco</a>
+  <a href="/4" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#1a1a1a;background:#fff;border:1px solid #ccc;font-weight:500;font-size:12px;">4 Ink</a>
+  <a href="/5" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#050520;border:1px solid #333;font-weight:500;font-size:12px;">5 Cosmic</a>
+</nav>
+
+  <!-- Aurora Background -->
+  <div class="aurora-container" id="auroraContainer">
+    <div class="aurora-blob aurora-blob--1"></div>
+    <div class="aurora-blob aurora-blob--2"></div>
+    <div class="aurora-blob aurora-blob--3"></div>
+    <div class="aurora-blob aurora-blob--4"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header__brand">
+        <h1 class="header__title">Movie<span>Together</span></h1>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs">
+      <div class="tabs__track">
+        <button class="tabs__btn tabs__btn--active" data-tab="actors-empty">Actors (Empty)</button>
+        <button class="tabs__btn" data-tab="actors-filled">Actors (Filled)</button>
+        <button class="tabs__btn" data-tab="movies-empty">Movies (Empty)</button>
+        <button class="tabs__btn" data-tab="movies-filled">Movies (Filled)</button>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- ========== Tab 1: Actors (Empty) ========== -->
+      <section class="tab-panel tab-panel--active" id="actors-empty">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" placeholder="Search first actor...">
+          </div>
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" placeholder="Search second actor...">
+          </div>
+        </div>
+
+        <div class="empty-state">
+          <div class="empty-card glass">
+            <span class="empty-card__icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <p class="empty-card__title">Discover shared filmographies</p>
+            <p class="empty-card__desc">Search for two actors to discover the movies they starred in together and the roles they played.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== Tab 2: Actors (Filled) ========== -->
+      <section class="tab-panel" id="actors-filled">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" value="Robert De Niro">
+          </div>
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" value="Joe Pesci">
+          </div>
+        </div>
+
+        <!-- Compare Header -->
+        <div class="compare-header">
+          <div class="compare-entity">
+            <div class="compare-entity__portrait">
+              <img src="https://image.tmdb.org/t/p/w500/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg">
+            </div>
+            <span class="compare-entity__name">Robert De Niro</span>
+          </div>
+
+          <div class="connection-orb">
+            <div class="connection-orb__sphere">4</div>
+            <span class="connection-orb__label">shared movies</span>
+          </div>
+
+          <div class="compare-entity">
+            <div class="compare-entity__portrait">
+              <img src="https://image.tmdb.org/t/p/w500/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci">
+            </div>
+            <span class="compare-entity__name">Joe Pesci</span>
+          </div>
+        </div>
+
+        <!-- Toggle -->
+        <div class="toggle-row">
+          <div class="toggle-pill">
+            <button class="toggle-pill__opt toggle-pill__opt--active">Shared Only</button>
+            <button class="toggle-pill__opt">All Movies</button>
+          </div>
+        </div>
+
+        <!-- Shared Movies Grid -->
+        <div class="section-heading">
+          <span class="section-heading__title">Shared Filmography</span>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Raging Bull -->
+          <div class="movie-card glass glass--lift movie-card--tint-purple">
+            <div class="movie-card__poster-wrap">
+              <img src="https://image.tmdb.org/t/p/w500/1WV7WlTS8LI1L5NkCgjWT9GSW3O.jpg" alt="Raging Bull">
+            </div>
+            <div class="movie-card__title">Raging Bull</div>
+            <span class="movie-card__year">1980</span>
+            <div class="movie-card__roles">
+              <div class="movie-card__role"><strong>De Niro</strong> as Jake LaMotta</div>
+              <div class="movie-card__role"><strong>Pesci</strong> as Joey LaMotta</div>
+            </div>
+          </div>
+
+          <!-- Goodfellas -->
+          <div class="movie-card glass glass--lift movie-card--tint-blue">
+            <div class="movie-card__poster-wrap">
+              <img src="https://image.tmdb.org/t/p/w500/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg" alt="Goodfellas">
+            </div>
+            <div class="movie-card__title">Goodfellas</div>
+            <span class="movie-card__year">1990</span>
+            <div class="movie-card__roles">
+              <div class="movie-card__role"><strong>De Niro</strong> as Jimmy Conway</div>
+              <div class="movie-card__role"><strong>Pesci</strong> as Tommy DeVito</div>
+            </div>
+          </div>
+
+          <!-- Casino -->
+          <div class="movie-card glass glass--lift movie-card--tint-green">
+            <div class="movie-card__poster-wrap">
+              <img src="https://image.tmdb.org/t/p/w500/gziIkUSnYuj9ChCi8qOu2ZunpSC.jpg" alt="Casino">
+            </div>
+            <div class="movie-card__title">Casino</div>
+            <span class="movie-card__year">1995</span>
+            <div class="movie-card__roles">
+              <div class="movie-card__role"><strong>De Niro</strong> as Sam Rothstein</div>
+              <div class="movie-card__role"><strong>Pesci</strong> as Nicky Santoro</div>
+            </div>
+          </div>
+
+          <!-- The Irishman -->
+          <div class="movie-card glass glass--lift movie-card--tint-pink">
+            <div class="movie-card__poster-wrap">
+              <img src="https://image.tmdb.org/t/p/w500/mbm8k3GFhXS0ROd9AD1gqYbIFbM.jpg" alt="The Irishman">
+            </div>
+            <div class="movie-card__title">The Irishman</div>
+            <span class="movie-card__year">2019</span>
+            <div class="movie-card__roles">
+              <div class="movie-card__role"><strong>De Niro</strong> as Frank Sheeran</div>
+              <div class="movie-card__role"><strong>Pesci</strong> as Russell Bufalino</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== Tab 3: Movies (Empty) ========== -->
+      <section class="tab-panel" id="movies-empty">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" placeholder="Search first movie...">
+          </div>
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" placeholder="Search second movie...">
+          </div>
+        </div>
+
+        <div class="empty-state">
+          <div class="empty-card glass">
+            <span class="empty-card__icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+            </span>
+            <p class="empty-card__title">Compare movie casts</p>
+            <p class="empty-card__desc">Search two movies to find shared cast members and see which actors appeared in both films.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== Tab 4: Movies (Filled) ========== -->
+      <section class="tab-panel" id="movies-filled">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" value="Goodfellas">
+          </div>
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" value="Casino">
+          </div>
+        </div>
+
+        <!-- Compare Header -->
+        <div class="compare-header">
+          <div class="compare-entity">
+            <div class="compare-entity__poster">
+              <img src="https://image.tmdb.org/t/p/w500/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg" alt="Goodfellas">
+            </div>
+            <span class="compare-entity__name">Goodfellas</span>
+          </div>
+
+          <div class="connection-orb">
+            <div class="connection-orb__sphere">3</div>
+            <span class="connection-orb__label">shared cast</span>
+          </div>
+
+          <div class="compare-entity">
+            <div class="compare-entity__poster">
+              <img src="https://image.tmdb.org/t/p/w500/gziIkUSnYuj9ChCi8qOu2ZunpSC.jpg" alt="Casino">
+            </div>
+            <span class="compare-entity__name">Casino</span>
+          </div>
+        </div>
+
+        <!-- Toggle -->
+        <div class="toggle-row">
+          <div class="toggle-pill">
+            <button class="toggle-pill__opt toggle-pill__opt--active">Shared Only</button>
+            <button class="toggle-pill__opt">Full Cast</button>
+          </div>
+        </div>
+
+        <!-- Shared Actors Grid -->
+        <div class="section-heading">
+          <span class="section-heading__title">Shared Cast Members</span>
+        </div>
+
+        <div class="cards-grid cards-grid--3col">
+          <!-- Robert De Niro -->
+          <div class="actor-card glass glass--lift">
+            <div class="actor-card__portrait">
+              <img src="https://image.tmdb.org/t/p/w500/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg" alt="Robert De Niro">
+            </div>
+            <div class="actor-card__name">Robert De Niro</div>
+            <div class="actor-card__roles">
+              <div class="actor-card__role-item">
+                <div class="actor-card__movie-name">Goodfellas</div>
+                <div class="actor-card__character">Jimmy Conway</div>
+              </div>
+              <div class="actor-card__role-item">
+                <div class="actor-card__movie-name">Casino</div>
+                <div class="actor-card__character">Sam Rothstein</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Joe Pesci -->
+          <div class="actor-card glass glass--lift">
+            <div class="actor-card__portrait">
+              <img src="https://image.tmdb.org/t/p/w500/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci">
+            </div>
+            <div class="actor-card__name">Joe Pesci</div>
+            <div class="actor-card__roles">
+              <div class="actor-card__role-item">
+                <div class="actor-card__movie-name">Goodfellas</div>
+                <div class="actor-card__character">Tommy DeVito</div>
+              </div>
+              <div class="actor-card__role-item">
+                <div class="actor-card__movie-name">Casino</div>
+                <div class="actor-card__character">Nicky Santoro</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Frank Vincent -->
+          <div class="actor-card glass glass--lift">
+            <div class="actor-card__portrait">
+              <img src="https://image.tmdb.org/t/p/w500/fa1gikNsPKvX1roWUo2bBmixnvp.jpg" alt="Frank Vincent">
+            </div>
+            <div class="actor-card__name">Frank Vincent</div>
+            <div class="actor-card__roles">
+              <div class="actor-card__role-item">
+                <div class="actor-card__movie-name">Goodfellas</div>
+                <div class="actor-card__character">Billy Batts</div>
+              </div>
+              <div class="actor-card__role-item">
+                <div class="actor-card__movie-name">Casino</div>
+                <div class="actor-card__character">Frank Marino</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Tab Navigation
+    const tabBtns = document.querySelectorAll('.tabs__btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    const auroraContainer = document.getElementById('auroraContainer');
+
+    function switchTab(tabId) {
+      // Update buttons
+      tabBtns.forEach(btn => btn.classList.remove('tabs__btn--active'));
+      document.querySelector(`[data-tab="${tabId}"]`).classList.add('tabs__btn--active');
+
+      // Update panels
+      tabPanels.forEach(panel => panel.classList.remove('tab-panel--active'));
+      document.getElementById(tabId).classList.add('tab-panel--active');
+
+      // Switch aurora palette for movie tabs
+      if (tabId.startsWith('movies')) {
+        auroraContainer.classList.add('aurora--movies');
+      } else {
+        auroraContainer.classList.remove('aurora--movies');
+      }
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Toggle pill interactions
+    document.querySelectorAll('.toggle-pill').forEach(pill => {
+      const opts = pill.querySelectorAll('.toggle-pill__opt');
+      opts.forEach(opt => {
+        opt.addEventListener('click', () => {
+          opts.forEach(o => o.classList.remove('toggle-pill__opt--active'));
+          opt.classList.add('toggle-pill__opt--active');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

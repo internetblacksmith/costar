@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MovieTogether - Design Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0c0c14;
+    color: #e0e0f0;
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  header p {
+    color: #888;
+    font-size: 1.05rem;
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .templates {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .template-card {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 28px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .template-card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .template-number {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .template-info h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .template-info p {
+    color: #888;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .template-arrow {
+    color: #555;
+    font-size: 1.4rem;
+    transition: transform 0.2s ease;
+  }
+
+  .template-card:hover .template-arrow {
+    transform: translateX(4px);
+    color: #aaa;
+  }
+
+  /* Individual template accent colors */
+  .t1 .template-number { background: #2a1f14; color: #f4e8c1; border: 1px solid #5c4033; }
+  .t1:hover { border-color: #5c4033; }
+
+  .t2 .template-number { background: #0a0a2e; color: #a0d2ff; border: 1px solid #7c3aed; }
+  .t2:hover { border-color: #7c3aed; }
+
+  .t3 .template-number { background: #1a0a0a; color: #d4a846; border: 1px solid #d4a846; }
+  .t3:hover { border-color: #d4a846; }
+
+  .t4 .template-number { background: #fff; color: #1a1a1a; border: 1px solid #ccc; }
+  .t4:hover { border-color: #999; }
+
+  .t5 .template-number { background: #050520; color: #a0d2ff; border: 1px solid #7c3aed; }
+  .t5:hover { border-color: #d946ef; }
+
+  .tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    color: #aaa;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 56px;
+    color: #555;
+    font-size: 0.85rem;
+  }
+
+  footer a {
+    color: #888;
+    text-decoration: none;
+  }
+
+  footer a:hover {
+    color: #ccc;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 24px 16px 60px; }
+    header h1 { font-size: 1.5rem; }
+    .template-card { grid-template-columns: 44px 1fr auto; gap: 14px; padding: 18px 20px; }
+    .template-number { width: 44px; height: 44px; font-size: 1.1rem; }
+    .template-info h2 { font-size: 1rem; }
+    .template-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>MovieTogether Design Templates</h1>
+    <p>We're exploring new designs for the app. Check them out and let us know which one you like best!</p>
+  </header>
+
+  <div class="templates">
+    <a href="/1" class="template-card t1">
+      <div class="template-number">1</div>
+      <div class="template-info">
+        <h2>Film Noir Dossier</h2>
+        <p>Detective case file aesthetic with typewriter fonts, push-pinned evidence photos, red string connections, and rubber stamp effects on aged paper.</p>
+        <div class="tags">
+          <span class="tag">Dark</span>
+          <span class="tag">Vintage</span>
+          <span class="tag">Immersive</span>
+        </div>
+      </div>
+      <span class="template-arrow">&rarr;</span>
+    </a>
+
+    <a href="/2" class="template-card t2">
+      <div class="template-number">2</div>
+      <div class="template-info">
+        <h2>Glassmorphism Aurora</h2>
+        <p>Frosted glass panels floating over animated aurora borealis gradients. Ultra-modern premium feel with soft glows and smooth animations.</p>
+        <div class="tags">
+          <span class="tag">Modern</span>
+          <span class="tag">Premium</span>
+          <span class="tag">Animated</span>
+        </div>
+      </div>
+      <span class="template-arrow">&rarr;</span>
+    </a>
+
+    <a href="/3" class="template-card t3">
+      <div class="template-number">3</div>
+      <div class="template-info">
+        <h2>Vintage Cinema Marquee</h2>
+        <p>Art Deco meets golden age Hollywood. Animated marquee lights, ornate gold frames, velvet curtain backgrounds, and Walk of Fame star elements.</p>
+        <div class="tags">
+          <span class="tag">Glamorous</span>
+          <span class="tag">Art Deco</span>
+          <span class="tag">Gold</span>
+        </div>
+      </div>
+      <span class="template-arrow">&rarr;</span>
+    </a>
+
+    <a href="/4" class="template-card t4">
+      <div class="template-number">4</div>
+      <div class="template-info">
+        <h2>Minimal Ink</h2>
+        <p>Ultra-clean editorial print design. Massive serif typography, extreme whitespace, grayscale images, and zero visual noise. Content speaks for itself.</p>
+        <div class="tags">
+          <span class="tag">Minimal</span>
+          <span class="tag">Editorial</span>
+          <span class="tag">Light</span>
+        </div>
+      </div>
+      <span class="template-arrow">&rarr;</span>
+    </a>
+
+    <a href="/5" class="template-card t5">
+      <div class="template-number">5</div>
+      <div class="template-info">
+        <h2>Cosmic Constellation</h2>
+        <p>Deep space theme with twinkling stars, nebula gradients, planetary rings around portraits, and SVG constellation lines mapping connections.</p>
+        <div class="tags">
+          <span class="tag">Space</span>
+          <span class="tag">Animated</span>
+          <span class="tag">Immersive</span>
+        </div>
+      </div>
+      <span class="template-arrow">&rarr;</span>
+    </a>
+  </div>
+
+  <footer>
+    <p><a href="/">&larr; Back to MovieTogether</a></p>
+  </footer>
+</div>
+</body>
+</html>

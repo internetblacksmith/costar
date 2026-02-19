@@ -263,15 +263,8 @@ redis-stop:
 	@echo "✅ Redis stopped successfully!"
 
 # Deploy to production using Doppler for secrets
-# Pre-commit checks run quietly (summary only) to avoid truncating deploy output
+# Checks run inside deploy.sh (not duplicated here)
 deploy:
-	@echo "🔍 Running pre-deployment checks (quiet mode)..."
-	@bundle exec rubocop --format simple --no-color 2>&1 | tail -1
-	@bundle exec rspec --format progress spec/lib spec/requests spec/contracts spec/integration spec/performance spec/security spec/javascript spec/views spec/visual spec/compatibility spec/accessibility spec/stress 2>&1 | tail -3
-	@bundle exec brakeman --force --quiet --no-pager 2>&1 | tail -3
-	@bundle exec bundle-audit check --update 2>&1 | tail -1
-	@echo "✅ All pre-deployment checks passed!"
-	@echo ""
 	@echo "🚀 Deploying to production with Doppler secrets..."
 	@echo "🔐 Using Doppler prd environment..."
 	@if [ -f "./scripts/deploy.sh" ]; then \

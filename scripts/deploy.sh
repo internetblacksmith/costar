@@ -78,19 +78,19 @@ if ! doppler configure get project &> /dev/null; then
     exit 1
 fi
 
-# Run tests before deployment
-echo -e "${BLUE}🧪 Running tests...${NC}"
+# Run tests before deployment (quiet mode — summaries only)
+echo -e "${BLUE}🧪 Running tests (quiet)...${NC}"
 # Exclude visual regression, browser compatibility, and accessibility tests as they are flaky due to external CDN resources
-if ! bundle exec rspec spec/ --exclude-pattern "spec/visual/**/*,spec/compatibility/**/*,spec/accessibility/**/*"; then
+if ! bundle exec rspec spec/ --exclude-pattern "spec/visual/**/*,spec/compatibility/**/*,spec/accessibility/**/*" --format progress 2>&1 | tail -5; then
     echo -e "${RED}❌ Tests failed. Aborting deployment.${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}✅ Tests passed!${NC}"
 
-# Run linting
-echo -e "${BLUE}🔍 Running linting...${NC}"
-if ! bundle exec rubocop; then
+# Run linting (quiet mode)
+echo -e "${BLUE}🔍 Running linting (quiet)...${NC}"
+if ! bundle exec rubocop --format simple 2>&1 | tail -1; then
     echo -e "${YELLOW}⚠️  Linting issues found. Continue? (y/N)${NC}"
     read -r response
     if [[ ! "$response" =~ ^[Yy]$ ]]; then
@@ -99,9 +99,9 @@ if ! bundle exec rubocop; then
     fi
 fi
 
-# Run security checks
-echo -e "${BLUE}🔒 Running security checks...${NC}"
-if ! bundle exec brakeman --force; then
+# Run security checks (quiet mode)
+echo -e "${BLUE}🔒 Running security checks (quiet)...${NC}"
+if ! bundle exec brakeman --force --quiet --no-pager 2>&1 | tail -3; then
     echo -e "${YELLOW}⚠️  Security issues found. Continue? (y/N)${NC}"
     read -r response
     if [[ ! "$response" =~ ^[Yy]$ ]]; then

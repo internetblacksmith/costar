@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Together. — Minimal Ink</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 400;
+    color: #1a1a1a;
+    background: #ffffff;
+    line-height: 1.7;
+  }
+
+  /* ===== Layout ===== */
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ===== Header ===== */
+  .site-header {
+    padding: 60px 0 0;
+    text-align: center;
+  }
+
+  .site-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: #1a1a1a;
+  }
+
+  .site-subtitle {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  .header-rule {
+    width: 100%;
+    height: 1px;
+    background: #e0e0e0;
+    margin-top: 40px;
+  }
+
+  /* ===== Navigation ===== */
+  .tab-nav {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    padding: 24px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .tab-group {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .tab-group + .tab-group {
+    margin-left: 48px;
+  }
+
+  .tab-group-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-right: 12px;
+    user-select: none;
+  }
+
+  .tab-link {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #999;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s, border-color 0.3s;
+    user-select: none;
+  }
+
+  .tab-link:hover {
+    color: #1a1a1a;
+  }
+
+  .tab-link.active {
+    color: #1a1a1a;
+    border-bottom-color: #c45d3e;
+  }
+
+  .tab-separator {
+    color: #ddd;
+    font-size: 13px;
+    margin: 0 4px;
+    user-select: none;
+  }
+
+  /* ===== Tab Content ===== */
+  .tab-content {
+    display: none;
+    padding: 80px 0 120px;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* ===== Section Subtitle ===== */
+  .section-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 48px;
+  }
+
+  /* ===== Search Inputs ===== */
+  .search-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+  }
+
+  .search-field {
+    position: relative;
+  }
+
+  .search-field label {
+    display: block;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 12px;
+  }
+
+  .search-field input {
+    width: 100%;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #1a1a1a;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 8px 0;
+    background: transparent;
+    outline: none;
+    transition: border-color 0.3s;
+    border-radius: 0;
+  }
+
+  .search-field input::placeholder {
+    color: #ccc;
+    font-style: italic;
+  }
+
+  .search-field input:focus {
+    border-bottom-color: #c45d3e;
+  }
+
+  /* ===== Empty State ===== */
+  .empty-state {
+    text-align: center;
+    padding: 80px 60px;
+  }
+
+  .empty-state p {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 400;
+    color: #999;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ===== Filled: Actor Header ===== */
+  .comparison-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+
+  .actor-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .actor-entry {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .actor-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 0;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter 0.5s;
+    flex-shrink: 0;
+  }
+
+  .actor-photo:hover {
+    filter: grayscale(0%);
+  }
+
+  .actor-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
+  }
+
+  .stat-block {
+    text-align: right;
+    padding-top: 8px;
+  }
+
+  .stat-number {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 140px;
+    font-weight: 400;
+    line-height: 0.85;
+    color: #1a1a1a;
+    letter-spacing: -0.04em;
+  }
+
+  .stat-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  /* ===== Film List (Editorial) ===== */
+  .film-list {
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .film-entry {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid #e0e0e0;
+    align-items: baseline;
+  }
+
+  .film-year {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: #ccc;
+    line-height: 1;
+  }
+
+  .film-details {
+    padding-top: 4px;
+  }
+
+  .film-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .film-roles {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .film-roles .accent-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: #c45d3e;
+    border-radius: 0;
+    margin: 0 10px;
+    vertical-align: middle;
+  }
+
+  /* ===== Sidebar Notes ===== */
+  .content-with-sidebar {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .sidebar {
+    padding-top: 32px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .sidebar-heading {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 16px;
+  }
+
+  .sidebar-list {
+    list-style: none;
+  }
+
+  .sidebar-list li {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #999;
+    line-height: 1.8;
+  }
+
+  .sidebar-list li span {
+    color: #ccc;
+    font-size: 12px;
+  }
+
+  .sidebar + .sidebar {
+    margin-top: 40px;
+  }
+
+  .sidebar-group .sidebar + .sidebar {
+    margin-top: 40px;
+  }
+
+  /* ===== Movie Tab: Filled ===== */
+  .movie-comparison-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+
+  .movie-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .movie-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .movie-poster {
+    width: 72px;
+    height: 108px;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter 0.5s;
+    flex-shrink: 0;
+  }
+
+  .movie-poster:hover {
+    filter: grayscale(0%);
+  }
+
+  .movie-info {
+    padding-top: 4px;
+  }
+
+  .movie-title-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+  }
+
+  .movie-meta {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #999;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== Cast List ===== */
+  .cast-entry {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 20px;
+    padding: 28px 0;
+    border-bottom: 1px solid #e0e0e0;
+    align-items: center;
+  }
+
+  .cast-photo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter 0.5s;
+  }
+
+  .cast-photo:hover {
+    filter: grayscale(0%);
+  }
+
+  .cast-details {}
+
+  .cast-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .cast-roles {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: #666;
+  }
+
+  .cast-roles .role-separator {
+    color: #ccc;
+    margin: 0 6px;
+  }
+
+  .cast-list {
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* ===== Pull Quote ===== */
+  .pull-quote {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 400;
+    color: #999;
+    border-left: 2px solid #c45d3e;
+    padding-left: 20px;
+    margin: 48px 0;
+    line-height: 1.6;
+  }
+
+  /* ===== Footer ===== */
+  .site-footer {
+    border-top: 1px solid #e0e0e0;
+    padding: 32px 0 60px;
+    text-align: center;
+  }
+
+  .site-footer p {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ccc;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 700px) {
+    .page {
+      padding: 0 24px;
+    }
+
+    .site-header {
+      padding: 40px 0 0;
+    }
+
+    .site-title {
+      font-size: 36px;
+    }
+
+    .tab-nav {
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px 0;
+    }
+
+    .tab-group + .tab-group {
+      margin-left: 0;
+    }
+
+    .search-row {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .search-field input {
+      font-size: 20px;
+    }
+
+    .tab-content {
+      padding: 48px 0 80px;
+    }
+
+    .comparison-header,
+    .movie-comparison-header {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .stat-block {
+      text-align: left;
+    }
+
+    .stat-number {
+      font-size: 96px;
+    }
+
+    .actor-name {
+      font-size: 28px;
+    }
+
+    .movie-title-heading {
+      font-size: 26px;
+    }
+
+    .content-with-sidebar {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .film-entry {
+      grid-template-columns: 72px 1fr;
+      gap: 20px;
+      padding: 24px 0;
+    }
+
+    .film-year {
+      font-size: 28px;
+    }
+
+    .film-title {
+      font-size: 20px;
+    }
+
+    .empty-state {
+      padding: 48px 20px;
+    }
+
+    .empty-state p {
+      font-size: 18px;
+    }
+  }
+</style>
+</head>
+<body style="padding-top: 44px;">
+<!-- Template Switcher Navbar -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:99999;height:44px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;border-bottom:1px solid #333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+  <span style="color:#888;margin-right:8px;font-weight:500;">Templates:</span>
+  <a href="/1" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#f4e8c1;background:#2a1f14;border:1px solid #5c4033;font-weight:500;font-size:12px;">1 Noir</a>
+  <a href="/2" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#0a0a2e;border:1px solid #333;font-weight:500;font-size:12px;">2 Aurora</a>
+  <a href="/3" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#d4a846;background:#1a0a0a;border:1px solid #333;font-weight:500;font-size:12px;">3 Deco</a>
+  <a href="/4" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#1a1a1a;background:#fff;border:1px solid #1a1a1a;font-weight:600;font-size:12px;">4 Ink</a>
+  <a href="/5" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#050520;border:1px solid #333;font-weight:500;font-size:12px;">5 Cosmic</a>
+</nav>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="site-header">
+    <h1 class="site-title">Movie Together.</h1>
+    <div class="header-rule"></div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <div class="tab-group">
+      <span class="tab-group-label">Actors</span>
+      <a class="tab-link active" data-tab="actors-empty">Empty</a>
+      <span class="tab-separator">/</span>
+      <a class="tab-link" data-tab="actors-filled">Filled</a>
+    </div>
+    <div class="tab-group">
+      <span class="tab-group-label">Movies</span>
+      <a class="tab-link" data-tab="movies-empty">Empty</a>
+      <span class="tab-separator">/</span>
+      <a class="tab-link" data-tab="movies-filled">Filled</a>
+    </div>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- TAB 1: Actors (Empty)                        -->
+  <!-- ============================================ -->
+  <section class="tab-content active" id="actors-empty">
+    <p class="section-label">Actor Connections</p>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label for="actor-search-1">First Actor</label>
+        <input type="text" id="actor-search-1" placeholder="Search for an actor...">
+      </div>
+      <div class="search-field">
+        <label for="actor-search-2">Second Actor</label>
+        <input type="text" id="actor-search-2" placeholder="Search for an actor...">
+      </div>
+    </div>
+
+    <div class="empty-state">
+      <p>Select two actors to explore their shared filmography.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TAB 2: Actors (Filled)                       -->
+  <!-- ============================================ -->
+  <section class="tab-content" id="actors-filled">
+    <p class="section-label">Actor Connections</p>
+
+    <div class="comparison-header">
+      <div class="actor-pair">
+        <div class="actor-entry">
+          <img src="https://image.tmdb.org/t/p/w500/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg" class="actor-photo">
+          <h2 class="actor-name">Robert<br>De Niro</h2>
+        </div>
+        <div class="actor-entry">
+          <img src="https://image.tmdb.org/t/p/w500/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci" class="actor-photo">
+          <h2 class="actor-name">Joe<br>Pesci</h2>
+        </div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">4</div>
+        <div class="stat-label">Shared Films</div>
+      </div>
+    </div>
+
+    <div class="content-with-sidebar">
+      <div class="film-list">
+        <div class="film-entry">
+          <div class="film-year">1980</div>
+          <div class="film-details">
+            <div class="film-title">Raging Bull</div>
+            <div class="film-roles">Jake LaMotta <span class="accent-dot"></span> Joey LaMotta</div>
+          </div>
+        </div>
+        <div class="film-entry">
+          <div class="film-year">1990</div>
+          <div class="film-details">
+            <div class="film-title">Goodfellas</div>
+            <div class="film-roles">Jimmy Conway <span class="accent-dot"></span> Tommy DeVito</div>
+          </div>
+        </div>
+        <div class="film-entry">
+          <div class="film-year">1995</div>
+          <div class="film-details">
+            <div class="film-title">Casino</div>
+            <div class="film-roles">Sam Rothstein <span class="accent-dot"></span> Nicky Santoro</div>
+          </div>
+        </div>
+        <div class="film-entry">
+          <div class="film-year">2019</div>
+          <div class="film-details">
+            <div class="film-title">The Irishman</div>
+            <div class="film-roles">Frank Sheeran <span class="accent-dot"></span> Russell Bufalino</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar">
+          <p class="sidebar-heading">Other Films by De Niro</p>
+          <ul class="sidebar-list">
+            <li>Taxi Driver <span>1976</span></li>
+            <li>The Deer Hunter <span>1978</span></li>
+            <li>The King of Comedy <span>1982</span></li>
+            <li>Heat <span>1995</span></li>
+          </ul>
+        </div>
+        <div class="sidebar">
+          <p class="sidebar-heading">Other Films by Pesci</p>
+          <ul class="sidebar-list">
+            <li>My Cousin Vinny <span>1992</span></li>
+            <li>Home Alone <span>1990</span></li>
+            <li>Lethal Weapon 2 <span>1989</span></li>
+            <li>JFK <span>1991</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <blockquote class="pull-quote">
+      "Four decades of collaboration between two of cinema's most formidable talents."
+    </blockquote>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TAB 3: Movies (Empty)                        -->
+  <!-- ============================================ -->
+  <section class="tab-content" id="movies-empty">
+    <p class="section-label">Film Connections</p>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label for="movie-search-1">First Film</label>
+        <input type="text" id="movie-search-1" placeholder="Search for a film...">
+      </div>
+      <div class="search-field">
+        <label for="movie-search-2">Second Film</label>
+        <input type="text" id="movie-search-2" placeholder="Search for a film...">
+      </div>
+    </div>
+
+    <div class="empty-state">
+      <p>Select two films to discover their shared cast.</p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TAB 4: Movies (Filled)                       -->
+  <!-- ============================================ -->
+  <section class="tab-content" id="movies-filled">
+    <p class="section-label">Film Connections</p>
+
+    <div class="movie-comparison-header">
+      <div class="movie-pair">
+        <div class="movie-entry">
+          <img src="https://image.tmdb.org/t/p/w500/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg" alt="Goodfellas" class="movie-poster">
+          <div class="movie-info">
+            <h2 class="movie-title-heading">Goodfellas</h2>
+            <p class="movie-meta">1990 &middot; Crime, Drama &middot; 2h 26m</p>
+          </div>
+        </div>
+        <div class="movie-entry">
+          <img src="https://image.tmdb.org/t/p/w500/gziIkUSnYuj9ChCi8qOu2ZunpSC.jpg" alt="Casino" class="movie-poster">
+          <div class="movie-info">
+            <h2 class="movie-title-heading">Casino</h2>
+            <p class="movie-meta">1995 &middot; Crime, Drama &middot; 2h 58m</p>
+          </div>
+        </div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Shared Cast Members</div>
+      </div>
+    </div>
+
+    <div class="content-with-sidebar">
+      <div class="cast-list">
+        <div class="cast-entry">
+          <img src="https://image.tmdb.org/t/p/w185/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg" alt="Robert De Niro" class="cast-photo">
+          <div class="cast-details">
+            <div class="cast-name">Robert De Niro</div>
+            <div class="cast-roles">Jimmy Conway <span class="role-separator">&middot;</span> Sam Rothstein</div>
+          </div>
+        </div>
+        <div class="cast-entry">
+          <img src="https://image.tmdb.org/t/p/w185/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci" class="cast-photo">
+          <div class="cast-details">
+            <div class="cast-name">Joe Pesci</div>
+            <div class="cast-roles">Tommy DeVito <span class="role-separator">&middot;</span> Nicky Santoro</div>
+          </div>
+        </div>
+        <div class="cast-entry">
+          <img src="https://image.tmdb.org/t/p/w185/fa1gikNsPKvX1roWUo2bBmixnvp.jpg" alt="Frank Vincent" class="cast-photo">
+          <div class="cast-details">
+            <div class="cast-name">Frank Vincent</div>
+            <div class="cast-roles">Billy Batts <span class="role-separator">&middot;</span> Frank Marino</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar">
+          <p class="sidebar-heading">Goodfellas Cast</p>
+          <ul class="sidebar-list">
+            <li>Ray Liotta <span>Henry Hill</span></li>
+            <li>Lorraine Bracco <span>Karen Hill</span></li>
+            <li>Paul Sorvino <span>Paul Cicero</span></li>
+          </ul>
+        </div>
+        <div class="sidebar">
+          <p class="sidebar-heading">Casino Cast</p>
+          <ul class="sidebar-list">
+            <li>Sharon Stone <span>Ginger McKenna</span></li>
+            <li>James Woods <span>Lester Diamond</span></li>
+            <li>Don Rickles <span>Billy Sherbert</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <blockquote class="pull-quote">
+      "Scorsese's twin epics of American excess, bound together by a shared company of players."
+    </blockquote>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Movie Together &mdash; Minimal Ink Prototype</p>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    const tabs = document.querySelectorAll('.tab-link');
+    const contents = document.querySelectorAll('.tab-content');
+    const subtitle = {
+      'actors-empty': 'Actor Connections',
+      'actors-filled': 'Actor Connections',
+      'movies-empty': 'Film Connections',
+      'movies-filled': 'Film Connections'
+    };
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function (e) {
+        e.preventDefault();
+        var target = this.getAttribute('data-tab');
+
+        // Update tab active states
+        tabs.forEach(function (t) { t.classList.remove('active'); });
+        this.classList.add('active');
+
+        // Update content visibility
+        contents.forEach(function (c) { c.classList.remove('active'); });
+        var el = document.getElementById(target);
+        if (el) el.classList.add('active');
+
+        // Update site subtitle
+        var sub = document.querySelector('.site-subtitle');
+        if (sub && subtitle[target]) {
+          sub.textContent = subtitle[target];
+        }
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmic Constellation - Movie Together</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --void: #050510;
+    --void-light: #0a0a2e;
+    --ice-blue: #a0d2ff;
+    --bright-star: #ffffff;
+    --nebula-purple: #7c3aed;
+    --nebula-pink: #d946ef;
+    --solar-gold: #fbbf24;
+    --comet-teal: #06b6d4;
+    --grid-line: rgba(160, 210, 255, 0.03);
+    --constellation-line: rgba(160, 210, 255, 0.3);
+    --constellation-glow: rgba(160, 210, 255, 0.2);
+  }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--void);
+    color: var(--ice-blue);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Star chart grid overlay */
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Star field container */
+  #starfield {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #starfield .star {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--bright-star);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes twinkle-bright {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* Nebula effects */
+  .nebula {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+  }
+
+  .nebula-1 {
+    width: 600px;
+    height: 600px;
+    top: -150px;
+    right: -100px;
+    background: radial-gradient(circle, var(--nebula-purple), transparent 70%);
+  }
+
+  .nebula-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -100px;
+    left: -100px;
+    background: radial-gradient(circle, var(--nebula-pink), transparent 70%);
+  }
+
+  .nebula-3 {
+    width: 400px;
+    height: 400px;
+    top: 40%;
+    left: 30%;
+    background: radial-gradient(circle, var(--comet-teal), transparent 70%);
+    opacity: 0.08;
+  }
+
+  .nebula-pink-shift {
+    background: radial-gradient(circle, var(--nebula-pink), transparent 70%) !important;
+  }
+
+  .nebula-purple-shift {
+    background: radial-gradient(circle, var(--nebula-purple), transparent 70%) !important;
+    opacity: 0.12 !important;
+  }
+
+  /* Main layout */
+  .app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .site-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-top: 12px;
+  }
+
+  .site-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: var(--bright-star);
+    text-shadow: 0 0 30px rgba(160, 210, 255, 0.4), 0 0 60px rgba(124, 58, 237, 0.2);
+    margin-bottom: 2px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .site-title::before,
+  .site-title::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--constellation-line), transparent);
+  }
+
+  .site-title::before { right: calc(100% + 16px); }
+  .site-title::after { left: calc(100% + 16px); }
+
+  .site-subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(160, 210, 255, 0.5);
+    margin-top: 6px;
+  }
+
+  /* Tab navigation - spaceship console style */
+  .tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 36px;
+    padding: 4px;
+    background: rgba(10, 10, 46, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(160, 210, 255, 0.08);
+    backdrop-filter: blur(10px);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(160, 210, 255, 0.45);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover {
+    color: var(--ice-blue);
+    background: rgba(160, 210, 255, 0.04);
+  }
+
+  .tab-btn.active {
+    color: var(--bright-star);
+    background: rgba(124, 58, 237, 0.15);
+    border-color: rgba(124, 58, 237, 0.35);
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.15), inset 0 0 12px rgba(124, 58, 237, 0.05);
+    text-shadow: 0 0 8px rgba(160, 210, 255, 0.4);
+  }
+
+  .tab-btn .tab-icon {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 3px;
+  }
+
+  /* Tab content */
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+    animation: fadeInPanel 0.4s ease;
+  }
+
+  @keyframes fadeInPanel {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section subtitle */
+  .section-subtitle {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(160, 210, 255, 0.6);
+    margin-bottom: 28px;
+  }
+
+  .section-subtitle .icon {
+    margin-right: 6px;
+    font-size: 0.9rem;
+  }
+
+  /* Search fields - coordinate inputs */
+  .search-row {
+    display: flex;
+    gap: 20px;
+    max-width: 650px;
+    margin: 0 auto 36px;
+  }
+
+  .search-field {
+    flex: 1;
+  }
+
+  .search-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(160, 210, 255, 0.45);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .search-label .coord-marker {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--solar-gold);
+    box-shadow: 0 0 6px var(--solar-gold);
+    display: inline-block;
+  }
+
+  .search-label .coord-marker.second {
+    background: var(--comet-teal);
+    box-shadow: 0 0 6px var(--comet-teal);
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--ice-blue);
+    background: rgba(10, 10, 46, 0.7);
+    border: 1px solid rgba(160, 210, 255, 0.1);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .search-input::placeholder {
+    color: rgba(160, 210, 255, 0.25);
+  }
+
+  .search-input:focus {
+    border-color: rgba(124, 58, 237, 0.5);
+    box-shadow: 0 0 16px rgba(124, 58, 237, 0.15);
+  }
+
+  /* Empty state */
+  .empty-state {
+    position: relative;
+    border: 1px dashed rgba(160, 210, 255, 0.08);
+    border-radius: 16px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 16, 0.5);
+    overflow: hidden;
+  }
+
+  .empty-state-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: rgba(160, 210, 255, 0.35);
+    letter-spacing: 0.08em;
+    text-align: center;
+    max-width: 340px;
+    line-height: 1.7;
+    z-index: 1;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.25;
+    z-index: 1;
+  }
+
+  /* Filled state - constellation map */
+  .constellation-map {
+    position: relative;
+    padding: 20px 0;
+  }
+
+  .constellation-title {
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--solar-gold);
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+    margin-bottom: 28px;
+    padding: 8px 20px;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid rgba(251, 191, 36, 0.15);
+    border-radius: 4px;
+    background: rgba(251, 191, 36, 0.03);
+  }
+
+  /* Actor/Movie orbs */
+  .entity-pair {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .entity-orb {
+    width: 200px;
+    text-align: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .orb-image-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 12px;
+  }
+
+  .orb-image-wrap img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 10px auto;
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(160, 210, 255, 0.2);
+    box-shadow: 0 0 20px rgba(160, 210, 255, 0.15), 0 0 40px rgba(124, 58, 237, 0.1);
+  }
+
+  /* Planetary rings */
+  .planetary-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 1px solid rgba(160, 210, 255, 0.15);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotateX(65deg);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .planetary-ring.ring-1 {
+    width: 155px;
+    height: 155px;
+    border-color: rgba(160, 210, 255, 0.12);
+    animation: ringRotate 20s linear infinite;
+  }
+
+  .planetary-ring.ring-2 {
+    width: 170px;
+    height: 170px;
+    border-color: rgba(124, 58, 237, 0.1);
+    transform: translate(-50%, -50%) rotateX(65deg) rotateZ(30deg);
+    animation: ringRotate 30s linear infinite reverse;
+  }
+
+  @keyframes ringRotate {
+    from { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg); }
+    to { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(360deg); }
+  }
+
+  .orb-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(160, 210, 255, 0.15), transparent 70%);
+    z-index: 0;
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  }
+
+  .entity-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--bright-star);
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+
+  .entity-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(160, 210, 255, 0.4);
+    letter-spacing: 0.1em;
+  }
+
+  /* Connection nodes - shared items as stars */
+  .connections-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 10px 20px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .connection-node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(10, 10, 46, 0.7);
+    border: 1px solid rgba(160, 210, 255, 0.1);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 440px;
+    transition: all 0.3s ease;
+    position: relative;
+    backdrop-filter: blur(4px);
+  }
+
+  .connection-node:hover {
+    border-color: rgba(160, 210, 255, 0.25);
+    box-shadow: 0 0 16px rgba(160, 210, 255, 0.08);
+    transform: scale(1.02);
+  }
+
+  .node-star {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.2), transparent);
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .node-star::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid rgba(251, 191, 36, 0.15);
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  .node-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .node-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--bright-star);
+    margin-bottom: 2px;
+  }
+
+  .node-year {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--solar-gold);
+    opacity: 0.7;
+    margin-left: 6px;
+    font-weight: 300;
+  }
+
+  .node-roles {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(160, 210, 255, 0.5);
+    letter-spacing: 0.03em;
+  }
+
+  .node-roles .role-separator {
+    color: var(--nebula-purple);
+    margin: 0 6px;
+    font-weight: 400;
+  }
+
+  /* Connection counter */
+  .connection-counter {
+    text-align: center;
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+
+  .counter-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--comet-teal);
+    text-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+    padding: 6px 20px;
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 20px;
+    display: inline-block;
+    background: rgba(6, 182, 212, 0.04);
+  }
+
+  /* Non-shared items */
+  .non-shared-section {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(160, 210, 255, 0.05);
+  }
+
+  .non-shared-label {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(160, 210, 255, 0.25);
+    margin-bottom: 16px;
+  }
+
+  .non-shared-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .non-shared-col {
+    flex: 1;
+  }
+
+  .non-shared-col-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(160, 210, 255, 0.3);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .dim-star {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    color: rgba(160, 210, 255, 0.22);
+    padding: 5px 10px;
+    text-align: center;
+    transition: color 0.3s ease;
+  }
+
+  .dim-star:hover {
+    color: rgba(160, 210, 255, 0.45);
+  }
+
+  .dim-star .dim-year {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    margin-left: 4px;
+    opacity: 0.6;
+  }
+
+  /* SVG constellation lines */
+  .constellation-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .constellation-svg line {
+    stroke: var(--constellation-line);
+    stroke-width: 1;
+    stroke-dasharray: 4 6;
+    filter: url(#lineGlow);
+  }
+
+  .constellation-svg .line-left {
+    stroke: rgba(251, 191, 36, 0.2);
+  }
+
+  .constellation-svg .line-right {
+    stroke: rgba(6, 182, 212, 0.2);
+  }
+
+  /* Comet trail on hover */
+  @keyframes cometTrail {
+    0% { stroke-dashoffset: 20; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  .connection-node:hover ~ .constellation-svg line,
+  .entity-orb:hover ~ .constellation-svg line {
+    animation: cometTrail 1s linear infinite;
+  }
+
+  /* Movie poster style for movies tab */
+  .orb-image-wrap.movie-poster img {
+    width: 110px;
+    height: 150px;
+    border-radius: 8px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .orb-image-wrap.movie-poster {
+    width: 150px;
+    height: 170px;
+  }
+
+  .orb-image-wrap.movie-poster .planetary-ring.ring-1 {
+    width: 165px;
+    height: 165px;
+    border-radius: 12px;
+    transform: translate(-50%, -50%) rotateX(0deg);
+    animation: none;
+    border-color: rgba(217, 70, 239, 0.12);
+  }
+
+  .orb-image-wrap.movie-poster .planetary-ring.ring-2 {
+    width: 180px;
+    height: 180px;
+    border-radius: 14px;
+    transform: translate(-50%, -50%) rotateX(0deg);
+    animation: none;
+    border-color: rgba(124, 58, 237, 0.08);
+  }
+
+  .orb-image-wrap.movie-poster .orb-glow {
+    width: 140px;
+    height: 160px;
+    border-radius: 10px;
+    background: radial-gradient(circle, rgba(217, 70, 239, 0.12), transparent 70%);
+  }
+
+  /* Movie tab pink tint */
+  .movies-tab .search-label .coord-marker {
+    background: var(--nebula-pink);
+    box-shadow: 0 0 6px var(--nebula-pink);
+  }
+
+  .movies-tab .search-label .coord-marker.second {
+    background: var(--nebula-purple);
+    box-shadow: 0 0 6px var(--nebula-purple);
+  }
+
+  .movies-tab .search-input:focus {
+    border-color: rgba(217, 70, 239, 0.5);
+    box-shadow: 0 0 16px rgba(217, 70, 239, 0.15);
+  }
+
+  .movies-tab .node-star {
+    background: radial-gradient(circle, rgba(217, 70, 239, 0.2), transparent);
+  }
+
+  .movies-tab .node-star::after {
+    border-color: rgba(217, 70, 239, 0.15);
+  }
+
+  .movies-tab .counter-value {
+    color: var(--nebula-pink);
+    text-shadow: 0 0 8px rgba(217, 70, 239, 0.4);
+    border-color: rgba(217, 70, 239, 0.2);
+    background: rgba(217, 70, 239, 0.04);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .site-title {
+      font-size: 1.3rem;
+      letter-spacing: 0.35em;
+    }
+
+    .site-title::before,
+    .site-title::after {
+      display: none;
+    }
+
+    .search-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .entity-pair {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .entity-orb {
+      width: 160px;
+    }
+
+    .non-shared-row {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tab-btn {
+      font-size: 0.6rem;
+      padding: 8px 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .connection-node {
+      max-width: 100%;
+    }
+
+    .constellation-svg {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .app-container {
+      padding: 16px 12px 40px;
+    }
+
+    .tab-nav {
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      flex: 1 1 45%;
+    }
+  }
+
+  /* Stardust particle keyframes */
+  @keyframes floatUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    20% { opacity: 0.6; }
+    100% { transform: translateY(-80px) translateX(20px); opacity: 0; }
+  }
+
+  /* Iridescent shimmer on constellation title */
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .constellation-title {
+    background-image: linear-gradient(
+      90deg,
+      var(--solar-gold) 0%,
+      #fff 25%,
+      var(--solar-gold) 50%,
+      var(--nebula-pink) 75%,
+      var(--solar-gold) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+</style>
+</head>
+<body style="padding-top: 44px;">
+<!-- Template Switcher Navbar -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:99999;height:44px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;border-bottom:1px solid #333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+  <span style="color:#888;margin-right:8px;font-weight:500;">Templates:</span>
+  <a href="/1" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#f4e8c1;background:#2a1f14;border:1px solid #5c4033;font-weight:500;font-size:12px;">1 Noir</a>
+  <a href="/2" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#0a0a2e;border:1px solid #333;font-weight:500;font-size:12px;">2 Aurora</a>
+  <a href="/3" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#d4a846;background:#1a0a0a;border:1px solid #333;font-weight:500;font-size:12px;">3 Deco</a>
+  <a href="/4" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#1a1a1a;background:#fff;border:1px solid #ccc;font-weight:500;font-size:12px;">4 Ink</a>
+  <a href="/5" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#050520;border:1px solid #7c3aed;font-weight:600;font-size:12px;">5 Cosmic</a>
+</nav>
+
+<!-- Background layers -->
+<div id="starfield"></div>
+<div class="grid-overlay"></div>
+<div class="nebula nebula-1" id="nebula1"></div>
+<div class="nebula nebula-2" id="nebula2"></div>
+<div class="nebula nebula-3"></div>
+
+<!-- SVG filter for glow effects -->
+<svg style="position:absolute;width:0;height:0;">
+  <defs>
+    <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="orbGlow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="app-container">
+
+  <!-- Header -->
+  <header class="site-header">
+    <h1 class="site-title">MOVIE TOGETHER</h1>
+    <div class="site-subtitle" id="dynamicSubtitle">
+      <span class="icon">&#9733;</span> Actor Observatory
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="actors-empty">
+      <span class="tab-icon">&#9675;</span>
+      Actors
+    </button>
+    <button class="tab-btn" data-tab="actors-filled">
+      <span class="tab-icon">&#10026;</span>
+      Actors (Demo)
+    </button>
+    <button class="tab-btn" data-tab="movies-empty">
+      <span class="tab-icon">&#9675;</span>
+      Movies
+    </button>
+    <button class="tab-btn" data-tab="movies-filled">
+      <span class="tab-icon">&#10026;</span>
+      Movies (Demo)
+    </button>
+  </nav>
+
+  <!-- ===================== TAB 1: ACTORS EMPTY ===================== -->
+  <section class="tab-panel active" id="tab-actors-empty">
+    <div class="section-subtitle">
+      <span class="icon">&#128301;</span> Actor Observatory
+    </div>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker"></span>
+          First Star
+        </label>
+        <input type="text" class="search-input" placeholder="Enter star coordinates...">
+      </div>
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker second"></span>
+          Second Star
+        </label>
+        <input type="text" class="search-input" placeholder="Enter star coordinates...">
+      </div>
+    </div>
+
+    <div class="empty-state">
+      <div class="empty-icon">&#128301;</div>
+      <div class="empty-state-text">
+        Plot two stars to map<br>their constellation
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 2: ACTORS FILLED ===================== -->
+  <section class="tab-panel" id="tab-actors-filled">
+    <div class="section-subtitle">
+      <span class="icon">&#128301;</span> Actor Observatory
+    </div>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker"></span>
+          First Star
+        </label>
+        <input type="text" class="search-input" value="Robert De Niro" readonly>
+      </div>
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker second"></span>
+          Second Star
+        </label>
+        <input type="text" class="search-input" value="Joe Pesci" readonly>
+      </div>
+    </div>
+
+    <div class="constellation-map" id="actorsConstellationMap">
+      <div class="constellation-title">THE DE NIRO &ndash; PESCI CONSTELLATION</div>
+
+      <div class="entity-pair" id="actorPair">
+        <!-- Left actor -->
+        <div class="entity-orb" id="actorLeft">
+          <div class="orb-image-wrap">
+            <div class="orb-glow"></div>
+            <div class="planetary-ring ring-1"></div>
+            <div class="planetary-ring ring-2"></div>
+            <img src="https://image.tmdb.org/t/p/w500/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg">
+          </div>
+          <div class="entity-name">Robert De Niro</div>
+          <div class="entity-meta">Star Alpha</div>
+        </div>
+
+        <!-- Center connections -->
+        <div class="connections-center" id="actorConnections">
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">Raging Bull <span class="node-year">1980</span></div>
+              <div class="node-roles">Jake LaMotta <span class="role-separator">/</span> Joey LaMotta</div>
+            </div>
+          </div>
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">Goodfellas <span class="node-year">1990</span></div>
+              <div class="node-roles">Jimmy Conway <span class="role-separator">/</span> Tommy DeVito</div>
+            </div>
+          </div>
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">Casino <span class="node-year">1995</span></div>
+              <div class="node-roles">Sam Rothstein <span class="role-separator">/</span> Nicky Santoro</div>
+            </div>
+          </div>
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">The Irishman <span class="node-year">2019</span></div>
+              <div class="node-roles">Frank Sheeran <span class="role-separator">/</span> Russell Bufalino</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right actor -->
+        <div class="entity-orb" id="actorRight">
+          <div class="orb-image-wrap">
+            <div class="orb-glow"></div>
+            <div class="planetary-ring ring-1"></div>
+            <div class="planetary-ring ring-2"></div>
+            <img src="https://image.tmdb.org/t/p/w500/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci">
+          </div>
+          <div class="entity-name">Joe Pesci</div>
+          <div class="entity-meta">Star Beta</div>
+        </div>
+
+        <!-- SVG Constellation lines -->
+        <svg class="constellation-svg" id="actorLinesSvg">
+          <use href="#lineGlowFilter"/>
+        </svg>
+      </div>
+
+      <div class="connection-counter">
+        <span class="counter-value">4 Connections Mapped</span>
+      </div>
+
+      <!-- Non-shared movies -->
+      <div class="non-shared-section">
+        <div class="non-shared-label">Distant Stars &mdash; Unshared Orbits</div>
+        <div class="non-shared-row">
+          <div class="non-shared-col">
+            <div class="non-shared-col-title">De Niro Only</div>
+            <div class="dim-star">Taxi Driver <span class="dim-year">1976</span></div>
+            <div class="dim-star">The Deer Hunter <span class="dim-year">1978</span></div>
+            <div class="dim-star">Heat <span class="dim-year">1995</span></div>
+            <div class="dim-star">The King of Comedy <span class="dim-year">1982</span></div>
+          </div>
+          <div class="non-shared-col">
+            <div class="non-shared-col-title">Pesci Only</div>
+            <div class="dim-star">My Cousin Vinny <span class="dim-year">1992</span></div>
+            <div class="dim-star">Home Alone <span class="dim-year">1990</span></div>
+            <div class="dim-star">Lethal Weapon 2 <span class="dim-year">1989</span></div>
+            <div class="dim-star">JFK <span class="dim-year">1991</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 3: MOVIES EMPTY ===================== -->
+  <section class="tab-panel movies-tab" id="tab-movies-empty">
+    <div class="section-subtitle">
+      <span class="icon">&#127902;</span> Film Observatory
+    </div>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker"></span>
+          First Film
+        </label>
+        <input type="text" class="search-input" placeholder="Enter film coordinates...">
+      </div>
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker second"></span>
+          Second Film
+        </label>
+        <input type="text" class="search-input" placeholder="Enter film coordinates...">
+      </div>
+    </div>
+
+    <div class="empty-state">
+      <div class="empty-icon">&#127902;</div>
+      <div class="empty-state-text">
+        Chart two films to discover<br>their stellar cast connections
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TAB 4: MOVIES FILLED ===================== -->
+  <section class="tab-panel movies-tab" id="tab-movies-filled">
+    <div class="section-subtitle">
+      <span class="icon">&#127902;</span> Film Observatory
+    </div>
+
+    <div class="search-row">
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker"></span>
+          First Film
+        </label>
+        <input type="text" class="search-input" value="Goodfellas (1990)" readonly>
+      </div>
+      <div class="search-field">
+        <label class="search-label">
+          <span class="coord-marker second"></span>
+          Second Film
+        </label>
+        <input type="text" class="search-input" value="Casino (1995)" readonly>
+      </div>
+    </div>
+
+    <div class="constellation-map" id="moviesConstellationMap">
+      <div class="constellation-title">THE SCORSESE CONSTELLATION</div>
+
+      <div class="entity-pair" id="moviePair">
+        <!-- Left movie -->
+        <div class="entity-orb" id="movieLeft">
+          <div class="orb-image-wrap movie-poster">
+            <div class="orb-glow"></div>
+            <div class="planetary-ring ring-1"></div>
+            <div class="planetary-ring ring-2"></div>
+            <img src="https://image.tmdb.org/t/p/w500/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg" alt="Goodfellas">
+          </div>
+          <div class="entity-name">Goodfellas</div>
+          <div class="entity-meta">1990</div>
+        </div>
+
+        <!-- Center connections -->
+        <div class="connections-center" id="movieConnections">
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">Robert De Niro</div>
+              <div class="node-roles">Jimmy Conway <span class="role-separator">/</span> Sam Rothstein</div>
+            </div>
+          </div>
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">Joe Pesci</div>
+              <div class="node-roles">Tommy DeVito <span class="role-separator">/</span> Nicky Santoro</div>
+            </div>
+          </div>
+          <div class="connection-node">
+            <div class="node-star">&#11088;</div>
+            <div class="node-info">
+              <div class="node-title">Frank Vincent</div>
+              <div class="node-roles">Billy Batts <span class="role-separator">/</span> Frank Marino</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right movie -->
+        <div class="entity-orb" id="movieRight">
+          <div class="orb-image-wrap movie-poster">
+            <div class="orb-glow"></div>
+            <div class="planetary-ring ring-1"></div>
+            <div class="planetary-ring ring-2"></div>
+            <img src="https://image.tmdb.org/t/p/w500/gziIkUSnYuj9ChCi8qOu2ZunpSC.jpg" alt="Casino">
+          </div>
+          <div class="entity-name">Casino</div>
+          <div class="entity-meta">1995</div>
+        </div>
+
+        <!-- SVG Constellation lines -->
+        <svg class="constellation-svg" id="movieLinesSvg">
+        </svg>
+      </div>
+
+      <div class="connection-counter">
+        <span class="counter-value">3 Stellar Connections</span>
+      </div>
+
+      <!-- Non-shared actors -->
+      <div class="non-shared-section">
+        <div class="non-shared-label">Distant Stars &mdash; Unshared Cast</div>
+        <div class="non-shared-row">
+          <div class="non-shared-col">
+            <div class="non-shared-col-title">Goodfellas Only</div>
+            <div class="dim-star">Ray Liotta</div>
+            <div class="dim-star">Lorraine Bracco</div>
+            <div class="dim-star">Paul Sorvino</div>
+          </div>
+          <div class="non-shared-col">
+            <div class="non-shared-col-title">Casino Only</div>
+            <div class="dim-star">Sharon Stone</div>
+            <div class="dim-star">James Woods</div>
+            <div class="dim-star">Don Rickles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /app-container -->
+
+<script>
+(function() {
+  // =========================
+  // Star field generation
+  // =========================
+  const starfield = document.getElementById('starfield');
+  const starCount = 150;
+
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    const size = Math.random() * 2 + 1; // 1-3px
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const duration = (Math.random() * 3 + 2).toFixed(1); // 2-5s
+    const delay = (Math.random() * 5).toFixed(1);
+    const baseOpacity = (Math.random() * 0.5 + 0.2).toFixed(2);
+
+    star.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${x}%;
+      top: ${y}%;
+      opacity: ${baseOpacity};
+      animation: twinkle ${duration}s ease-in-out ${delay}s infinite;
+    `;
+
+    // Occasional brighter star with color tint
+    if (Math.random() < 0.08) {
+      const colors = ['#a0d2ff', '#fbbf24', '#d946ef', '#06b6d4', '#ffffff'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      star.style.background = color;
+      star.style.boxShadow = `0 0 ${size + 2}px ${color}`;
+    }
+
+    starfield.appendChild(star);
+  }
+
+  // =========================
+  // Tab switching
+  // =========================
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  const subtitle = document.getElementById('dynamicSubtitle');
+  const nebula1 = document.getElementById('nebula1');
+  const nebula2 = document.getElementById('nebula2');
+
+  const subtitles = {
+    'actors-empty': '<span class="icon">&#128301;</span> Actor Observatory',
+    'actors-filled': '<span class="icon">&#128301;</span> Actor Observatory',
+    'movies-empty': '<span class="icon">&#127902;</span> Film Observatory',
+    'movies-filled': '<span class="icon">&#127902;</span> Film Observatory'
+  };
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.getAttribute('data-tab');
+
+      // Update buttons
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update panels
+      tabPanels.forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      // Update subtitle
+      subtitle.innerHTML = subtitles[tabId] || '';
+
+      // Shift nebula colors for movies tabs
+      if (tabId.startsWith('movies')) {
+        nebula1.classList.add('nebula-pink-shift');
+        nebula2.classList.add('nebula-purple-shift');
+      } else {
+        nebula1.classList.remove('nebula-pink-shift');
+        nebula2.classList.remove('nebula-purple-shift');
+      }
+
+      // Redraw constellation lines for the active filled tab
+      requestAnimationFrame(() => {
+        drawConstellationLines();
+      });
+    });
+  });
+
+  // =========================
+  // Constellation line drawing
+  // =========================
+  function drawConstellationLines() {
+    drawLines('actorPair', 'actorLeft', 'actorRight', 'actorConnections', 'actorLinesSvg');
+    drawLines('moviePair', 'movieLeft', 'movieRight', 'movieConnections', 'movieLinesSvg');
+  }
+
+  function drawLines(pairId, leftId, rightId, connectionsId, svgId) {
+    const pair = document.getElementById(pairId);
+    const leftOrb = document.getElementById(leftId);
+    const rightOrb = document.getElementById(rightId);
+    const connections = document.getElementById(connectionsId);
+    const svg = document.getElementById(svgId);
+
+    if (!pair || !leftOrb || !rightOrb || !connections || !svg) return;
+
+    const pairRect = pair.getBoundingClientRect();
+    const leftRect = leftOrb.getBoundingClientRect();
+    const rightRect = rightOrb.getBoundingClientRect();
+
+    // Left orb center (relative to pair)
+    const lx = leftRect.left - pairRect.left + leftRect.width / 2;
+    const ly = leftRect.top - pairRect.top + leftRect.height * 0.4;
+
+    // Right orb center
+    const rx = rightRect.left - pairRect.left + rightRect.width / 2;
+    const ry = rightRect.top - pairRect.top + rightRect.height * 0.4;
+
+    const nodes = connections.querySelectorAll('.connection-node');
+    let linesHTML = `
+      <defs>
+        <filter id="lineGlowSvg" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+    `;
+
+    nodes.forEach(node => {
+      const nodeRect = node.getBoundingClientRect();
+      const nx = nodeRect.left - pairRect.left + nodeRect.width / 2;
+      const ny = nodeRect.top - pairRect.top + nodeRect.height / 2;
+
+      // Line from left to node
+      linesHTML += `<line x1="${lx}" y1="${ly}" x2="${nx}" y2="${ny}"
+        stroke="rgba(251, 191, 36, 0.18)" stroke-width="1" stroke-dasharray="4 6"
+        filter="url(#lineGlowSvg)"/>`;
+
+      // Line from node to right
+      linesHTML += `<line x1="${nx}" y1="${ny}" x2="${rx}" y2="${ry}"
+        stroke="rgba(6, 182, 212, 0.18)" stroke-width="1" stroke-dasharray="4 6"
+        filter="url(#lineGlowSvg)"/>`;
+    });
+
+    svg.innerHTML = linesHTML;
+  }
+
+  // Initial draw + redraw on resize
+  window.addEventListener('load', () => {
+    setTimeout(drawConstellationLines, 100);
+  });
+
+  window.addEventListener('resize', () => {
+    drawConstellationLines();
+  });
+
+  // Also draw when tab becomes visible via ResizeObserver
+  const observer = new ResizeObserver(() => {
+    drawConstellationLines();
+  });
+
+  const maps = document.querySelectorAll('.constellation-map');
+  maps.forEach(m => observer.observe(m));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Film Noir Dossier - Case File Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f4e8c1;
+    --cream-dark: #e8d5a3;
+    --brown-dark: #2a1f14;
+    --brown-mid: #5c4033;
+    --brown-light: #8b7355;
+    --red-deep: #8b0000;
+    --red-stamp: #a52a2a;
+    --red-string: #c0392b;
+    --sepia: #704214;
+    --ink: #1a1209;
+    --paper-shadow: rgba(42, 31, 20, 0.25);
+    --manila: #d4b56a;
+    --manila-active: #f4e8c1;
+    --folder-edge: #b8963e;
+  }
+
+  body {
+    font-family: 'Special Elite', 'Courier New', monospace;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 28px,
+        rgba(42, 31, 20, 0.03) 28px,
+        rgba(42, 31, 20, 0.03) 29px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 28px,
+        rgba(42, 31, 20, 0.02) 28px,
+        rgba(42, 31, 20, 0.02) 29px
+      ),
+      radial-gradient(ellipse at 20% 50%, rgba(139, 115, 85, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(112, 66, 20, 0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 80%, rgba(180, 140, 80, 0.06) 0%, transparent 50%),
+      linear-gradient(180deg, #e8d5a3 0%, #f4e8c1 15%, #f0ddb0 50%, #e6cfA0 85%, #dcc490 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== COFFEE STAINS ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 120px;
+    right: 60px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 50% 50%, transparent 38%, rgba(101, 67, 33, 0.08) 40%, rgba(101, 67, 33, 0.12) 44%, transparent 47%),
+      radial-gradient(ellipse at 45% 55%, transparent 35%, rgba(101, 67, 33, 0.06) 38%, transparent 42%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: 80px;
+    left: 40px;
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 50% 50%, transparent 36%, rgba(101, 67, 33, 0.1) 39%, rgba(101, 67, 33, 0.14) 43%, transparent 46%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== MAIN WRAPPER ===== */
+  .dossier-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== TOP HEADER ===== */
+  .top-header {
+    text-align: center;
+    padding: 30px 20px 10px;
+    position: relative;
+  }
+  .top-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--brown-dark);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 0 rgba(244, 232, 193, 0.8);
+  }
+  .top-header .subtitle {
+    font-size: 0.85rem;
+    color: var(--brown-light);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+  }
+  .classified-watermark {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    font-size: clamp(0.6rem, 2vw, 0.9rem);
+    color: var(--red-deep);
+    border: 3px double var(--red-deep);
+    padding: 4px 14px;
+    transform: rotate(12deg);
+    opacity: 0.55;
+    letter-spacing: 3px;
+    font-weight: bold;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* ===== FOLDER TABS ===== */
+  .folder-tabs {
+    display: flex;
+    gap: 3px;
+    margin-top: 20px;
+    padding: 0 4px;
+    position: relative;
+    z-index: 10;
+    flex-wrap: wrap;
+  }
+  .folder-tab {
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: clamp(0.7rem, 2vw, 0.88rem);
+    padding: 10px 18px 8px;
+    background: var(--manila);
+    border: 1px solid var(--folder-edge);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    color: var(--brown-mid);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    top: 1px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    box-shadow: inset 0 -4px 6px rgba(0,0,0,0.06);
+  }
+  .folder-tab:hover {
+    background: var(--cream-dark);
+    color: var(--brown-dark);
+  }
+  .folder-tab.active {
+    background: var(--cream);
+    color: var(--brown-dark);
+    border-color: var(--brown-light);
+    z-index: 12;
+    box-shadow: -2px -2px 4px rgba(0,0,0,0.06), 2px -2px 4px rgba(0,0,0,0.06);
+    font-weight: bold;
+    top: 2px;
+    padding-bottom: 10px;
+  }
+  .folder-tab .tab-icon {
+    margin-right: 5px;
+  }
+
+  /* ===== CASE FILE PANEL ===== */
+  .case-panel {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 27px,
+        rgba(42, 31, 20, 0.04) 27px,
+        rgba(42, 31, 20, 0.04) 28px
+      ),
+      linear-gradient(135deg, var(--cream) 0%, #f2e2b6 50%, var(--cream) 100%);
+    border: 1px solid var(--brown-light);
+    border-top: 2px solid var(--brown-light);
+    border-radius: 0 4px 4px 4px;
+    padding: clamp(20px, 4vw, 40px);
+    min-height: 500px;
+    position: relative;
+    box-shadow:
+      4px 4px 12px var(--paper-shadow),
+      -1px -1px 0 rgba(255,255,255,0.3) inset,
+      0 0 60px rgba(42, 31, 20, 0.04) inset;
+    z-index: 9;
+  }
+  .case-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(ellipse at 70% 20%, rgba(101, 67, 33, 0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 20% 70%, rgba(101, 67, 33, 0.03) 0%, transparent 35%);
+    pointer-events: none;
+    border-radius: 0 4px 4px 4px;
+  }
+
+  /* Paper clip decoration */
+  .case-panel::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 40px;
+    width: 24px;
+    height: 60px;
+    border: 2px solid #999;
+    border-radius: 12px;
+    background: transparent;
+    transform: rotate(-5deg);
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+    z-index: 20;
+  }
+
+  .tab-content {
+    display: none;
+    position: relative;
+    z-index: 1;
+  }
+  .tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SECTION HEADERS ===== */
+  .section-header {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    color: var(--brown-dark);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--brown-dark);
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid var(--brown-light);
+  }
+
+  /* ===== STAMP EFFECT ===== */
+  .stamp {
+    display: inline-block;
+    padding: 6px 18px;
+    border: 3px solid var(--red-deep);
+    color: var(--red-deep);
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    font-weight: bold;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    transform: rotate(-4deg);
+    opacity: 0.75;
+    position: relative;
+    margin: 10px 0;
+  }
+  .stamp::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 1px solid var(--red-deep);
+    opacity: 0.4;
+  }
+  .stamp.centered {
+    display: block;
+    text-align: center;
+    width: fit-content;
+    margin: 20px auto;
+  }
+
+  /* ===== REDACTED TEXT ===== */
+  .redacted {
+    background: var(--ink);
+    color: var(--ink);
+    padding: 0 4px;
+    user-select: none;
+    border-radius: 1px;
+  }
+
+  /* ===== TYPEWRITER INPUT ===== */
+  .typewriter-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .typewriter-input-group label {
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brown-mid);
+  }
+  .typewriter-input {
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: 1.05rem;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 27px,
+        rgba(42, 31, 20, 0.08) 27px,
+        rgba(42, 31, 20, 0.08) 28px
+      ),
+      linear-gradient(to bottom, #faf3e0, #f5ecd3);
+    border: none;
+    border-bottom: 2px solid var(--brown-dark);
+    padding: 12px 14px;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  }
+  .typewriter-input::placeholder {
+    color: var(--brown-light);
+    opacity: 0.7;
+    font-style: italic;
+  }
+  .typewriter-input:focus {
+    border-bottom-color: var(--red-deep);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 2px 0 var(--red-deep);
+  }
+
+  /* ===== SEARCH ROW ===== */
+  .search-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 30px;
+  }
+  @media (max-width: 600px) {
+    .search-row { grid-template-columns: 1fr; }
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--brown-light);
+  }
+  .empty-state .folder-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+    display: block;
+  }
+  .empty-state .empty-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--brown-mid);
+    margin-bottom: 12px;
+  }
+  .empty-state .empty-sub {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    opacity: 0.7;
+  }
+  .empty-state .dashed-box {
+    border: 2px dashed var(--brown-light);
+    padding: 40px 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+    opacity: 0.5;
+  }
+
+  /* ===== SUSPECT PROFILES / EVIDENCE PHOTOS ===== */
+  .suspects-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 30px;
+  }
+  @media (max-width: 700px) {
+    .suspects-row {
+      grid-template-columns: 1fr;
+    }
+    .suspects-row .vs-divider {
+      text-align: center;
+    }
+  }
+
+  .suspect-card {
+    background:
+      linear-gradient(to bottom, #faf4e4, #f0e4c8);
+    border: 1px solid var(--brown-light);
+    padding: 20px;
+    position: relative;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  }
+  .suspect-card::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle at 40% 35%, #e74c3c 0%, #c0392b 40%, #922b21 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 -1px 2px rgba(0,0,0,0.2);
+    z-index: 5;
+  }
+  /* Pushpin highlight */
+  .suspect-card::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    z-index: 6;
+  }
+  .suspect-card .photo-frame {
+    border: 3px solid var(--brown-mid);
+    padding: 4px;
+    background: #fff;
+    margin: 10px auto 14px;
+    display: block;
+    width: fit-content;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    transform: rotate(-1deg);
+  }
+  .suspect-card:nth-child(3) .photo-frame {
+    transform: rotate(1.5deg);
+  }
+  .suspect-card .photo-frame img {
+    display: block;
+    width: 150px;
+    height: auto;
+  }
+  .suspect-card .suspect-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    text-align: center;
+    color: var(--brown-dark);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .suspect-card .suspect-meta {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--brown-light);
+    letter-spacing: 1px;
+  }
+
+  .vs-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+  }
+  .vs-divider .vs-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--red-deep);
+    opacity: 0.6;
+    letter-spacing: 3px;
+  }
+  .vs-divider .string-line {
+    width: 2px;
+    height: 40px;
+    background: var(--red-string);
+    margin: 8px 0;
+    opacity: 0.5;
+  }
+
+  /* ===== EVIDENCE / CASE TIMELINE ===== */
+  .evidence-section {
+    margin-top: 30px;
+    position: relative;
+  }
+  .evidence-section-title {
+    font-size: 0.95rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brown-dark);
+    margin-bottom: 16px;
+    border-bottom: 1px dashed var(--brown-light);
+    padding-bottom: 6px;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--red-string);
+    opacity: 0.5;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 22px;
+    padding: 14px 18px;
+    background:
+      linear-gradient(135deg, #faf4e4 0%, #f5edd5 100%);
+    border: 1px solid rgba(139, 115, 85, 0.3);
+    border-left: 3px solid var(--red-deep);
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.06);
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 18px;
+    width: 12px;
+    height: 12px;
+    background: var(--red-deep);
+    border-radius: 50%;
+    border: 2px solid var(--cream);
+    box-shadow: 0 0 0 1px var(--red-deep);
+  }
+  .timeline-item .evidence-year {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--red-deep);
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+  }
+  .timeline-item .evidence-title {
+    font-size: 1.05rem;
+    color: var(--brown-dark);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .timeline-item .evidence-roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--brown-mid);
+  }
+  @media (max-width: 500px) {
+    .timeline-item .evidence-roles {
+      grid-template-columns: 1fr;
+    }
+  }
+  .evidence-roles .role-tag {
+    background: rgba(42, 31, 20, 0.06);
+    padding: 4px 8px;
+    border-left: 2px solid var(--brown-light);
+  }
+  .role-tag .role-actor {
+    font-weight: bold;
+    color: var(--brown-dark);
+  }
+
+  /* ===== SECONDARY EVIDENCE (individual movies/actors) ===== */
+  .secondary-evidence {
+    margin-top: 30px;
+    opacity: 0.7;
+  }
+  .secondary-evidence .secondary-title {
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brown-mid);
+    margin-bottom: 12px;
+    border-bottom: 1px dotted var(--brown-light);
+    padding-bottom: 4px;
+  }
+  .secondary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 600px) {
+    .secondary-grid { grid-template-columns: 1fr; }
+  }
+  .secondary-column h4 {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brown-dark);
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(139,115,85,0.3);
+    padding-bottom: 4px;
+  }
+  .secondary-list {
+    list-style: none;
+  }
+  .secondary-list li {
+    font-size: 0.82rem;
+    color: var(--brown-mid);
+    padding: 4px 0 4px 14px;
+    position: relative;
+    border-bottom: 1px dotted rgba(139,115,85,0.15);
+  }
+  .secondary-list li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--brown-light);
+  }
+  .secondary-list li span.year {
+    color: var(--brown-light);
+    font-size: 0.75rem;
+  }
+
+  /* ===== PERSONS OF INTEREST CARDS (Movies Filled) ===== */
+  .poi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+  }
+  .poi-card {
+    background: linear-gradient(135deg, #faf4e4 0%, #f2e6ca 100%);
+    border: 1px solid rgba(139, 115, 85, 0.35);
+    border-left: 4px solid var(--red-deep);
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.06);
+    position: relative;
+  }
+  .poi-card .poi-photo {
+    flex-shrink: 0;
+    width: 60px;
+    height: 80px;
+    border: 2px solid var(--brown-mid);
+    background: #ddd;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+  }
+  .poi-card .poi-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .poi-card .poi-info {
+    flex: 1;
+  }
+  .poi-card .poi-name {
+    font-size: 0.95rem;
+    color: var(--brown-dark);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .poi-card .poi-roles {
+    font-size: 0.78rem;
+    color: var(--brown-mid);
+  }
+  .poi-card .poi-roles .poi-role-line {
+    padding: 2px 0;
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+  .poi-role-label {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--brown-light);
+    min-width: fit-content;
+  }
+  .poi-role-char {
+    color: var(--brown-dark);
+  }
+  .poi-card .string-connector {
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    width: 10px;
+    height: 2px;
+    background: var(--red-string);
+    opacity: 0.4;
+  }
+
+  /* ===== MOVIE EVIDENCE CARDS (for Movies Filled tab) ===== */
+  .movie-suspects-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 30px;
+  }
+  @media (max-width: 700px) {
+    .movie-suspects-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ===== FILE NUMBER / CASE STAMP ===== */
+  .case-number {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--brown-light);
+    text-align: right;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  /* ===== TORN PAPER EDGE ===== */
+  .torn-edge {
+    height: 12px;
+    background:
+      linear-gradient(135deg, var(--cream) 33.33%, transparent 33.33%) -12px 0,
+      linear-gradient(225deg, var(--cream) 33.33%, transparent 33.33%) -12px 0,
+      linear-gradient(315deg, var(--cream) 33.33%, transparent 33.33%),
+      linear-gradient(45deg, var(--cream) 33.33%, transparent 33.33%);
+    background-size: 24px 12px;
+    margin: 20px -40px 20px;
+    opacity: 0.3;
+  }
+
+  /* ===== DIVIDER ===== */
+  .case-divider {
+    border: none;
+    border-top: 1px dashed var(--brown-light);
+    margin: 24px 0;
+    opacity: 0.4;
+  }
+
+  /* ===== CONNECTION STAMP (for filled views) ===== */
+  .connection-stamp-wrapper {
+    text-align: center;
+    margin: 24px 0 10px;
+    position: relative;
+  }
+  .connection-stamp-wrapper::before,
+  .connection-stamp-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 120px);
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--red-string) 0, var(--red-string) 8px, transparent 8px, transparent 14px);
+    opacity: 0.3;
+  }
+  .connection-stamp-wrapper::before { left: 0; }
+  .connection-stamp-wrapper::after { right: 0; }
+
+  /* ===== STRING DECORATION ===== */
+  .string-decoration {
+    position: absolute;
+    border: 1px solid var(--red-string);
+    opacity: 0.15;
+    pointer-events: none;
+    border-radius: 0;
+  }
+
+  /* ===== NON-SHARED ACTORS / SECONDARY ===== */
+  .non-shared-section {
+    margin-top: 28px;
+    opacity: 0.65;
+  }
+  .non-shared-section .ns-title {
+    font-size: 0.82rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brown-mid);
+    margin-bottom: 10px;
+    border-bottom: 1px dotted var(--brown-light);
+    padding-bottom: 4px;
+  }
+  .ns-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .ns-grid { grid-template-columns: 1fr; }
+  }
+  .ns-column h4 {
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brown-dark);
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid rgba(139,115,85,0.2);
+  }
+
+  /* ===== FOOTER ===== */
+  .dossier-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(139, 115, 85, 0.2);
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brown-light);
+    opacity: 0.5;
+  }
+
+  /* ===== MOBILE REFINEMENTS ===== */
+  @media (max-width: 480px) {
+    .case-panel {
+      padding: 16px;
+    }
+    .case-panel::after {
+      display: none;
+    }
+    .folder-tab {
+      padding: 8px 10px 6px;
+      font-size: 0.65rem;
+    }
+    .suspect-card .photo-frame img {
+      width: 110px;
+    }
+    .classified-watermark {
+      display: none;
+    }
+    .timeline {
+      padding-left: 22px;
+    }
+  }
+</style>
+</head>
+<body style="padding-top: 44px;">
+<!-- Template Switcher Navbar -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:99999;height:44px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;border-bottom:1px solid #333;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+  <span style="color:#888;margin-right:8px;font-weight:500;">Templates:</span>
+  <a href="/1" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#f4e8c1;background:#2a1f14;border:1px solid #5c4033;font-weight:600;font-size:12px;">1 Noir</a>
+  <a href="/2" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#0a0a2e;border:1px solid #333;font-weight:500;font-size:12px;">2 Aurora</a>
+  <a href="/3" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#d4a846;background:#1a0a0a;border:1px solid #333;font-weight:500;font-size:12px;">3 Deco</a>
+  <a href="/4" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#1a1a1a;background:#fff;border:1px solid #ccc;font-weight:500;font-size:12px;">4 Ink</a>
+  <a href="/5" style="padding:5px 14px;border-radius:6px;text-decoration:none;color:#a0d2ff;background:#050520;border:1px solid #333;font-weight:500;font-size:12px;">5 Cosmic</a>
+</nav>
+
+<div class="dossier-wrapper">
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="classified-watermark">CLASSIFIED</div>
+    <h1>Film Noir Dossier</h1>
+    <div class="subtitle">Comparative Investigation Bureau</div>
+  </header>
+
+  <!-- Folder Tabs -->
+  <nav class="folder-tabs">
+    <button class="folder-tab active" data-tab="actors-empty">
+      <span class="tab-icon">&#128269;</span>Actors (Empty)
+    </button>
+    <button class="folder-tab" data-tab="actors-filled">
+      <span class="tab-icon">&#128373;</span>Actors (Filled)
+    </button>
+    <button class="folder-tab" data-tab="movies-empty">
+      <span class="tab-icon">&#127902;</span>Movies (Empty)
+    </button>
+    <button class="folder-tab" data-tab="movies-filled">
+      <span class="tab-icon">&#128214;</span>Movies (Filled)
+    </button>
+  </nav>
+
+  <!-- Case File Panel -->
+  <div class="case-panel">
+
+    <!-- ============================================ -->
+    <!-- TAB 1: ACTORS EMPTY -->
+    <!-- ============================================ -->
+    <div class="tab-content active" id="actors-empty">
+      <div class="case-number">CASE FILE No. ________</div>
+      <h2 class="section-header">Actor Investigation Bureau</h2>
+
+      <div class="search-row">
+        <div class="typewriter-input-group">
+          <label>Subject A</label>
+          <input type="text" class="typewriter-input" placeholder="Enter suspect name..." disabled>
+        </div>
+        <div class="typewriter-input-group">
+          <label>Subject B</label>
+          <input type="text" class="typewriter-input" placeholder="Enter suspect name..." disabled>
+        </div>
+      </div>
+
+      <hr class="case-divider">
+
+      <div class="empty-state">
+        <span class="folder-icon">&#128193;</span>
+        <div class="empty-title">No Case File Opened</div>
+        <div class="empty-sub">Enter two subject names above to begin the investigation</div>
+        <div class="dashed-box">
+          <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; color: var(--brown-mid);">Awaiting Directive</div>
+          <div style="font-size: 0.75rem; color: var(--brown-light);">
+            Provide two actor names to cross-reference their filmography.<br>
+            All connections will be documented and filed.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 2: ACTORS FILLED -->
+    <!-- ============================================ -->
+    <div class="tab-content" id="actors-filled">
+      <div class="case-number">CASE FILE No. 1990-GF-0714</div>
+      <h2 class="section-header">Actor Investigation Bureau</h2>
+
+      <!-- Search fields (filled) -->
+      <div class="search-row">
+        <div class="typewriter-input-group">
+          <label>Subject A</label>
+          <input type="text" class="typewriter-input" value="Robert De Niro" disabled>
+        </div>
+        <div class="typewriter-input-group">
+          <label>Subject B</label>
+          <input type="text" class="typewriter-input" value="Joe Pesci" disabled>
+        </div>
+      </div>
+
+      <!-- Stamp -->
+      <div class="connection-stamp-wrapper">
+        <div class="stamp centered">Subjects Connected</div>
+      </div>
+
+      <!-- Suspect Profiles -->
+      <div class="suspects-row">
+        <div class="suspect-card">
+          <div class="photo-frame">
+            <img src="https://image.tmdb.org/t/p/w500/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg" loading="lazy">
+          </div>
+          <div class="suspect-name">Robert De Niro</div>
+          <div class="suspect-meta">DOB: August 17, 1943<br>Status: Active</div>
+        </div>
+        <div class="vs-divider">
+          <div class="string-line"></div>
+          <div class="vs-text">VS</div>
+          <div class="string-line"></div>
+        </div>
+        <div class="suspect-card">
+          <div class="photo-frame">
+            <img src="https://image.tmdb.org/t/p/w500/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci" loading="lazy">
+          </div>
+          <div class="suspect-name">Joe Pesci</div>
+          <div class="suspect-meta">DOB: February 9, 1943<br>Status: Semi-Retired</div>
+        </div>
+      </div>
+
+      <hr class="case-divider">
+
+      <!-- Evidence Timeline: Shared Movies -->
+      <div class="evidence-section">
+        <div class="evidence-section-title">&#128205; Shared Case Files &mdash; Verified Connections</div>
+        <div class="timeline">
+
+          <div class="timeline-item">
+            <div class="evidence-year">1980</div>
+            <div class="evidence-title">Raging Bull</div>
+            <div class="evidence-roles">
+              <div class="role-tag"><span class="role-actor">De Niro:</span> Jake LaMotta</div>
+              <div class="role-tag"><span class="role-actor">Pesci:</span> Joey LaMotta</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="evidence-year">1990</div>
+            <div class="evidence-title">Goodfellas</div>
+            <div class="evidence-roles">
+              <div class="role-tag"><span class="role-actor">De Niro:</span> Jimmy Conway</div>
+              <div class="role-tag"><span class="role-actor">Pesci:</span> Tommy DeVito</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="evidence-year">1995</div>
+            <div class="evidence-title">Casino</div>
+            <div class="evidence-roles">
+              <div class="role-tag"><span class="role-actor">De Niro:</span> Sam "Ace" Rothstein</div>
+              <div class="role-tag"><span class="role-actor">Pesci:</span> Nicky Santoro</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="evidence-year">2019</div>
+            <div class="evidence-title">The Irishman</div>
+            <div class="evidence-roles">
+              <div class="role-tag"><span class="role-actor">De Niro:</span> Frank Sheeran</div>
+              <div class="role-tag"><span class="role-actor">Pesci:</span> Russell Bufalino</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="case-divider">
+
+      <!-- Secondary Evidence -->
+      <div class="secondary-evidence">
+        <div class="secondary-title">&#128196; Secondary Evidence &mdash; Individual Filmography</div>
+        <div class="secondary-grid">
+          <div class="secondary-column">
+            <h4>De Niro &mdash; Solo Cases</h4>
+            <ul class="secondary-list">
+              <li>Taxi Driver <span class="year">(1976)</span></li>
+              <li>The Deer Hunter <span class="year">(1978)</span></li>
+              <li>The King of Comedy <span class="year">(1982)</span></li>
+              <li>Heat <span class="year">(1995)</span></li>
+              <li>Joker <span class="year">(2019)</span></li>
+            </ul>
+          </div>
+          <div class="secondary-column">
+            <h4>Pesci &mdash; Solo Cases</h4>
+            <ul class="secondary-list">
+              <li>My Cousin Vinny <span class="year">(1992)</span></li>
+              <li>Home Alone <span class="year">(1990)</span></li>
+              <li>Home Alone 2 <span class="year">(1992)</span></li>
+              <li>JFK <span class="year">(1991)</span></li>
+              <li>Lethal Weapon 2 <span class="year">(1989)</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 3: MOVIES EMPTY -->
+    <!-- ============================================ -->
+    <div class="tab-content" id="movies-empty">
+      <div class="case-number">CASE FILE No. ________</div>
+      <h2 class="section-header">Film Evidence Unit</h2>
+
+      <div class="search-row">
+        <div class="typewriter-input-group">
+          <label>Film A</label>
+          <input type="text" class="typewriter-input" placeholder="Enter film title..." disabled>
+        </div>
+        <div class="typewriter-input-group">
+          <label>Film B</label>
+          <input type="text" class="typewriter-input" placeholder="Enter film title..." disabled>
+        </div>
+      </div>
+
+      <hr class="case-divider">
+
+      <div class="empty-state">
+        <span class="folder-icon">&#127902;</span>
+        <div class="empty-title">No Films Under Investigation</div>
+        <div class="empty-sub">Enter two film titles above to cross-reference their cast</div>
+        <div class="dashed-box">
+          <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; color: var(--brown-mid);">Evidence Locker Empty</div>
+          <div style="font-size: 0.75rem; color: var(--brown-light);">
+            Provide two film titles to identify all shared persons of interest.<br>
+            Cross-referenced cast will be flagged and documented.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 4: MOVIES FILLED -->
+    <!-- ============================================ -->
+    <div class="tab-content" id="movies-filled">
+      <div class="case-number">CASE FILE No. 1995-CS-1122</div>
+      <h2 class="section-header">Film Evidence Unit</h2>
+
+      <!-- Search fields (filled) -->
+      <div class="search-row">
+        <div class="typewriter-input-group">
+          <label>Film A</label>
+          <input type="text" class="typewriter-input" value="Goodfellas (1990)" disabled>
+        </div>
+        <div class="typewriter-input-group">
+          <label>Film B</label>
+          <input type="text" class="typewriter-input" value="Casino (1995)" disabled>
+        </div>
+      </div>
+
+      <!-- Stamp -->
+      <div class="connection-stamp-wrapper">
+        <div class="stamp centered">Films Linked</div>
+      </div>
+
+      <!-- Movie Profile Cards -->
+      <div class="movie-suspects-row">
+        <div class="suspect-card">
+          <div class="photo-frame">
+            <img src="https://image.tmdb.org/t/p/w500/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg" alt="Goodfellas" loading="lazy">
+          </div>
+          <div class="suspect-name">Goodfellas</div>
+          <div class="suspect-meta">Year: 1990<br>Director: Martin Scorsese</div>
+        </div>
+        <div class="vs-divider">
+          <div class="string-line"></div>
+          <div class="vs-text">VS</div>
+          <div class="string-line"></div>
+        </div>
+        <div class="suspect-card">
+          <div class="photo-frame">
+            <img src="https://image.tmdb.org/t/p/w500/gziIkUSnYuj9ChCi8qOu2ZunpSC.jpg" alt="Casino" loading="lazy">
+          </div>
+          <div class="suspect-name">Casino</div>
+          <div class="suspect-meta">Year: 1995<br>Director: Martin Scorsese</div>
+        </div>
+      </div>
+
+      <hr class="case-divider">
+
+      <!-- Persons of Interest -->
+      <div class="evidence-section">
+        <div class="evidence-section-title">&#128373; Persons of Interest &mdash; Shared Cast</div>
+        <div class="poi-grid">
+
+          <div class="poi-card">
+            <div class="poi-photo">
+              <img src="https://image.tmdb.org/t/p/w185/cT8htcckIuyI1Lqwt1CvD02ynTh.jpg" alt="Robert De Niro" loading="lazy">
+            </div>
+            <div class="poi-info">
+              <div class="poi-name">Robert De Niro</div>
+              <div class="poi-roles">
+                <div class="poi-role-line">
+                  <span class="poi-role-label">Goodfellas:</span>
+                  <span class="poi-role-char">Jimmy Conway</span>
+                </div>
+                <div class="poi-role-line">
+                  <span class="poi-role-label">Casino:</span>
+                  <span class="poi-role-char">Sam Rothstein</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="poi-card">
+            <div class="poi-photo">
+              <img src="https://image.tmdb.org/t/p/w185/zbAdhqbMfRXSz26TjxJvB5f2eL5.jpg" alt="Joe Pesci" loading="lazy">
+            </div>
+            <div class="poi-info">
+              <div class="poi-name">Joe Pesci</div>
+              <div class="poi-roles">
+                <div class="poi-role-line">
+                  <span class="poi-role-label">Goodfellas:</span>
+                  <span class="poi-role-char">Tommy DeVito</span>
+                </div>
+                <div class="poi-role-line">
+                  <span class="poi-role-label">Casino:</span>
+                  <span class="poi-role-char">Nicky Santoro</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="poi-card">
+            <div class="poi-photo">
+              <img src="https://image.tmdb.org/t/p/w185/fa1gikNsPKvX1roWUo2bBmixnvp.jpg" alt="Frank Vincent" loading="lazy">
+            </div>
+            <div class="poi-info">
+              <div class="poi-name">Frank Vincent</div>
+              <div class="poi-roles">
+                <div class="poi-role-line">
+                  <span class="poi-role-label">Goodfellas:</span>
+                  <span class="poi-role-char">Billy Batts</span>
+                </div>
+                <div class="poi-role-line">
+                  <span class="poi-role-label">Casino:</span>
+                  <span class="poi-role-char">Frank Marino</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="case-divider">
+
+      <!-- Non-shared actors -->
+      <div class="non-shared-section">
+        <div class="ns-title">&#128196; Secondary Evidence &mdash; Non-Shared Cast</div>
+        <div class="ns-grid">
+          <div class="ns-column">
+            <h4>Goodfellas Only</h4>
+            <ul class="secondary-list">
+              <li>Ray Liotta <span class="year">&mdash; Henry Hill</span></li>
+              <li>Lorraine Bracco <span class="year">&mdash; Karen Hill</span></li>
+              <li>Paul Sorvino <span class="year">&mdash; Paul Cicero</span></li>
+            </ul>
+          </div>
+          <div class="ns-column">
+            <h4>Casino Only</h4>
+            <ul class="secondary-list">
+              <li>Sharon Stone <span class="year">&mdash; Ginger McKenna</span></li>
+              <li>James Woods <span class="year">&mdash; Lester Diamond</span></li>
+              <li>Don Rickles <span class="year">&mdash; Billy Sherbert</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /case-panel -->
+
+  <div class="dossier-footer">
+    Film Noir Dossier &bull; Comparative Investigation Bureau &bull; All Rights Reserved
+  </div>
+
+</div><!-- /dossier-wrapper -->
+
+<script>
+(function() {
+  const tabs = document.querySelectorAll('.folder-tab');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const target = this.getAttribute('data-tab');
+
+      // Deactivate all tabs
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      contents.forEach(function(c) { c.classList.remove('active'); });
+
+      // Activate clicked tab
+      this.classList.add('active');
+      var targetContent = document.getElementById(target);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

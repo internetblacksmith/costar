@@ -4,16 +4,11 @@ service: screen-thread
 # Docker image (GitHub Container Registry - free private images)
 image: ghcr.io/jabawack81/screen_thread
 
-# SSH configuration for connecting to VPS (uses deploy user, not root)
-ssh:
-  user: deploy
-  port: 1447
-
-# Server configuration
+# Server configuration (SSH user/port configured in ~/.ssh/config via host alias)
 servers:
   web:
     hosts:
-      - digitalocean
+      - digitalocean-vps-deploy
     labels:
       # Traefik routing for HTTP/HTTPS
       traefik.enable: true
@@ -60,7 +55,7 @@ env:
 accessories:
   redis:
     image: redis:7.4-alpine
-    host: digitalocean
+    host: digitalocean-vps-deploy
     port: 6380
     directories:
       - data:/data

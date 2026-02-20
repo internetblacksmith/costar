@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Environment Variable Validation Script for ActorSync
+# Environment Variable Validation Script for CoStar
 # Checks if all required environment variables are properly configured
 
 class EnvironmentChecker
@@ -67,7 +67,7 @@ class EnvironmentChecker
   end
 
   def check_environment
-    puts "🔍 Checking ActorSync Environment Variables"
+    puts "🔍 Checking CoStar Environment Variables"
     puts "=" * 50
     puts
 

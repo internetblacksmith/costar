@@ -1,10 +1,10 @@
-# Kamal Configuration Instructions for movie_together
+# Kamal Configuration Instructions for CoStar
 
-This document provides instructions for generating a complete Kamal deployment configuration for the movie_together (ActorSync) application.
+This document provides instructions for generating a complete Kamal deployment configuration for the CoStar application.
 
 ## Application Overview
 
-**Name:** movie_together (ActorSync)  
+**Name:** CoStar
 **Type:** Ruby/Sinatra web application  
 **Purpose:** Actor filmography timeline visualizer with TMDB API integration  
 **Port:** 4567  
@@ -89,10 +89,10 @@ Create a `config/deploy.yml` file with the following structure:
 
 ```yaml
 # Service name (used for container naming)
-service: actorsync
+service: costar
 
 # Docker image (update USERNAME with actual Docker Hub username)
-image: USERNAME/actorsync
+image: USERNAME/costar
 
 # Server configuration
 servers:
@@ -101,10 +101,10 @@ servers:
       - SERVER_IP  # Replace with actual VPS IP address
     labels:
       # Traefik routing configuration
-      traefik.http.routers.actorsync.rule: Host(`actors.DOMAIN`)  # Replace DOMAIN
-      traefik.http.routers.actorsync.entrypoints: websecure
-      traefik.http.routers.actorsync.tls.certresolver: letsencrypt
-      traefik.http.services.actorsync.loadbalancer.server.port: 4567
+      traefik.http.routers.costar.rule: Host(`actors.DOMAIN`)  # Replace DOMAIN
+      traefik.http.routers.costar.entrypoints: websecure
+      traefik.http.routers.costar.tls.certresolver: letsencrypt
+      traefik.http.services.costar.loadbalancer.server.port: 4567
     # Override CMD to use Doppler for secret injection
     cmd: doppler run -- bundle exec puma -C config/puma.rb
 
@@ -135,7 +135,7 @@ healthcheck:
 
 # Persistent volumes
 volumes:
-  - actorsync-cache:/app/tmp
+  - costar-cache:/app/tmp
 
 # Deployment hooks
 hooks:
@@ -254,7 +254,7 @@ Ensure config.ru exists:
 
 require_relative "app"
 
-run MovieTogetherApp
+run CoStarApp
 ```
 
 ### .kamal/hooks/post-deploy
@@ -265,7 +265,7 @@ Create executable post-deployment hook:
 #!/bin/bash
 set -e
 
-echo "✅ actorsync deployment completed"
+echo "✅ costar deployment completed"
 
 # Optional: Notify Sentry of new release
 if [ -n "$SENTRY_AUTH_TOKEN" ] && [ -n "$SENTRY_ORG" ] && [ -n "$SENTRY_PROJECT" ]; then
@@ -299,10 +299,10 @@ chmod +x .kamal/hooks/post-deploy
 ### Pre-Deployment Setup
 
 - [ ] **Doppler Configuration**
-  - [ ] Create Doppler project: `doppler projects create actorsync`
-  - [ ] Setup environment: `doppler setup` (select actorsync, config: prd)
+  - [ ] Create Doppler project: `doppler projects create costar`
+  - [ ] Setup environment: `doppler setup` (select costar, config: prd)
   - [ ] Add all required secrets (see Environment Variables section)
-  - [ ] Create service token: `doppler configs tokens create kamal-deploy --project actorsync --config prd`
+  - [ ] Create service token: `doppler configs tokens create kamal-deploy --project costar --config prd`
   - [ ] Save token securely
 
 - [ ] **TMDB API Setup**
@@ -321,7 +321,7 @@ chmod +x .kamal/hooks/post-deploy
   - [ ] Copy Project API Key to Doppler
 
 - [ ] **Docker Hub**
-  - [ ] Create repository: `actorsync`
+  - [ ] Create repository: `costar`
   - [ ] Use same token as gcal-sinatra
   - [ ] Add token to Doppler as `KAMAL_REGISTRY_PASSWORD`
 
@@ -377,10 +377,10 @@ If Redis or Traefik are not running, deploy gcal-sinatra first.
 
 ```bash
 # 1. Build Docker image
-docker build -t USERNAME/actorsync .
+docker build -t USERNAME/costar .
 
 # 2. Push to Docker Hub
-docker push USERNAME/actorsync
+docker push USERNAME/costar
 
 # 3. Initialize Kamal (creates config)
 kamal init
@@ -405,8 +405,8 @@ curl -I https://actors.DOMAIN
 git commit -am "Update feature"
 
 # 2. Build and push new image
-docker build -t USERNAME/actorsync .
-docker push USERNAME/actorsync
+docker build -t USERNAME/costar .
+docker push USERNAME/costar
 
 # 3. Deploy update (zero-downtime)
 kamal deploy
@@ -432,7 +432,7 @@ After deployment, verify:
 ### 1. Container Health
 ```bash
 kamal app containers
-# Should show: actorsync running
+# Should show: costar running
 
 kamal app logs | grep -i error
 # Should have no critical errors
@@ -554,7 +554,7 @@ kamal app logs | grep -i cache
 # Verify Redis caching is working
 kamal app exec --interactive bash
 redis-cli -h redis
-KEYS actorsync:*
+KEYS costar:*
 # Should show cached keys
 ```
 
@@ -595,7 +595,7 @@ kamal app exec --interactive bash
 redis-cli -h redis INFO stats
 
 # Check cache keys
-redis-cli -h redis KEYS actorsync:*
+redis-cli -h redis KEYS costar:*
 
 # Monitor cache in real-time
 redis-cli -h redis MONITOR
@@ -654,7 +654,7 @@ kamal app exec --interactive bash
 redis-cli -h redis
 FLUSHDB  # Clears current database
 # Or selectively:
-DEL actorsync:search:*
+DEL costar:search:*
 ```
 
 ### View Logs
@@ -691,7 +691,7 @@ kamal app logs | grep -i "cache hit"
 
 ---
 
-**Generated for:** movie_together (ActorSync)  
+**Generated for:** CoStar
 **Last Updated:** 2025-01-10  
 **Kamal Version:** 2.x  
 **Ruby Version:** 4.0.1  

@@ -2,7 +2,7 @@
 
 ## Overview
 
-ActorSync uses Cucumber for end-to-end browser simulation testing combined with VCR for reliable API recording and playback. This dual-mode setup ensures tests work consistently in both development and CI/CD environments while catching real-world issues that unit tests might miss.
+CoStar uses Cucumber for end-to-end browser simulation testing combined with VCR for reliable API recording and playback. This dual-mode setup ensures tests work consistently in both development and CI/CD environments while catching real-world issues that unit tests might miss.
 
 ## Why Cucumber + VCR?
 
@@ -303,4 +303,4 @@ The Cucumber + VCR setup provides:
 3. **Dual-Mode Flexibility**: Development recording, CI playback
 4. **Complete Coverage**: End-to-end user flows with all components active
 
-This combination ensures ActorSync works correctly in real-world conditions, not just in isolated test scenarios.
+This combination ensures CoStar works correctly in real-world conditions, not just in isolated test scenarios.

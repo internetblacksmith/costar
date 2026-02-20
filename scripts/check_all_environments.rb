@@ -4,7 +4,7 @@
 # Comprehensive Environment Check Wrapper
 # Checks both Doppler configurations and local environment setup
 
-puts "🌍 ActorSync Complete Environment Validation"
+puts "🌍 CoStar Complete Environment Validation"
 puts "=" * 70
 puts
 

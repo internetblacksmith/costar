@@ -19,7 +19,7 @@ Successfully fixed and configured GitHub Actions deployment with Doppler integra
 3. ✅ **Validated all Doppler secrets** (9/9 configured correctly)
    - KAMAL_REGISTRY_PASSWORD ✅ (40 chars)
    - TMDB_API_KEY ✅ (32 chars)
-   - REDIS_URL ✅ (35 chars) - Fixed to `redis://movie-together-redis:6380/0`
+   - REDIS_URL ✅ (35 chars) - Fixed to `redis://costar-redis:6380/0`
    - SENTRY_DSN ✅ (85 chars)
    - SENTRY_ENVIRONMENT ✅ (10 chars)
    - SESSION_SECRET ✅ (64 chars)

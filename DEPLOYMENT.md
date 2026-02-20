@@ -1,10 +1,10 @@
 # Production Deployment Guide
 
-This comprehensive guide covers deploying ActorSync to production with Redis caching, error tracking, and security hardening.
+This comprehensive guide covers deploying CoStar to production with Redis caching, error tracking, and security hardening.
 
 ## 🚀 Quick Deployment (Render.com)
 
-ActorSync is pre-configured for one-click deployment to Render.com with Redis and monitoring.
+CoStar is pre-configured for one-click deployment to Render.com with Redis and monitoring.
 
 ### Prerequisites
 
@@ -22,14 +22,14 @@ The `render.yaml` file automatically provisions:
 ```yaml
 services:
   - type: web
-    name: actorsync
+    name: costar
     env: ruby
     buildCommand: bundle install
     startCommand: bundle exec puma
     healthCheckPath: /health/simple
     
   - type: redis
-    name: actorsync-redis
+    name: costar-redis
     plan: free
     region: oregon
 ```
@@ -47,7 +47,7 @@ services:
 2. **Create New Service**:
    - Click "New +" → "Web Service"
    - Connect GitHub account
-   - Select your ActorSync repository
+   - Select your CoStar repository
    - Choose `main` branch
 
 3. **Render Auto-Detection**:
@@ -84,7 +84,7 @@ REDIS_POOL_TIMEOUT=5
 3. Update the placeholder values:
    - `TMDB_API_KEY`: Replace `changeme` with your TMDB API key
    - `SENTRY_DSN`: Replace `changeme` with your Sentry DSN
-   - `ALLOWED_ORIGINS`: Set to your domain (e.g., `https://actorsync.onrender.com`)
+   - `ALLOWED_ORIGINS`: Set to your domain (e.g., `https://costar.onrender.com`)
 
 ### 4. Deploy Application
 
@@ -302,7 +302,7 @@ curl https://your-app.onrender.com/health/complete
 **1. Environment Variable Issues**
 ```bash
 # Check logs for missing variables
-render logs --service actorsync
+render logs --service costar
 
 # Common error: Missing TMDB_API_KEY
 ERROR: Missing required environment variable: TMDB_API_KEY

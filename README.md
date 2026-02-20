@@ -1,4 +1,4 @@
-# 🎬 ScreenThread
+# 🎬 CoStar
 
 [![CI](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml)
 [![Deploy](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml)
@@ -73,7 +73,7 @@ A production-ready web application that discovers the connections between actors
 
 ## Architecture
 
-ActorSync features a resilient, production-ready architecture:
+CoStar features a resilient, production-ready architecture:
 
 ### Core Services
 - **TMDBService**: API integration with caching and standardized error handling
@@ -101,7 +101,7 @@ ActorSync features a resilient, production-ready architecture:
 ## Project Structure
 
 ```
-actorsync/
+costar/
 ├── app.rb                     # Main Sinatra application
 ├── config.ru                 # Rack configuration  
 ├── Gemfile                   # Ruby dependencies
@@ -260,7 +260,7 @@ bundle exec ruby app.rb
 
 ## Production Deployment
 
-ScreenThread is production-ready with automated CI/CD pipeline:
+CoStar is production-ready with automated CI/CD pipeline:
 
 ### Automated Deployment Pipeline (GitHub Actions + Kamal)
 
@@ -309,7 +309,7 @@ See `DEPLOYMENT.md` for detailed production setup instructions.
 
 ## Security Features
 
-ActorSync implements comprehensive security hardening:
+CoStar implements comprehensive security hardening:
 
 ### Input Protection
 - **Query Sanitization**: Removes dangerous characters while preserving international names

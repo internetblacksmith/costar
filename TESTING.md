@@ -1,6 +1,6 @@
-# Testing Guide for ActorSync
+# Testing Guide for CoStar
 
-This document outlines the testing strategy and provides instructions for running and maintaining tests in the ActorSync application.
+This document outlines the testing strategy and provides instructions for running and maintaining tests in the CoStar application.
 
 ## 🧪 Testing Stack
 

@@ -1,10 +1,10 @@
-# ActorSync Security Implementation
+# CoStar Security Implementation
 
-This document details the comprehensive security hardening implemented in ActorSync to ensure production-ready security posture.
+This document details the comprehensive security hardening implemented in CoStar to ensure production-ready security posture.
 
 ## 🔒 Security Overview
 
-ActorSync implements defense-in-depth security with multiple layers of protection:
+CoStar implements defense-in-depth security with multiple layers of protection:
 
 1. **Transport Security** - HTTPS enforcement and secure headers
 2. **Input Protection** - Validation, sanitization, and whitelisting

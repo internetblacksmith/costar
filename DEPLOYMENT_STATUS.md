@@ -1,4 +1,4 @@
-# movie_together Deployment Status & Next Steps
+# CoStar Deployment Status & Next Steps
 
 ## Current Status
 
@@ -163,7 +163,7 @@ Push a test commit to main and monitor:
 
 ### 5. Verify Application
 - Check container is running: `docker ps | grep movie`
-- Check logs: `docker logs movie-together-web`
+- Check logs: `docker logs costar-web`
 - Test health endpoint: `curl -I https://as.frenimies-lab.dev/health`
 - Test application: Browse to `https://as.frenimies-lab.dev`
 

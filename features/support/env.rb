@@ -16,7 +16,7 @@ require_relative "vcr_config"
 require_relative "vcr_helpers"
 
 # Configure Capybara for browser simulation
-Capybara.app = ScreenThreadApp
+Capybara.app = CoStarApp
 Capybara.server = :puma
 Capybara.server_port = 45_670
 Capybara.app_host = "http://localhost:45670"

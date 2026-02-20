@@ -6,7 +6,7 @@
 services:
   redis-test:
     image: redis:7-alpine
-    container_name: screenthread_redis_test
+    container_name: costar_redis_test
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes

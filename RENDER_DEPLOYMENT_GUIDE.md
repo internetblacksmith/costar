@@ -1,6 +1,6 @@
 # Quick Start - Render.com Deployment
 
-This is a simplified guide to get ActorSync deployed on Render.com in minutes.
+This is a simplified guide to get CoStar deployed on Render.com in minutes.
 
 ## Prerequisites
 
@@ -91,4 +91,4 @@ Click "Add Environment Variable" and add:
 - Verify environment variables are set
 - Test API endpoints manually
 
-That's it! Your ActorSync app should now be live on Render.com 🎉
+That's it! Your CoStar app should now be live on Render.com 🎉

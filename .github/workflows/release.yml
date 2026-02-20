@@ -76,9 +76,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.version.outputs.VERSION }}
-        release_name: ActorSync ${{ steps.version.outputs.VERSION }}
+        release_name: CoStar ${{ steps.version.outputs.VERSION }}
         body: |
-          # ActorSync ${{ steps.version.outputs.VERSION }}
+          # CoStar ${{ steps.version.outputs.VERSION }}
           
           ## 🎉 What's New
           

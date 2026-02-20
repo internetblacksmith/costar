@@ -1,8 +1,8 @@
-# CSS Architecture - ActorSync
+# CSS Architecture - CoStar
 
 ## Overview
 
-The ActorSync CSS architecture follows a modular, component-based approach with clear separation of concerns. The stylesheets are organized using the ITCSS (Inverted Triangle CSS) methodology for better scalability and maintainability.
+The CoStar CSS architecture follows a modular, component-based approach with clear separation of concerns. The stylesheets are organized using the ITCSS (Inverted Triangle CSS) methodology for better scalability and maintainability.
 
 ## Directory Structure
 

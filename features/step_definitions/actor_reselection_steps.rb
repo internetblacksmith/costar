@@ -2,7 +2,7 @@
 
 # Step definitions for actor reselection feature
 
-Given("I am on the MovieTogether homepage") do
+Given("I am on the CoStar homepage") do
   visit "/"
   expect(page.status_code).to eq(200)
 end

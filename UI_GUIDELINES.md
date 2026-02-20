@@ -1,4 +1,4 @@
-# UI Guidelines for ActorSync
+# UI Guidelines for CoStar
 
 This document captures all UI/UX decisions and guidelines implemented based on user feedback during development.
 

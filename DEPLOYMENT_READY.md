@@ -1,4 +1,4 @@
-# Movie Together - Deployment Ready Checklist
+# CoStar - Deployment Ready Checklist
 
 **Status**: ✅ **READY FOR DEPLOYMENT**
 

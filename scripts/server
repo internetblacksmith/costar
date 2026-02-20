@@ -46,7 +46,7 @@ end
 project_root = File.expand_path("..", __dir__)
 Dir.chdir(project_root)
 
-puts "🎬 ActorSync Development Server with File Watching"
+puts "🎬 CoStar Development Server with File Watching"
 puts "=" * 50
 puts "📁 Project root: #{project_root}"
 puts "👁️  Watching: #{WATCHED_PATTERNS.join(", ")}"

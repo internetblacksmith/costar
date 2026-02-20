@@ -1,187 +1,102 @@
-# 🎬 CoStar
+# CoStar
 
 [![CI](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml)
 [![Deploy](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml)
-[![Ruby](https://img.shields.io/badge/ruby-4.0.0-red.svg)](https://www.ruby-lang.org)
+[![Ruby](https://img.shields.io/badge/ruby-4.0.1-red.svg)](https://www.ruby-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A production-ready web application that discovers the connections between actors and movies. Find movies that two actors have appeared in together, or find actors who have appeared in two movies. Built with a resilient Ruby/Sinatra backend and HTMX frontend with comprehensive security hardening.
+A web application that discovers the connections between actors and movies. Find movies that two actors have appeared in together, or find actors who have appeared in two movies. Built with Ruby/Sinatra backend, HTMX frontend, and deployed via Kamal to a DigitalOcean VPS.
 
 ## Features
 
 - **Actor Search**: Search for actors with autocomplete suggestions and input validation
 - **Timeline Visualization**: View filmographies organized by year in a vertical timeline
 - **Shared Movies Highlighting**: Common movies between actors are highlighted in red
-- **Responsive Design**: Works on desktop and mobile devices with optimized performance
+- **Responsive Design**: Works on desktop and mobile devices
 - **TMDB Integration**: Uses The Movie Database API with circuit breaker resilience
-- **Production Security**: Rate limiting, CORS protection, input sanitization, and security headers
 - **Redis Caching**: High-performance caching with connection pooling
-- **Monitoring**: Structured logging, error tracking (Sentry for backend and frontend), and health checks
-- **CI/CD Ready**: Comprehensive test suite and automated deployment
+- **Monitoring**: Structured logging, error tracking (Sentry), and health checks
 
 ## Prerequisites
 
-- Ruby 3.0+ installed
-- Bundler gem installed (`gem install bundler`)
-- Redis server (for production caching)
+- Ruby 4.0+
+- Bundler (`gem install bundler`)
+- Docker (for Redis and production deployment)
+- [Doppler CLI](https://docs.doppler.com/docs/install-cli) (secrets management)
 
-## Quick Setup
+## Getting Started
 
-1. **Clone and Install Dependencies**:
-   ```bash
-   git clone <repository-url>
-   cd movie_together
-   bundle install
-   ```
+### 1. Clone and install dependencies
 
-2. **Configure Environment**:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit `.env` and add your configuration:
-   ```
-   TMDB_API_KEY=your_tmdb_api_key_here
-   SENTRY_DSN=your_sentry_dsn_here (optional)
-   REDIS_URL=redis://localhost:6379 (production)
-   ```
+```bash
+git clone <repository-url>
+cd movie_together
+make setup-dev
+```
 
-3. **Get API Keys**:
-   - **TMDB API**: Visit [TMDB API](https://www.themoviedb.org/settings/api) for film data
-   - **Sentry** (optional): Visit [Sentry](https://sentry.io) for error tracking
+### 2. Set up Doppler for development
 
-4. **Run the Application**:
-   ```bash
-   # Development with auto-reload
-   bundle exec rerun ruby app.rb
-   
-   # Production
-   bundle exec puma
-   ```
+```bash
+doppler login
+doppler setup --project movie_together --config dev
+```
 
-5. **Open in Browser**: `http://localhost:4567`
+Required secrets in the `dev` config:
+- `TMDB_API_KEY` — get one at [TMDB API](https://www.themoviedb.org/settings/api)
+- `SESSION_SECRET` — generate with `openssl rand -hex 32`
+- `REDIS_URL` — `redis://localhost:6379` for local Redis
 
-6. **Install Git Hooks** (recommended for local development):
-   ```bash
-   bin/setup-git-hooks
-   ```
-   This installs pre-commit hooks that automatically run:
-   - RuboCop (code style linting)
-   - RSpec tests (487 unit tests)
-   - Cucumber tests (7 integration tests)
-   - Brakeman (security scanning)
-   - bundle-audit (dependency vulnerability scanning)
+Optional:
+- `SENTRY_DSN` — [Sentry](https://sentry.io) error tracking
+- `POSTHOG_API_KEY` — [PostHog](https://posthog.com) analytics
+
+### 3. Start Redis and run the app
+
+```bash
+make redis-start   # in a separate terminal
+make dev           # starts development server with Doppler secrets
+```
+
+### 4. Open in browser
+
+Visit `http://localhost:4567`
+
+## Development Commands
+
+```bash
+make                 # Interactive menu
+make dev             # Start development server (Doppler + Puma)
+make test            # Run all tests (RSpec + Cucumber)
+make test-rspec      # Run RSpec tests only
+make test-cucumber   # Run Cucumber tests only
+make lint            # Check code style (RuboCop)
+make fix             # Auto-fix code style issues
+make security        # Run security scans (Brakeman + bundler-audit)
+make pre-commit      # Run all checks before committing
+make help            # Show all available commands
+```
 
 ## Architecture
-
-CoStar features a resilient, production-ready architecture:
 
 ### Core Services
 - **TMDBService**: API integration with caching and standardized error handling
 - **ResilientTMDBClient**: Circuit breaker pattern for API resilience
 - **ActorComparisonService**: Timeline generation and movie analysis
 - **TimelineBuilder**: Performance-optimized timeline rendering
-- **SimpleRequestThrottler**: Synchronous request rate limiting without threading
+- **SimpleRequestThrottler**: Synchronous request rate limiting
 - **CacheCleaner**: Background service for automatic TTL-based cache cleanup
-- **ConfigurationPolicy**: Policy-based configuration management with validation
-- **ConfigurationValidator**: Environment variable validation with type checking
 
 ### Security & Performance
 - **Rate Limiting**: Rack::Attack with Redis backend
 - **Input Validation**: Comprehensive sanitization for all user inputs
 - **Security Headers**: CSP, HSTS, X-Frame-Options, and more
 - **CORS Protection**: Environment-based origin allowlisting
-- **Caching**: Redis with connection pooling (production) / Memory (development) with automatic TTL cleanup
+- **Caching**: Redis with connection pooling (production) / Memory (development)
 
 ### Monitoring & Reliability
 - **Circuit Breaker**: Automatic API failure handling
-- **Structured Logging**: Comprehensive request/error tracking
 - **Health Checks**: `/health/simple` and `/health/complete` endpoints
 - **Error Tracking**: Sentry integration for production monitoring
-
-## Project Structure
-
-```
-costar/
-├── app.rb                     # Main Sinatra application
-├── config.ru                 # Rack configuration  
-├── Gemfile                   # Ruby dependencies
-├── render.yaml               # Render.com deployment config
-├── lib/                      # Application services and logic
-│   ├── services/             # Core business logic
-│   │   ├── tmdb_service.rb           # TMDB API integration
-│   │   ├── resilient_tmdb_client.rb  # Circuit breaker client
-│   │   ├── actor_comparison_service.rb # Timeline comparison
-│   │   ├── timeline_builder.rb       # Performance-optimized rendering
-│   │   ├── cache_cleaner.rb          # Background service for TTL cache cleanup
-│   │   ├── simple_request_throttler.rb # Synchronous request throttling
-│   │   ├── input_sanitizer.rb        # Centralized input sanitization
-│   │   ├── api_response_builder.rb   # Standardized API response formatting
-│   │   ├── cache_manager.rb          # Centralized cache operations
-│   │   └── cache_key_builder.rb      # Standardized cache key generation
-│   ├── controllers/          # Request handlers
-│   │   ├── api_controller.rb         # API routes with CORS
-│   │   ├── api_handlers.rb           # Input validation & processing
-│   │   ├── health_controller.rb      # Health check endpoints
-│   │   ├── error_handler.rb          # Application-wide error handling
-│   │   ├── error_handler_tmdb.rb     # TMDB-specific error handlers
-│   │   └── input_validator.rb        # Input validation service
-│   ├── config/               # Configuration and utilities
-│   │   ├── cache.rb                  # Redis/Memory cache abstraction
-│   │   ├── logger.rb                 # Structured logging
-│   │   ├── errors.rb                 # Custom error classes with hierarchy
-│   │   ├── service_container.rb      # Dependency injection container
-│   │   ├── service_initializer.rb    # Service registration and initialization
-│   │   ├── configuration_policy.rb   # Policy-based configuration system
-│   │   ├── configuration_validator.rb # Environment variable validation
-│   │   └── request_context.rb        # Thread-local request context management
-│   ├── dto/                  # Data Transfer Objects
-│   │   ├── base_dto.rb               # Base DTO with validation and serialization
-│   │   ├── actor_dto.rb              # Actor data structure
-│   │   ├── movie_dto.rb              # Movie data structure
-│   │   ├── search_results_dto.rb     # Search results wrapper
-│   │   ├── comparison_result_dto.rb  # Timeline comparison results
-│   │   ├── actor_search_request.rb   # Search request validation
-│   │   ├── actor_comparison_request.rb # Comparison request validation
-│   │   └── dto_factory.rb            # DTO creation from API responses
-│   └── middleware/           # Request processing
-│       ├── request_logger.rb         # Request/response logging
-│       ├── performance_headers.rb    # Caching optimization
-│       ├── error_handler_module.rb   # Standardized error handling patterns
-│       └── request_context_middleware.rb # Request lifecycle tracking
-├── views/                    # ERB templates
-│   ├── layout.erb            # Main layout with security headers
-│   ├── index.erb             # Home page
-│   ├── suggestions.erb       # Actor search suggestions
-│   └── timeline.erb          # Timeline visualization
-├── public/                   # Static assets
-│   ├── css/                  # Modular CSS architecture
-│   │   ├── main.css          # Main entry point and imports
-│   │   ├── base/             # Foundation styles (reset, variables, typography)
-│   │   ├── components/       # Component-specific styles
-│   │   ├── utilities/        # Utility classes and animations
-│   │   ├── responsive.css    # Responsive breakpoints
-│   │   └── modern-ui.css     # Modern UI enhancements
-│   ├── js/                   # JavaScript modules
-│   │   ├── app.js            # Main application initialization
-│   │   └── modules/          # Modular JavaScript components
-│   └── errors/               # Custom error pages
-├── spec/                     # RSpec test suite (441 examples, 0 failures)
-│   ├── lib/                  # Service and component tests
-│   ├── requests/             # API integration tests
-│   └── support/              # Test helpers and mocks
-├── features/                 # Cucumber end-to-end tests
-│   ├── step_definitions/     # Test step implementations
-│   ├── support/              # Test configuration and helpers
-│   └── *.feature             # Feature specifications
-├── config/                   # Configuration files
-│   ├── rack_attack.rb        # Rate limiting configuration
-│   └── sentry.rb             # Error tracking setup
-└── docs/                     # Documentation
-    ├── SECURITY.md           # Security implementation details
-    ├── ARCHITECTURE.md       # Technical architecture guide
-    ├── DEPLOYMENT.md         # Production deployment guide
-    └── TESTING.md            # Test suite documentation
-```
 
 ## API Endpoints
 
@@ -195,226 +110,77 @@ costar/
 - `GET /api/actors/:id/movies` - Get actor filmography
 - `GET /api/actors/compare?actor1_id=123&actor2_id=456&actor1_name=Name1&actor2_name=Name2` - Timeline comparison
 
-All API endpoints include:
-- Rate limiting (30-120 requests/minute depending on endpoint)
-- Input validation and sanitization
-- CORS headers
-- Security headers
-- Structured error responses
-
-## Development
-
-### Running Tests
-```bash
-# Run all tests (RSpec + Cucumber)
-make test
-
-# Run RSpec unit/integration tests only
-make test-rspec
-# or
-bundle exec rspec
-
-# Run Cucumber end-to-end tests only
-make test-cucumber
-# or
-bundle exec cucumber
-
-# Run with coverage
-bundle exec rspec --format documentation
-
-# Test production endpoints
-make prod-test
-# or with verbose output
-make prod-test-verbose
-
-# Run specific RSpec test file
-bundle exec rspec spec/requests/api_spec.rb
-
-# Run specific Cucumber feature
-bundle exec cucumber features/actor_comparison.feature
-```
-
-### Code Quality
-```bash
-# Check code style
-bundle exec rubocop
-
-# Auto-fix style issues
-bundle exec rubocop -A
-
-# Security scan
-bundle exec brakeman
-
-# Dependency security scan
-bundle exec bundle-audit
-```
-
-### Development Server
-```bash
-# Auto-reloading development server
-bundle exec rerun ruby app.rb
-
-# Manual restart
-bundle exec ruby app.rb
-```
+All API endpoints include rate limiting, input validation, CORS headers, and structured error responses.
 
 ## Production Deployment
 
-CoStar is production-ready with automated CI/CD pipeline:
+CoStar is deployed to a DigitalOcean VPS via [Kamal v2](https://kamal-deploy.org/) with Traefik reverse proxy for HTTPS.
 
-### Automated Deployment Pipeline (GitHub Actions + Kamal)
+**Live at:** `https://as.frenimies-lab.dev`
 
-The application features a complete CI/CD workflow that:
+### Secrets management
 
-1. **Continuous Integration** - Every push/PR
-   - Runs 487+ RSpec unit & integration tests
-   - Runs 7 Cucumber end-to-end tests
-   - Security scans (Brakeman, Bundle Audit)
-   - RuboCop code quality checks
+Production secrets are stored in [Doppler](https://doppler.com) and fetched at deploy time by Kamal's native Doppler adapter (configured in `.kamal/secrets`). No `doppler run` wrapper is needed — Kamal handles it directly.
 
-2. **Continuous Deployment** - On merge to main
-   - Builds Docker image and pushes to GitHub Container Registry
-   - Deploys via Kamal to DigitalOcean VPS
-   - Requires manual approval (GitHub Environment)
-   - Auto-rollback on deployment failure
-   - Slack notifications
+### Deploy
 
-See `CI_CD_SETUP.md` for complete setup and `DEPLOYMENT.md` for detailed instructions.
-
-### Infrastructure Requirements
-- **Ruby 3.0+** runtime
-- **Redis** for caching and rate limiting
-- **Reverse proxy** (Traefik) for HTTPS termination and routing
-- **Docker** for containerization
-
-### Environment Variables
 ```bash
-# Required
-RACK_ENV=production
-TMDB_API_KEY=your_tmdb_api_key
-
-# Recommended
-SENTRY_DSN=your_sentry_dsn
-REDIS_URL=redis://localhost:6379
-REDIS_POOL_SIZE=15
-ALLOWED_ORIGINS=https://yourdomain.com
-SESSION_SECRET=your_session_secret
-
-# Optional
-CDN_BASE_URL=https://cdn.yourdomain.com
-CDN_PROVIDER=cloudflare
+make deploy          # Deploy to production
+make deploy-status   # Show deployment status
+make deploy-logs     # Stream production logs
+make deploy-rollback # Rollback to previous version
+make deploy-setup    # First-time Kamal setup on new server
 ```
 
-See `DEPLOYMENT.md` for detailed production setup instructions.
+### Setting up deployment (first time)
 
-## Security Features
+```bash
+make setup-deploy    # Checks prerequisites, installs Kamal, generates .kamal/secrets
+```
 
-CoStar implements comprehensive security hardening:
+Doppler must be configured with the `movie_together/prd` config containing all required secrets (see `config/deploy.yml` for the full list).
 
-### Input Protection
-- **Query Sanitization**: Removes dangerous characters while preserving international names
-- **Parameter Validation**: Type checking and range limits for all inputs
-- **Field Whitelisting**: Only approved field names accepted
+### CI/CD
 
-### Request Protection  
-- **Per-Client Throttling**: Individual client rate limiting by method
-- **Rate Limiting**: Tiered limits by endpoint complexity
-- **CORS Policy**: Environment-based origin restrictions
-- **User Agent Filtering**: Blocks suspicious bots and scrapers
+GitHub Actions runs tests and security scans on every push. Deployment to production can be triggered via `make deploy` or through the GitHub Actions deploy workflow.
 
-### Response Security
-- **Security Headers**: CSP, HSTS, X-Frame-Options, X-XSS-Protection
-- **Content Validation**: All responses include security headers
-- **HTTPS Enforcement**: Automatic redirection in production
+### Infrastructure
 
-See `SECURITY.md` for complete security implementation details.
+- **Host**: DigitalOcean VPS with Traefik reverse proxy
+- **Registry**: GitHub Container Registry (ghcr.io)
+- **Accessories**: Redis 7.4 (managed by Kamal on the VPS)
+- **Domain**: `as.frenimies-lab.dev` (Cloudflare DNS, grey cloud / DNS only)
 
 ## Technology Stack
 
 ### Backend
-- **Ruby 3.0+** with Sinatra framework
+- **Ruby 4.0+** with Sinatra framework
 - **Redis** for high-performance caching
-- **Puma** web server for production
-- **Circuit Breaker** pattern for API resilience
+- **Puma** web server
 
-### Frontend  
-- **HTMX** for dynamic interactions without JavaScript
-- **Modular CSS Architecture** with ITCSS methodology and design system
-- **ERB** templating with security-focused layouts
-
-### CSS Architecture
-- **ITCSS Methodology** for scalable, maintainable stylesheets
-- **Design System** with CSS custom properties for theming
-- **Component-Based** organization with clear separation of concerns
-- **Utility-First** approach with helper classes for common patterns
-- **Responsive Design** with mobile-first approach
-- **Performance Optimized** with minimal specificity and efficient selectors
-- **Theme Support** with light/dark mode capability
-- **Modern Features** including CSS Grid, Custom Properties, and animations
+### Frontend
+- **HTMX** for dynamic interactions
+- **ERB** templating
+- **Modular CSS** with ITCSS methodology
 
 ### External Services
 - **TMDB API v3** for movie data
-- **Sentry** for error tracking and monitoring
-- **Render.com** for hosting (Redis included)
+- **Sentry** for error tracking
+- **Doppler** for secrets management
+- **PostHog** for product analytics
 
-### Development & Testing
-- **RSpec** test framework (441 examples, 0 failures) for unit/integration tests
-- **Cucumber** for end-to-end browser simulation tests
-- **VCR** for reliable API testing in both RSpec and Cucumber
-- **WebMock** for API mocking in tests
+### Testing
+- **RSpec** for unit/integration tests
+- **Cucumber** for end-to-end BDD tests
+- **VCR** + **WebMock** for API mocking
 - **RuboCop** for code quality
 - **Brakeman** for security scanning
-- **SimpleCov** for test coverage
-
-## Performance
-
-- **Sub-second response times** with Redis caching
-- **80% API call reduction** through intelligent caching
-- **Circuit breaker protection** prevents cascade failures
-- **Connection pooling** for database efficiency
-- **Gzip compression** for reduced bandwidth
-- **Performance headers** for browser caching
-
-## Monitoring
-
-### Health Checks
-- `/health/simple` - Basic uptime check
-- `/health/complete` - Full dependency validation
-
-### Logging
-- **Structured JSON logging** for all requests
-- **Performance metrics** for response times
-- **Error tracking** with full context
-- **Cache performance** monitoring
-
-### Alerting
-- **Sentry integration** for error notifications
-- **Circuit breaker** status monitoring
-- **Rate limiting** threshold alerts
 
 ## TMDB API Compliance
 
 This application uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.
 
-**Important**: This is a non-commercial personal project. For commercial use, you must obtain a commercial agreement with TMDB.
-
-### Commercial Use Requirements
-According to TMDB terms, the following require a commercial license:
-- Adding advertising or monetization
-- Charging user fees or subscriptions  
-- Generating revenue through the application
-- Using TMDB content for commercial recommendations
-
-**Terms of Use**: Review [TMDB API Terms](https://www.themoviedb.org/api-terms-of-use) before deployment.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass: `bundle exec rspec`
-5. Check code style: `bundle exec rubocop -A`
-6. Submit a pull request
+**Important**: This is a non-commercial personal project. For commercial use, you must obtain a commercial agreement with TMDB. Review [TMDB API Terms](https://www.themoviedb.org/api-terms-of-use) before deployment.
 
 ## License
 

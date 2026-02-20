@@ -30,9 +30,9 @@ If you need to deploy locally, try from a different machine/environment where `d
 PASSWORD=$(doppler secrets get KAMAL_REGISTRY_PASSWORD --config prd --plain)
 echo "$PASSWORD" | docker login ghcr.io -u jabawack81 --password-stdin
 
-# Then run kamal commands directly (without make deploy)
-doppler run --config prd -- kamal build push
-doppler run --config prd -- kamal deploy
+# Then run kamal commands directly (secrets fetched by .kamal/secrets Doppler adapter)
+bundle exec kamal build push
+bundle exec kamal deploy
 ```
 
 ## Token Validation

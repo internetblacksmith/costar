@@ -36,7 +36,7 @@ help:
 	@echo "  make redis-start - Start Redis server"
 	@echo "  make redis-stop  - Stop Redis server"
 	@echo ""
-	@echo "🚀 Deployment Commands (Kamal + Doppler):"
+	@echo "🚀 Deployment Commands (Kamal):"
 	@echo "  make deploy          - Deploy to production"
 	@echo "  make deploy-build    - Build and push image only"
 	@echo "  make deploy-logs     - Stream production logs"
@@ -165,7 +165,7 @@ setup-deploy:
 	@echo ""
 	@echo "ℹ️  IMPORTANT: Never set up prd config on developer machines"
 	@echo "ℹ️  Dev machines: Use dev config from .doppler file"
-	@echo "ℹ️  Deployment: Explicitly specifies prd config (--config prd)"
+	@echo "ℹ️  Deployment: .kamal/secrets fetches from Doppler movie_together/prd via adapter"
 
 # Full setup (both dev and deploy)
 setup: setup-dev setup-deploy
@@ -262,73 +262,67 @@ redis-stop:
 	docker compose down
 	@echo "✅ Redis stopped successfully!"
 
-# Deploy to production using Doppler for secrets
-# Checks run inside deploy.sh (not duplicated here)
+# Deploy to production via Kamal (secrets fetched by .kamal/secrets Doppler adapter)
 deploy:
-	@echo "🚀 Deploying to production with Doppler secrets..."
-	@echo "🔐 Using Doppler prd environment..."
+	@echo "🚀 Deploying to production..."
 	@if [ -f "./scripts/deploy.sh" ]; then \
 		chmod +x ./scripts/deploy.sh && ./scripts/deploy.sh; \
 	else \
-		doppler run --project movie_together --config prd --command='bash -c "export KAMAL_REGISTRY_PASSWORD && bundle exec kamal deploy"'; \
+		bundle exec kamal deploy; \
 	fi
 
 # Build and push Docker image only
 deploy-build:
 	@echo "🔨 Building and pushing Docker image..."
-	doppler run --project movie_together --config prd -- bundle exec kamal build push
+	bundle exec kamal build push
 
 # Stream production logs
 deploy-logs:
-	doppler run --project movie_together --config prd -- bundle exec kamal app logs -f
+	bundle exec kamal app logs -f
 
 # Restart production containers
 deploy-restart:
-	doppler run --project movie_together --config prd -- bundle exec kamal app boot
+	bundle exec kamal app boot
 
 # Rollback to previous version
 deploy-rollback:
-	doppler run --project movie_together --config prd -- bundle exec kamal rollback
+	bundle exec kamal rollback
 
 # Stop production containers
 deploy-stop:
-	doppler run --project movie_together --config prd -- bundle exec kamal app stop
+	bundle exec kamal app stop
 
 # Open shell in production container
 deploy-shell:
-	doppler run --project movie_together --config prd -- bundle exec kamal app exec -i bash
+	bundle exec kamal app exec -i bash
 
 # Show deployment status
 deploy-status:
-	doppler run --project movie_together --config prd -- bundle exec kamal details
+	bundle exec kamal details
 
 # Show production environment variables
 deploy-env:
-	doppler run --project movie_together --config prd -- bundle exec kamal app exec env | grep -v PASSWORD | grep -v TOKEN | sort
+	bundle exec kamal app exec env | grep -v PASSWORD | grep -v TOKEN | sort
 
 # Setup Kamal on new server
 deploy-setup:
-	doppler run --project movie_together --config prd -- bundle exec kamal setup
+	bundle exec kamal setup
 
-# Generate .kamal/secrets file for development
+# Generate .kamal/secrets file using Kamal's Doppler adapter
 kamal-secrets-setup:
 	@echo "📝 Generating .kamal/secrets file..."
 	@mkdir -p .kamal
-	@echo "# Kamal secrets file - uses variable substitution with Doppler" > .kamal/secrets
-	@echo "# This file is required by Kamal even when using environment variables" >> .kamal/secrets
-	@echo "# Doppler injects the actual values during deployment (not at runtime)" >> .kamal/secrets
+	@echo "# Fetch secrets from Doppler (movie_together/prd)" > .kamal/secrets
+	@echo 'SECRETS=$$(kamal secrets fetch --adapter doppler --from movie_together/prd KAMAL_REGISTRY_PASSWORD TMDB_API_KEY REDIS_URL SENTRY_DSN SENTRY_ENVIRONMENT SESSION_SECRET POSTHOG_API_KEY)' >> .kamal/secrets
 	@echo "" >> .kamal/secrets
-	@echo "# Deployment secrets (used only during deployment)" >> .kamal/secrets
-	@echo "KAMAL_REGISTRY_PASSWORD=\$$KAMAL_REGISTRY_PASSWORD" >> .kamal/secrets
-	@echo "" >> .kamal/secrets
-	@echo "# Runtime environment variables (passed to container)" >> .kamal/secrets
-	@echo "TMDB_API_KEY=\$$TMDB_API_KEY" >> .kamal/secrets
-	@echo "REDIS_URL=\$$REDIS_URL" >> .kamal/secrets
-	@echo "SENTRY_DSN=\$$SENTRY_DSN" >> .kamal/secrets
-	@echo "SENTRY_ENVIRONMENT=\$$SENTRY_ENVIRONMENT" >> .kamal/secrets
-	@echo "RACK_ENV=production" >> .kamal/secrets
-	@echo "" >> .kamal/secrets
+	@echo 'KAMAL_REGISTRY_PASSWORD=$$(kamal secrets extract KAMAL_REGISTRY_PASSWORD $$SECRETS)' >> .kamal/secrets
+	@echo 'TMDB_API_KEY=$$(kamal secrets extract TMDB_API_KEY $$SECRETS)' >> .kamal/secrets
+	@echo 'REDIS_URL=$$(kamal secrets extract REDIS_URL $$SECRETS)' >> .kamal/secrets
+	@echo 'SENTRY_DSN=$$(kamal secrets extract SENTRY_DSN $$SECRETS)' >> .kamal/secrets
+	@echo 'SENTRY_ENVIRONMENT=$$(kamal secrets extract SENTRY_ENVIRONMENT $$SECRETS)' >> .kamal/secrets
+	@echo 'SESSION_SECRET=$$(kamal secrets extract SESSION_SECRET $$SECRETS)' >> .kamal/secrets
+	@echo 'POSTHOG_API_KEY=$$(kamal secrets extract POSTHOG_API_KEY $$SECRETS)' >> .kamal/secrets
 	@echo "✅ .kamal/secrets file created successfully"
 	@echo ""
-	@echo "⚠️  This file uses variable substitution (\$$VAR_NAME) so Doppler can inject the actual secrets."
-	@echo "   Make sure you have all required secrets configured in Doppler prd config."
+	@echo "ℹ️  This file uses Kamal's Doppler adapter to fetch secrets directly."
+	@echo "   No doppler run wrapper needed — just run 'make deploy'."

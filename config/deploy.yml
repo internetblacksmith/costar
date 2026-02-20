@@ -4,7 +4,12 @@ service: costar
 # Docker image (GitHub Container Registry - free private images)
 image: jabawack81/costar
 
-# Server configuration (SSH user/port configured in ~/.ssh/config via host alias)
+# SSH configuration (matches host alias in ~/.ssh/config)
+ssh:
+  user: deploy
+  port: 1447
+
+# Server configuration
 servers:
   web:
     hosts:
@@ -31,7 +36,8 @@ servers:
 registry:
   server: ghcr.io
   username: jabawack81
-  password: $KAMAL_REGISTRY_PASSWORD
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
 # Builder configuration
 builder:

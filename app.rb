@@ -40,7 +40,7 @@ require_relative "lib/controllers/health_controller"
 require_relative "lib/controllers/api_controller"
 require_relative "lib/controllers/error_handler"
 
-class ScreenThreadApp < Sinatra::Base
+class CoStarApp < Sinatra::Base
   register Sinatra::Namespace
   include HealthController
   include APIController
@@ -291,4 +291,4 @@ class ScreenThreadApp < Sinatra::Base
 end
 
 # Run the app when executed directly
-ScreenThreadApp.run! if __FILE__ == $PROGRAM_NAME
+CoStarApp.run! if __FILE__ == $PROGRAM_NAME

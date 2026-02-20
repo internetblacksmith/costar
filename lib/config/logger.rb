@@ -82,7 +82,7 @@ class StructuredLogger
         timestamp: Time.now.iso8601,
         level: level.to_s.upcase,
         message: message,
-        app: "actorsync",
+        app: "costar",
         environment: ENV.fetch("RACK_ENV", "development")
       }
 

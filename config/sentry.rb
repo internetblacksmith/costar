@@ -24,7 +24,7 @@ if sentry_enabled
     config.release = ENV.fetch("APP_VERSION", "unknown")
 
     # Server name
-    config.server_name = ENV.fetch("RENDER_SERVICE_NAME", "screenthread")
+    config.server_name = ENV.fetch("RENDER_SERVICE_NAME", "costar")
 
     # Sample rate for performance monitoring (0.0 to 1.0)
     config.traces_sample_rate = ENV.fetch("SENTRY_TRACES_SAMPLE_RATE", "0.1").to_f
@@ -54,7 +54,7 @@ if sentry_enabled
 
   # Tags to add to all events (set after initialization)
   Sentry.set_tags(
-    app: "screenthread",
+    app: "costar",
     component: "backend"
   )
 end

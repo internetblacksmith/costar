@@ -1,6 +1,6 @@
-# Sentry Setup Guide for ActorSync
+# Sentry Setup Guide for CoStar
 
-This guide walks you through setting up Sentry error tracking for your ActorSync application.
+This guide walks you through setting up Sentry error tracking for your CoStar application.
 
 ## 🎯 Why Sentry?
 
@@ -18,7 +18,7 @@ This guide walks you through setting up Sentry error tracking for your ActorSync
 2. Create a new project:
    - Platform: **Ruby**
    - Framework: **Sinatra**
-   - Project name: `actorsync` (or your preferred name)
+   - Project name: `costar` (or your preferred name)
 
 ### 2. Get Your DSN
 
@@ -110,7 +110,7 @@ Sentry will track which errors occur in which releases.
 ### Free Tier Limits
 - **5,000 errors/month** - plenty for most applications
 - **1 user** - upgrade when you need team access
-- **1 project** - sufficient for ActorSync
+- **1 project** - sufficient for CoStar
 
 ### When to Upgrade
 Consider upgrading to **Team plan ($26/month)** when:

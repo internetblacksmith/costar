@@ -1,8 +1,8 @@
-# ScreenThread Kamal Deployment Configuration
-service: screen-thread
+# CoStar Kamal Deployment Configuration
+service: costar
 
 # Docker image (GitHub Container Registry - free private images)
-image: ghcr.io/jabawack81/screen_thread
+image: jabawack81/costar
 
 # Server configuration (SSH user/port configured in ~/.ssh/config via host alias)
 servers:
@@ -63,4 +63,4 @@ accessories:
 
 # Persistent volumes for application data
 volumes:
-  - screenthread-data:/app/data
+  - costar-data:/app/data

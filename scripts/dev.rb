@@ -15,7 +15,7 @@ class DevServer
   end
 
   def start
-    puts "🎬 ActorSync Development Server"
+    puts "🎬 CoStar Development Server"
     puts "================================\n"
 
     check_project_directory
@@ -30,7 +30,7 @@ class DevServer
 
   def check_project_directory
     unless File.exist?(File.join(@project_root, "app.rb"))
-      puts "❌ Error: Not in ActorSync project directory"
+      puts "❌ Error: Not in CoStar project directory"
       puts "   Expected to find app.rb in #{@project_root}"
       exit(1)
     end

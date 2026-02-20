@@ -1,4 +1,4 @@
-# movie_together Deployment Secrets Configuration
+# CoStar Deployment Secrets Configuration
 
 ## Overview
 
@@ -162,7 +162,7 @@ git push origin main
 # - SSH to VPS and check containers
 ssh -p 1447 deploy@161.35.165.206
 docker ps | grep movie
-docker logs movie-together-web
+docker logs costar-web
 ```
 
 ## Troubleshooting

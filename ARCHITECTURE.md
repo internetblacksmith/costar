@@ -1,10 +1,10 @@
-# ActorSync Architecture Documentation
+# CoStar Architecture Documentation
 
-This document provides a comprehensive overview of ActorSync's production-ready architecture, design patterns, and implementation details.
+This document provides a comprehensive overview of CoStar's production-ready architecture, design patterns, and implementation details.
 
 ## 🏗️ System Architecture Overview
 
-ActorSync is built with a resilient, layered architecture that emphasizes security, performance, and maintainability:
+CoStar is built with a resilient, layered architecture that emphasizes security, performance, and maintainability:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -88,7 +88,7 @@ ActorSync is built with a resilient, layered architecture that emphasizes securi
 
 #### CSS Architecture & Design System
 
-ActorSync features a comprehensive CSS architecture built on modern principles and methodologies for scalability, maintainability, and performance.
+CoStar features a comprehensive CSS architecture built on modern principles and methodologies for scalability, maintainability, and performance.
 
 ```
 CSS Architecture Structure:
@@ -855,7 +855,7 @@ end
 # render.yaml
 services:
   - type: web
-    name: actorsync
+    name: costar
     env: ruby
     envVars:
       - key: RACK_ENV
@@ -863,7 +863,7 @@ services:
       - key: REDIS_URL
         fromService:
           type: redis
-          name: actorsync-redis
+          name: costar-redis
           property: connectionString
 ```
 

@@ -1,7 +1,7 @@
 # Actor Reselection Bug - Fix Complete ✅
 
 ## Overview
-Successfully identified, fixed, and tested the actor reselection bug in MovieTogether where the timeline would display stale data when users changed actors mid-comparison.
+Successfully identified, fixed, and tested the actor reselection bug in CoStar where the timeline would display stale data when users changed actors mid-comparison.
 
 ## Problem Statement
 When users:
@@ -107,7 +107,7 @@ The `hx-cache="false"` attribute ensures each comparison request is fresh, preve
 
 ## Verification Steps
 To verify the fix is working:
-1. Navigate to the MovieTogether home page
+1. Navigate to the CoStar home page
 2. Open browser DevTools
 3. Inspect the Compare button element
 4. Verify it has `hx-cache="false"` attribute

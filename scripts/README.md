@@ -1,6 +1,6 @@
-# ActorSync Environment Validation Scripts
+# CoStar Environment Validation Scripts
 
-This directory contains comprehensive environment validation tools for the ActorSync application.
+This directory contains comprehensive environment validation tools for the CoStar application.
 
 ## Scripts Overview
 

@@ -2,13 +2,13 @@
 
 **To:** data-partner@justwatch.com
 
-**Subject:** Logo Usage Guidelines Request - ScreenThread Project
+**Subject:** Logo Usage Guidelines Request - CoStar Project
 
 ---
 
 Dear JustWatch Team,
 
-I am the developer of **ScreenThread**, a web application that helps users discover the connections between actors and movies. The app finds films where two selected actors have appeared together, and can also find common actors between two movies.
+I am the developer of **CoStar**, a web application that helps users discover the connections between actors and movies. The app finds films where two selected actors have appeared together, and can also find common actors between two movies.
 
 ## How we currently integrate with JustWatch
 

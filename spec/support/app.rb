@@ -2,7 +2,7 @@
 
 # App definition for Rack::Test
 def app
-  ScreenThreadApp
+  CoStarApp
 end
 
 # Helper methods for testing

@@ -5,7 +5,7 @@ require "json"
 require "open3"
 require "shellwords"
 
-# Comprehensive Doppler Environment Validation Script for ActorSync
+# Comprehensive Doppler Environment Validation Script for CoStar
 # Checks all Doppler configurations and provides detailed analysis
 
 class DopplerEnvironmentChecker
@@ -144,7 +144,7 @@ class DopplerEnvironmentChecker
   end
 
   def check_all_environments
-    puts "🔍 Doppler ActorSync Environment Validation"
+    puts "🔍 Doppler CoStar Environment Validation"
     puts "=" * 60
     puts
 

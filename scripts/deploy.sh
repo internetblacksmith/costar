@@ -1,7 +1,7 @@
 #!/bin/bash
 # frozen_string_literal: true
 
-# Kamal Deployment Script for movie_together
+# Kamal Deployment Script for CoStar
 # Usage: ./scripts/deploy.sh [--staging]
 
 set -e
@@ -190,10 +190,10 @@ chmod 600 ~/.docker/config.json
 
 # Build and push Docker image locally (avoids Docker CLI auth issues with Kamal)
 echo -e "${BLUE}🔨 Building Docker image...${NC}"
-doppler run --config "$DOPPLER_CONFIG" -- docker build -t ghcr.io/jabawack81/movie_together:latest .
+doppler run --config "$DOPPLER_CONFIG" -- docker build -t ghcr.io/jabawack81/costar:latest .
 
 echo -e "${BLUE}📤 Pushing Docker image to registry...${NC}"
-docker image push ghcr.io/jabawack81/movie_together:latest
+docker image push ghcr.io/jabawack81/costar:latest
 
 # Deploy the application with Kamal using Doppler to inject secrets
 echo -e "${BLUE}🚀 Deploying with Kamal...${NC}"

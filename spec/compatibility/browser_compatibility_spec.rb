@@ -21,7 +21,7 @@ RSpec.describe "Browser Compatibility", type: :feature, js: true do
       visit "/"
 
       # Page should still load and show basic content
-      expect(page).to have_content("ScreenThread")
+      expect(page).to have_content("CoStar")
       expect(page).to have_css("input#actor1")
       expect(page).to have_css("input#actor2")
     end

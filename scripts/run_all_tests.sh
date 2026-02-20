@@ -2,7 +2,7 @@
 
 # Run all test suites and generate a summary report
 
-echo "🧪 MovieTogether Comprehensive Test Suite"
+echo "🧪 CoStar Comprehensive Test Suite"
 echo "========================================"
 echo ""
 

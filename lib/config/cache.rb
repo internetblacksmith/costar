@@ -154,7 +154,7 @@ class Cache
     end
 
     def cache_prefix
-      ENV.fetch("CACHE_PREFIX", "actorsync")
+      ENV.fetch("CACHE_PREFIX", "costar")
     end
   end
 

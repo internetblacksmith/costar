@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# Docker entrypoint for MovieTogether
+# Docker entrypoint for CoStar
 # Secrets are injected as environment variables by Kamal at container startup
 # No runtime secret fetching needed
 

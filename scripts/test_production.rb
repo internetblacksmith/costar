@@ -7,7 +7,7 @@ require "uri"
 require "time"
 require "optparse"
 
-# Production test script for MovieTogether
+# Production test script for CoStar
 # Tests all API endpoints and verifies deployment success
 class ProductionTester
   DEFAULT_TIMEOUT = 10
@@ -23,7 +23,7 @@ class ProductionTester
   end
 
   def run
-    puts "🎬 MovieTogether Production Test Suite"
+    puts "🎬 CoStar Production Test Suite"
     puts "=" * 50
     puts "Target: #{@base_url}"
     puts "Timeout: #{@timeout}s per request"
@@ -119,7 +119,7 @@ class ProductionTester
       path: "/",
       expected_status: 200,
       validate: lambda { |body|
-        body.include?("MovieTogether") &&
+        body.include?("CoStar") &&
         body.include?("search-form") &&
         body.include?("actor1")
       }

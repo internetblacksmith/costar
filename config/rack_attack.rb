@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Rack::Attack configuration for ActorSync
+# Rack::Attack configuration for CoStar
 # Rate limiting and security rules
 
 require "rack/attack"

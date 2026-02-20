@@ -41,6 +41,7 @@ gem "uri", "1.1.1" # URI parsing
 group :development do
   gem "brakeman", "8.0.2" # Security scanner
   gem "bundle-audit", "0.2.0" # Dependency security scanner
+  gem "kamal", "2.10.1" # Deployment tool
   gem "listen", "3.10.0" # File watching for auto-restart
   gem "pry", "0.16.0" # Interactive debugger
   gem "rubocop", "1.84.2" # Code style and linting

@@ -48,22 +48,11 @@ done
 
 echo -e "${BLUE}🚀 Starting Kamal deployment for ${ENVIRONMENT} environment${NC}"
 
-# Kamal is installed under Ruby 3.4.x, not the project Ruby version
-# Find the Ruby version that has kamal installed
-KAMAL_RUBY=""
-for v in 3.4.8 3.4.4 3.4.2; do
-    if RBENV_VERSION="$v" rbenv which kamal &> /dev/null; then
-        KAMAL_RUBY="$v"
-        break
-    fi
-done
-
-if [ -z "$KAMAL_RUBY" ]; then
-    echo -e "${RED}❌ Kamal is not installed in any Ruby 3.4.x version.${NC}"
-    echo "Install with: RBENV_VERSION=3.4.8 gem install kamal"
+# Check if kamal is installed (should be in Gemfile dev group)
+if ! bundle exec kamal version &> /dev/null; then
+    echo -e "${RED}❌ Kamal is not installed. Run: bundle install${NC}"
     exit 1
 fi
-echo -e "${GREEN}✅ Kamal found in Ruby ${KAMAL_RUBY}${NC}"
 
 # Check if we're in the right directory
 if [[ ! -f "config/deploy.yml" ]]; then
@@ -208,13 +197,13 @@ docker image push ghcr.io/jabawack81/movie_together:latest
 
 # Deploy the application with Kamal using Doppler to inject secrets
 echo -e "${BLUE}🚀 Deploying with Kamal...${NC}"
-RBENV_VERSION="$KAMAL_RUBY" doppler run --config "$DOPPLER_CONFIG" -- kamal app boot
+doppler run --config "$DOPPLER_CONFIG" -- bundle exec kamal app boot
 
 # Note: cleanup happens automatically via trap on EXIT
 
 # Check deployment status
 echo -e "${BLUE}📊 Checking deployment status...${NC}"
-RBENV_VERSION="$KAMAL_RUBY" kamal app details
+bundle exec kamal app details
 
 echo
 echo -e "${GREEN}🎉 Deployment complete!${NC}"

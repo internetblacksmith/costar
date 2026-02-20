@@ -270,45 +270,45 @@ deploy:
 	@if [ -f "./scripts/deploy.sh" ]; then \
 		chmod +x ./scripts/deploy.sh && ./scripts/deploy.sh; \
 	else \
-		doppler run --project movie_together --config prd --command='bash -c "export KAMAL_REGISTRY_PASSWORD && kamal deploy"'; \
+		doppler run --project movie_together --config prd --command='bash -c "export KAMAL_REGISTRY_PASSWORD && bundle exec kamal deploy"'; \
 	fi
 
 # Build and push Docker image only
 deploy-build:
 	@echo "🔨 Building and pushing Docker image..."
-	doppler run --project movie_together --config prd -- kamal build push
+	doppler run --project movie_together --config prd -- bundle exec kamal build push
 
 # Stream production logs
 deploy-logs:
-	doppler run --project movie_together --config prd -- kamal app logs -f
+	doppler run --project movie_together --config prd -- bundle exec kamal app logs -f
 
 # Restart production containers
 deploy-restart:
-	doppler run --project movie_together --config prd -- kamal app boot
+	doppler run --project movie_together --config prd -- bundle exec kamal app boot
 
 # Rollback to previous version
 deploy-rollback:
-	doppler run --project movie_together --config prd -- kamal rollback
+	doppler run --project movie_together --config prd -- bundle exec kamal rollback
 
 # Stop production containers
 deploy-stop:
-	doppler run --project movie_together --config prd -- kamal app stop
+	doppler run --project movie_together --config prd -- bundle exec kamal app stop
 
 # Open shell in production container
 deploy-shell:
-	doppler run --project movie_together --config prd -- kamal app exec -i bash
+	doppler run --project movie_together --config prd -- bundle exec kamal app exec -i bash
 
 # Show deployment status
 deploy-status:
-	doppler run --project movie_together --config prd -- kamal details
+	doppler run --project movie_together --config prd -- bundle exec kamal details
 
 # Show production environment variables
 deploy-env:
-	doppler run --project movie_together --config prd -- kamal app exec env | grep -v PASSWORD | grep -v TOKEN | sort
+	doppler run --project movie_together --config prd -- bundle exec kamal app exec env | grep -v PASSWORD | grep -v TOKEN | sort
 
 # Setup Kamal on new server
 deploy-setup:
-	doppler run --project movie_together --config prd -- kamal setup
+	doppler run --project movie_together --config prd -- bundle exec kamal setup
 
 # Generate .kamal/secrets file for development
 kamal-secrets-setup:

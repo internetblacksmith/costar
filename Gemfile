@@ -22,7 +22,7 @@ gem "dotenv", "3.2.0" # Environment variable loading (fallback)
 gem "json", "2.18.0" # JSON parsing
 gem "logger", "1.7.0" # Logging
 gem "net-http", "0.9.1" # HTTP client
-gem "nokogiri", "1.19.0" # XML parsing
+gem "nokogiri", "1.19.1" # XML parsing
 gem "ostruct", "0.6.3" # OpenStruct
 gem "puma", "7.1.0" # Web server
 gem "rack", "3.2.4" # Web server framework

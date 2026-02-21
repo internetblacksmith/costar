@@ -32,10 +32,9 @@ Thumbs.db
 # Logs
 *.log
 
-# Kamal deployment secrets and configuration
+# Kamal deployment configuration
 .kamal/
-.kamal/**/*
-# Allow secrets.example to be committed as documentation
+!.kamal/secrets
 !.kamal/secrets.example
 
 # VCR cassettes - we commit these but VCR filters sensitive data

@@ -35,7 +35,7 @@ gem "rexml", "3.4.4" # XML parsing
 gem "sentry-ruby", "6.3.1" # Error tracking and monitoring
 gem "sinatra", "4.2.1" # Web framework
 gem "sinatra-contrib", "4.2.1" # Sinatra extensions
-gem "thor", "1.4.0" # CLI framework
+gem "thor", "1.5.0" # CLI framework
 gem "uri", "1.1.1" # URI parsing
 
 group :development do
@@ -58,7 +58,7 @@ group :test do
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
-  gem "selenium-webdriver", "4.40.0" # Selenium WebDriver for browser testing
+  gem "selenium-webdriver", "4.41.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.4.0" # Record and replay HTTP interactions
   gem "webmock", "3.26.1" # HTTP request stubbing

@@ -263,7 +263,17 @@ redis-stop:
 	@echo "✅ Redis stopped successfully!"
 
 # Deploy to production via Kamal (secrets fetched by .kamal/secrets Doppler adapter)
+HEALTH_URL := https://costar.internetblacksmith.dev/health/simple
 deploy:
+	@LOCAL=$$(git rev-parse HEAD 2>/dev/null); \
+	DEPLOYED=$$(curl -sf --max-time 10 $(HEALTH_URL) 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true); \
+	if [ "$$DEPLOYED" = "$$LOCAL" ]; then \
+		echo "✅ Already deployed ($${LOCAL:0:7}), skipping."; \
+		exit 0; \
+	fi; \
+	if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then \
+		echo "⚠️  Uncommitted changes detected (Kamal deploys only committed code)"; \
+	fi
 	@echo "🚀 Deploying to production..."
 	@if [ -f "./scripts/deploy.sh" ]; then \
 		chmod +x ./scripts/deploy.sh && ./scripts/deploy.sh; \

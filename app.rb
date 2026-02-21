@@ -153,7 +153,7 @@ class CoStarApp < Sinatra::Base
     content_type :json
     {
       status: "ok",
-      git_sha: ENV.fetch("RENDER_GIT_COMMIT", `git rev-parse --short HEAD 2>/dev/null`.strip) || "unknown"
+      version: ENV.fetch("KAMAL_VERSION", "unknown")
     }.to_json
   end
 

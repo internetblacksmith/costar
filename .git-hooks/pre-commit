@@ -1,5 +1,5 @@
 #!/bin/bash
-# Git pre-commit hook for movie_together
+# Git pre-commit hook for costar
 # Automatically runs linting, tests, and security checks before allowing commits
 # This ensures code quality and prevents broken code from being committed
 

@@ -43,7 +43,7 @@ $DOCKER_COMPOSE_CMD up -d redis-test
 echo -e "${YELLOW}⏳ Waiting for Redis to be ready...${NC}"
 timeout=30
 while [ $timeout -gt 0 ]; do
-    if docker exec movie_together_redis_test redis-cli ping &> /dev/null; then
+    if docker exec costar_redis_test redis-cli ping &> /dev/null; then
         echo -e "${GREEN}✅ Redis is ready!${NC}"
         break
     fi

@@ -45,7 +45,7 @@ class EnvironmentChecker
     "ALLOWED_ORIGINS" => {
       description: "Comma-separated list of allowed CORS origins",
       required: false,
-      validation: ->(value) { value.include?("frenimies-lab.dev") || value.include?("localhost") }
+      validation: ->(value) { value.include?("internetblacksmith.dev") || value.include?("localhost") }
     }
   }.freeze
 
@@ -196,7 +196,7 @@ class EnvironmentChecker
 
     if @errors.any? { |e| e.include?("ALLOWE_ORIGIN") }
       puts "2. Fix ALLOWED_ORIGINS typo in Doppler:"
-      puts "   doppler secrets set ALLOWED_ORIGINS=as.frenimies-lab.dev --config prd"
+      puts "   doppler secrets set ALLOWED_ORIGINS=costar.internetblacksmith.dev --config prd"
       puts "   doppler secrets delete ALLOWE_ORIGIN --config prd"
       puts
     end

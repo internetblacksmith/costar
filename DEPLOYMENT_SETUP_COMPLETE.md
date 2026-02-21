@@ -1,4 +1,4 @@
-# ✅ GitHub Actions Deployment Setup - Complete
+# GitHub Actions Deployment Setup - Complete
 
 ## Summary
 
@@ -6,54 +6,52 @@ Successfully fixed and configured GitHub Actions deployment with Doppler integra
 
 ## What Was Accomplished
 
-1. ✅ **Fixed GitHub Actions deployment workflow**
+1. **Fixed GitHub Actions deployment workflow**
    - Added SSH config for `digitalocean` host resolution
    - Created `.kamal/secrets` file generation from Doppler
    - Fixed Docker login authentication issue
 
-2. ✅ **Integrated Doppler for automatic secret injection**
+2. **Integrated Doppler for automatic secret injection**
    - Installed Doppler CLI in workflow
    - Configured automatic secret fetching from Doppler
    - Eliminated need for manual secret sync
 
-3. ✅ **Validated all Doppler secrets** (9/9 configured correctly)
-   - KAMAL_REGISTRY_PASSWORD ✅ (40 chars)
-   - TMDB_API_KEY ✅ (32 chars)
-   - REDIS_URL ✅ (35 chars) - Fixed to `redis://costar-redis:6380/0`
-   - SENTRY_DSN ✅ (85 chars)
-   - SENTRY_ENVIRONMENT ✅ (10 chars)
-   - SESSION_SECRET ✅ (64 chars)
-   - POSTHOG_API_KEY ✅ (47 chars)
-   - DEPLOY_SSH_PRIVATE_KEY ✅ (386 chars)
-   - SLACK_WEBHOOK_URL ✅ (81 chars)
+3. **Validated all Doppler secrets** (9/9 configured correctly)
+   - KAMAL_REGISTRY_PASSWORD (40 chars)
+   - TMDB_API_KEY (32 chars)
+   - REDIS_URL (35 chars) - Fixed to `redis://costar-redis:6380/0`
+   - SENTRY_DSN (85 chars)
+   - SENTRY_ENVIRONMENT (10 chars)
+   - SESSION_SECRET (64 chars)
+   - POSTHOG_API_KEY (47 chars)
+   - DEPLOY_SSH_PRIVATE_KEY (386 chars)
+   - SLACK_WEBHOOK_URL (81 chars)
 
-4. ✅ **Created comprehensive documentation**
+4. **Created comprehensive documentation**
    - `DOPPLER_GITHUB_ACTIONS_SETUP.md` - Complete setup guide
    - Updated `.kamal/secrets.example` with correct values
 
 ## Commits Pushed
 
-### movie_together Repository
+### costar Repository
 - `97aa75f` - fix: GitHub Actions deployment with proper Kamal secrets injection
 - `068819b` - feat: integrate Doppler for automatic secret injection in GitHub Actions
 - `9a52e8a` - docs: add Doppler GitHub Actions integration guide
 
 ### vps-config Repository
-- `089356a` - chore: update movie_together submodule with GitHub Actions deployment fixes
-- `e31843c` - chore: update movie_together with Doppler GitHub Actions integration
+- `089356a` - chore: update costar submodule with GitHub Actions deployment fixes
+- `e31843c` - chore: update costar with Doppler GitHub Actions integration
 
 ## Required GitHub Secrets (Only 2!)
 
 ### 1. DOPPLER_TOKEN
 **Purpose**: Service token that allows GitHub Actions to fetch all secrets from Doppler
 
-**Value**: `dp.st.prd.TyLOTQGn6V9MPDbUACVsndcPa32XutHnAC2mZSav0xO`
-
 **How to Add**:
-1. Go to: https://github.com/jabawack81/movie_together/settings/secrets/actions
+1. Go to: https://github.com/internetblacksmith/costar/settings/secrets/actions
 2. Click "New repository secret"
 3. Name: `DOPPLER_TOKEN`
-4. Value: Paste the token above
+4. Value: Paste your Doppler service token
 5. Click "Add secret"
 
 ### 2. DEPLOY_SSH_PRIVATE_KEY
@@ -61,7 +59,7 @@ Successfully fixed and configured GitHub Actions deployment with Doppler integra
 
 **Get value**:
 ```bash
-doppler secrets get DEPLOY_SSH_PRIVATE_KEY --project movie_together --config prd --plain
+doppler secrets get DEPLOY_SSH_PRIVATE_KEY --project costar --config prd --plain
 ```
 
 Then add to GitHub secrets with name `DEPLOY_SSH_PRIVATE_KEY`
@@ -74,43 +72,43 @@ Then add to GitHub secrets with name `DEPLOY_SSH_PRIVATE_KEY`
 
 2. **Trigger Deployment**
    - Push to main branch, OR
-   - Manual trigger: https://github.com/jabawack81/movie_together/actions
+   - Manual trigger: https://github.com/internetblacksmith/costar/actions
 
 3. **Monitor Deployment**
-   - Watch progress: https://github.com/jabawack81/movie_together/actions
+   - Watch progress: https://github.com/internetblacksmith/costar/actions
 
 4. **Verify Deployment**
-   - Check app: https://as.frenimies-lab.dev
+   - Check app: https://costar.internetblacksmith.dev
 
 ## How It Works
 
 ```
 Push to main
-  ↓
+  |
 GitHub Actions triggered
-  ↓
+  |
 Install Ruby + Kamal + Doppler CLI
-  ↓
+  |
 Setup SSH config (digitalocean host)
-  ↓
+  |
 Fetch ALL secrets from Doppler (using DOPPLER_TOKEN)
-  ↓
+  |
 Create .kamal/secrets file
-  ↓
+  |
 Run: doppler run -- kamal deploy
-  ↓
+  |
 Deploy to VPS (161.35.165.206:1447)
-  ↓
-App running at: https://as.frenimies-lab.dev
+  |
+App running at: https://costar.internetblacksmith.dev
 ```
 
 ## Benefits
 
-- ✅ **Single source of truth**: All secrets in Doppler
-- ✅ **Automatic sync**: No manual secret copying to GitHub
-- ✅ **Easy rotation**: Update once in Doppler, applies everywhere
-- ✅ **Audit trail**: Doppler logs all secret changes
-- ✅ **Reduced attack surface**: Only 2 secrets in GitHub vs 9+
+- **Single source of truth**: All secrets in Doppler
+- **Automatic sync**: No manual secret copying to GitHub
+- **Easy rotation**: Update once in Doppler, applies everywhere
+- **Audit trail**: Doppler logs all secret changes
+- **Reduced attack surface**: Only 2 secrets in GitHub vs 9+
 
 ## Documentation
 
@@ -135,16 +133,16 @@ docker stderr: Error response from daemon: Get "https://ghcr.io/v2/": denied: de
 1. Created `.kamal/secrets` file generation step in workflow
 2. Added SSH config defining `digitalocean` host
 3. Added POSTHOG_API_KEY to deploy.yml env secrets
-4. Updated REDIS_URL to `redis://movie-together-redis:6380/0`
+4. Updated REDIS_URL to `redis://costar-redis:6380/0`
 5. Integrated Doppler for automatic secret injection
 
 ## Status
 
-- ✅ All code changes committed and pushed
-- ✅ All Doppler secrets validated
-- ✅ Documentation complete
-- ⏳ GitHub secrets need to be added (DOPPLER_TOKEN + DEPLOY_SSH_PRIVATE_KEY)
-- ⏳ Ready for deployment test
+- All code changes committed and pushed
+- All Doppler secrets validated
+- Documentation complete
+- GitHub secrets need to be added (DOPPLER_TOKEN + DEPLOY_SSH_PRIVATE_KEY)
+- Ready for deployment test
 
 ---
 

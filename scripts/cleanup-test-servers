@@ -20,8 +20,8 @@ if lsof -ti:4567 >/dev/null 2>&1; then
   lsof -ti:4567 | xargs kill -9 2>/dev/null || true
 fi
 
-# Kill any remaining puma processes with movie_together in the name
-pkill -f "puma.*movie_together" 2>/dev/null || true
+# Kill any remaining puma processes with costar in the name
+pkill -f "puma.*costar" 2>/dev/null || true
 
 # Kill any Ruby processes running app.rb or related to testing
 pkill -f "ruby.*app\.rb" 2>/dev/null || true

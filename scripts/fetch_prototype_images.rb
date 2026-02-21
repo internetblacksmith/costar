@@ -4,14 +4,14 @@
 # Fetches real TMDB image URLs for prototype templates and replaces all
 # placehold.co placeholders with real images.
 #
-# Usage: doppler run --project movie_together --config dev -- ruby scripts/fetch_prototype_images.rb
+# Usage: doppler run --project costar --config dev -- ruby scripts/fetch_prototype_images.rb
 
 require "net/http"
 require "json"
 require "uri"
 
 TMDB_API_KEY = ENV.fetch("TMDB_API_KEY") do
-  abort "TMDB_API_KEY not set. Run with: doppler run --project movie_together --config dev -- ruby #{$PROGRAM_NAME}"
+  abort "TMDB_API_KEY not set. Run with: doppler run --project costar --config dev -- ruby #{$PROGRAM_NAME}"
 end
 TMDB_BASE = "https://api.themoviedb.org/3"
 IMG_BASE = "https://image.tmdb.org/t/p"

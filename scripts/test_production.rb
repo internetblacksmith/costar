@@ -323,7 +323,7 @@ if __FILE__ == $PROGRAM_NAME
     end
   end.parse!
 
-  url = ARGV[0] || ENV["PRODUCTION_URL"] || "https://as.frenimies-lab.dev"
+  url = ARGV[0] || ENV["PRODUCTION_URL"] || "https://costar.internetblacksmith.dev"
 
   tester = ProductionTester.new(url, options)
   exit tester.run

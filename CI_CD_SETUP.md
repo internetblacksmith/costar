@@ -38,7 +38,7 @@ Generate an ED25519 key on your local machine:
 
 ```bash
 # Generate new SSH key
-ssh-keygen -t ed25519 -f ~/.ssh/vps_deploy_key -C "github-actions@movie-together"
+ssh-keygen -t ed25519 -f ~/.ssh/vps_deploy_key -C "github-actions@costar"
 # Press Enter twice (no passphrase)
 
 # Get private key
@@ -176,7 +176,7 @@ The repository should have these workflow files:
 Check deployment workflow:
 
 ```bash
-cd /home/jabawack81/projects/vps-config/movie_together
+cd /home/paolo/projects/vps-config/costar
 cat .github/workflows/deploy.yml | head -20
 ```
 
@@ -267,13 +267,13 @@ ssh -i ~/.ssh/vps_deploy_key -p 1447 deploy@161.35.165.206 "whoami"
 ### Test 3: Local Docker Build
 
 ```bash
-cd /home/jabawack81/projects/vps-config/movie_together
+cd /home/paolo/projects/vps-config/costar
 
 # Build image
-docker build -t movie-together:test .
+docker build -t costar:test .
 
 # Run tests in container
-docker run -e RACK_ENV=test movie-together:test bundle exec rspec
+docker run -e RACK_ENV=test costar:test bundle exec rspec
 ```
 
 ## Troubleshooting
@@ -311,7 +311,7 @@ doppler token create github-actions
 cat Dockerfile | head -20
 
 # Build locally to test
-docker build -t movie-together:test .
+docker build -t costar:test .
 ```
 
 **Common causes:**
@@ -338,7 +338,7 @@ docker build -t movie-together:test .
 ssh -p 1447 deploy@161.35.165.206
 
 # Check container status
-docker ps | grep movie
+docker ps | grep costar
 
 # View logs
 docker logs <container-id>
@@ -459,7 +459,7 @@ kamal app details
 # Or SSH to VPS
 ssh -p 1447 deploy@161.35.165.206
 docker ps
-docker logs movie-together
+docker logs costar
 ```
 
 ### View Production Logs
@@ -470,7 +470,7 @@ kamal app logs
 
 # Or with SSH
 ssh -p 1447 deploy@161.35.165.206
-docker logs -f $(docker ps | grep movie | awk '{print $1}')
+docker logs -f $(docker ps | grep costar | awk '{print $1}')
 ```
 
 ### Sentry Error Monitoring
@@ -528,13 +528,13 @@ kamal app logs
 
 ```bash
 # Build Docker image
-docker build -t movie-together:test .
+docker build -t costar:test .
 
 # Run container
 docker run -p 4567:4567 \
   -e RACK_ENV=production \
   -e TMDB_API_KEY=test_key \
-  movie-together:test
+  costar:test
 
 # Test in another terminal
 curl http://localhost:4567

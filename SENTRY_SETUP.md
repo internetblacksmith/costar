@@ -60,7 +60,7 @@ After adding the `SENTRY_DSN` to Doppler:
 
 1. **Deploy to Render** - Doppler will sync the environment variable automatically
 2. **Test error tracking**:
-   - Visit: `https://movie-together.onrender.com/api/actors/search?q=nonexistent`
+   - Visit: `https://costar.internetblacksmith.dev/api/actors/search?q=nonexistent`
    - Check your Sentry dashboard for captured errors
 3. **Monitor your dashboard** at [sentry.io](https://sentry.io)
 

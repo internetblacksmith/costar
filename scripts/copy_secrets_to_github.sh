@@ -4,14 +4,14 @@
 
 set -e
 
-PROJECT="movie_together"
+PROJECT="costar"
 CONFIG="prd"
 
 echo "========================================"
 echo "GitHub Secrets Configuration Helper"
 echo "========================================"
 echo ""
-echo "Navigate to: https://github.com/jabawack81/movie_together/settings/secrets/actions"
+echo "Navigate to: https://github.com/internetblacksmith/costar/settings/secrets/actions"
 echo "Click 'New repository secret' for each of these:"
 echo ""
 echo "----------------------------------------"
@@ -57,12 +57,12 @@ echo "========================================"
 echo "GitHub Variables Configuration"
 echo "========================================"
 echo ""
-echo "Navigate to: https://github.com/jabawack81/movie_together/settings/variables/actions"
+echo "Navigate to: https://github.com/internetblacksmith/costar/settings/variables/actions"
 echo "Click 'New repository variable' for each:"
 echo ""
 
 echo "📝 Variable: REDIS_URL"
-echo "   Value: redis://movie-together-redis:6380/0"
+echo "   Value: redis://costar-redis:6380/0"
 echo ""
 
 echo "📝 Variable: SENTRY_ENVIRONMENT"
@@ -74,4 +74,4 @@ echo "Setup Complete!"
 echo "========================================"
 echo ""
 echo "Next: Trigger deployment by pushing to main or manually at:"
-echo "https://github.com/jabawack81/movie_together/actions"
+echo "https://github.com/internetblacksmith/costar/actions"

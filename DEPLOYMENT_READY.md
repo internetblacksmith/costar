@@ -90,7 +90,7 @@ All critical vulnerabilities patched:
 
 ```bash
 # From the project root
-cd /home/jabawack81/projects/vps-config/movie_together
+cd /home/paolo/projects/vps-config/costar
 
 # Ensure secrets are loaded from Doppler
 doppler run -- kamal deploy
@@ -103,7 +103,7 @@ make deploy
 
 ```bash
 # Set up Doppler
-doppler setup --project movie_together --config prd
+doppler setup --project costar --config prd
 
 # Deploy
 doppler run -- kamal deploy
@@ -128,7 +128,7 @@ Run these checks after deployment to verify everything is working:
 
 ```bash
 # Check app is running
-curl https://movie-together-domain.com/health
+curl https://costar.internetblacksmith.dev/health
 
 # Check logs for errors
 kamal logs | grep -i error
@@ -137,7 +137,7 @@ kamal logs | grep -i error
 kamal exec 'bundle exec rails db:migrate:status'
 
 # Test API endpoint
-curl https://movie-together-domain.com/api/actors/search?q=Tom
+curl https://costar.internetblacksmith.dev/api/actors/search?q=Tom
 
 # Check Sentry for errors
 # Visit: https://sentry.io/organizations/your-org/issues/
@@ -177,7 +177,7 @@ Before deploying, verify all required secrets are in Doppler:
 
 ```bash
 # List all secrets for production
-doppler secrets list --project movie_together --config prd
+doppler secrets list --project costar --config prd
 
 # Required secrets:
 # - RACK_ENV=production
@@ -205,13 +205,13 @@ bundle exec brakeman --force
 **Post-Deployment**:
 ```bash
 # Health endpoint
-curl https://movie-together-domain.com/health
+curl https://costar.internetblacksmith.dev/health
 
 # Admin check (if available)
-curl https://movie-together-domain.com/admin/health
+curl https://costar.internetblacksmith.dev/admin/health
 
 # Database connection test
-curl https://movie-together-domain.com/api/test/db
+curl https://costar.internetblacksmith.dev/api/test/db
 ```
 
 ## Known Issues & Mitigations
@@ -259,7 +259,7 @@ For issues during deployment:
 
 - 📚 [Kamal Documentation](https://kamal-deploy.org/)
 - 🔐 [Doppler Documentation](https://docs.doppler.com/)
-- 🚀 [Movie Together README](./README.md)
+- 🚀 [CoStar README](./README.md)
 - 🔧 [Deployment Guide](./DEPLOYMENT.md)
 
 ---

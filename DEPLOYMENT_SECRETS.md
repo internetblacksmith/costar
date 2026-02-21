@@ -2,12 +2,12 @@
 
 ## Overview
 
-This document outlines all secrets and environment variables required for deploying `movie_together` to production using GitHub Actions and Kamal.
+This document outlines all secrets and environment variables required for deploying `costar` to production using GitHub Actions and Kamal.
 
 ## Secrets & Variables Checklist
 
 ### 1. Doppler Configuration
-Project: `movie_together`, Config: `prd`
+Project: `costar`, Config: `prd`
 
 **Secrets (marked as secret type in Doppler):**
 - [ ] `KAMAL_REGISTRY_PASSWORD` - GitHub Container Registry PAT with `read:packages` and `write:packages` scopes
@@ -21,7 +21,7 @@ Project: `movie_together`, Config: `prd`
 - [ ] `SENTRY_ENVIRONMENT` - Environment name for Sentry (e.g., `production`)
 
 ### 2. GitHub Repository Secrets
-Repo: `Frenimies-Solutions/movie_together`, Environment: `production`
+Repo: `internetblacksmith/costar`, Environment: `production`
 
 **Deployment Secrets:**
 - [ ] `DEPLOY_SSH_PRIVATE_KEY` - Ed25519 private key for deploy@digitalocean (1447)
@@ -58,7 +58,7 @@ SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT }}
 ```yaml
 registry:
   server: ghcr.io
-  username: jabawack81
+  username: internetblacksmith
   password: $KAMAL_REGISTRY_PASSWORD  # Gets KAMAL_REGISTRY_PASSWORD from environment
 
 env:
@@ -76,19 +76,19 @@ env:
 
 ```
 GitHub Push to main
-    ↓
+    |
 GitHub Actions Workflow Triggers
-    ↓
+    |
 [Test Job]
 - Runs RSpec and Cucumber tests
 - Uses test placeholder for TMDB_API_KEY
-    ↓
+    |
 [Build Job]
 - Sets up Docker Buildx
 - Logs in to GHCR using GITHUB_TOKEN
 - Extracts Docker metadata
-- Builds and pushes image to ghcr.io/jabawack81/movie_together
-    ↓
+- Builds and pushes image to ghcr.io/internetblacksmith/costar
+    |
 [Deploy Job]
 - Reads secrets from GitHub (synced from Doppler)
 - Sets up SSH key for deploy@digitalocean
@@ -97,8 +97,8 @@ GitHub Actions Workflow Triggers
   - Uses KAMAL_REGISTRY_PASSWORD to authenticate with GHCR
   - Pulls built image
   - Deploys to VPS with all secret env vars
-  - Configures Traefik for HTTP/HTTPS at as.frenimies-lab.dev
-    ↓
+  - Configures Traefik for HTTP/HTTPS at costar.internetblacksmith.dev
+    |
 Container Running with:
 - RACK_ENV=production
 - TMDB_API_KEY (from container env)
@@ -115,7 +115,7 @@ Container Running with:
 # Login to Doppler (if not already logged in)
 doppler login
 
-# Switch to movie_together/prd config
+# Switch to costar/prd config
 doppler switch
 
 # List all secrets and variables
@@ -138,13 +138,13 @@ doppler secrets get SENTRY_ENVIRONMENT
 # Requires gh CLI and GitHub token
 
 # List repository secrets (shows only names, not values)
-gh secret list -R Frenimies-Solutions/movie_together
+gh secret list -R internetblacksmith/costar
 
 # List repository variables
-gh variable list -R Frenimies-Solutions/movie_together
+gh variable list -R internetblacksmith/costar
 
 # Check if specific secret exists
-gh secret list -R Frenimies-Solutions/movie_together | grep KAMAL_REGISTRY_PASSWORD
+gh secret list -R internetblacksmith/costar | grep KAMAL_REGISTRY_PASSWORD
 ```
 
 ### 3. Test Deployment
@@ -161,7 +161,7 @@ git push origin main
 # Monitor VPS
 # - SSH to VPS and check containers
 ssh -p 1447 deploy@161.35.165.206
-docker ps | grep movie
+docker ps | grep costar
 docker logs costar-web
 ```
 
@@ -199,4 +199,4 @@ docker logs costar-web
 - [GitHub Actions Secrets & Variables](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions)
 - [Doppler GitHub Integration](https://docs.doppler.com/docs/github-actions)
 - [Kamal Documentation](https://kamal-deploy.org/)
-- [movie_together README](./README.md)
+- [CoStar README](./README.md)

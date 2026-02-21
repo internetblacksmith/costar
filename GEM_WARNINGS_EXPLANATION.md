@@ -11,7 +11,7 @@ When running `bundle exec rspec`, you may see warnings related to the `axe-core-
 And a warning about `benchmark` gem:
 
 ```
-/home/jabawack81/projects/movie_together/spec/performance/performance_spec.rb:4: warning: benchmark was loaded from the standard library, but will no longer be part of the default gems starting from Ruby 3.5.0.
+/home/jabawack81/projects/costar/spec/performance/performance_spec.rb:4: warning: benchmark was loaded from the standard library, but will no longer be part of the default gems starting from Ruby 3.5.0.
 ```
 
 ## Why These Warnings Occur

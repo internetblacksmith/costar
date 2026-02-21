@@ -28,7 +28,7 @@ If you need to deploy locally, try from a different machine/environment where `d
 ```bash
 # Pre-authenticate before running deploy
 PASSWORD=$(doppler secrets get KAMAL_REGISTRY_PASSWORD --config prd --plain)
-echo "$PASSWORD" | docker login ghcr.io -u jabawack81 --password-stdin
+echo "$PASSWORD" | docker login ghcr.io -u internetblacksmith --password-stdin
 
 # Then run kamal commands directly (secrets fetched by .kamal/secrets Doppler adapter)
 bundle exec kamal build push
@@ -50,6 +50,6 @@ If validation fails, it provides clear instructions for fixing the token.
 1. Make your code changes
 2. Commit and push to `main` branch
 3. GitHub Actions automatically runs tests, builds image, and deploys
-4. Monitor at: https://github.com/jabawack81/movie_together/actions
+4. Monitor at: https://github.com/internetblacksmith/costar/actions
 
 This ensures consistent, tested deployments across different environments.

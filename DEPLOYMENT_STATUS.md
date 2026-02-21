@@ -2,7 +2,7 @@
 
 ## Current Status
 
-### ✅ Completed
+### Completed
 
 #### Infrastructure & Configuration
 - [x] GitHub Actions Deploy Workflow (`.github/workflows/deploy.yml`)
@@ -16,14 +16,14 @@
 
 - [x] Kamal Configuration (`config/deploy.yml`)
   - Proper registry authentication with GHCR
-  - Traefik routing to `as.frenimies-lab.dev`
+  - Traefik routing to `costar.internetblacksmith.dev`
   - Redis accessory configuration
   - Volume and persistence setup
   - Environment variable declarations
 
 - [x] Git Submodule Setup
-  - movie_together registered in `.gitmodules`
-  - SSH URL configured: `git@github.com:Frenimies-Solutions/movie_together.git`
+  - costar registered in `.gitmodules`
+  - SSH URL configured: `git@github.com:internetblacksmith/costar.git`
   - Accessible from vps-config parent repo
 
 - [x] Documentation
@@ -32,11 +32,11 @@
   - Deployment flow diagram
   - All required secrets listed
 
-### 📋 Required Actions Before First Deployment
+### Required Actions Before First Deployment
 
 The following must be verified/configured in Doppler and GitHub before deployment can succeed:
 
-#### 1. Doppler Configuration (movie_together/prd)
+#### 1. Doppler Configuration (costar/prd)
 **Secrets** (marked as type "secret"):
 - [ ] `KAMAL_REGISTRY_PASSWORD` - GitHub PAT with packages scopes
 - [ ] `TMDB_API_KEY` - Movie Database API key
@@ -49,7 +49,7 @@ The following must be verified/configured in Doppler and GitHub before deploymen
 - [ ] `SENTRY_ENVIRONMENT` - Environment name
 
 #### 2. GitHub Repository Secrets
-Repo: `Frenimies-Solutions/movie_together`
+Repo: `internetblacksmith/costar`
 
 **Secrets that must be manually set:**
 - [ ] `DEPLOY_SSH_PRIVATE_KEY` - Ed25519 private key for deploy@digitalocean
@@ -76,40 +76,40 @@ Repo: `Frenimies-Solutions/movie_together`
 
 ```
 User pushes to main branch
-    ↓
+    |
 GitHub Actions workflow triggers
-    ↓
+    |
 Test Job
-├─ Sets up Ruby 4.0.1
-├─ Runs bundle install (cached)
-├─ Sets up Chrome for Cuprite
-├─ Runs RSpec test suite
-├─ Runs Cucumber feature tests
-└─ Runs security checks (Brakeman, bundle-audit)
-    ↓
+|- Sets up Ruby 4.0.1
+|- Runs bundle install (cached)
+|- Sets up Chrome for Cuprite
+|- Runs RSpec test suite
+|- Runs Cucumber feature tests
+\- Runs security checks (Brakeman, bundle-audit)
+    |
 [Only if tests pass]
 Build Job
-├─ Sets up Docker Buildx
-├─ Logs in to GHCR with GITHUB_TOKEN
-├─ Extracts image metadata
-├─ Builds Docker image
-└─ Pushes to ghcr.io/jabawack81/movie_together:main-<sha>
-    ↓
+|- Sets up Docker Buildx
+|- Logs in to GHCR with GITHUB_TOKEN
+|- Extracts image metadata
+|- Builds Docker image
+\- Pushes to ghcr.io/internetblacksmith/costar:main-<sha>
+    |
 [Only if build succeeds]
 Deploy Job (requires production environment secrets)
-├─ Sets up Ruby and Kamal
-├─ Configures SSH for VPS connectivity
-├─ Executes: kamal deploy
-│  ├─ Authenticates with GHCR using KAMAL_REGISTRY_PASSWORD
-│  ├─ Pulls built image
-│  ├─ Stops previous container
-│  ├─ Starts new container with environment variables
-│  ├─ Configures Traefik routing
-│  └─ Verifies deployment
-├─ Checks deployment status
-└─ Sends Slack notification
-    ↓
-Application running at https://as.frenimies-lab.dev
+|- Sets up Ruby and Kamal
+|- Configures SSH for VPS connectivity
+|- Executes: kamal deploy
+|  |- Authenticates with GHCR using KAMAL_REGISTRY_PASSWORD
+|  |- Pulls built image
+|  |- Stops previous container
+|  |- Starts new container with environment variables
+|  |- Configures Traefik routing
+|  \- Verifies deployment
+|- Checks deployment status
+\- Sends Slack notification
+    |
+Application running at https://costar.internetblacksmith.dev
 ```
 
 ## What Gets Deployed
@@ -135,7 +135,7 @@ SESSION_SECRET=<from secrets>
 - **Logging**: Driver: json-file, Max size: 10m
 
 ### Traefik Routing
-- **Domain**: as.frenimies-lab.dev
+- **Domain**: costar.internetblacksmith.dev
 - **Protocol**: HTTPS (Let's Encrypt)
 - **HTTP Redirect**: Automatic redirect to HTTPS
 - **Upstream Port**: 4567
@@ -162,10 +162,10 @@ Push a test commit to main and monitor:
 - Slack notification sent (if configured)
 
 ### 5. Verify Application
-- Check container is running: `docker ps | grep movie`
+- Check container is running: `docker ps | grep costar`
 - Check logs: `docker logs costar-web`
-- Test health endpoint: `curl -I https://as.frenimies-lab.dev/health`
-- Test application: Browse to `https://as.frenimies-lab.dev`
+- Test health endpoint: `curl -I https://costar.internetblacksmith.dev/health`
+- Test application: Browse to `https://costar.internetblacksmith.dev`
 
 ## Troubleshooting Common Issues
 
@@ -197,7 +197,7 @@ Push a test commit to main and monitor:
 
 ### Application Crashes
 **Fix**:
-1. Check container logs: `docker logs movie-together-web -f`
+1. Check container logs: `docker logs costar-web -f`
 2. Verify REDIS_URL is accessible
 3. Verify TMDB_API_KEY is valid
 4. Check if dependencies need updating

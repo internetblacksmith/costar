@@ -72,13 +72,13 @@ setup-dev:
 	@echo ""
 	@echo "🪝 Installing git pre-commit hook..."
 	@if [ -f .git-hooks/pre-commit ]; then \
-		mkdir -p .git/hooks 2>/dev/null || mkdir -p ../.git/modules/movie_together/hooks; \
+		mkdir -p .git/hooks 2>/dev/null || mkdir -p ../.git/modules/costar/hooks; \
 		if [ -d .git/hooks ]; then \
 			cp .git-hooks/pre-commit .git/hooks/pre-commit; \
 			chmod +x .git/hooks/pre-commit; \
 		else \
-			cp .git-hooks/pre-commit ../.git/modules/movie_together/hooks/pre-commit; \
-			chmod +x ../.git/modules/movie_together/hooks/pre-commit; \
+			cp .git-hooks/pre-commit ../.git/modules/costar/hooks/pre-commit; \
+			chmod +x ../.git/modules/costar/hooks/pre-commit; \
 		fi; \
 		echo "✅ Git pre-commit hook installed (runs lint + tests + security before commits)"; \
 	else \
@@ -92,11 +92,11 @@ setup-dev:
 	@echo ""
 	@echo "Next steps:"
 	@echo "  1. Setup Doppler with dev config:"
-	@echo "     doppler setup --project movie_together --config dev"
+	@echo "     doppler setup --project costar --config dev"
 	@echo "  2. Copy .doppler.example to .doppler:"
 	@echo "     cp .doppler.example .doppler"
 	@echo "  3. Configure dev secrets in Doppler:"
-	@echo "     doppler secrets set --project movie_together --config dev"
+	@echo "     doppler secrets set --project costar --config dev"
 	@echo "  4. Run 'make redis-start' to start Redis (in separate terminal)"
 	@echo "  5. Run 'make dev' to start the local development server"
 	@echo "  6. Run 'make setup-deploy' to configure production deployment (separate step)"
@@ -139,11 +139,11 @@ setup-deploy:
 	@echo "✅ Kamal $$(bundle exec kamal version 2>/dev/null || echo 'installed')"
 	@echo ""
 	@echo "🔐 Checking Doppler configuration..."
-	@if ! doppler configure get project --plain 2>/dev/null | grep -q "movie_together"; then \
+	@if ! doppler configure get project --plain 2>/dev/null | grep -q "costar"; then \
 		echo "⚠️  Doppler not configured for deployment. You'll need to set up:"; \
-		echo "   doppler setup --project movie_together --config prd"; \
+		echo "   doppler setup --project costar --config prd"; \
 	else \
-		echo "✅ Doppler project: movie_together"; \
+		echo "✅ Doppler project: costar"; \
 	fi
 	@echo ""
 	@echo "🔧 Generating .kamal/secrets file..."
@@ -153,9 +153,9 @@ setup-deploy:
 	@echo ""
 	@echo "Next steps (for authorized ops/CI-CD personnel ONLY):"
 	@echo "  1. Setup production Doppler config:"
-	@echo "     doppler setup --project movie_together --config prd"
+	@echo "     doppler setup --project costar --config prd"
 	@echo "  2. Set production secrets in Doppler prd config:"
-	@echo "     doppler secrets set --project movie_together --config prd"
+	@echo "     doppler secrets set --project costar --config prd"
 	@echo "  3. Test VPS connection:"
 	@echo "     ssh digitalocean-deploy"
 	@echo "  4. Test deployment:"
@@ -165,7 +165,7 @@ setup-deploy:
 	@echo ""
 	@echo "ℹ️  IMPORTANT: Never set up prd config on developer machines"
 	@echo "ℹ️  Dev machines: Use dev config from .doppler file"
-	@echo "ℹ️  Deployment: .kamal/secrets fetches from Doppler movie_together/prd via adapter"
+	@echo "ℹ️  Deployment: .kamal/secrets fetches from Doppler costar/prd via adapter"
 
 # Full setup (both dev and deploy)
 setup: setup-dev setup-deploy
@@ -200,7 +200,7 @@ dev:
 	@echo ""
 	@if command -v doppler > /dev/null; then \
 		echo "🔐 Using Doppler dev config for secrets..."; \
-		doppler run --project movie_together --config dev -- bundle exec puma -C config/puma.rb; \
+		doppler run --project costar --config dev -- bundle exec puma -C config/puma.rb; \
 	else \
 		echo "⚠️  Doppler not found. Running without Doppler..."; \
 		bundle exec puma -C config/puma.rb; \
@@ -238,12 +238,12 @@ clean:
 # Build Docker image
 docker-build:
 	@echo "🐳 Building Docker image..."
-	docker build -t movie_together .
+	docker build -t costar .
 
 # Run Docker container
 docker-run:
 	@echo "🐳 Running Docker container..."
-	docker run -it -p 4567:4567 --env-file .env movie_together
+	docker run -it -p 4567:4567 --env-file .env costar
 
 # Start Redis server
 redis-start:
@@ -312,8 +312,8 @@ deploy-setup:
 kamal-secrets-setup:
 	@echo "📝 Generating .kamal/secrets file..."
 	@mkdir -p .kamal
-	@echo "# Fetch secrets from Doppler (movie_together/prd)" > .kamal/secrets
-	@echo 'SECRETS=$$(kamal secrets fetch --adapter doppler --from movie_together/prd KAMAL_REGISTRY_PASSWORD TMDB_API_KEY REDIS_URL SENTRY_DSN SENTRY_ENVIRONMENT SESSION_SECRET POSTHOG_API_KEY)' >> .kamal/secrets
+	@echo "# Fetch secrets from Doppler (costar/prd)" > .kamal/secrets
+	@echo 'SECRETS=$$(kamal secrets fetch --adapter doppler --from costar/prd KAMAL_REGISTRY_PASSWORD TMDB_API_KEY REDIS_URL SENTRY_DSN SENTRY_ENVIRONMENT SESSION_SECRET POSTHOG_API_KEY)' >> .kamal/secrets
 	@echo "" >> .kamal/secrets
 	@echo 'KAMAL_REGISTRY_PASSWORD=$$(kamal secrets extract KAMAL_REGISTRY_PASSWORD $$SECRETS)' >> .kamal/secrets
 	@echo 'TMDB_API_KEY=$$(kamal secrets extract TMDB_API_KEY $$SECRETS)' >> .kamal/secrets

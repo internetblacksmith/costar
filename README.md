@@ -1,7 +1,7 @@
 # CoStar
 
-[![CI](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/ci.yml)
-[![Deploy](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml/badge.svg)](https://github.com/jabawack81/screen_thread/actions/workflows/deploy.yml)
+[![CI](https://github.com/internetblacksmith/costar/actions/workflows/ci.yml/badge.svg)](https://github.com/internetblacksmith/costar/actions/workflows/ci.yml)
+[![Deploy](https://github.com/internetblacksmith/costar/actions/workflows/deploy.yml/badge.svg)](https://github.com/internetblacksmith/costar/actions/workflows/deploy.yml)
 [![Ruby](https://img.shields.io/badge/ruby-4.0.1-red.svg)](https://www.ruby-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -30,7 +30,7 @@ A web application that discovers the connections between actors and movies. Find
 
 ```bash
 git clone <repository-url>
-cd movie_together
+cd costar
 make setup-dev
 ```
 
@@ -38,7 +38,7 @@ make setup-dev
 
 ```bash
 doppler login
-doppler setup --project movie_together --config dev
+doppler setup --project costar --config dev
 ```
 
 Required secrets in the `dev` config:
@@ -116,7 +116,7 @@ All API endpoints include rate limiting, input validation, CORS headers, and str
 
 CoStar is deployed to a DigitalOcean VPS via [Kamal v2](https://kamal-deploy.org/) with Traefik reverse proxy for HTTPS.
 
-**Live at:** `https://as.frenimies-lab.dev`
+**Live at:** `https://costar.internetblacksmith.dev`
 
 ### Secrets management
 
@@ -138,7 +138,7 @@ make deploy-setup    # First-time Kamal setup on new server
 make setup-deploy    # Checks prerequisites, installs Kamal, generates .kamal/secrets
 ```
 
-Doppler must be configured with the `movie_together/prd` config containing all required secrets (see `config/deploy.yml` for the full list).
+Doppler must be configured with the `costar/prd` config containing all required secrets (see `config/deploy.yml` for the full list).
 
 ### CI/CD
 
@@ -149,7 +149,7 @@ GitHub Actions runs tests and security scans on every push. Deployment to produc
 - **Host**: DigitalOcean VPS with Traefik reverse proxy
 - **Registry**: GitHub Container Registry (ghcr.io)
 - **Accessories**: Redis 7.4 (managed by Kamal on the VPS)
-- **Domain**: `as.frenimies-lab.dev` (Cloudflare DNS, grey cloud / DNS only)
+- **Domain**: `costar.internetblacksmith.dev` (Cloudflare DNS, grey cloud / DNS only)
 
 ## Technology Stack
 

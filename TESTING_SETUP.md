@@ -60,7 +60,7 @@ make test-teardown
 ### Redis Connection Issues
 ```bash
 # Check if Redis is running
-docker exec movie_together_redis_test redis-cli ping
+docker exec costar_redis_test redis-cli ping
 
 # View Redis logs
 docker-compose logs redis-test

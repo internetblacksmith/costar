@@ -8,7 +8,7 @@ This project uses **Doppler** with automatic GitHub sync to inject secrets into 
 
 ### Automatic Sync via Doppler
 
-Since Doppler is configured to sync with GitHub Actions, all secrets from the `movie_together/prd` config are automatically available in the `production` environment.
+Since Doppler is configured to sync with GitHub Actions, all secrets from the `costar/prd` config are automatically available in the `production` environment.
 
 ### Required Secrets (Sensitive - Auto-synced from Doppler):
 
@@ -22,7 +22,7 @@ Since Doppler is configured to sync with GitHub Actions, all secrets from the `m
 
 ### Required Variables (Non-sensitive - Auto-synced from Doppler):
 
-1. **REDIS_URL** - Redis connection string (`redis://movie-together-redis:6380/0`)
+1. **REDIS_URL** - Redis connection string (`redis://costar-redis:6380/0`)
 2. **SENTRY_ENVIRONMENT** - Environment name (`production`)
 
 **Note**: Variables are used for non-sensitive configuration that doesn't need encryption.
@@ -31,11 +31,11 @@ Since Doppler is configured to sync with GitHub Actions, all secrets from the `m
 
 If you need to manually add secrets to GitHub Actions:
 
-1. Go to: https://github.com/jabawack81/movie_together/settings/secrets/actions
+1. Go to: https://github.com/internetblacksmith/costar/settings/secrets/actions
 2. For each secret, click "New repository secret"
 3. Get the value from Doppler:
    ```bash
-   doppler secrets get SECRET_NAME --project movie_together --config prd --plain
+   doppler secrets get SECRET_NAME --project costar --config prd --plain
    ```
 4. Add to GitHub with the same name
 
@@ -63,13 +63,13 @@ All these secrets are synced from Doppler to GitHub Actions `production` environ
 
 ## ✅ Doppler Configuration Status
 
-All secrets validated in `movie_together/prd`:
+All secrets validated in `costar/prd`:
 
 | Secret | Status | Length | Purpose |
 |--------|--------|--------|---------|
 | KAMAL_REGISTRY_PASSWORD | ✅ | 40 chars | GitHub PAT for ghcr.io |
 | TMDB_API_KEY | ✅ | 32 chars | Movie database API |
-| REDIS_URL | ✅ | 35 chars | `redis://movie-together-redis:6380/0` |
+| REDIS_URL | ✅ | 35 chars | `redis://costar-redis:6380/0` |
 | SENTRY_DSN | ✅ | 85 chars | Error tracking |
 | SENTRY_ENVIRONMENT | ✅ | 10 chars | `production` |
 | SESSION_SECRET | ✅ | 64 chars | Session encryption |
@@ -83,7 +83,7 @@ To update any secret:
 
 1. Update in Doppler:
    ```bash
-   doppler secrets set SECRET_NAME="new_value" --project movie_together --config prd
+   doppler secrets set SECRET_NAME="new_value" --project costar --config prd
    ```
 
 2. Next deployment automatically uses the new value (no GitHub changes needed!)
@@ -92,7 +92,7 @@ To update any secret:
 
 To manually trigger a deployment:
 
-1. Go to: https://github.com/jabawack81/movie_together/actions
+1. Go to: https://github.com/internetblacksmith/costar/actions
 2. Click "Deploy to Production"
 3. Click "Run workflow"
 4. Select branch: `main`
@@ -117,7 +117,7 @@ Run: doppler run -- kamal deploy
   ↓
 Deploy to VPS (161.35.165.206:1447)
   ↓
-App running at: https://as.frenimies-lab.dev
+App running at: https://costar.internetblacksmith.dev
 ```
 
 ## 🔐 Security Benefits
@@ -134,7 +134,7 @@ For local deployment:
 
 ```bash
 # Setup Doppler for this project
-doppler setup --project movie_together --config prd
+doppler setup --project costar --config prd
 
 # Create .kamal/secrets file
 doppler secrets download --no-file --format env-no-quotes > .kamal/secrets
@@ -152,7 +152,7 @@ The `DOPPLER_TOKEN` is a service token for the `prd` config.
 ```bash
 doppler configs tokens create github-actions-production \
   --config prd \
-  --project movie_together \
+  --project costar \
   --plain
 ```
 
@@ -160,7 +160,7 @@ doppler configs tokens create github-actions-production \
 ```bash
 doppler configs tokens revoke github-actions-production \
   --config prd \
-  --project movie_together
+  --project costar
 ```
 
 ## 🎯 Next Steps
@@ -168,8 +168,8 @@ doppler configs tokens revoke github-actions-production \
 1. ✅ Add `DOPPLER_TOKEN` to GitHub Secrets
 2. ✅ Add `DEPLOY_SSH_PRIVATE_KEY` to GitHub Secrets  
 3. ✅ Push to main or manually trigger workflow
-4. ✅ Monitor deployment at: https://github.com/jabawack81/movie_together/actions
-5. ✅ Verify app at: https://as.frenimies-lab.dev
+4. ✅ Monitor deployment at: https://github.com/internetblacksmith/costar/actions
+5. ✅ Verify app at: https://costar.internetblacksmith.dev
 
 ## 📚 References
 

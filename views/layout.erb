@@ -117,9 +117,9 @@
                 <p><small>This site uses analytics to improve user experience. No personal data is collected without consent.</small></p>
                 <% end %>
             </div>
-            <!-- START FRENIMIES LAB LINK -->
-            <p><a href="https://frenimies-lab.dev" target="_blank">Created by Frenimies Lab</a></p>
-            <!-- END FRENIMIES LAB LINK -->
+            <!-- START INTERNET BLACKSMITH LINK -->
+            <p><a href="https://internetblacksmith.dev" target="_blank">Created by Internet Blacksmith</a></p>
+            <!-- END INTERNET BLACKSMITH LINK -->
         </footer>
     </div>
     
@@ -135,26 +135,26 @@
     <script src="/js/modules/actor-search.js?v=<%= Time.now.to_i %>"></script>
     <script src="/js/app.js?v=<%= Time.now.to_i %>"></script>
     
-    <!-- Frenimies Lab Footer Link - JavaScript fallback for ERB rendering issue -->
+    <!-- Internet Blacksmith Footer Link - JavaScript fallback for ERB rendering issue -->
     <script>
         (function() {
             function ensureFooterLink() {
                 const footer = document.querySelector('footer');
                 if (!footer) return;
-                
-                if (footer.querySelector('a[href="https://frenimies-lab.dev"]')) {
+
+                if (footer.querySelector('a[href="https://internetblacksmith.dev"]')) {
                     return;
                 }
-                
+
                 const p = document.createElement('p');
                 const a = document.createElement('a');
-                a.href = 'https://frenimies-lab.dev';
+                a.href = 'https://internetblacksmith.dev';
                 a.target = '_blank';
-                a.textContent = 'Created by Frenimies Lab';
+                a.textContent = 'Created by Internet Blacksmith';
                 p.appendChild(a);
                 footer.appendChild(p);
             }
-            
+
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', ensureFooterLink);
             } else {

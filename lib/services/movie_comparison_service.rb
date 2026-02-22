@@ -157,16 +157,11 @@ class MovieComparisonService
   end
 
   def handle_tmdb_error(error, operation)
-    message = "TMDB Error #{operation}: #{error.message}"
-    if defined?(Configuration) && Configuration.instance.development?
-      puts message
-    else
-      StructuredLogger.error("MovieComparisonService Error",
-                             type: "service_error",
-                             service: "movie_comparison",
-                             operation: operation,
-                             error: error.message,
-                             error_class: error.class.name)
-    end
+    StructuredLogger.error("MovieComparisonService Error",
+                           type: "service_error",
+                           service: "movie_comparison",
+                           operation: operation,
+                           error: error.message,
+                           error_class: error.class.name)
   end
 end

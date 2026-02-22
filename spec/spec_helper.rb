@@ -11,7 +11,7 @@ SimpleCov.start do
   add_group "Configuration", "lib/config"
   add_group "Application", "app.rb"
 
-  minimum_coverage 30 # Temporary lower target while fixing tests
+  minimum_coverage 60
 end
 
 # Load test environment

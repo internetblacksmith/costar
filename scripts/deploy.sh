@@ -137,10 +137,9 @@ echo -e "${GREEN}✅ All required secrets present!${NC}"
 
 # Validate GitHub token (KAMAL_REGISTRY_PASSWORD)
 echo -e "${BLUE}🔐 Validating GitHub Container Registry token...${NC}"
-REGISTRY_PASSWORD=$(doppler secrets get KAMAL_REGISTRY_PASSWORD --config "$DOPPLER_CONFIG" --plain)
 
-# Test docker login with the token
-if ! echo "$REGISTRY_PASSWORD" | docker login ghcr.io -u jabawack81 --password-stdin &> /dev/null; then
+# Pipe directly from Doppler to avoid storing secrets in shell variables
+if ! doppler secrets get KAMAL_REGISTRY_PASSWORD --config "$DOPPLER_CONFIG" --plain | docker login ghcr.io -u jabawack81 --password-stdin &> /dev/null; then
     echo -e "${RED}❌ GitHub Container Registry token validation failed!${NC}"
     echo "   The token in Doppler (KAMAL_REGISTRY_PASSWORD) is invalid or expired."
     echo "   Please verify the token at: https://github.com/settings/tokens"

@@ -236,25 +236,6 @@ class CoStarApp < Sinatra::Base
 
   private
 
-  # Add comprehensive security headers for production
-  def add_security_headers
-    headers "Content-Security-Policy" => build_csp_header
-    headers "Referrer-Policy" => "strict-origin-when-cross-origin"
-    headers "Permissions-Policy" => "geolocation=(), microphone=(), camera=()"
-
-    # Only add HSTS in production/test with HTTPS
-    return unless ENV.fetch("RACK_ENV", "development") == "production"
-
-    headers "Strict-Transport-Security" => "max-age=31536000; includeSubDomains; preload"
-  end
-
-  def override_rack_protection_headers
-    # Override Rack::Protection defaults with our more secure settings
-    headers "X-Frame-Options" => "DENY"
-    headers "X-Content-Type-Options" => "nosniff"
-    headers "X-XSS-Protection" => "1; mode=block"
-  end
-
   def build_csp_header
     # Build Content Security Policy
     policies = [

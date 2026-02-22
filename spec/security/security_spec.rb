@@ -32,11 +32,6 @@ RSpec.describe "Security", type: :request do
     it "includes security headers" do
       get "/"
 
-      # Debug: print status and content type to see what's happening
-      puts "Status: #{last_response.status}"
-      puts "Content-Type: #{last_response.headers["content-type"]}"
-      puts "Body start: #{last_response.body[0..100]}"
-
       expect(last_response.headers["X-Frame-Options"]).to eq("DENY")
       expect(last_response.headers["X-Content-Type-Options"]).to eq("nosniff")
     end

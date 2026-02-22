@@ -28,18 +28,10 @@ class PerformanceMonitor
       PerformanceTracker.track_api_performance_production(*args, **kwargs)
     end
 
-    # Override method_missing to handle any mocking issues
+    # Silently handle unknown track_ methods to avoid NoMethodError
     def method_missing(method_name, *args, &block)
-      if method_name.to_s.start_with?("track_")
-        puts "\n=== PerformanceMonitor method_missing DEBUG ==="
-        puts "Method: #{method_name}"
-        puts "Args count: #{args.length}"
-        puts "Args: #{args.inspect}"
-        puts "Caller:"
-        caller(1..5).each_with_index { |line, i| puts "  #{i}: #{line}" }
-        puts "=== END DEBUG ===\n"
-        return nil
-      end
+      return nil if method_name.to_s.start_with?("track_")
+
       super
     end
 

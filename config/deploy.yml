@@ -21,6 +21,11 @@ servers:
       traefik.http.routers.costar-web.entrypoints: websecure
       traefik.http.routers.costar-web.tls.certresolver: letsencrypt
       traefik.http.services.costar-web.loadbalancer.server.port: 4567
+      # Rate limiting (brute-force protection)
+      traefik.http.routers.costar-web.middlewares: costar-ratelimit
+      traefik.http.middlewares.costar-ratelimit.ratelimit.average: 20
+      traefik.http.middlewares.costar-ratelimit.ratelimit.burst: 50
+      traefik.http.middlewares.costar-ratelimit.ratelimit.period: 1s
       # HTTP to HTTPS redirect
       traefik.http.routers.costar-web-http.rule: Host(`costar.internetblacksmith.dev`)
       traefik.http.routers.costar-web-http.entrypoints: web
@@ -62,10 +67,11 @@ accessories:
   redis:
     image: redis:7.4-alpine
     host: digitalocean-vps-deploy
-    port: 6380
     directories:
       - data:/data
     cmd: redis-server --save 60 1 --loglevel warning
+    options:
+      network: "private"
 
 # Persistent volumes for application data
 volumes:

@@ -235,13 +235,13 @@ GEM
     ruby2_keywords (0.0.5)
     rubyzip (3.2.2)
     securerandom (0.4.1)
-    selenium-webdriver (4.40.0)
+    selenium-webdriver (4.41.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    sentry-ruby (6.3.1)
+    sentry-ruby (6.4.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
       logger
@@ -274,7 +274,7 @@ GEM
     sys-uname (1.5.0)
       ffi (~> 1.1)
       memoist3 (~> 1.0.0)
-    thor (1.4.0)
+    thor (1.5.0)
     thread_safe (0.3.6)
     tilt (2.7.0)
     tzinfo (2.0.6)
@@ -340,12 +340,12 @@ DEPENDENCIES
   rspec (= 3.13.2)
   rspec_junit_formatter (= 0.6.0)
   rubocop (= 1.84.2)
-  selenium-webdriver (= 4.40.0)
-  sentry-ruby (= 6.3.1)
+  selenium-webdriver (= 4.41.0)
+  sentry-ruby (= 6.4.0)
   simplecov (= 0.22.0)
   sinatra (= 4.2.1)
   sinatra-contrib (= 4.2.1)
-  thor (= 1.4.0)
+  thor (= 1.5.0)
   uri (= 1.1.1)
   vcr (= 6.4.0)
   webmock (= 3.26.1)
@@ -455,8 +455,8 @@ CHECKSUMS
   ruby2_keywords (0.0.5) sha256=ffd13740c573b7301cf7a2e61fc857b2a8e3d3aff32545d6f8300d8bae10e3ef
   rubyzip (3.2.2) sha256=c0ed99385f0625415c8f05bcae33fe649ed2952894a95ff8b08f26ca57ea5b3c
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
-  selenium-webdriver (4.40.0) sha256=16ef7aa9853c1d4b9d52eac45aafa916e3934c5c83cb4facb03f250adfd15e5b
-  sentry-ruby (6.3.1) sha256=b2de4e9bada1053a36f4224d75617a2b44d33157e9030b20b86a791358c2e154
+  selenium-webdriver (4.41.0) sha256=cdc1173cd55cf186022cea83156cc2d0bec06d337e039b02ad25d94e41bedd22
+  sentry-ruby (6.4.0) sha256=562bee79aea8f92825ac9df3ea01cc7788f9170d382f8d38947895280dc3be06
   simplecov (0.22.0) sha256=fe2622c7834ff23b98066bb0a854284b2729a569ac659f82621fc22ef36213a5
   simplecov-html (0.13.2) sha256=bd0b8e54e7c2d7685927e8d6286466359b6f16b18cb0df47b508e8d73c777246
   simplecov_json_formatter (0.1.4) sha256=529418fbe8de1713ac2b2d612aa3daa56d316975d307244399fa4838c601b428
@@ -464,7 +464,7 @@ CHECKSUMS
   sinatra-contrib (4.2.1) sha256=10d091c944d268aa910c618ea40a3c3ebe0533e6e32990d84af92235a3d26b4a
   sshkit (1.25.0) sha256=c8c6543cdb60f91f1d277306d585dd11b6a064cb44eab0972827e4311ff96744
   sys-uname (1.5.0) sha256=15286961bc583796424135e2e4949c54f2943997c7b1a23470b70e5d021c3053
-  thor (1.4.0) sha256=8763e822ccb0f1d7bee88cde131b19a65606657b847cc7b7b4b82e772bcd8a3d
+  thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
   thread_safe (0.3.6) sha256=9ed7072821b51c57e8d6b7011a8e282e25aeea3a4065eab326e43f66f063b05a
   tilt (2.7.0) sha256=0d5b9ba69f6a36490c64b0eee9f6e9aad517e20dcc848800a06eb116f08c6ab3
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b

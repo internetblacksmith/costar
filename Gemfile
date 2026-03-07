@@ -19,7 +19,7 @@ gem "activesupport", "8.1.2" # For cache and notifications
 gem "circuit_breaker", "1.1.2" # Circuit breaker pattern for API resilience
 gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)
-gem "json", "2.18.1" # JSON parsing
+gem "json", "2.19.0" # JSON parsing
 gem "logger", "1.7.0" # Logging
 gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", "1.19.1" # XML parsing
@@ -32,10 +32,10 @@ gem "rackup", "2.3.1" # Rack server command
 gem "redis", "5.4.1" # Redis client
 gem "retries", "0.0.5" # Exponential backoff retries
 gem "rexml", "3.4.4" # XML parsing
-gem "sentry-ruby", "6.3.1" # Error tracking and monitoring
+gem "sentry-ruby", "6.4.1" # Error tracking and monitoring
 gem "sinatra", "4.2.1" # Web framework
 gem "sinatra-contrib", "4.2.1" # Sinatra extensions
-gem "thor", "1.4.0" # CLI framework
+gem "thor", "1.5.0" # CLI framework
 gem "uri", "1.1.1" # URI parsing
 
 group :development do
@@ -58,7 +58,7 @@ group :test do
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
-  gem "selenium-webdriver", "4.40.0" # Selenium WebDriver for browser testing
+  gem "selenium-webdriver", "4.41.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.4.0" # Record and replay HTTP interactions
   gem "webmock", "3.26.1" # HTTP request stubbing

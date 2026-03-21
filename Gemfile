@@ -39,12 +39,12 @@ gem "thor", "1.4.0" # CLI framework
 gem "uri", "1.1.1" # URI parsing
 
 group :development do
-  gem "brakeman", "8.0.2" # Security scanner
+  gem "brakeman", "8.0.4" # Security scanner
   gem "bundle-audit", "0.2.0" # Dependency security scanner
   gem "kamal", "2.10.1" # Deployment tool
   gem "listen", "3.10.0" # File watching for auto-restart
   gem "pry", "0.16.0" # Interactive debugger
-  gem "rubocop", "1.84.2" # Code style and linting
+  gem "rubocop", "1.85.1" # Code style and linting
 end
 
 group :test do
@@ -54,14 +54,14 @@ group :test do
   gem "cucumber", "10.2.0" # BDD testing framework
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara
   gem "factory_bot", "6.5.6" # Test data factories
-  gem "faker", "3.6.0" # Fake data generation
+  gem "faker", "3.6.1" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
   gem "selenium-webdriver", "4.40.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.4.0" # Record and replay HTTP interactions
-  gem "webmock", "3.26.1" # HTTP request stubbing
+  gem "webmock", "3.26.2" # HTTP request stubbing
 end
 
 group :development, :test do

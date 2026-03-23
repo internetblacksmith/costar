@@ -15,7 +15,7 @@ ruby ">= 4.0.0"
 # Last updated: 2026-02-19 (Ruby 4.0.1 + dependency updates)
 
 # Core application dependencies
-gem "activesupport", "8.1.2" # For cache and notifications
+gem "activesupport", "8.1.2.1" # For cache and notifications
 gem "circuit_breaker", "1.1.2" # Circuit breaker pattern for API resilience
 gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)

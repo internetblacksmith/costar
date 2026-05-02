@@ -7,7 +7,7 @@ SimpleCov.start do
   # name so SimpleCov merges them in coverage/.resultset.json instead of
   # overwriting. The CI workflow sets SIMPLECOV_COMMAND_NAME per step;
   # when running locally the default keeps the standard "RSpec" name.
-  command_name "RSpec #{ENV['SIMPLECOV_COMMAND_NAME']}".strip
+  command_name "RSpec #{ENV.fetch("SIMPLECOV_COMMAND_NAME", nil)}".strip
 
   add_filter "/spec/"
   add_filter "/config/"

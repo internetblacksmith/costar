@@ -3,6 +3,12 @@
 # Configure SimpleCov for test coverage
 require "simplecov"
 SimpleCov.start do
+  # Each rspec slice (spec/lib, spec/requests, ...) uses a distinct command
+  # name so SimpleCov merges them in coverage/.resultset.json instead of
+  # overwriting. The CI workflow sets SIMPLECOV_COMMAND_NAME per step;
+  # when running locally the default keeps the standard "RSpec" name.
+  command_name "RSpec #{ENV['SIMPLECOV_COMMAND_NAME']}".strip
+
   add_filter "/spec/"
   add_filter "/config/"
   add_filter "/views/"
@@ -11,10 +17,10 @@ SimpleCov.start do
   add_group "Configuration", "lib/config"
   add_group "Application", "app.rb"
 
-  # Coverage threshold is enforced after all rspec/cucumber slices have run
-  # (see bin/check-coverage). Don't gate inside spec_helper — each rspec
-  # invocation re-initialises SimpleCov, so per-slice at_exit only sees
-  # that slice's coverage and would always fail.
+  # The combined coverage threshold is enforced once after every slice
+  # has run (see bin/check-coverage). Don't gate inside spec_helper —
+  # each rspec invocation re-initialises SimpleCov, so a per-slice
+  # at_exit hook only sees that slice's coverage.
 end
 
 # Load test environment

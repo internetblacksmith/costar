@@ -43,22 +43,33 @@ jobs:
         chrome-version: stable
     
     - name: Run Unit Tests
+      env:
+        SIMPLECOV_COMMAND_NAME: lib
       run: bundle exec rspec spec/lib --format documentation
-    
+
     - name: Run Integration Tests
+      env:
+        SIMPLECOV_COMMAND_NAME: requests
       run: bundle exec rspec spec/requests --format documentation
-    
+
     - name: Run Accessibility Tests
-      run: ACCESSIBILITY_TESTS=true bundle exec rspec spec/accessibility --format documentation
+      env:
+        ACCESSIBILITY_TESTS: "true"
+        SIMPLECOV_COMMAND_NAME: accessibility
+      run: bundle exec rspec spec/accessibility --format documentation
       continue-on-error: true # Don't fail PR if accessibility tests fail
-    
+
     - name: Run Performance Tests
+      env:
+        SIMPLECOV_COMMAND_NAME: performance
       run: bundle exec rspec spec/performance --format documentation
       continue-on-error: true
-    
+
     - name: Run Security Tests
+      env:
+        SIMPLECOV_COMMAND_NAME: security
       run: bundle exec rspec spec/security --format documentation
-    
+
     - name: Run E2E Tests (Cucumber)
       run: bundle exec cucumber --format progress
 

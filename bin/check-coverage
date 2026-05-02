@@ -1,32 +1,78 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Reads the SimpleCov last_run summary and fails if line coverage is below
-# the configured threshold. Run after all rspec/cucumber slices complete —
-# spec_helper deliberately doesn't gate per-slice (each rspec invocation
-# re-initialises SimpleCov and would only see its own slice).
+# Reads the SimpleCov resultset (which contains one entry per rspec slice
+# thanks to SIMPLECOV_COMMAND_NAME), merges their per-line hit counts,
+# and fails if combined line coverage falls below COVERAGE_MINIMUM (55).
+#
+# Run after every rspec/cucumber slice has finished. We can't rely on
+# SimpleCov's own `minimum_coverage` because each rspec invocation
+# re-initialises SimpleCov in its own process and only knows about its
+# own slice; combining lives in the resultset on disk.
 
 require "json"
 
-LAST_RUN = "coverage/.last_run.json"
+RESULTSET = "coverage/.resultset.json"
 MINIMUM = Float(ENV.fetch("COVERAGE_MINIMUM", "55"))
 
-unless File.exist?(LAST_RUN)
-  warn "coverage/.last_run.json not found — did the test suite run?"
+unless File.exist?(RESULTSET)
+  warn "#{RESULTSET} not found — did the test suite run?"
   exit 1
 end
 
-data = JSON.parse(File.read(LAST_RUN))
-covered = data.dig("result", "line")
+data = JSON.parse(File.read(RESULTSET))
 
-if covered.nil?
-  warn "line coverage missing from #{LAST_RUN}: #{data.inspect}"
+if data.empty?
+  warn "#{RESULTSET} is empty — no coverage data to check."
   exit 1
 end
 
-if covered < MINIMUM
-  warn "Line coverage #{covered}% is below the minimum #{MINIMUM}%."
+# Merge per-file line hit arrays across every command (slice). Each entry
+# has shape:
+#   "RSpec lib": { "coverage": { "/path/to/file.rb": { "lines": [nil, 1, 0, ...] } } }
+# A line is `nil` when not relevant (comment/blank), 0 when uncovered, >0
+# when covered. Merging takes the max hit count across slices.
+merged = Hash.new { |h, file| h[file] = [] }
+
+data.each_value do |suite|
+  coverage = suite["coverage"] || {}
+  coverage.each do |file, file_data|
+    lines = file_data.is_a?(Hash) ? file_data["lines"] : file_data
+    next if lines.nil?
+
+    file_lines = merged[file]
+    file_lines.concat(Array.new(lines.length - file_lines.length)) if lines.length > file_lines.length
+
+    lines.each_with_index do |hit, i|
+      next if hit.nil?
+      file_lines[i] = [file_lines[i] || 0, hit].max
+    end
+  end
+end
+
+relevant = 0
+covered = 0
+merged.each_value do |lines|
+  lines.each do |hit|
+    next if hit.nil?
+    relevant += 1
+    covered += 1 if hit.positive?
+  end
+end
+
+if relevant.zero?
+  warn "No relevant lines found in coverage data."
   exit 1
 end
 
-puts "Line coverage #{covered}% meets the minimum #{MINIMUM}%."
+percent = (covered.to_f / relevant * 100).round(2)
+slices = data.keys.sort.join(", ")
+
+if percent < MINIMUM
+  warn "Combined line coverage #{percent}% (#{covered}/#{relevant}) is below the minimum #{MINIMUM}%."
+  warn "Slices merged: #{slices}"
+  exit 1
+end
+
+puts "Combined line coverage #{percent}% (#{covered}/#{relevant}) meets the minimum #{MINIMUM}%."
+puts "Slices merged: #{slices}"

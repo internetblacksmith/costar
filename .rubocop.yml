@@ -28,6 +28,11 @@ Metrics/BlockLength:
 Style/Documentation:
   Enabled: false
 
+# Several files house related small classes (e.g. error hierarchies); enforcing
+# one-class-per-file would just spread them across many tiny files for no gain.
+Style/OneClassPerFile:
+  Enabled: false
+
 Style/FrozenStringLiteralComment:
   Enabled: true
 

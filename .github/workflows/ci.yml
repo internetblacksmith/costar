@@ -61,7 +61,12 @@ jobs:
     
     - name: Run E2E Tests (Cucumber)
       run: bundle exec cucumber --format progress
-    
+
+    - name: Check combined coverage
+      run: bin/check-coverage
+      env:
+        COVERAGE_MINIMUM: "55"
+
     - name: Upload Test Coverage
       uses: actions/upload-artifact@v7
       if: always()

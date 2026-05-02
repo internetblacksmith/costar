@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Reads the SimpleCov last_run summary and fails if line coverage is below
+# the configured threshold. Run after all rspec/cucumber slices complete —
+# spec_helper deliberately doesn't gate per-slice (each rspec invocation
+# re-initialises SimpleCov and would only see its own slice).
+
+require "json"
+
+LAST_RUN = "coverage/.last_run.json"
+MINIMUM = Float(ENV.fetch("COVERAGE_MINIMUM", "55"))
+
+unless File.exist?(LAST_RUN)
+  warn "coverage/.last_run.json not found — did the test suite run?"
+  exit 1
+end
+
+data = JSON.parse(File.read(LAST_RUN))
+covered = data.dig("result", "line")
+
+if covered.nil?
+  warn "line coverage missing from #{LAST_RUN}: #{data.inspect}"
+  exit 1
+end
+
+if covered < MINIMUM
+  warn "Line coverage #{covered}% is below the minimum #{MINIMUM}%."
+  exit 1
+end
+
+puts "Line coverage #{covered}% meets the minimum #{MINIMUM}%."

@@ -11,10 +11,10 @@ SimpleCov.start do
   add_group "Configuration", "lib/config"
   add_group "Application", "app.rb"
 
-  # Only enforce the coverage gate on the full suite. Partial runs
-  # (e.g. `rspec spec/security`) trip an already-low minimum because
-  # only a subset of code is exercised — that's not a real coverage drop.
-  minimum_coverage 55 if ENV["ENFORCE_COVERAGE"] == "true"
+  # Coverage threshold is enforced after all rspec/cucumber slices have run
+  # (see bin/check-coverage). Don't gate inside spec_helper — each rspec
+  # invocation re-initialises SimpleCov, so per-slice at_exit only sees
+  # that slice's coverage and would always fail.
 end
 
 # Load test environment

@@ -206,7 +206,7 @@ jobs:
     - uses: actions/checkout@v6
     
     - name: Run Dependabot Security Scan
-      uses: dependabot/fetch-metadata@v2
+      uses: dependabot/fetch-metadata@v3
       continue-on-error: true
     
     - name: Check for Outdated Dependencies

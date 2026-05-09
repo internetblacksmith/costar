@@ -19,7 +19,7 @@ gem "activesupport", "8.1.3" # For cache and notifications
 gem "circuit_breaker", "1.1.2" # Circuit breaker pattern for API resilience
 gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)
-gem "json", "2.19.4" # JSON parsing
+gem "json", "2.19.5" # JSON parsing
 gem "logger", "1.7.0" # Logging
 gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", "1.19.3" # XML parsing

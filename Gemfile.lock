@@ -101,7 +101,7 @@ GEM
     drb (2.2.3)
     dumb_delegator (1.1.0)
     ed25519 (1.4.0)
-    factory_bot (6.5.6)
+    factory_bot (6.6.0)
       activesupport (>= 6.1.0)
     faker (3.8.0)
       i18n (>= 1.8.11, < 2)
@@ -318,7 +318,7 @@ DEPENDENCIES
   cucumber (= 11.0.0)
   cuprite (= 0.17)
   dotenv (= 3.2.0)
-  factory_bot (= 6.5.6)
+  factory_bot (= 6.6.0)
   faker (= 3.8.0)
   json (= 2.19.5)
   kamal (= 2.11.0)
@@ -391,7 +391,7 @@ CHECKSUMS
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
   dumb_delegator (1.1.0) sha256=1ad255e5b095a2206a574c62b40c678f3d5c9151f1b3d0bae1b0463f7e40188e
   ed25519 (1.4.0) sha256=16e97f5198689a154247169f3453ef4cfd3f7a47481fde0ae33206cdfdcac506
-  factory_bot (6.5.6) sha256=12beb373214dccc086a7a63763d6718c49769d5606f0501e0a4442676917e077
+  factory_bot (6.6.0) sha256=1fc1b3b5620ec980a6a27aec1b6ec8c250ca82962e970e8a40f93e8d388d4b89
   faker (3.8.0) sha256=c147b308df73a90f27a4fc84f18d4c22ef0ad9c2a64b2b61c86fd0ca71753efc
   ferrum (0.17.1) sha256=51d591120fc593e5a13b5d9d6474389f5145bb92a91e36eab147b5d096c8cbe7
   ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d

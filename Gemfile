@@ -53,7 +53,7 @@ group :test do
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
   gem "cucumber", "11.0.0" # BDD testing framework
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara
-  gem "factory_bot", "6.5.6" # Test data factories
+  gem "factory_bot", "6.6.0" # Test data factories
   gem "faker", "3.8.0" # Fake data generation
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework

@@ -44,7 +44,7 @@ group :development do
   gem "kamal", "2.11.0" # Deployment tool
   gem "listen", "3.10.0" # File watching for auto-restart
   gem "pry", "0.16.0" # Interactive debugger
-  gem "rubocop", "1.86.1" # Code style and linting
+  gem "rubocop", "1.86.2" # Code style and linting
 end
 
 group :test do

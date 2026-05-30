@@ -19,12 +19,12 @@ gem "activesupport", "8.1.3" # For cache and notifications
 gem "circuit_breaker", "1.1.2" # Circuit breaker pattern for API resilience
 gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)
-gem "json", "2.19.5" # JSON parsing
+gem "json", "2.19.7" # JSON parsing
 gem "logger", "1.7.0" # Logging
 gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", "1.19.3" # XML parsing
 gem "ostruct", "0.6.3" # OpenStruct
-gem "puma", "8.0.1" # Web server
+gem "puma", "8.0.2" # Web server
 gem "rack", "3.2.6" # Web server framework
 gem "rack-attack", "6.8.0" # Rate limiting and security
 gem "rack-ssl", "1.4.1" # HTTPS enforcement
@@ -58,7 +58,7 @@ group :test do
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
-  gem "selenium-webdriver", "4.43.0" # Selenium WebDriver for browser testing
+  gem "selenium-webdriver", "4.44.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.4.0" # Record and replay HTTP interactions
   gem "webmock", "3.26.2" # HTTP request stubbing

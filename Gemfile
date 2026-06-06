@@ -44,14 +44,14 @@ group :development do
   gem "kamal", "2.11.0" # Deployment tool
   gem "listen", "3.10.0" # File watching for auto-restart
   gem "pry", "0.16.0" # Interactive debugger
-  gem "rubocop", "1.86.1" # Code style and linting
+  gem "rubocop", "1.87.0" # Code style and linting
 end
 
 group :test do
   gem "axe-core-rspec", "4.11.3" # Accessibility testing with axe-core
   gem "benchmark", "0.5.0" # Performance measurement
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
-  gem "cucumber", "11.0.0" # BDD testing framework
+  gem "cucumber", "11.1.0" # BDD testing framework
   gem "cuprite", "0.17" # Headless Chrome driver for Capybara
   gem "factory_bot", "6.6.0" # Test data factories
   gem "faker", "3.8.0" # Fake data generation

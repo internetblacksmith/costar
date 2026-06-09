@@ -24,7 +24,7 @@ gem "logger", "1.7.0" # Logging
 gem "net-http", "0.9.1" # HTTP client
 gem "nokogiri", "1.19.3" # XML parsing
 gem "ostruct", "0.6.3" # OpenStruct
-gem "puma", "8.0.1" # Web server
+gem "puma", "8.0.2" # Web server
 gem "rack", "3.2.6" # Web server framework
 gem "rack-attack", "6.8.0" # Rate limiting and security
 gem "rack-ssl", "1.4.1" # HTTPS enforcement

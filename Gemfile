@@ -19,12 +19,12 @@ gem "activesupport", "8.1.3" # For cache and notifications
 gem "circuit_breaker", "1.1.2" # Circuit breaker pattern for API resilience
 gem "connection_pool", "3.0.2" # Redis connection pooling
 gem "dotenv", "3.2.0" # Environment variable loading (fallback)
-gem "json", "2.19.5" # JSON parsing
+gem "json", "2.20.0" # JSON parsing
 gem "logger", "1.7.0" # Logging
 gem "net-http", "0.9.1" # HTTP client
-gem "nokogiri", "1.19.3" # XML parsing
+gem "nokogiri", "1.19.4" # XML parsing
 gem "ostruct", "0.6.3" # OpenStruct
-gem "puma", "8.0.1" # Web server
+gem "puma", "8.0.2" # Web server
 gem "rack", "3.2.6" # Web server framework
 gem "rack-attack", "6.8.0" # Rate limiting and security
 gem "rack-ssl", "1.4.1" # HTTPS enforcement
@@ -32,7 +32,7 @@ gem "rackup", "2.3.1" # Rack server command
 gem "redis", "5.4.1" # Redis client
 gem "retries", "0.0.5" # Exponential backoff retries
 gem "rexml", "3.4.4" # XML parsing
-gem "sentry-ruby", "6.5.0" # Error tracking and monitoring
+gem "sentry-ruby", "6.6.2" # Error tracking and monitoring
 gem "sinatra", "4.2.1" # Web framework
 gem "sinatra-contrib", "4.2.1" # Sinatra extensions
 gem "thor", "1.5.0" # CLI framework
@@ -41,14 +41,14 @@ gem "uri", "1.1.1" # URI parsing
 group :development do
   gem "brakeman", "8.0.4" # Security scanner
   gem "bundle-audit", "0.2.0" # Dependency security scanner
-  gem "kamal", "2.11.0" # Deployment tool
+  gem "kamal", "2.12.0" # Deployment tool
   gem "listen", "3.10.0" # File watching for auto-restart
   gem "pry", "0.16.0" # Interactive debugger
   gem "rubocop", "1.86.1" # Code style and linting
 end
 
 group :test do
-  gem "axe-core-rspec", "4.11.3" # Accessibility testing with axe-core
+  gem "axe-core-rspec", "4.12.0" # Accessibility testing with axe-core
   gem "benchmark", "0.5.0" # Performance measurement
   gem "capybara", "3.40.0" # Browser simulation for Cucumber
   gem "cucumber", "11.0.0" # BDD testing framework
@@ -58,7 +58,7 @@ group :test do
   gem "rack-test", "2.2.0" # Rack application testing
   gem "rspec", "3.13.2" # Testing framework
   gem "rspec_junit_formatter", "0.6.0" # JUnit format for CI
-  gem "selenium-webdriver", "4.43.0" # Selenium WebDriver for browser testing
+  gem "selenium-webdriver", "4.45.0" # Selenium WebDriver for browser testing
   gem "simplecov", "0.22.0" # Code coverage analysis
   gem "vcr", "6.4.0" # Record and replay HTTP interactions
   gem "webmock", "3.26.2" # HTTP request stubbing
